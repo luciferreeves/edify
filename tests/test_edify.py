@@ -1,7 +1,4 @@
-
-from edify import main
-
+from edify.main import main
 
 def test_main():
-    if main.main() is None:
-        assert True
+    assert main() == 0

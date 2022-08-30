@@ -1,4 +1,4 @@
 # Edify Package
 
 def main():
-    pass
+    return 0
