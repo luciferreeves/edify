@@ -1,7 +1,7 @@
 
-from edify import __main__
+from edify import main
 
 
 def test_main():
-    if __main__.main() is None:
+    if main() is None:
         assert True
