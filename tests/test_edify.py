@@ -3,4 +3,5 @@ from edify import main
 
 
 def test_main():
-    assert main.main() == None
+    if main.main() is None:
+        assert True
