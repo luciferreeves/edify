@@ -19,7 +19,7 @@ default_context:
     _extensions:               ['jinja2_time.TimeExtension']
     _template:                 'gh:ionelmc/cookiecutter-pylibrary'
     allow_tests_inside_package: 'no'
-    appveyor:                  'yes'
+    appveyor:                  'no'
     c_extension_function:      'longest'
     c_extension_module:        '_edify'
     c_extension_optional:      'no'

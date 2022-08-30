@@ -3,7 +3,6 @@ graft src
 graft ci
 graft tests
 
-include .appveyor.yml
 include .bumpversion.cfg
 include .cookiecutterrc
 include .coveragerc

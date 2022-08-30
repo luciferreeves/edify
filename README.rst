@@ -10,7 +10,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |github-actions| |appveyor| |requires|
+      - | |github-actions| |requires|
         | |codecov|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
@@ -18,10 +18,6 @@ Overview
 .. |docs| image:: https://readthedocs.org/projects/edify/badge/?style=flat
     :target: https://edify.readthedocs.io/
     :alt: Documentation Status
-
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/luciferreeves/edify?branch=main&svg=true
-    :alt: AppVeyor Build Status
-    :target: https://ci.appveyor.com/project/luciferreeves/edify
 
 .. |github-actions| image:: https://github.com/luciferreeves/edify/actions/workflows/github-actions.yml/badge.svg
     :alt: GitHub Actions Build Status
