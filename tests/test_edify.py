@@ -1,6 +1,6 @@
 
-from edify import main
+from edify import __main__
 
 
 def test_main():
-    pass
+    assert __main__.main() == None
