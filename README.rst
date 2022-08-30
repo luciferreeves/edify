@@ -27,29 +27,29 @@ Overview
     :alt: GitHub Actions Build Status
     :target: https://github.com/luciferreeves/edify/actions
 
-.. |requires| image:: https://requires.io/github/luciferreeves/edify/requirements.svg?branch=main
-    :alt: Requirements Status
-    :target: https://requires.io/github/luciferreeves/edify/requirements/?branch=main
+.. .. |requires| image:: https://requires.io/github/luciferreeves/edify/requirements.svg?branch=main
+..     :alt: Requirements Status
+..     :target: https://requires.io/github/luciferreeves/edify/requirements/?branch=main
 
 .. |codecov| image:: https://codecov.io/gh/luciferreeves/edify/branch/main/graphs/badge.svg?branch=main
     :alt: Coverage Status
     :target: https://codecov.io/github/luciferreeves/edify
 
-.. |version| image:: https://img.shields.io/pypi/v/edify.svg
-    :alt: PyPI Package latest release
-    :target: https://pypi.org/project/edify
+.. .. |version| image:: https://img.shields.io/pypi/v/edify.svg
+..     :alt: PyPI Package latest release
+..     :target: https://pypi.org/project/edify
 
-.. |wheel| image:: https://img.shields.io/pypi/wheel/edify.svg
-    :alt: PyPI Wheel
-    :target: https://pypi.org/project/edify
+.. .. |wheel| image:: https://img.shields.io/pypi/wheel/edify.svg
+..     :alt: PyPI Wheel
+..     :target: https://pypi.org/project/edify
 
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/edify.svg
-    :alt: Supported versions
-    :target: https://pypi.org/project/edify
+.. .. |supported-versions| image:: https://img.shields.io/pypi/pyversions/edify.svg
+..     :alt: Supported versions
+..     :target: https://pypi.org/project/edify
 
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/edify.svg
-    :alt: Supported implementations
-    :target: https://pypi.org/project/edify
+.. .. |supported-implementations| image:: https://img.shields.io/pypi/implementation/edify.svg
+..     :alt: Supported implementations
+..     :target: https://pypi.org/project/edify
 
 .. |commits-since| image:: https://img.shields.io/github/commits-since/luciferreeves/edify/v0.1.0.svg
     :alt: Commits since latest release
