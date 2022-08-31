@@ -1,72 +1,10 @@
-[tool.poetry]
-name = "edify"
-version = "0.1.0"
-homepage = "https://github.com/luciferreeves/edify"
-description = "Regular Expressions Made Simple."
-authors = ["Bobby <bobbyskhs@gmail.com>"]
-readme = "README.md"
-license =  "Apache Software License 2.0"
-
-packages = [
-    { include = "edify" },
-]
-
-[tool.poetry.dependencies]
-python = "^3.10"
-
-[tool.poetry.dev-dependencies]
-mypy = "^0.971"
-pytest = "^7.1.2"
-black = "^22.6.0"
-flake8 = "^5.0.4"
-isort = "^5.10.1"
-mkdocs = "^1.3.1"
-mkdocs-include-markdown-plugin = "^3.6.1"
-mkdocs-material = "^8.3.9"
-mkdocstrings = { version = "^0.19.0", extras = ["python"] }
-mkdocs-material-extensions = "^1.0.3"
-pytest-cov = "^3.0.0"
-bump2version = "^1.0.1"
-pre-commit = "^2.20.0"
-twine = "^4.0.1"
-tox = "^3.25.1"
-
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "--basetemp=testtemp"
-
-[tool.coverage.run]
-omit = ["*/test/*", "**/conftest.py"]
-
-[tool.coverage.report]
-omit = ["*/test/*"]
-exclude_lines = [
-    "pragma: no cover",
-    "@abstractmethod",
-    "@abc.abstractmethod",
-    "def __repr__",
-    "if .*DEBUG",
-    "raise AssertionError",
-    "raise NotImplementedError"
+[build-system]
+requires = [
+    "setuptools>=30.3.0",
+    "wheel",
 ]
 
 [tool.black]
 line-length = 140
 target-version = ['py36']
 skip-string-normalization = true
-
-[tool.isort]
-profile = "black"
-line_length = 100
-skip_gitignore = true
-known_typing="typing"
-sections= ["FUTURE","STDLIB","FIRSTPARTY","THIRDPARTY","LOCALFOLDER","TYPING"]
-
-
-[build-system]
-requires = [
-    "poetry-core>=1.0.0",
-    "setuptools>=30.3.0",
-    "wheel",
-]
-build-backend = "poetry.core.masonry.api"
