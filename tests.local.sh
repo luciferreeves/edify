@@ -4,6 +4,9 @@ tox -e clean
 # Run Tests
 tox -e check -v
 
+# Run Docs
+tox -e docs -v
+
 # Get the current installed python version
 PYTHON_VERSION=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
 
