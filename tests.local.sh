@@ -1,6 +1,9 @@
 # Clean tox environment
 tox -e clean
 
+# Sort imports
+isort .
+
 # Run Tests
 tox -e check -v
 
