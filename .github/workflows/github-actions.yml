@@ -159,7 +159,6 @@ jobs:
         virtualenv --version
         pip --version
         tox --version
-        pip install coverage
         pip list --format=freeze
     - name: test
       env:
