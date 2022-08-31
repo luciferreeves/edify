@@ -1,15 +1,9 @@
-from abc import abstractmethod
-
 from .abc import Builder
 
 
 class Quantifier(Builder):
     def __init__(self, target):
         self.target = target
-
-    @abstractmethod
-    def build(self):
-        pass
 
 
 class Optional(Quantifier):
@@ -33,7 +27,7 @@ class Exact(Quantifier):
         self.count = count
 
     def build(self):
-        return f"{self.target}{{self.count}}"
+        return f"{self.target}{{{self.count}}}"
 
 
 class Range(Quantifier):
@@ -43,7 +37,7 @@ class Range(Quantifier):
         self.max = max
 
     def build(self):
-        return f"{self.target}{{self.min, self.max}}"
+        return f"{self.target}{{{self.min},{self.max}}}"
 
 
 class AtLeast(Quantifier):
@@ -52,7 +46,7 @@ class AtLeast(Quantifier):
         self.min = min
 
     def build(self):
-        return f"{self.target}{{self.min,}}"
+        return f"{self.target}{{{self.min},}}"
 
 
 class AtMost(Quantifier):
@@ -61,4 +55,4 @@ class AtMost(Quantifier):
         self.max = max
 
     def build(self):
-        return f"{self.target}{{,self.max}}"
+        return f"{self.target}{{,{self.max}}}"
