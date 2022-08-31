@@ -1,14 +1,25 @@
-"""This is the main module for the edify builder. It is responsible for building
-Regular Expressions from simple function chains.
-"""
+from .abc import Builder
+from .part import Part
+from .errors import NotPart
+from re import match
 
-class RegexBuilder:
-    """RegexBuilder helps build and use regular expressions using its methods.
-    """
 
-    regex = None
-
+class RegexBuilder(Builder):
     def __init__(self):
-        """Initialize the RegexBuilder.
-        """
-        self.regex = ""
+        self.parts = []
+
+    def build(self):
+        return "".join(map(str, self.parts))
+
+    def add(self, part):
+        self.parts.append(part)
+
+    def part(self, part):
+        if not (issubclass(type(part), Builder) or isinstance(part, str)):
+            raise NotPart(f"{part} is not a valid Part")
+
+        self.parts.append(part)
+        return self
+
+    def match(self, regex):
+        return match(self.build(), regex)

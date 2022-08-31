@@ -1,0 +1,2 @@
+class NotPart(Exception):
+    pass
