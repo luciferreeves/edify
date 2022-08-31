@@ -1,5 +1,6 @@
-from .abc import Builder
 from abc import abstractmethod
+
+from .abc import Builder
 
 
 class Quantifier(Builder):
@@ -61,4 +62,3 @@ class AtMost(Quantifier):
 
     def build(self):
         return f"{self.target}{{,self.max}}"
-

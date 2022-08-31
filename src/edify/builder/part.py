@@ -1,5 +1,6 @@
-from .abc import Builder
 from abc import abstractmethod
+
+from .abc import Builder
 
 
 class Part(Builder):
@@ -12,7 +13,7 @@ class Part(Builder):
 
 
 class Any(Part):
-    def __init__(self, *targets, capture = True, name = None):
+    def __init__(self, *targets, capture=True, name=None):
         if not capture and name:
             raise ValueError("Cannot specify group name without capturing")
 

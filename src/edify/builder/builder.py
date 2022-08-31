@@ -1,7 +1,7 @@
-from .abc import Builder
-from .part import Part
-from .errors import NotPart
 from re import match
+
+from .abc import Builder
+from .errors import NotPart
 
 
 class RegexBuilder(Builder):
