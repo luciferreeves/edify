@@ -4,8 +4,12 @@ version = "0.1.0"
 homepage = "https://github.com/luciferreeves/edify"
 description = "Regular Expressions Made Simple."
 authors = ["Bobby <bobbyskhs@gmail.com>"]
-readme = "README.rst"
+readme = "README.md"
 license =  "Apache Software License 2.0"
+
+packages = [
+    { include = "edify" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.7"
