@@ -10,8 +10,7 @@ Overview
     * - docs
       - |docs|
     * - tests
-      - | |github-actions| |requires|
-        | |codecov|
+      - | |github-actions| |codecov|
     * - package
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
@@ -22,10 +21,6 @@ Overview
 .. |github-actions| image:: https://github.com/luciferreeves/edify/actions/workflows/github-actions.yml/badge.svg
     :alt: GitHub Actions Build Status
     :target: https://github.com/luciferreeves/edify/actions
-
-.. .. |requires| image:: https://requires.io/github/luciferreeves/edify/requirements.svg?branch=main
-..     :alt: Requirements Status
-..     :target: https://requires.io/github/luciferreeves/edify/requirements/?branch=main
 
 .. |codecov| image:: https://codecov.io/gh/luciferreeves/edify/branch/main/graphs/badge.svg?branch=main
     :alt: Coverage Status
