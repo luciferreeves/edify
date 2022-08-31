@@ -47,9 +47,9 @@ Overview
 ..     :alt: Supported implementations
 ..     :target: https://pypi.org/project/edify
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/luciferreeves/edify/v0.1.0.svg
-    :alt: Commits since latest release
-    :target: https://github.com/luciferreeves/edify/compare/v0.1.0...main
+.. .. |commits-since| image:: https://img.shields.io/github/commits-since/luciferreeves/edify/v0.1.0.svg
+..     :alt: Commits since latest release
+..     :target: https://github.com/luciferreeves/edify/compare/v0.1.0...main
 
 
 
