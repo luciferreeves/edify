@@ -1,6 +1,8 @@
 import re
 
-from edify.builder import ANY, WORD, DIGIT
+from edify.builder import ANY
+from edify.builder import DIGIT
+from edify.builder import WORD
 from edify.builder import AtLeast
 from edify.builder import AtMost
 from edify.builder import Escaped
@@ -11,11 +13,13 @@ from edify.builder import Range
 from edify.builder import RegexBuilder
 from edify.builder import ZeroOrMore
 
+
 def catch_exception(subroutine):
     try:
         subroutine()
     except Exception as e:
         return e.__class__
+
 
 def test_invalid_section_error():
     assert catch_exception(lambda: RegexBuilder().add(1)) is ValueError
@@ -116,6 +120,7 @@ def test_escaped_with_quantifier():
     assert re.match(regex, "...") is not None
     assert re.match(regex, "....") is not None
 
+
 def test_escaped_with_quantifier_and_optional():
     regex = (
         RegexBuilder()
@@ -142,4 +147,3 @@ def test_email_using_builder():
     )
     assert re.match(regex, "hello@example.com") is not None
     assert re.match(regex, "hello@example") is None
-

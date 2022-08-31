@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from .builder import RegexBuilder
 from .constants import *
 from .escaped import Escaped

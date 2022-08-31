@@ -1,5 +1,6 @@
 from .abc import Builder
 
+
 class RegexBuilder(Builder):
     def __init__(self):
         self.parts = []
