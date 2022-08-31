@@ -159,12 +159,16 @@ jobs:
         virtualenv --version
         pip --version
         tox --version
+        pip install coverage
         pip list --format=freeze
     - name: test
       env:
         TOXPYTHON: '${{ matrix.toxpython }}'
       run: >
         tox -e ${{ matrix.tox_env }} -v
+    - name: process coverage report
+      run: >
+        coverage xml
     - uses: actions/checkout@master
     - uses: codecov/codecov-action@v3
       with:
