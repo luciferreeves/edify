@@ -1,5 +1,6 @@
 from edify.library import phone_number
 
+
 def test():
     phones = {
         "1234567890": True,
