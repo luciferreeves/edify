@@ -23,9 +23,10 @@ from .helpers.core import apply_subexpression_defaults
 from .helpers.core import assertion
 from .helpers.core import create_stack_frame
 from .helpers.core import deep_copy
-from .helpers.core import escape_special
+from .helpers.core import escape_special, fuse_elements
 from .helpers.regex_vars import named_group_regex
 from .helpers.t import t
+from .helpers.quantifiers import quantifier_table
 
 
 class RegexBuilder:
@@ -39,46 +40,52 @@ class RegexBuilder:
             'has_defined_start': False,
             'has_defined_end': False,
             'flags': {
-                'g': False,
-                'y': False,
-                'm': False,
-                'i': False,
-                'u': False,
-                's': False,
+                'A': False,
+                'DEBUG': False,
+                'L': False,
+                'I': False,
+                'M': False,
+                'S': False,
+                'V': False,
             },
             'stack': create_stack_frame(t['root']),
             'named_groups': [],
             'total_capture_groups': 0,
         }
 
-    def allow_multiple_matches(self):
+    def ascii_only(self):
         next = clone(self)
-        next.state['stack']['flags']['g'] = True
+        next.state['stack']['flags']['A'] = True
         return next
 
-    def sticky(self):
+    def debug(self):
         next = clone(self)
-        next.state['stack']['flags']['y'] = True
+        next.state['stack']['flags']['DEBUG'] = True
         return next
 
-    def line_by_line(self):
+    def locale(self):
         next = clone(self)
-        next.state['stack']['flags']['m'] = True
+        next.state['stack']['flags']['L'] = True
         return next
 
-    def case_insensitive(self):
+    def ignore_case(self):
         next = clone(self)
-        next.state['stack']['flags']['i'] = True
+        next.state['stack']['flags']['I'] = True
         return next
 
-    def unicode(self):
+    def multi_line(self):
         next = clone(self)
-        next.state['stack']['flags']['u'] = True
+        next.state['stack']['flags']['M'] = True
         return next
 
-    def single_line(self):
+    def dot_all(self):
         next = clone(self)
-        next.state['stack']['flags']['s'] = True
+        next.state['stack']['flags']['S'] = True
+        return next
+
+    def verbose(self):
+        next = clone(self)
+        next.state['stack']['flags']['V'] = True
         return next
 
     def get_current_frame(self):
@@ -365,7 +372,7 @@ class RegexBuilder:
         if next_el['contains_child']:
             next_el['value'] = self.merge_subexpression(next_el['value'], options, parent, increment_capture_groups)
         elif next_el['contains_children']:
-            next_el['value'] = next_el['value'].map(lambda e: self.merge_subexpression(e, options, parent, increment_capture_groups))
+            next_el['value'] = list(map(lambda e: self.merge_subexpression(e, options, parent, increment_capture_groups), next_el['value']))
         if next_el['type'] == 'start_of_input':
             if options['ignore_start_and_end']:
                 return t['noop']
@@ -383,4 +390,143 @@ class RegexBuilder:
         assertion(isinstance(expr, RegexBuilder), must_be_instance("Expression", expr, "RegexBuilder"))
         assertion(len(expr['state']['stack']) == 1, can_not_call_se(expr.get_current_frame()['type']['type']))
         options = apply_subexpression_defaults(opts)
+        expr_next = clone(expr)
+        next = clone(self)
+        additional_capture_groups = 0
+        expr_frame = expr_next.get_current_frame()
 
+        def increment_capture_groups():
+            nonlocal additional_capture_groups
+            additional_capture_groups += 1
+        expr_frame['elements'] = list(map(
+            lambda e: self.merge_subexpression(e, options, expr_next, increment_capture_groups), expr_frame['elements']))
+        next.state['total_capture_groups'] += additional_capture_groups
+        if not options['ignore_flags']:
+            for flag_name, enabled in expr_next.state['flags'].items():
+                next.state['flags'][flag_name] = enabled or next.state['flags'][flag_name]
+        current_frame = next.get_current_frame()
+        current_frame['elements'].append(next.apply_quantifier(t['subexpression'](expr_frame['elements'])))
+        return next
+
+    def evaluate(self, el):
+        if el['type'] == 'noop':
+            return ''
+        if el['type'] == 'any_char':
+            return '.'
+        if el['type'] == 'whitespace_char':
+            return '\s'
+        if el['type'] == 'non_whitespace_char':
+            return '\S'
+        if el['type'] == 'digit':
+            return '\d'
+        if el['type'] == 'non_digit':
+            return '\D'
+        if el['type'] == 'word':
+            return '\w'
+        if el['type'] == 'non_word':
+            return '\W'
+        if el['type'] == 'word_boundary':
+            return '\\b'
+        if el['type'] == 'non_word_boundary':
+            return '\B'
+        if el['type'] == 'start_of_input':
+            return '^'
+        if el['type'] == 'end_of_input':
+            return '$'
+        if el['type'] == 'newline':
+            return '\\n'
+        if el['type'] == 'carriage_return':
+            return '\\r'
+        if el['type'] == 'tab':
+            return '\\t'
+        if el['type'] == 'null_byte':
+            return '\\0'
+        if el['type'] == 'string':
+            return el['value']
+        if el['type'] == 'char':
+            return el['value']
+        if el['type'] == 'range':
+            return '[{}-{}]'.format(el['value'][0], el['value'][1])
+        if el['type'] == 'anything_but_range':
+            return '[^{}-{}]'.format(el['value'][0], el['value'][1])
+        if el['type'] == 'any_of_chars':
+            return '[' + ''.join(el['value']) + ']'
+        if el['type'] == 'anything_but_chars':
+            return '[^' + ''.join(el['value']) + ']'
+        if el['type'] == 'named_back_reference':
+            return '\\k<{}>'.format(el['name'])
+        if el['type'] == 'back_reference':
+            return '\\{}'.format(el['index'])
+        if el['type'] == 'subexpression':
+            return ''.join(map(lambda e: self.evaluate(e), el['value']))
+        cg1 = ['optional', 'zero_or_more', 'zero_or_more_lazy', 'one_or_more', 'one_or_more_lazy']
+        if el['type'] in cg1:
+            inner = self.evaluate(el['value'])
+            with_group = "(?:{})".format(inner) if el['value']['quantifiers_require_group'] else inner
+            symbol = quantifier_table[el['type']]
+            return '{}{}'.format(with_group, symbol)
+        cg2 = ['between', 'between_lazy', 'at_least', 'exactly']
+        if el['type'] in cg2:
+            inner = self.evaluate(el['value'])
+            with_group = "(?:{})".format(inner) if el['value']['quantifiers_require_group'] else inner
+            return '{}{}'.format(with_group, quantifier_table[el['type']](el['times']))
+        if el['type'] == 'anything_but_string':
+            chars = ''.join(map(lambda c: '[^{}]'.format(c), el['value']))
+            return '(?:{})'.format(chars)
+        if el['type'] == 'assert_ahead':
+            evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
+            return '(?={})'.format(evaluated)
+        if el['type'] == 'assert_behind':
+            evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
+            return '(?<={})'.format(evaluated)
+        if el['type'] == 'assert_not_ahead':
+            evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
+            return '(?!{})'.format(evaluated)
+        if el['type'] == 'assert_not_behind':
+            evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
+            return '(?<!{})'.format(evaluated)
+        if el['type'] == 'any_of':
+            [fused, rest] = fuse_elements(el['value'])
+            if len(rest) == 0:
+                return '[{}]'.format(fused)
+            evaluated_rest = list(map(lambda e: self.evaluate(e), rest))
+            separator = '|' if len(evaluated_rest) > 0 and len(fused) > 0 else ''
+            return '(?:{}{}{})'.format('|'.join(evaluated_rest), separator, '[{}]'.format(fused) if fused else '')
+        if el['type'] == 'capture':
+            evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
+            return evaluated
+        if el['type'] == 'named_capture':
+            evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
+            return '(?P<{}>{})'.format(el['name'], evaluated)
+        if el['type'] == 'group':
+            evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
+            return '(?:{})'.format(evaluated)
+
+        raise Exception('Can not process unsupported element type: {}'.format(el['type']))
+
+
+    def get_regex_patterns_and_flags(self):
+        assertion(len(self.state['stack']) == 1, can_not_call_se(self.get_current_frame()['type']['type']))
+        pattern = "".join(list(map(lambda e: self.evaluate(e),  self.get_current_element_array())))
+        flags = ""
+        for flag_name, enabled in self.state['flags'].items():
+            if enabled:
+                flags += flag_name
+        pattern = "(?:)" if pattern == "" else pattern
+        flags = "".join(sorted(flags))
+        return pattern, flags
+
+    def to_regex_string(self):
+        patterns, flags = self.get_regex_patterns_and_flags()
+        return '/{}/{}'.format(str(patterns), str(flags))
+
+    def to_regex(self):
+        patterns, flags = self.get_regex_patterns_and_flags()
+        flag = None
+        if flags != '':
+            for flag_name in flags:
+                if flag is None:
+                    flag = getattr(re, flag_name)
+                else:
+                    flag |= getattr(re, flag_name)
+        return re.compile(patterns, flag)

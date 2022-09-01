@@ -50,3 +50,27 @@ def apply_subexpression_defaults(expr):
     assertion(type(out['ignore_flags']) == bool, 'ignore_flags must be a boolean')
     assertion(type(out['ignore_start_and_end']) == bool, 'ignore_start_and_end must be a boolean')
     return out
+
+
+def is_fusable(element):
+    return element['type'] == 'range' or element['type'] == 'char' or element['type'] == 'any_of_chars'
+
+
+def partition(pred, a):
+    result = [[], []]
+    for cur in a:
+        if pred(cur):
+            result[0].append(cur)
+        else:
+            result[1].append(cur)
+    return result
+
+
+def fuse_elements(elements):
+    [fusables, rest] = partition(is_fusable, elements)
+    def map_el(el):
+        if el['type'] == 'char' or el['type'] == 'any_of_chars':
+            return el['value']
+        return '{}-{}'.format(el['value'][0], el['value'][1])
+    fused = ''.join(map(map_el, fusables))
+    return [fused, rest]

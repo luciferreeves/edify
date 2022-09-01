@@ -29,7 +29,7 @@ t = {
     'named_back_reference': lambda name: deferred_type('named_back_reference', {'name': name}),
     'back_reference': lambda index: deferred_type('back_reference', {'index': index}),
     'capture': deferred_type('capture', {'contains_children': True}),
-    'sub_expression': as_type('sub_expression', {'contains_children': True, 'quantifiers_require_group': True}),
+    'subexpression': as_type('subexpression', {'contains_children': True, 'quantifiers_require_group': True}),
     'named_capture': lambda name: deferred_type('named_capture', {'name': name, 'contains_children': True}),
     'group': deferred_type('group', {'contains_children': True}),
     'any_of': deferred_type('any_of', {'contains_children': True}),
