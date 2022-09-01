@@ -1,4 +1,5 @@
-from .core import as_type, deferred_type
+from .core import as_type
+from .core import deferred_type
 
 t = {
     'root': as_type('root')(),
