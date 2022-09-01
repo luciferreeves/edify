@@ -48,3 +48,24 @@ def end_input_already_defined():
 
 def can_not_end_while_building_root_exp():
     return 'Can not end while building the root expression.'
+
+
+def must_be_single_character(value, variable_name):
+    return '{} must be a single character. (got {})'.format(value, type(variable_name))
+
+
+def must_have_a_smaller_value(a, b):
+    return '{} must have a smaller character value than {}. (a = {}, b = {})'.format(a, b, ord(a), ord(b))
+
+
+def ignore_se():
+    return 'You can ignore a subexpressions startOfInput/endOfInput markers with the ignoreStartAndEnd option'
+
+
+def must_be_instance(value, variable_name, class_name):
+    return '{} must be an instance of {}. (got {})'.format(value, class_name, type(variable_name))
+
+
+def can_not_call_se(cft):
+    return "Can not call subexpression a not yet fully specified regex object. \
+        \n (Try adding a .end() call to match the {} on the subexpression)".format(cft)
