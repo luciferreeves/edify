@@ -1,5 +1,5 @@
-from copy import deepcopy as clone
 import re
+from copy import deepcopy as clone
 
 from .errors import can_not_call_se
 from .errors import can_not_end_while_building_root_exp
@@ -23,10 +23,11 @@ from .helpers.core import apply_subexpression_defaults
 from .helpers.core import assertion
 from .helpers.core import create_stack_frame
 from .helpers.core import deep_copy
-from .helpers.core import escape_special, fuse_elements
+from .helpers.core import escape_special
+from .helpers.core import fuse_elements
+from .helpers.quantifiers import quantifier_table
 from .helpers.regex_vars import named_group_regex
 from .helpers.t import t
-from .helpers.quantifiers import quantifier_table
 
 
 class RegexBuilder:
@@ -414,21 +415,21 @@ class RegexBuilder:
         if el['type'] == 'any_char':
             return '.'
         if el['type'] == 'whitespace_char':
-            return '\s'
+            return '\\s'
         if el['type'] == 'non_whitespace_char':
-            return '\S'
+            return '\\S'
         if el['type'] == 'digit':
-            return '\d'
+            return '\\d'
         if el['type'] == 'non_digit':
-            return '\D'
+            return '\\D'
         if el['type'] == 'word':
-            return '\w'
+            return '\\w'
         if el['type'] == 'non_word':
-            return '\W'
+            return '\\W'
         if el['type'] == 'word_boundary':
             return '\\b'
         if el['type'] == 'non_word_boundary':
-            return '\B'
+            return '\\B'
         if el['type'] == 'start_of_input':
             return '^'
         if el['type'] == 'end_of_input':
@@ -503,7 +504,6 @@ class RegexBuilder:
             return '(?:{})'.format(evaluated)
 
         raise Exception('Can not process unsupported element type: {}'.format(el['type']))
-
 
     def get_regex_patterns_and_flags(self):
         assertion(len(self.state['stack']) == 1, can_not_call_se(self.get_current_frame()['type']['type']))

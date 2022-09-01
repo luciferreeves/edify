@@ -68,6 +68,7 @@ def partition(pred, a):
 
 def fuse_elements(elements):
     [fusables, rest] = partition(is_fusable, elements)
+
     def map_el(el):
         if el['type'] == 'char' or el['type'] == 'any_of_chars':
             return el['value']
