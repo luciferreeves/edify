@@ -3,7 +3,7 @@ Edify
 ========
 
 .. Cover Image
-.. image:: images/cover.png
+.. image:: https://raw.githubusercontent.com/luciferreeves/edify/dev/images/cover.png
     :alt: Cover Image
 
 |
