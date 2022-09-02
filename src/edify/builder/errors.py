@@ -30,8 +30,8 @@ def must_be_integer_greater_than_zero(variable_name):
     return '{} must be an integer greater than zero.'.format(variable_name)
 
 
-def unable_to_quantify(quantifier, type):
-    return 'Can not quantify regular expression with {}, because it has already been quantified with {}.'.format(quantifier, type)
+# def unable_to_quantify(quantifier, type):
+#     return 'Can not quantify regular expression with {}, because it has already been quantified with {}.'.format(quantifier, type)
 
 
 def start_input_already_defined():
@@ -68,4 +68,6 @@ def must_be_instance(value, variable_name, class_name):
 
 def can_not_call_se(cft):
     return "Can not call subexpression a not yet fully specified regex object. \
-        \n (Try adding a .end() call to match the {} on the subexpression)".format(cft)
+        \n (Try adding a .end() call to match the {} on the subexpression)".format(
+        cft
+    )

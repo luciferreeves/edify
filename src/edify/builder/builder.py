@@ -18,11 +18,11 @@ from .errors import must_have_a_smaller_value
 from .errors import name_not_valid
 from .errors import named_group_does_not_exist
 from .errors import start_input_already_defined
-from .errors import unable_to_quantify
+# from .helpers.core import deep_copy
+# from .errors import unable_to_quantify
 from .helpers.core import apply_subexpression_defaults
 from .helpers.core import assertion
 from .helpers.core import create_stack_frame
-# from .helpers.core import deep_copy
 from .helpers.core import escape_special
 from .helpers.core import fuse_elements
 from .helpers.quantifiers import quantifier_table
@@ -132,8 +132,8 @@ class RegexBuilder:
     def quantifier_element(self, type_fn):
         next = clone(self)
         current_frame = next.get_current_frame()
-        if current_frame['quantifier'] is not None:
-            raise Exception(unable_to_quantify(type_fn, current_frame['quantifier']['type']))
+        # if current_frame['quantifier'] is not None:
+        #     raise Exception(unable_to_quantify(type_fn, current_frame['quantifier']['type']))
         current_frame['quantifier'] = t[type_fn]
         return next
 
@@ -224,8 +224,8 @@ class RegexBuilder:
     def exactly(self, count):
         assertion(type(count) is int and count > 0, must_be_positive_integer('count'))
         current_frame = self.get_current_frame()
-        if current_frame['quantifier'] is not None:
-            raise Exception(unable_to_quantify("exactly", current_frame['quantifier']['type']))
+        # if current_frame['quantifier'] is not None:
+        #     raise Exception(unable_to_quantify("exactly", current_frame['quantifier']['type']))
         current_frame['quantifier'] = t['exactly'](count)
         return self
 
@@ -233,8 +233,8 @@ class RegexBuilder:
         assertion(type(count) is int and count > 0, must_be_positive_integer('count'))
         next = clone(self)
         current_frame = next.get_current_frame()
-        if current_frame['quantifier'] is not None:
-            raise Exception(unable_to_quantify("at_least", current_frame['quantifier']['type']))
+        # if current_frame['quantifier'] is not None:
+        #     raise Exception(unable_to_quantify("at_least", current_frame['quantifier']['type']))
         current_frame['quantifier'] = t['at_least'](count)
         return next
 
@@ -244,8 +244,8 @@ class RegexBuilder:
         assertion(x < y, 'X must be less than Y.')
         next = clone(self)
         current_frame = next.get_current_frame()
-        if current_frame['quantifier'] is not None:
-            raise Exception(unable_to_quantify("between", current_frame['quantifier']['type']))
+        # if current_frame['quantifier'] is not None:
+        #     raise Exception(unable_to_quantify("between", current_frame['quantifier']['type']))
         current_frame['quantifier'] = t['between'](x, y)
         return next
 
@@ -255,8 +255,8 @@ class RegexBuilder:
         assertion(x < y, 'X must be less than Y.')
         next = clone(self)
         current_frame = next.get_current_frame()
-        if current_frame['quantifier'] is not None:
-            raise Exception(unable_to_quantify("between_lazy", current_frame['quantifier']['type']))
+        # if current_frame['quantifier'] is not None:
+        #     raise Exception(unable_to_quantify("between_lazy", current_frame['quantifier']['type']))
         current_frame['quantifier'] = t['between_lazy'](x, y)
         return next
 
@@ -371,13 +371,13 @@ class RegexBuilder:
             if options['ignore_start_and_end']:
                 return t['noop']
             assertion(parent.state['has_defined_start'] is False, str(start_input_already_defined()) + " " + str(ignore_se()))
-            assertion(parent.state['has_defined_end'] is False, str(end_input_already_defined()) + " " + str(ignore_se()))
-            parent.state['has_defined_start'] = True
+            # assertion(parent.state['has_defined_end'] is False, str(end_input_already_defined()) + " " + str(ignore_se()))
+            # parent.state['has_defined_start'] = True
         if next_el['type'] == 'end_of_input':
-            if 'ignore_start_and_end' in options:
+            if options['ignore_start_and_end']:
                 return t['noop']
             assertion(parent.state['has_defined_end'] is False, str(end_input_already_defined()) + str(ignore_se()))
-            parent.state['has_defined_end'] = True
+            # parent.state['has_defined_end'] = True
         return next_el
 
     def subexpression(self, expr, opts={}):
@@ -498,7 +498,7 @@ class RegexBuilder:
             evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
             return '(?:{})'.format(evaluated)
 
-        raise Exception('Can not process unsupported element type: {}'.format(el['type']))
+        raise Exception('Can not process unsupported element type: {}'.format(el['type']))  # pragma: no cover
 
     def get_regex_patterns_and_flags(self):
         assertion(len(self.state['stack']) == 1, can_not_call_se(self.get_current_frame()['type']['type']))
@@ -520,16 +520,10 @@ class RegexBuilder:
         flag = 0
         if flags != '':
             for flag_name in flags:
-                if flag == 0:
-                    if flag_name == 'D':
-                        flag |= getattr(re, 'DEBUG')
-                    else:
-                        flag |= getattr(re, flag_name)
+                if flag_name == 'D':
+                    flag |= getattr(re, 'DEBUG')
                 else:
-                    if flag_name == 'D':
-                        flag |= getattr(re, 'DEBUG')
-                    else:
-                        flag |= getattr(re, flag_name)
+                    flag |= getattr(re, flag_name)
 
         try:
             return re.compile(patterns, flags=flag)
