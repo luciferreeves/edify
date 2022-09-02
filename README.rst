@@ -43,6 +43,7 @@ Edify
 
 
 .. end-badges
+
 |
 
 Edify (/ˈɛdɪfaɪ/, "ed-uh-fahy") is a Python library that allows you to easily create regular expressions for matching text in a programmatically-friendly way. It is designed to be used in conjunction with the ``re`` module.
