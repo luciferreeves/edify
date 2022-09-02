@@ -31,8 +31,7 @@ from .helpers.t import t
 
 
 class RegexBuilder:
-    """Regular Expression Builder Class.
-    """
+    """Regular Expression Builder Class."""
 
     state = {}
 
@@ -42,55 +41,49 @@ class RegexBuilder:
             'has_defined_end': False,
             'flags': {
                 'A': False,
-                'DEBUG': False,
-                'L': False,
+                'D': False,
                 'I': False,
                 'M': False,
                 'S': False,
-                'V': False,
+                'X': False,
             },
-            'stack': create_stack_frame(t['root']),
+            'stack': [create_stack_frame(t['root'])],
             'named_groups': [],
             'total_capture_groups': 0,
         }
 
     def ascii_only(self):
         next = clone(self)
-        next.state['stack']['flags']['A'] = True
+        next.state['flags']['A'] = True
         return next
 
     def debug(self):
         next = clone(self)
-        next.state['stack']['flags']['DEBUG'] = True
-        return next
-
-    def locale(self):
-        next = clone(self)
-        next.state['stack']['flags']['L'] = True
+        next.state['flags']['D'] = True
         return next
 
     def ignore_case(self):
         next = clone(self)
-        next.state['stack']['flags']['I'] = True
+        next.state['flags']['I'] = True
         return next
 
     def multi_line(self):
         next = clone(self)
-        next.state['stack']['flags']['M'] = True
+        next.state['flags']['M'] = True
         return next
 
     def dot_all(self):
         next = clone(self)
-        next.state['stack']['flags']['S'] = True
+        next.state['flags']['S'] = True
         return next
 
     def verbose(self):
         next = clone(self)
-        next.state['stack']['flags']['V'] = True
+        next.state['flags']['X'] = True
         return next
 
     def get_current_frame(self):
-        return self.state['stack']
+        return self.state['stack'][len(self.state['stack']) - 1]
 
     def get_current_element_array(self):
         return self.get_current_frame()['elements']
@@ -191,7 +184,7 @@ class RegexBuilder:
         assertion(type(index) is int, 'Index must be an integer.')
         assertion(
             index > 0 and index <= self.state['total_capture_groups'],
-            invalid_total_capture_groups_index(index, self.state['total_capture_groups'])
+            invalid_total_capture_groups_index(index, self.state['total_capture_groups']),
         )
         return self.match_element(t['back_reference'](index))
 
@@ -399,8 +392,10 @@ class RegexBuilder:
         def increment_capture_groups():
             nonlocal additional_capture_groups
             additional_capture_groups += 1
-        expr_frame['elements'] = list(map(
-            lambda e: self.merge_subexpression(e, options, expr_next, increment_capture_groups), expr_frame['elements']))
+
+        expr_frame['elements'] = list(
+            map(lambda e: self.merge_subexpression(e, options, expr_next, increment_capture_groups), expr_frame['elements'])
+        )
         next.state['total_capture_groups'] += additional_capture_groups
         if not options['ignore_flags']:
             for flag_name, enabled in expr_next.state['flags'].items():
@@ -434,7 +429,7 @@ class RegexBuilder:
             return '^'
         if el['type'] == 'end_of_input':
             return '$'
-        if el['type'] == 'newline':
+        if el['type'] == 'new_line':
             return '\\n'
         if el['type'] == 'carriage_return':
             return '\\r'
@@ -495,7 +490,7 @@ class RegexBuilder:
             return '(?:{}{}{})'.format('|'.join(evaluated_rest), separator, '[{}]'.format(fused) if fused else '')
         if el['type'] == 'capture':
             evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
-            return evaluated
+            return '({})'.format(evaluated)
         if el['type'] == 'named_capture':
             evaluated = ''.join(map(lambda e: self.evaluate(e), el['value']))
             return '(?P<{}>{})'.format(el['name'], evaluated)
@@ -507,7 +502,7 @@ class RegexBuilder:
 
     def get_regex_patterns_and_flags(self):
         assertion(len(self.state['stack']) == 1, can_not_call_se(self.get_current_frame()['type']['type']))
-        pattern = "".join(list(map(lambda e: self.evaluate(e),  self.get_current_element_array())))
+        pattern = "".join(list(map(lambda e: self.evaluate(e), self.get_current_element_array())))
         flags = ""
         for flag_name, enabled in self.state['flags'].items():
             if enabled:
@@ -522,11 +517,21 @@ class RegexBuilder:
 
     def to_regex(self):
         patterns, flags = self.get_regex_patterns_and_flags()
-        flag = None
+        flag = 0
         if flags != '':
             for flag_name in flags:
-                if flag is None:
-                    flag = getattr(re, flag_name)
+                if flag == 0:
+                    if flag_name == 'D':
+                        flag |= getattr(re, 'DEBUG')
+                    else:
+                        flag |= getattr(re, flag_name)
                 else:
-                    flag |= getattr(re, flag_name)
-        return re.compile(patterns, flag)
+                    if flag_name == 'D':
+                        flag |= getattr(re, 'DEBUG')
+                    else:
+                        flag |= getattr(re, flag_name)
+
+        try:
+            return re.compile(patterns, flags=flag)
+        except Exception as e:
+            raise Exception('Can not compile regex: {}'.format(e))

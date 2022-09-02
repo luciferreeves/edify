@@ -1,18 +1,19 @@
 import re
 
 
-def as_type(type, options={}):
-    def as_type_fn(value=None):
+def as_type(type, opts={}):
+    def type_fn(value=None):
         return {
             'type': type,
             'value': value,
-            'options': options,
+            **opts,
         }
-    return as_type_fn
+
+    return type_fn
 
 
-def deferred_type(type, options={}):
-    type_fn = as_type(type, options)
+def deferred_type(type, opts={}):
+    type_fn = as_type(type, opts)
     return type_fn(type_fn)
 
 
@@ -73,5 +74,6 @@ def fuse_elements(elements):
         if el['type'] == 'char' or el['type'] == 'any_of_chars':
             return el['value']
         return '{}-{}'.format(el['value'][0], el['value'][1])
+
     fused = ''.join(map(map_el, fusables))
     return [fused, rest]
