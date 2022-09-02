@@ -22,7 +22,7 @@ from .errors import unable_to_quantify
 from .helpers.core import apply_subexpression_defaults
 from .helpers.core import assertion
 from .helpers.core import create_stack_frame
-from .helpers.core import deep_copy
+# from .helpers.core import deep_copy
 from .helpers.core import escape_special
 from .helpers.core import fuse_elements
 from .helpers.quantifiers import quantifier_table
@@ -351,38 +351,38 @@ class RegexBuilder:
         return next
 
     def merge_subexpression(self, el, options, parent, increment_capture_groups):
-        next_el = deep_copy(el)
+        next_el = clone(el)
 
         if next_el['type'] == 'back_reference':
-            next_el['index'] += parent['state']['total_capture_groups']
+            next_el['index'] += parent.state['total_capture_groups']
         if next_el['type'] == 'capture':
             increment_capture_groups()
         if next_el['type'] == 'named_capture':
             group_name = '{}{}'.format(options['namespace'], next_el['name']) if options['namespace'] else next_el['name']
-            parent['tracked_named_group'] = group_name
+            # parent.tracked_named_group(group_name)
             next_el['name'] = group_name
         if next_el['type'] == 'named_back_reference':
             next_el['name'] = '{}{}'.format(options['namespace'], next_el['name']) if options['namespace'] else next_el['name']
-        if next_el['contains_child']:
+        if 'contains_child' in next_el:
             next_el['value'] = self.merge_subexpression(next_el['value'], options, parent, increment_capture_groups)
-        elif next_el['contains_children']:
+        elif 'contains_children' in next_el:
             next_el['value'] = list(map(lambda e: self.merge_subexpression(e, options, parent, increment_capture_groups), next_el['value']))
         if next_el['type'] == 'start_of_input':
             if options['ignore_start_and_end']:
                 return t['noop']
-            assertion(parent['state']['has_defined_start'] is False, str(start_input_already_defined()) + str(ignore_se()))
-            assertion(parent['state']['has_defined_end'] is False, str(end_input_already_defined()) + str(ignore_se()))
-            parent['state']['has_defined_start'] = True
+            assertion(parent.state['has_defined_start'] is False, str(start_input_already_defined()) + " " + str(ignore_se()))
+            assertion(parent.state['has_defined_end'] is False, str(end_input_already_defined()) + " " + str(ignore_se()))
+            parent.state['has_defined_start'] = True
         if next_el['type'] == 'end_of_input':
-            if options['ignore_start_and_end']:
+            if 'ignore_start_and_end' in options:
                 return t['noop']
-            assertion(parent['state']['has_defined_end'] is False, str(end_input_already_defined()) + str(ignore_se()))
-            parent['state']['has_defined_end'] = True
+            assertion(parent.state['has_defined_end'] is False, str(end_input_already_defined()) + str(ignore_se()))
+            parent.state['has_defined_end'] = True
         return next_el
 
     def subexpression(self, expr, opts={}):
         assertion(isinstance(expr, RegexBuilder), must_be_instance("Expression", expr, "RegexBuilder"))
-        assertion(len(expr['state']['stack']) == 1, can_not_call_se(expr.get_current_frame()['type']['type']))
+        assertion(len(expr.state['stack']) == 1, can_not_call_se(expr.get_current_frame()['type']['type']))
         options = apply_subexpression_defaults(opts)
         expr_next = clone(expr)
         next = clone(self)
@@ -458,13 +458,13 @@ class RegexBuilder:
         cg1 = ['optional', 'zero_or_more', 'zero_or_more_lazy', 'one_or_more', 'one_or_more_lazy']
         if el['type'] in cg1:
             inner = self.evaluate(el['value'])
-            with_group = "(?:{})".format(inner) if el['value']['quantifiers_require_group'] else inner
+            with_group = "(?:{})".format(inner) if 'quantifiers_require_group' in el['value'] else inner
             symbol = quantifier_table[el['type']]
             return '{}{}'.format(with_group, symbol)
         cg2 = ['between', 'between_lazy', 'at_least', 'exactly']
         if el['type'] in cg2:
             inner = self.evaluate(el['value'])
-            with_group = "(?:{})".format(inner) if el['value']['quantifiers_require_group'] else inner
+            with_group = "(?:{})".format(inner) if 'quantifiers_require_group' in el['value'] else inner
             return '{}{}'.format(with_group, quantifier_table[el['type']](el['times']))
         if el['type'] == 'anything_but_string':
             chars = ''.join(map(lambda c: '[^{}]'.format(c), el['value']))

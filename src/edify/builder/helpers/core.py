@@ -34,12 +34,12 @@ def escape_special(s):
     return re.escape(s)
 
 
-def deep_copy(o):
-    if isinstance(o, list):
-        return [deep_copy(e) for e in o]
-    if isinstance(o, dict):
-        return {k: deep_copy(v) for k, v in o.items()}
-    return o
+# def deep_copy(o):
+#     if isinstance(o, list):
+#         return [deep_copy(e) for e in o]
+#     if isinstance(o, dict):
+#         return {k: deep_copy(v) for k, v in o.items()}
+#     return o
 
 
 def apply_subexpression_defaults(expr):

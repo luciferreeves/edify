@@ -59,7 +59,7 @@ def must_have_a_smaller_value(a, b):
 
 
 def ignore_se():
-    return 'You can ignore a subexpressions startOfInput/endOfInput markers with the ignoreStartAndEnd option'
+    return 'You can ignore a subexpressions start_of_input/end_of_input markers with the ignore_start_and_end option'
 
 
 def must_be_instance(value, variable_name, class_name):
