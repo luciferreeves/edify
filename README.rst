@@ -8,7 +8,7 @@ Edify
 
 |
 
-.. image:: https://readthedocs.org/projects/edify/badge/?style=flat&version=dev
+.. image:: https://readthedocs.org/projects/edify/badge/?style=flat&version=stable
     :target: https://edify.readthedocs.io/
     :alt: Documentation Status
 
