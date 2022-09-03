@@ -3,12 +3,12 @@ Edify
 ========
 
 .. Cover Image
-.. image:: https://raw.githubusercontent.com/luciferreeves/edify/dev/images/cover.png
+.. image:: https://raw.githubusercontent.com/luciferreeves/edify/main/images/cover.png
     :alt: Cover Image
 
 |
 
-.. image:: https://readthedocs.org/projects/edify/badge/?style=flat&version=stable
+.. image:: https://readthedocs.org/projects/edify/badge/?style=flat&version=latest
     :target: https://edify.readthedocs.io/
     :alt: Documentation Status
 
