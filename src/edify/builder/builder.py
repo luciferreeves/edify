@@ -513,10 +513,11 @@ class RegexBuilder:
 
     def to_regex_string(self):
         patterns, flags = self.get_regex_patterns_and_flags()
-        return '/{}/{}'.format(str(patterns), str(flags))
+        return '/{}/{}'.format(str(patterns.replace('\\ ', ' ')), str(flags))
 
     def to_regex(self):
         patterns, flags = self.get_regex_patterns_and_flags()
+        patterns = r"{}".format(patterns.replace('\ ', ' '))
         flag = 0
         if flags != '':
             for flag_name in flags:

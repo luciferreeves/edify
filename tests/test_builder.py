@@ -164,14 +164,14 @@ def test_any_of_range_fusion_with_other_choices():
 
 def test_capture():
     expr = RegexBuilder().capture().string('hello ').word().char('!').end()
-    regex_equality('/(hello\\ \\w!)/', expr)
-    regex_compilation('(hello\\ \\w!)', expr)
+    regex_equality('/(hello \\w!)/', expr)
+    regex_compilation('(hello \\w!)', expr)
 
 
 def test_named_capture():
     expr = RegexBuilder().named_capture('this_is_the_name').string('hello ').word().char('!').end()
-    regex_equality('/(?P<this_is_the_name>hello\\ \\w!)/', expr)
-    regex_compilation('(?P<this_is_the_name>hello\\ \\w!)', expr)
+    regex_equality('/(?P<this_is_the_name>hello \\w!)/', expr)
+    regex_compilation('(?P<this_is_the_name>hello \\w!)', expr)
 
 
 def test_bad_name_error():
@@ -202,7 +202,7 @@ def test_same_name_error():
 
 def test_named_back_reference():
     expr = RegexBuilder().named_capture('this_is_the_name').string('hello ').word().char('!').end().named_back_reference('this_is_the_name')
-    regex_equality('/(?P<this_is_the_name>hello\\ \\w!)\\k<this_is_the_name>/', expr)
+    regex_equality('/(?P<this_is_the_name>hello \\w!)\\k<this_is_the_name>/', expr)
     # Python does not support named back references, so we raise an error
     try:
         expr.to_regex()
@@ -219,8 +219,8 @@ def test_named_back_reference_no_cg_exists():
 
 def test_back_reference():
     expr = RegexBuilder().capture().string('hello ').word().char('!').end().back_reference(1)
-    regex_equality('/(hello\\ \\w!)\\1/', expr)
-    regex_compilation('(hello\\ \\w!)\\1', expr)
+    regex_equality('/(hello \\w!)\\1/', expr)
+    regex_compilation('(hello \\w!)\\1', expr)
 
 
 def test_back_reference_no_cg_exists():
@@ -232,8 +232,8 @@ def test_back_reference_no_cg_exists():
 
 def test_group():
     expr = RegexBuilder().group().string('hello ').word().char('!').end()
-    regex_equality('/(?:hello\\ \\w!)/', expr)
-    regex_compilation('(?:hello\\ \\w!)', expr)
+    regex_equality('/(?:hello \\w!)/', expr)
+    regex_compilation('(?:hello \\w!)', expr)
 
 
 def test_error_when_called_with_no_stack():
@@ -251,8 +251,8 @@ def test_assert_ahead():
 
 def test_assert_behind():
     expr = RegexBuilder().assert_behind().string('hello ').end().range('a', 'z')
-    regex_equality('/(?<=hello\\ )[a-z]/', expr)
-    regex_compilation('(?<=hello\\ )[a-z]', expr)
+    regex_equality('/(?<=hello )[a-z]/', expr)
+    regex_compilation('(?<=hello )[a-z]', expr)
 
 
 def test_assert_not_ahead():
@@ -263,8 +263,8 @@ def test_assert_not_ahead():
 
 def test_assert_not_behind():
     expr = RegexBuilder().assert_not_behind().string('hello ').end().range('a', 'z')
-    regex_equality('/(?<!hello\\ )[a-z]/', expr)
-    regex_compilation('(?<!hello\\ )[a-z]', expr)
+    regex_equality('/(?<!hello )[a-z]/', expr)
+    regex_compilation('(?<!hello )[a-z]', expr)
 
 
 def test_optional():
@@ -514,5 +514,5 @@ def test_indexed_back_referencing():
 
 def test_deeply_nested_se():
     expr = RegexBuilder().capture().at_least(3).digit().end().subexpression(first_layer_se).back_reference(1).range('0', '9')
-    regex_equality('/(\\d{3,})outer\\ begin(?P<inner_subexpression>(?:.{2})?)outer\\ end\\1[0-9]/', expr)
-    regex_compilation('(\\d{3,})outer\\ begin(?P<inner_subexpression>(?:.{2})?)outer\\ end\\1[0-9]', expr)
+    regex_equality('/(\\d{3,})outer begin(?P<inner_subexpression>(?:.{2})?)outer end\\1[0-9]/', expr)
+    regex_compilation('(\\d{3,})outer begin(?P<inner_subexpression>(?:.{2})?)outer end\\1[0-9]', expr)

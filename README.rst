@@ -70,7 +70,7 @@ Regex is a powerful tool, but its syntax is not very intuitive and can be diffic
 That's where Edify becomes extremely useful. It allows you to create regular expressions in a programmatic way by invoking the ``RegexBuilder`` class, based on the SuperExpressive_ library. The API uses the `fluent builder pattern <https://en.wikipedia.org/wiki/Fluent_interface>`_, and is completely immutable. It is built to be discoverable and predictable.
 
 - Properties and methods describe what they do in plain English.
-- Order matters! Quantifiers are specified before the thing they change, just like in English (e.g. ``RegexBuilder().exactly(5).digit()``.)
+- Order matters! Quantifiers are specified before the thing they change, just like in English (e.g. ``RegexBuilder().exactly(5).digit()``).
 - If you make a mistake, you'll know how to fix it. Edify will guide you towards a fix if your expression is invalid.
 - ``subexpressions`` can be used to create meaningful, reusable components.
 
