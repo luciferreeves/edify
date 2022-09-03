@@ -110,7 +110,6 @@ The following example recognises and captures the value of a 16-bit hexadecimal 
 .. code-block:: python
 
 
-    import re
     from edify import RegexBuilder
 
     expr = (
