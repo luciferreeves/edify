@@ -6,9 +6,7 @@ Contents
    :maxdepth: 2
 
    readme
-   installation
-   usage
-   reference/index
+   regex-builder/index
    contributing
    authors
    changelog
