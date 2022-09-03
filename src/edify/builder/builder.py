@@ -517,7 +517,7 @@ class RegexBuilder:
 
     def to_regex(self):
         patterns, flags = self.get_regex_patterns_and_flags()
-        patterns = r"{}".format(patterns.replace('\ ', ' '))
+        patterns = r"{}".format(patterns.replace("\\ ", ' '))
         flag = 0
         if flags != '':
             for flag_name in flags:
