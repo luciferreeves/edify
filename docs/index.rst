@@ -6,6 +6,7 @@ Contents
    :maxdepth: 3
 
    readme
+   built-in/index
    regex-builder/index
    contributing
    authors
