@@ -1,4 +1,5 @@
-from edify.library import date, iso_date
+from edify.library import date
+from edify.library import iso_date
 
 
 def test_date():
