@@ -60,3 +60,35 @@ You can use the ``phone`` function as follows:
     phone('123-456-7890') # returns True
     phone('9012') # returns False
     phone('+1 (615) 243-') # returns False
+
+
+ipv4()
+------
+
+The ``ipv4`` function verifies that a string is a valid IPv4 address. The function takes a ``string`` argument which is supposed to be a valid IPv4 address. The function returns ``True`` if the string is a valid IPv4 address, and ``False`` otherwise.
+
+You can use the ``ipv4`` function as follows:
+
+.. code-block:: python
+
+    from edify.library import ipv4
+
+    ipv4('128.128.128.128') # returns True
+    ipv4('128.128.128') # returns False
+
+
+ipv6()
+------
+
+The ``ipv6`` function verifies that a string is a valid IPv6 address. The function takes a ``string`` argument which is supposed to be a valid IPv6 address. The function returns ``True`` if the string is a valid IPv6 address, and ``False`` otherwise.
+
+You can use the ``ipv6`` function as follows:
+
+.. code-block:: python
+
+    from edify.library import ipv6
+
+    ipv6('2001:0db8:85a3:0000:0000:8a2e:0370:7334') # returns True
+    ipv6('2001:0db8:85a3:0000:0000:8a2e:0370') # returns False
+
+
