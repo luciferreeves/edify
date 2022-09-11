@@ -91,4 +91,46 @@ You can use the ``ipv6`` function as follows:
     ipv6('2001:0db8:85a3:0000:0000:8a2e:0370:7334') # returns True
     ipv6('2001:0db8:85a3:0000:0000:8a2e:0370') # returns False
 
+date()
+------
 
+The ``date`` function verifies that a string is a valid date. The function takes a ``string`` argument which is supposed to be a valid date. The function returns ``True`` if the string is a valid date, and ``False`` otherwise.
+
+.. warning::
+    The ``date`` function validates the string against a date format (D/M/YYYY or M/D/YYYY). This however does not guarantee that the date would be valid. For example, the string ``31-02-2017`` is a valid date according to the date format, but it is not a valid date.
+
+    While there are some regular expressions that allow more complex date validations, it is usually better to validate dates using special date and time libraries. For example, in Python datetime package can be used for these purposes. In this case, the validation will look like this:
+
+    .. code-block:: python
+
+        from datetime import datetime
+
+        try:
+            datetime.strptime('31-02-2017', '%d-%m-%Y')
+        except ValueError:
+            print('Invalid date')
+        else:
+            print('Valid date')
+
+You can use the ``date`` function as follows:
+
+.. code-block:: python
+
+    from edify.library import date
+
+    date('31/12/2017') # returns True
+    date('31-12-2017') # returns False
+
+iso_date()
+----------
+
+The ISO 8061 is an international standard for exchanging and serializing date and time data. The ``iso_date`` function verifies that a string is a valid ISO date. The function takes a ``string`` argument which is supposed to be a valid ISO date. The function returns ``True`` if the string is a valid ISO date, and ``False`` otherwise.
+
+You can use the ``iso_date`` function as follows:
+
+.. code-block:: python
+
+    from edify.library import iso_date
+
+    iso_date('2021-11-04T22:32:47.142354-10:00') # returns True
+    iso_date('12/12/2022') # returns False
