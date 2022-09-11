@@ -25,6 +25,20 @@ Then, call the ``email`` function with a string argument.
     email('hello@example.com') # returns True
     email('hello') # returns False
 
+email_rfc_5322()
+-----------------
+
+The ``email_rfc_5322`` function verifies that a string is a valid email address according to the `RFC 5322 <https://tools.ietf.org/html/rfc5322>`_ standard which allows for the most complete validation. Usually, you should not use it because it is an overkill. In most cases apps are not able to handle all emails that this regex allows. The function takes a ``string`` argument which is supposed to be a valid email address. The function returns ``True`` if the string is a valid email address, and ``False`` otherwise.
+
+You can use the ``email_rfc_5322`` function as follows:
+
+.. code-block:: python
+
+    from edify.library import email_rfc_5322
+
+    email_rfc_5322('hello@example.com') # returns True
+    email_rfc_5322('hello') # returns False
+
 phone()
 -------
 

@@ -1,8 +1,7 @@
 from edify.library import email
+from edify.library import email_rfc_5322
 
-
-def test():
-    emails = [
+emails = [
         "email@example.com",
         "email@192.168.0.1",
         "firstname.lastname@example.com",
@@ -26,7 +25,11 @@ def test():
         "あいうえお@example.com",
         "email@-example.com",
         "Abc..123@example.com"
-    ]
+]
+
+
+def test_email():
+
     expectations = [
         True,
         True,
@@ -54,3 +57,33 @@ def test():
     ]
     for i in range(len(emails)):
         assert email(emails[i]) == expectations[i]
+
+
+def test_email_rfc_5322():
+    expectations = [
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        True,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False,
+        False
+    ]
+    for i in range(len(emails)):
+        assert email_rfc_5322(emails[i]) == expectations[i]
