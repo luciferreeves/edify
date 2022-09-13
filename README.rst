@@ -145,3 +145,8 @@ Further API documentation is available on `edify.rftd.io <https://edify.readthed
 .. [#f1] ``RegexBuilder`` class based on the `SuperExpressive`_ library.
 
 .. [1]:
+
+
+License
+=============
+This project is licensed under `Apache Software License 2.0 <https://github.com/luciferreeves/edify/LICENSE>`_
