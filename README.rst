@@ -153,3 +153,7 @@ See `Contributing Guidelines <https://github.com/luciferreeves/edify/blob/main/C
 License
 =============
 This project is licensed under `Apache Software License 2.0 <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_
+
+Thanks to all the contributors ❤
+=============
+.. image:: https://contrib.rocks/image?repo=luciferreeves/edify
