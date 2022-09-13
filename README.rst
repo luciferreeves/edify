@@ -146,6 +146,9 @@ Further API documentation is available on `edify.rftd.io <https://edify.readthed
 
 .. [1]:
 
+Contributing
+=============
+See `Contributing Guidelines <https://github.com/luciferreeves/edify/blob/main/CONTRIBUTING.rst>`_
 
 License
 =============
