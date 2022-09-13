@@ -149,4 +149,4 @@ Further API documentation is available on `edify.rftd.io <https://edify.readthed
 
 License
 =============
-This project is licensed under `Apache Software License 2.0 <https://github.com/luciferreeves/edify/LICENSE>`_
+This project is licensed under `Apache Software License 2.0 <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_
