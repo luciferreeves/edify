@@ -143,7 +143,7 @@ License & Contributing
 
 This project is licensed under `Apache Software License 2.0 <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_. See `Contributing Guidelines <https://github.com/luciferreeves/edify/blob/main/CONTRIBUTING.rst>`_ for information on how to contribute to this project.
 
-contributors
+Contributors
 ------------
 .. image:: https://contrib.rocks/image?repo=luciferreeves/edify
 
