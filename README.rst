@@ -50,41 +50,20 @@ Edify (/ˈɛdɪfaɪ/, "ed-uh-fahy") is a Python library that allows you to easil
 
 It also allows you to verify a string quickly by providing commonly used regex patterns in its extensive set of built-in patterns. To tap into a pattern, simply import the pattern function from the ``edify.library`` module.
 
-Installation
-============
-
-::
-
-    pip install edify
-
-You can also install the in-development version with::
-
-    pip install https://github.com/luciferreeves/edify/archive/main.zip
-
-
-Why Edify?
-===========
-
-Regex is a powerful tool, but its syntax is not very intuitive and can be difficult to build, understand, and use. It gets even more difficult when you have to deal with backtracking, look-ahead, and other features that make regex difficult.
-
-That's where Edify becomes extremely useful. It allows you to create regular expressions in a programmatic way by invoking the ``RegexBuilder`` class [#f1]_. The API uses the `fluent builder pattern <https://en.wikipedia.org/wiki/Fluent_interface>`_, and is completely immutable. It is built to be discoverable and predictable.
-
-- Properties and methods describe what they do in plain English.
-- Order matters! Quantifiers are specified before the thing they change, just like in English (e.g. ``RegexBuilder().exactly(5).digit()``).
-- If you make a mistake, you'll know how to fix it. Edify will guide you towards a fix if your expression is invalid.
-- ``subexpressions`` can be used to create meaningful, reusable components.
-
-Edify turns those complex and unwieldy regexes that appear in code reviews into something that can be read, understood, and **properly reviewed** by your peers - and maintained by anyone!
-
-
-.. _SuperExpressive: https://github.com/francisrstokes/super-expressive
-
 Quick Start
 =============
 
-To get started make sure you have python 3.7 or later installed and then, install Edify from ``pip``::
+To get started make sure you have python 3.7 or later installed and then, install Edify from ``pip``:
+
+.. code-block:: bash
 
     pip install edify
+
+You can also install the in-development version with:
+
+.. code-block:: bash
+
+    pip install https://github.com/luciferreeves/edify/archive/main.zip
 
 Then go on to import the ``RegexBuilder`` class from the ``edify`` module.
 
@@ -135,25 +114,40 @@ The following example recognises and captures the value of a 16-bit hexadecimal 
     assert expr.match("0xC0D3")
 
 
-Documentation
-=============
+Further Documentation
+---------------------
 
 Further API documentation is available on `edify.rftd.io <https://edify.readthedocs.io>`_.
+
+Why Edify?
+===========
+
+Regex is a powerful tool, but its syntax is not very intuitive and can be difficult to build, understand, and use. It gets even more difficult when you have to deal with backtracking, look-ahead, and other features that make regex difficult.
+
+That's where Edify becomes extremely useful. It allows you to create regular expressions in a programmatic way by invoking the ``RegexBuilder`` class [#f1]_. The API uses the `fluent builder pattern <https://en.wikipedia.org/wiki/Fluent_interface>`_, and is completely immutable. It is built to be discoverable and predictable.
+
+- Properties and methods describe what they do in plain English.
+- Order matters! Quantifiers are specified before the thing they change, just like in English (e.g. ``RegexBuilder().exactly(5).digit()``).
+- If you make a mistake, you'll know how to fix it. Edify will guide you towards a fix if your expression is invalid.
+- ``subexpressions`` can be used to create meaningful, reusable components.
+
+Edify turns those complex and unwieldy regexes that appear in code reviews into something that can be read, understood, and **properly reviewed** by your peers - and maintained by anyone!
+
+
+.. _SuperExpressive: https://github.com/francisrstokes/super-expressive
+
+.. [1]:
+
+License & Contributing
+======================
+
+This project is licensed under `Apache Software License 2.0 <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_. See `Contributing Guidelines <https://github.com/luciferreeves/edify/blob/main/CONTRIBUTING.rst>`_ for information on how to contribute to this project.
+
+contributors
+------------
+.. image:: https://contrib.rocks/image?repo=luciferreeves/edify
+
 
 .. rubric:: Footnotes
 
 .. [#f1] ``RegexBuilder`` class based on the `SuperExpressive`_ library.
-
-.. [1]:
-
-Contributing
-=============
-See `Contributing Guidelines <https://github.com/luciferreeves/edify/blob/main/CONTRIBUTING.rst>`_
-
-License
-=============
-This project is licensed under `Apache Software License 2.0 <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_
-
-Thanks to all the contributors ❤
-=============
-.. image:: https://contrib.rocks/image?repo=luciferreeves/edify
