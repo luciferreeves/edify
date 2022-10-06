@@ -10,7 +10,7 @@ The ``email`` function verifies that a string is a valid email address. The func
 
 .. warning::
 
-    The ``email`` function is not a complete email address validator. It only checks that the string is in the correct format. It does not check that the domain name is valid or that the email address actually exists.
+    The ``email`` function is not a complete email address validator. It only checks that the string is in the correct format. It does not check that the domain name is valid or that the email address actually exists. This shall also be noted that there are certain trade-offs while validating email addresses using regular expressions. Regular expressions do not serve as a robust solution and should be avoided while validating complex email addresses. To learn more, go to `regular-expressions.info/email.html <https://www.regular-expressions.info/email.html>`_.
 
 To use the ``email`` function, import it from the ``edify.library`` module.
 
