@@ -18,7 +18,8 @@ def test():
         "+1 (124) 232": True,
         "+1 (123) 45-890": True,
         "+1 (1) 456-7890": True,
-        "9012": False,
+        "9012": True,
+        "911": True,
         "+1 (615) 243-": False
     }
     for phone, expectation in phones.items():
