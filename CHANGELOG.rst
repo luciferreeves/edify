@@ -2,6 +2,11 @@
 Changelog
 =========
 
+0.2.1 (2022-11-27)
+------------------
+
+* This is a Quick Fix Release to fix the incomplete release of 0.2.0. The release was intended to drop support for 3.6, but the metadata was not updated to reflect this. This release fixes that. v0.2.0 remains available on PyPI, but is incompatible with Python 3.6. Using it with other versions of Python is not a problem. Other than the metadata, the two releases are identical.
+
 0.2.0 (2022-11-27)
 ------------------
 This is a minor release with a few new built-in validators along with some small changes and bug fixes.
