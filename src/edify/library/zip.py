@@ -1,6 +1,9 @@
 import re
+
 from .support.zip import ZIP_LOCALES
+
 locales = [locale["abbrev"] for locale in ZIP_LOCALES]
+
 
 def zip(zip: str, locale: str = "US") -> bool:
     """Check if a string is a valid zip code.
@@ -24,5 +27,3 @@ def zip(zip: str, locale: str = "US") -> bool:
 
     pattern = ZIP_LOCALES[locales.index(locale)]["zip"]
     return re.match(pattern, zip) is not None
-
-

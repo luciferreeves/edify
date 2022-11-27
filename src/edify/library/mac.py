@@ -2,6 +2,7 @@ import re
 
 mac_address_validate_pattern = "^(?:[0-9A-Fa-f]{2}[:-]){5}(?:[0-9A-Fa-f]{2})$"
 
+
 def mac(mac: str) -> bool:
     """Validate a MAC (IEEE 802) address.
 

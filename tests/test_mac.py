@@ -1,5 +1,6 @@
 from edify.library import mac
 
+
 def test_mac():
     macs = {
         "00:00:5e:00:53:af": True,

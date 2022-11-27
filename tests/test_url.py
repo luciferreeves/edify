@@ -13,11 +13,13 @@ urls = [
     "//example.com",
 ]
 
+
 def test_all_protocols():
     match_list = ["proto", "no_proto"]
     expected = [True] * 9 + [False]
     for uri, expectation in zip(urls, expected):
         assert url(uri, match=match_list) == expectation
+
 
 def test_proto_only():
     match_list = ["proto"]
@@ -26,11 +28,13 @@ def test_proto_only():
         print(uri, expectation)
         assert url(uri, match=match_list) == expectation
 
+
 def test_no_proto_only():
     match_list = ["no_proto"]
     expected = [True] * 3 + [False] * 7
     for uri, expectation in zip(urls, expected):
         assert url(uri, match=match_list) == expectation
+
 
 def test_invalid_protocol():
     match_list = ["invalid"]
@@ -40,6 +44,7 @@ def test_invalid_protocol():
         except ValueError:
             assert True
 
+
 def test_invalid_match_type():
     match_list = "invalid"
     for uri in urls:
@@ -47,6 +52,7 @@ def test_invalid_match_type():
             url(uri, match=match_list)
         except TypeError:
             assert True
+
 
 def test_empty_match_list():
     match_list = []

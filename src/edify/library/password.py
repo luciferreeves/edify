@@ -1,6 +1,16 @@
 import re
 
-def password(password: str, min_length: int = 8, max_length: int = 64, min_upper: int = 1, min_lower: int = 1, min_digit: int = 1, min_special: int = 1, special_chars: str = "!@#$%^&*()_+-=[]{}|;':\",./<>?") -> bool:
+
+def password(
+    password: str,
+    min_length: int = 8,
+    max_length: int = 64,
+    min_upper: int = 1,
+    min_lower: int = 1,
+    min_digit: int = 1,
+    min_special: int = 1,
+    special_chars: str = "!@#$%^&*()_+-=[]{}|;':\",./<>?",
+) -> bool:
     """Check if the given string is a valid password.
 
     Args:

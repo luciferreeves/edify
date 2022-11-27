@@ -7,6 +7,7 @@ uuids = {
     "123e456": False,
 }
 
+
 def test_valid_uuids():
     for uuid_string, expectation in uuids.items():
         assert uuid(uuid_string) == expectation

@@ -1,5 +1,6 @@
 from edify.library import ssn
 
+
 def test_ssn():
     ssns = {
         "000-22-3333": False,
