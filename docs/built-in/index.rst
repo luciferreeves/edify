@@ -960,5 +960,32 @@ Here's an example of how to use the ``guid`` function:
     guid('{51d52cf1-83c9-4f02-b117-703ecb728b74}') # returns True
     guid('{51d52cf1-83c9-4f02-b117-703ecb728-b74}') # returns False
 
+password(password: str, min_length?: int, max_length?: int, min_upper?: int, min_lower?: int, min_digit?: int, min_special?: int, special_chars?: str)
+------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+The ``password`` function validates a password string. The function returns ``True`` if the string is a valid password, and ``False`` otherwise.
+
+The ``password`` function takes the following arguments:
+
+  * ``password``: The password string to validate.
+  * ``min_length``: The minimum length of the password. The default value is 8.
+  * ``max_length``: The maximum length of the password. The default value is 64.
+  * ``min_upper``: The minimum number of uppercase characters in the password. The default value is 1.
+  * ``min_lower``: The minimum number of lowercase characters in the password. The default value is 1.
+  * ``min_digit``: The minimum number of digits in the password. The default value is 1.
+  * ``min_special``: The minimum number of special characters in the password. The default value is 1.
+  * ``special_chars``: The special characters to use in the password. The default value is ``!@#$%^&*()_+-=[]{}|;':\",./<>?``.
+
+Here's an example of how to use the ``password`` function:
+
+.. code-block:: python
+
+    from edify.library import password
+
+    password('password') # returns False
+    password("Password123!") # returns True
+    password("Password123!", max_length=8) # returns False
+    password("Password123!", min_upper=2) # returns False
+    password("password", min_upper=0, min_digit=0, min_special=0) # returns True
+    password("pass@#1", min_special=1, special_chars="!", min_digit=0, min_upper=0, min_length=4) # returns False
 
