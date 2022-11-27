@@ -20,7 +20,7 @@ def read(*names, **kwargs):
 
 setup(
     name='edify',
-    version='0.3.0',
+    version='0.2.0',
     license='Apache-2.0',
     description='Regular Expressions Made Simple',
     long_description='{}\n{}'.format(
