@@ -989,3 +989,33 @@ Here's an example of how to use the ``password`` function:
     password("password", min_upper=0, min_digit=0, min_special=0) # returns True
     password("pass@#1", min_special=1, special_chars="!", min_digit=0, min_upper=0, min_length=4) # returns False
 
+ssn(ssn: str)
+-------------
+
+The ``ssn`` function validates a Social Security Number (SSN) string. The function returns ``True`` if the string is a valid SSN, and ``False`` otherwise.
+
+Here's an example of how to use the ``ssn`` function:
+
+.. code-block:: python
+
+    from edify.library import ssn
+
+    ssn('123-45-6789') # returns True
+    ssn('123-45-678') # returns False
+    ssn('123-45-67890') # returns False
+
+
+mac(mac: str)
+-------------
+
+The ``mac`` function validates a MAC address (IEEE 802) string. The function returns ``True`` if the string is a valid MAC address, and ``False`` otherwise.
+
+Here's an example of how to use the ``mac`` function:
+
+.. code-block:: python
+
+    from edify.library import mac
+
+    mac('00:00:00:00:00:00') # returns True
+    mac('00:00:00:00:00:0') # returns False
+    mac('00:00:00:00:00:000') # returns False

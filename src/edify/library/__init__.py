@@ -13,3 +13,5 @@ from .uuid import uuid
 from .zip import zip
 from .guid import guid
 from .password import password
+from .ssn import ssn
+from .mac import mac
