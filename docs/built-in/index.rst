@@ -944,3 +944,21 @@ By default, the ``zip`` function matches ZIP codes for "US". Here's an example o
     zip('123456', locale='IN') # returns True
 
 If you supply an Invalid or empty value in the ``locale`` argument, the function will raise a ``ValueError`` exception. Similarly, if you supply another data type in the ``locale`` argument, the function will raise a ``TypeError`` exception.
+
+
+guid(guid: str)
+---------------
+
+The ``guid`` function validates a GUID (Globally Unique Identifier) string. The function returns ``True`` if the string is a valid GUID, and ``False`` otherwise.
+
+Here's an example of how to use the ``guid`` function:
+
+.. code-block:: python
+    from edify.library import guid
+
+    guid('6ba7b810-9dad-11d1-80b4-00c04fd430c8') # returns True
+    guid('{51d52cf1-83c9-4f02-b117-703ecb728b74}') # returns True
+    guid('{51d52cf1-83c9-4f02-b117-703ecb728-b74}') # returns False
+
+
+

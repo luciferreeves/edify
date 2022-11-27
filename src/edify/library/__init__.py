@@ -11,3 +11,4 @@ from .phone import phone_number
 from .url import url
 from .uuid import uuid
 from .zip import zip
+from .guid import guid
