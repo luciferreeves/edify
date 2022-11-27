@@ -4,7 +4,7 @@ Changelog
 
 0.2.0 (2022-11-27)
 ------------------
-This is a minor release with a few new built-in validators along with some small changes and bug fixes. This version also drops support for Python 3.6.
+This is a minor release with a few new built-in validators along with some small changes and bug fixes.
 
 Validators added:
 ~~~~~~~~~~~~~~~~~
