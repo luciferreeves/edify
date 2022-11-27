@@ -169,3 +169,25 @@ By default, the ``url`` function matches both URLs with and without a protocol. 
     url('https://example.com', match=['no_proto']) # returns False
 
 If you supply an Invalid or empty value in the ``match`` list argument, the function will raise a ``ValueError`` exception. Similarly, if you supply another data type in the ``match`` list argument, the function will raise a ``TypeError`` exception.
+
+.. code-block:: python
+
+    from edify.library import url
+
+    url('example.com', match=['invalid']) # raises ValueError
+    url('example.com', match=['no_proto', 'invalid']) # raises ValueError
+    url('example.com', match=['no_proto', 1]) # raises TypeError
+
+uuid(uuid: str)
+---------------
+
+The ``uuid`` function verifies that a string is a valid UUID. The function takes a ``string`` argument which is supposed to be a valid UUID. The function returns ``True`` if the string is a valid UUID, and ``False`` otherwise.
+
+You can use the ``uuid`` function as follows:
+
+.. code-block:: python
+
+    from edify.library import uuid
+
+    uuid('123e4567-e89b-12d3-a456-426655440000') # returns True
+    uuid('123e4567-e') # returns False
