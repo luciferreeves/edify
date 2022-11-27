@@ -954,6 +954,7 @@ The ``guid`` function validates a GUID (Globally Unique Identifier) string. The 
 Here's an example of how to use the ``guid`` function:
 
 .. code-block:: python
+
     from edify.library import guid
 
     guid('6ba7b810-9dad-11d1-80b4-00c04fd430c8') # returns True

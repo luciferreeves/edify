@@ -7,7 +7,7 @@ Changelog
 This is a minor release with a few new built-in validators along with some small changes and bug fixes. This version also drops support for Python 3.6.
 
 Validators added:
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 * URL Validator
 * UUID Validator
 * GUID Validator
