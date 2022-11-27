@@ -1,3 +1,13 @@
+.. |toggleStart| raw:: html
+
+   <details>
+   <summary style="font-size: 1.2rem; font-style: bold; cursor: pointer;">View Supported Locales</summary>
+
+.. |toggleEnd| raw:: html
+
+   </details>
+
+
 Pre-Built Pattern API Reference
 ================================
 
@@ -191,3 +201,746 @@ You can use the ``uuid`` function as follows:
 
     uuid('123e4567-e89b-12d3-a456-426655440000') # returns True
     uuid('123e4567-e') # returns False
+
+zip(zip: str, locale?: str)
+---------------------------
+
+The ``zip`` function verifies that a string is a valid ZIP code. The function takes a ``string`` argument which is supposed to be a valid ZIP code. The function returns ``True`` if the string is a valid ZIP code, and ``False`` otherwise.
+
+The ``zip`` function also accepts an optional ``locale`` argument. The ``locale`` argument is a string that you can use to configure what types of ZIP codes the function should match. You can view the ``locale`` argument values below.
+
+|toggleStart|
+
+.. list-table::
+  :header-rows: 1
+
+  * - Country
+    - Locale
+
+  * - Afghanistan
+    - AF
+
+  * - Albania
+    - AL
+
+  * - Algeria
+    - DZ
+
+  * - American Samoa
+    - AS
+
+  * - Andorra
+    - AD
+
+  * - Angola
+    - AO
+
+  * - Anguilla
+    - AI
+
+  * - Antigua and Barbuda
+    - AG
+
+  * - Argentina
+    - AR
+
+  * - Armenia
+    - AM
+
+  * - Aruba
+    - AW
+
+  * - Australia
+    - AU
+
+  * - Austria
+    - AT
+
+  * - Azerbaijan
+    - AZ
+
+  * - Bahamas
+    - BS
+
+  * - Bahrain
+    - BH
+
+  * - Bangladesh
+    - BD
+
+  * - Barbados
+    - BB
+
+  * - Belarus
+    - BY
+
+  * - Belgium
+    - BE
+
+  * - Belize
+    - BZ
+
+  * - Benin
+    - BJ
+
+  * - Bermuda
+    - BM
+
+  * - Bhutan
+    - BT
+
+  * - Bolivia
+    - BO
+
+  * - Bonaire
+    - BQ
+
+  * - Bosnia and Herzegovina
+    - BA
+
+  * - Botswana
+    - BW
+
+  * - Brazil
+    - BR
+
+  * - Brunei
+    - BN
+
+  * - Bulgaria
+    - BG
+
+  * - Burkina Faso
+    - BF
+
+  * - Burundi
+    - BI
+
+  * - Cambodia
+    - KH
+
+  * - Cameroon
+    - CM
+
+  * - Canada
+    - CA
+
+  * - Canary Islands
+    - CI
+
+  * - Cape Verde
+    - CV
+
+  * - Cayman Islands
+    - KY
+
+  * - Central African Republic
+    - CF
+
+  * - Chad
+    - TD
+
+  * - Channel Islands
+    - CI
+
+  * - Chile
+    - CL
+
+  * - China, People's Republic
+    - CN
+
+  * - Colombia
+    - CO
+
+  * - Comoros
+    - KM
+
+  * - Congo
+    - CG
+
+  * - Congo, The Democratic Republic of
+    - CD
+
+  * - Cook Islands
+    - CK
+
+  * - Costa Rica
+    - CR
+
+  * - Côte d'Ivoire
+    - CI
+
+  * - Croatia
+    - HR
+
+  * - Cuba
+    - CU
+
+  * - Curacao
+    - CW
+
+  * - Cyprus
+    - CY
+
+  * - Czech Republic
+    - CZ
+
+  * - Denmark
+    - DK
+
+  * - Djibouti
+    - DJ
+
+  * - Dominica
+    - DM
+
+  * - Dominican Republic
+    - DO
+
+  * - East Timor
+    - TL
+
+  * - Ecuador
+    - EC
+
+  * - Egypt
+    - EG
+
+  * - El Salvador
+    - SV
+
+  * - Eritrea
+    - ER
+
+  * - Estonia
+    - EE
+
+  * - Ethiopia
+    - ET
+
+  * - Falkland Islands
+    - FK
+
+  * - Faroe Islands
+    - FO
+
+  * - Fiji
+    - FJ
+
+  * - Finland
+    - FI
+
+  * - France
+    - FR
+
+  * - French Polynesia
+    - PF
+
+  * - Gabon
+    - GA
+
+  * - Gambia
+    - GM
+
+  * - Georgia
+    - GE
+
+  * - Germany
+    - DE
+
+  * - Ghana
+    - GH
+
+  * - Gibraltar
+    - GI
+
+  * - Greece
+    - GR
+
+  * - Greenland
+    - GL
+
+  * - Grenada
+    - GD
+
+  * - Guadeloupe
+    - GP
+
+  * - Guam
+    - GU
+
+  * - Guatemala
+    - GT
+
+  * - Guernsey
+    - GG
+
+  * - Guinea-Bissau
+    - GW
+
+  * - Guinea-Equatorial
+    - GQ
+
+  * - Guinea Republic
+    - GN
+
+  * - Guyana (British)
+    - GY
+
+  * - Guyana (French)
+    - GF
+
+  * - Haiti
+    - HT
+
+  * - Honduras
+    - HN
+
+  * - Hong Kong
+    - HK
+
+  * - Hungary
+    - HU
+
+  * - Iceland
+    - IS
+
+  * - India
+    - IN
+
+  * - Indonesia
+    - ID
+
+  * - Iran
+    - IR
+
+  * - Iraq
+    - IQ
+
+  * - Ireland, Republic of
+    - IE
+
+  * - Islas Malvinas
+    - FK
+
+  * - Israel
+    - IL
+
+  * - Italy
+    - IT
+
+  * - Ivory Coast
+    - CI
+
+  * - Jamaica
+    - JM
+
+  * - Japan
+    - JP
+
+  * - Jersey
+    - JE
+
+  * - Jordan
+    - JO
+
+  * - Kazakhstan
+    - KZ
+
+  * - Kenya
+    - KE
+
+  * - Kiribati
+    - KI
+
+  * - Korea, Republic of
+    - KR
+
+  * - Korea, The D.P.R of
+    - KP
+
+  * - Kosovo
+    - XK
+
+  * - Kuwait
+    - KW
+
+  * - Kyrgyzstan
+    - KG
+
+  * - Laos
+    - LA
+
+  * - Latvia
+    - LV
+
+  * - Lebanon
+    - LB
+
+  * - Lesotho
+    - LS
+
+  * - Liberia
+    - LR
+
+  * - Libya
+    - LY
+
+  * - Liechtenstein
+    - LI
+
+  * - Lithuania
+    - LT
+
+  * - Luxembourg
+    - LU
+
+  * - Macau
+    - MO
+
+  * - Macedonia, Republic of
+    - MK
+
+  * - Madagascar
+    - MG
+
+  * - Malawi
+    - MW
+
+  * - Malaysia
+    - MY
+
+  * - Maldives
+    - MV
+
+  * - Mali
+    - ML
+
+  * - Malta
+    - MT
+
+  * - Marshall Islands
+    - MH
+
+  * - Martinique
+    - MQ
+
+  * - Mauritania
+    - MR
+
+  * - Mauritius
+    - MU
+
+  * - Mayotte
+    - YT
+
+  * - Mexico
+    - MX
+
+  * - Moldova, Republic of
+    - MD
+
+  * - Monaco
+    - MC
+
+  * - Mongolia
+    - MN
+
+  * - Montenegro
+    - ME
+
+  * - Montserrat
+    - MS
+
+  * - Morocco
+    - MA
+
+  * - Mozambique
+    - MZ
+
+  * - Myanmar
+    - MM
+
+  * - Namibia
+    - NA
+
+  * - Nauru
+    - NR
+
+  * - Nepal
+    - NP
+
+  * - Netherlands
+    - NL
+
+  * - New Caledonia
+    - NC
+
+  * - New Zealand
+    - NZ
+
+  * - Nicaragua
+    - NI
+
+  * - Niger
+    - NE
+
+  * - Nigeria
+    - NG
+
+  * - Niue
+    - NU
+
+  * - Northern Mariana Islands
+    - MP
+
+  * - Norway
+    - NO
+
+  * - Oman
+    - OM
+
+  * - Pakistan
+    - PK
+
+  * - Palau
+    - PW
+
+  * - Panama
+    - PA
+
+  * - Papua New Guinea
+    - PG
+
+  * - Paraguay
+    - PY
+
+  * - Peru
+    - PE
+
+  * - Philippines
+    - PH
+
+  * - Poland
+    - PL
+
+  * - Portugal
+    - PT
+
+  * - Puerto Rico
+    - PR
+
+  * - Qatar
+    - QA
+
+  * - Réunion
+    - RE
+
+  * - Romania
+    - RO
+
+  * - Russian Federation
+    - RU
+
+  * - Rwanda
+    - RW
+
+  * - Saipan
+    - MP
+
+  * - Samoa
+    - WS
+
+  * - Sao Tome and Principe
+    - ST
+
+  * - Saudi Arabia
+    - SA
+
+  * - Senegal
+    - SN
+
+  * - Serbia
+    - RS
+
+  * - Seychelles
+    - SC
+
+  * - Sierra Leone
+    - SL
+
+  * - Singapore
+    - SG
+
+  * - Slovakia
+    - SK
+
+  * - Slovenia
+    - SI
+
+  * - Solomon Islands
+    - SB
+
+  * - Somalia
+    - SO
+
+  * - South Africa
+    - ZA
+
+  * - South Sudan
+    - SS
+
+  * - Spain
+    - ES
+
+  * - Sri Lanka
+    - LK
+
+  * - St. Barthélemy
+    - BL
+
+  * - St. Croix
+    - VI
+
+  * - St. Eustatius
+    - SE
+
+  * - St. Helena
+    - SH
+
+  * - St. John
+    - AG
+
+  * - St. Kitts and Nevis
+    - KN
+
+  * - St. Lucia
+    - LC
+
+  * - St. Maarten
+    - SX
+
+  * - St. Thomas
+    - VI
+
+  * - St. Vincent and the Grenadines
+    - VC
+
+  * - Sudan
+    - SD
+
+  * - Suriname
+    - SR
+
+  * - Swaziland
+    - SZ
+
+  * - Sweden
+    - SE
+
+  * - Switzerland
+    - CH
+
+  * - Syria
+    - SY
+
+  * - Tahiti
+    - PF
+
+  * - Taiwan
+    - TW
+
+  * - Tanzania
+    - TZ
+
+  * - Thailand
+    - TH
+
+  * - Togo
+    - TG
+
+  * - Tonga
+    - TO
+
+  * - Tortola
+    - VG
+
+  * - Trinidad and Tobago
+    - TT
+
+  * - Tunisia
+    - TN
+
+  * - Turkey
+    - TR
+
+  * - Turkmenistan
+    - TM
+
+  * - Turks and Caicos Islands
+    - TC
+
+  * - Tuvalu
+    - TV
+
+  * - Uganda
+    - UG
+
+  * - Ukraine
+    - UA
+
+  * - United Arab Emirates
+    - AE
+
+  * - United Kingdom
+    - GB
+
+  * - United States of America
+    - US
+
+  * - Uruguay
+    - UY
+
+  * - Uzbekistan
+    - UZ
+
+  * - Vanuatu
+    - VU
+
+  * - Venezuela
+    - VE
+
+  * - Vietnam
+    - VN
+
+  * - Virgin Islands (British)
+    - VG
+
+  * - Virgin Islands (US)
+    - VI
+
+  * - Yemen
+    - YE
+
+  * - Zambia
+    - ZM
+
+  * - Zimbabwe
+    - ZW
+
+|toggleEnd|
+
+By default, the ``zip`` function matches ZIP codes for "US". Here's an example of how to use the ``zip`` function to match ZIP codes:
+
+.. code-block:: python
+
+    from edify.library import zip
+
+    zip('12345') # returns True
+    zip('1234') # returns False
+    zip('12345', locale='US') # returns True
+    zip('12345-1234') # returns True
+    zip('12345-1234', locale='US') # returns True
+    zip('123456', locale='IN') # returns True
+
+If you supply an Invalid or empty value in the ``locale`` argument, the function will raise a ``ValueError`` exception. Similarly, if you supply another data type in the ``locale`` argument, the function will raise a ``TypeError`` exception.
