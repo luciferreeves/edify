@@ -5,6 +5,7 @@ Changelog
 ------------------
 * Added Support for Python 3.11
 * Added more RegexBuilder Examples
+* Fixed Documentation Typos
 
 0.2.1 (2022-11-27)
 ------------------
