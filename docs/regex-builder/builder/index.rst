@@ -890,7 +890,7 @@ You can use the ``.subexpression()`` method like this:
     expr = (
         RegexBuilder()
         .ignore_case()
-        .multiline()
+        .multi_line()
         .start_of_input()
         .optional().string('0x')
         .capture()
@@ -919,7 +919,7 @@ You can use the ``.subexpression()`` method like this:
     expr = (
         RegexBuilder()
         .ignore_case()
-        .multiline()
+        .multi_line()
         .start_of_input()
         .optional().string('0x')
         .capture()

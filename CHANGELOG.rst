@@ -1,6 +1,10 @@
 
 Changelog
 =========
+0.2.2 (2022-12-22)
+------------------
+* Added Support for Python 3.11
+* Added more RegexBuilder Examples
 
 0.2.1 (2022-11-27)
 ------------------
