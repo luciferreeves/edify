@@ -36,9 +36,9 @@ Edify
     :alt: Supported implementations
     :target: https://pypi.org/project/edify
 
-.. image:: https://img.shields.io/github/commits-since/luciferreeves/edify/v0.2.1.svg
+.. image:: https://img.shields.io/github/commits-since/luciferreeves/edify/v0.2.2.svg
     :alt: Commits since latest release
-    :target: https://github.com/luciferreeves/edify/compare/v0.2.1...main
+    :target: https://github.com/luciferreeves/edify/compare/v0.2.2...main
 
 
 
@@ -109,13 +109,13 @@ The following example recognises and captures the value of a 16-bit hexadecimal 
     """
     Produces the following regular expression:
     re.compile(^(?:0x)?([A-Fa-f0-9]{4})$)
-    
+
     Using `to_regex_string()` instead of `to_regex()` at the end
     will give the compiled regex string.
     """
 
     assert expr.match("0xC0D3")
-    
+
 Building Regex Example: Validating Signed Integer
 -------------------------------------------------
 
@@ -141,7 +141,7 @@ The following example recognises and checks if a number is a valid signed intege
 
     if expr.match('-69'):
         print("Matched")                        # prints matched
-    
+
 Building Regex Example: Simple URL Validator
 --------------------------------------------
 
@@ -191,9 +191,9 @@ Building Regex Example: Simple Password Validator
 The regular expression below cheks that a password:
 
 * Has minimum 8 characters in length.
-* At least one uppercase English letter. 
+* At least one uppercase English letter.
 * At least one lowercase English letter.
-* At least one digit. 
+* At least one digit.
 * At least one special character from ``#?!@$%^&*-``.
 
 .. code-block:: python
@@ -207,7 +207,7 @@ The regular expression below cheks that a password:
                 .assert_ahead() # positive look ahead
                     # matches any character in range 'A' to 'Z' zero and unlimited times,
                     # as few times as possible, expanding as needed (lazy) - matching at least 1 uppercase character
-                    .zero_or_more_lazy().any_char().range('A', 'Z')  
+                    .zero_or_more_lazy().any_char().range('A', 'Z')
                 .end()
                 .assert_ahead()
                      # at least 1 lowercase character
@@ -215,11 +215,11 @@ The regular expression below cheks that a password:
                 .end()
                 .assert_ahead()
                     # at least 1 number
-                    .zero_or_more_lazy().any_char().range('0', '9') 
+                    .zero_or_more_lazy().any_char().range('0', '9')
                 .end()
                 .assert_ahead()
                     # at least 1 special character present in the list
-                    .zero_or_more_lazy().any_char().any_of_chars('#?!@$%^&*-')   
+                    .zero_or_more_lazy().any_char().any_of_chars('#?!@$%^&*-')
                 .end()
                 .at_least(8).any_char() # must be at least 8 characters long
         .end_of_input()
