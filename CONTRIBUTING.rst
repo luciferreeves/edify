@@ -49,9 +49,13 @@ To set up `edify` for local development:
 
    Now you can make your changes locally.
 
-4. When you're done making changes run all the checks and docs builder with `tox <https://tox.wiki/en/latest/install.html>`_ one command::
+4. When you're done making changes run all the checks and docs builder with `tox <https://tox.wiki/en/latest/installation.html>`_ one command::
 
     tox
+
+    (Optional) If you're using a UNIX Like OS you can run the tests by running the following shell script::
+
+    ./tests.local.sh
 
 5. Commit your changes and push your branch to GitHub::
 

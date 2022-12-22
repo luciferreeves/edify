@@ -28,6 +28,9 @@ elif [ "$PYTHON_VERSION" = "3.9" ]; then
 elif [ "$PYTHON_VERSION" = "3.10" ]; then
     # Build using python 3.10
     tox -e py310 -v
+elif [ "$PYTHON_VERSION" = "3.11" ]; then
+    # Build using python 3.11
+    tox -e py311 -v
 else
     # Show error message
     echo "Python version $PYTHON_VERSION is not supported"
