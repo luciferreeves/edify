@@ -69,6 +69,6 @@ default_context:
     travis_osx:                'no'
     version:                   '0.1.0'
     version_manager:           'bump2version'
-    website:                   'https://thatcomputerscientist.com'
+    website:                   'https://shi.foo'
     year_from:                 '2022'
     year_to:                   '2022'
