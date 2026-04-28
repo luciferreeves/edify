@@ -156,10 +156,10 @@ jobs:
             tox_env: 'py314'
             os: 'macos-latest'
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
       with:
         fetch-depth: 0
-    - uses: actions/setup-python@v3
+    - uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.python_arch }}
