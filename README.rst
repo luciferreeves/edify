@@ -53,7 +53,7 @@ It also allows you to verify a string quickly by providing commonly used regex p
 Quick Start
 =============
 
-To get started make sure you have python 3.7 or later installed and then, install Edify from ``pip``:
+To get started make sure you have Python 3.7-3.14 installed and then, install Edify from ``pip``:
 
 .. code-block:: bash
 

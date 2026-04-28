@@ -1,6 +1,11 @@
 
 Changelog
 =========
+Unreleased
+----------
+* Added support for Python 3.14.
+* Updated Read the Docs build configuration.
+
 0.2.2 (2022-12-22)
 ------------------
 * Added Support for Python 3.11
