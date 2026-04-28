@@ -21,6 +21,7 @@ jobs:
             os: 'ubuntu-latest'
 {% for env in tox_environments %}
 {% set prefix = env.split('-')[0] -%}
+{% if prefix not in ['py37', 'pypy37'] %}
 {% if prefix.startswith('pypy') %}
 {% set python %}pypy-{{ prefix[4] }}.{{ prefix[5] }}{% endset %}
 {% set cpython %}pp{{ prefix[4:5] }}{% endset %}
@@ -42,6 +43,7 @@ jobs:
             tox_env: '{{ env }}{% if 'cover' in env %},codecov{% endif %}'
             os: '{{ os }}-latest'
 {% endfor %}
+{% endif %}
 {% endfor %}
     steps:
     - uses: actions/checkout@v2
