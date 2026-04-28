@@ -20,14 +20,21 @@ project = 'Edify'
 year = '2022-2026'
 author = 'Bobby'
 copyright = '{0}, {1}'.format(year, author)
-version = release = '0.2.2'
+version = release = '0.3.0'
 
 pygments_style = 'trac'
 templates_path = ['.']
 extlinks = {
-    'issue': ('https://github.com/luciferreeves/edify/issues/%s', '#'),
-    'pr': ('https://github.com/luciferreeves/edify/pull/%s', 'PR #'),
+    'issue': ('https://github.com/luciferreeves/edify/issues/%s', '#%s'),
+    'pr': ('https://github.com/luciferreeves/edify/pull/%s', 'PR #%s'),
 }
+# The "commits since latest release" shield in README.rst targets a
+# `compare/vX.Y.Z...main` URL, which 404s during the window between
+# bumping the version and tagging the release. Skip it in linkcheck
+# rather than letting docs CI fail every time we bump.
+linkcheck_ignore = [
+    r'https://github\.com/luciferreeves/edify/compare/v\d+\.\d+\.\d+\.\.\.main',
+]
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
