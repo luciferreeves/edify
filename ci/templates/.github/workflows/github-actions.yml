@@ -21,6 +21,7 @@ jobs:
             os: 'ubuntu-latest'
 {% for env in tox_environments %}
 {% set prefix = env.split('-')[0] -%}
+{% if prefix not in ['py37', 'pypy37'] %}
 {% if prefix.startswith('pypy') %}
 {% set python %}pypy-{{ prefix[4] }}.{{ prefix[5] }}{% endset %}
 {% set cpython %}pp{{ prefix[4:5] }}{% endset %}
@@ -33,15 +34,16 @@ jobs:
 {% for os, python_arch in [
     ['ubuntu', 'x64'],
     ['windows', 'x64'],
-    ['macos', 'x64'],
+    ['macos', ''],
 ] %}
           - name: '{{ env }} ({{ os }})'
             python: '{{ python }}'
             toxpython: '{{ toxpython }}'
-            python_arch: '{{ python_arch }}'
-            tox_env: '{{ env }}{% if 'cover' in env %},codecov{% endif %}'
+            {% if python_arch %}python_arch: '{{ python_arch }}'
+            {% endif %}tox_env: '{{ env }}{% if 'cover' in env %},codecov{% endif %}'
             os: '{{ os }}-latest'
 {% endfor %}
+{% endif %}
 {% endfor %}
     steps:
     - uses: actions/checkout@v2
