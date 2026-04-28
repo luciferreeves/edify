@@ -40,6 +40,7 @@ Housekeeping
 
 * Dropped a dead ``py37``/``pypy37`` exclusion from the cookiecutter Jinja template and refreshed the docs copyright year (:pr:`43`).
 * Updated author website URL in ``AUTHORS.rst`` and ``.cookiecutterrc`` (:pr:`41`).
+* Removed all cookiecutter regeneration scaffolding — ``.cookiecutterrc``, ``ci/bootstrap.py``, and ``ci/templates/`` (containing dead AppVeyor config and a workflow template that lagged the live one) — along with the ``[testenv:bootstrap]`` env, related ``MANIFEST.in`` / ``setup.cfg`` / ``.pre-commit-config.yaml`` exclusions, and the dead Python 3.7 branch in ``tests.local.sh``. The local-test script's per-version ``if/elif`` chain is now a single programmatic ``tox -e py$VERSION`` lookup, which adapts automatically when Python versions are added or removed from the matrix (:pr:`47`).
 
 0.2.2 (2022-12-22)
 ------------------

@@ -4,7 +4,6 @@ graft ci
 graft tests
 
 include .bumpversion.cfg
-include .cookiecutterrc
 include .coveragerc
 include .editorconfig
 include .github/workflows/github-actions.yml

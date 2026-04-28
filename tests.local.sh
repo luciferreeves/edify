@@ -10,30 +10,16 @@ tox -e check -v
 # Run Docs
 tox -e docs -v
 
-# Get the current installed python version
-PYTHON_VERSION=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')
+# Run the tox env matching the current Python version
+PY_NODOT=$(python3 -c 'import sys; print("{0.major}{0.minor}".format(sys.version_info))')
+TOX_ENV="py${PY_NODOT}"
 
-# Subset the python version to the major.minor version
-PYTHON_VERSION=$(echo $PYTHON_VERSION | cut -d. -f1,2)
-
-if [ "$PYTHON_VERSION" = "3.7" ]; then
-    # Build using python 3.7
-    tox -e py37 -v
-elif [ "$PYTHON_VERSION" = "3.8" ]; then
-    # Build using python 3.8
-    tox -e py38 -v
-elif [ "$PYTHON_VERSION" = "3.9" ]; then
-    # Build using python 3.9
-    tox -e py39 -v
-elif [ "$PYTHON_VERSION" = "3.10" ]; then
-    # Build using python 3.10
-    tox -e py310 -v
-elif [ "$PYTHON_VERSION" = "3.11" ]; then
-    # Build using python 3.11
-    tox -e py311 -v
+if tox --listenvs-all | grep -qE "^${TOX_ENV}$"; then
+    tox -e "${TOX_ENV}" -v
 else
-    # Show error message
-    echo "Python version $PYTHON_VERSION is not supported"
+    PY_DOTTED=$(python3 -c 'import sys; print("{0.major}.{0.minor}".format(sys.version_info))')
+    echo "Python ${PY_DOTTED} (tox env ${TOX_ENV}) is not in tox envlist"
+    exit 1
 fi
 
 # Run Coverage
