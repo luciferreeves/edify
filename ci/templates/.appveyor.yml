@@ -4,9 +4,9 @@ image: Visual Studio 2019
 environment:
   matrix:
     - TOXENV: check
-      TOXPYTHON: C:\Python36\python.exe
-      PYTHON_HOME: C:\Python36
-      PYTHON_VERSION: '3.6'
+      TOXPYTHON: C:\Python38\python.exe
+      PYTHON_HOME: C:\Python38
+      PYTHON_VERSION: '3.8'
       PYTHON_ARCH: '32'
 {% for env in tox_environments %}
 {% if env.startswith(('py2', 'py3')) %}
