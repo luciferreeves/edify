@@ -34,13 +34,13 @@ jobs:
 {% for os, python_arch in [
     ['ubuntu', 'x64'],
     ['windows', 'x64'],
-    ['macos', 'x64'],
+    ['macos', ''],
 ] %}
           - name: '{{ env }} ({{ os }})'
             python: '{{ python }}'
             toxpython: '{{ toxpython }}'
-            python_arch: '{{ python_arch }}'
-            tox_env: '{{ env }}{% if 'cover' in env %},codecov{% endif %}'
+            {% if python_arch %}python_arch: '{{ python_arch }}'
+            {% endif %}tox_env: '{{ env }}{% if 'cover' in env %},codecov{% endif %}'
             os: '{{ os }}-latest'
 {% endfor %}
 {% endif %}
