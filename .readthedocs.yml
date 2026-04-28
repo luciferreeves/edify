@@ -6,7 +6,6 @@ build:
     python: "3.14"
 sphinx:
   configuration: docs/conf.py
-formats: all
 python:
   install:
     - requirements: docs/requirements.txt
