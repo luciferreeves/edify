@@ -5,20 +5,20 @@
 exclude: '^(\.tox|ci/templates|\.bumpversion\.cfg)(/|$)'
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: main
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: debug-statements
-  - repo: https://github.com/timothycrosley/isort
-    rev: main
+  - repo: https://github.com/PyCQA/isort
+    rev: 8.0.1
     hooks:
       - id: isort
-  - repo: https://github.com/psf/black
-    rev: main
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 26.3.1
     hooks:
       - id: black
-  - repo: https://gitlab.com/pycqa/flake8
-    rev: master
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.3.0
     hooks:
       - id: flake8
