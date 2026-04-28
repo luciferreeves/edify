@@ -1,10 +1,45 @@
 
 Changelog
 =========
-Unreleased
-----------
-* Added support for Python 3.14.
-* Updated Read the Docs build configuration.
+0.3.0 (unreleased)
+------------------
+
+A maintenance release: Edify is dragged out of 2022 and back into modern shape. No new patterns or builder API. The minimum supported Python rises to 3.8.
+
+Breaking
+~~~~~~~~
+
+* Dropped support for Python 3.7. Edify now requires Python 3.8 or newer (:pr:`32`).
+
+Added
+~~~~~
+
+* Support for Python 3.12, 3.13, and 3.14, with the matrix and Read the Docs build configuration updated to match (:pr:`31`).
+
+Tooling and CI
+~~~~~~~~~~~~~~
+
+* Bumped GitHub Actions to current major versions: ``actions/checkout@v5``, ``actions/setup-python@v5``, ``github/codeql-action@v3``. All workflow jobs now run on the Node 20 runtime instead of the deprecated Node 16. ``pypa/gh-action-pypi-publish`` SHA refreshed to ``v1.14.0`` (:pr:`35`).
+* PyPy CI matrix moved off the EOL ``pypy-3.8`` line to the maintained ``pypy-3.10`` and ``pypy-3.11`` (:pr:`37`).
+* ``.pre-commit-config.yaml`` modernised: every hook pinned to an immutable tag instead of a floating branch ref, dead repo URLs corrected (``gitlab.com/pycqa/flake8`` → ``github.com/PyCQA/flake8``, ``timothycrosley/isort`` → ``PyCQA/isort``), and ``psf/black`` swapped for the upstream-recommended ``psf/black-pre-commit-mirror`` (:pr:`33`).
+
+Dependencies
+~~~~~~~~~~~~
+
+* Bumped minimum versions: ``setuptools >=75.0``, ``pip >=26.0.1``, ``virtualenv >=21.3.0``, ``six >=1.17.0``, ``sphinx >=7.4.7`` (:pr:`25`, :pr:`26`, :pr:`27`, :pr:`28`, :pr:`29`).
+
+Repository infrastructure
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Added ``.github/CODEOWNERS`` and ``natsuoto`` to ``AUTHORS.rst`` for the new agent-driven contribution flow (:pr:`39`).
+* Locked ``main``: 1 approving code-owner review required, 31 status-check contexts required (the full matrix), linear history enforced, no force pushes or deletions, applies to administrators.
+* Repo-level ``allow_auto_merge`` enabled — PRs auto-merge once review and CI gates pass.
+
+Housekeeping
+~~~~~~~~~~~~
+
+* Dropped a dead ``py37``/``pypy37`` exclusion from the cookiecutter Jinja template and refreshed the docs copyright year (:pr:`43`).
+* Updated author website URL in ``AUTHORS.rst`` and ``.cookiecutterrc`` (:pr:`41`).
 
 0.2.2 (2022-12-22)
 ------------------
