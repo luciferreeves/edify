@@ -1,7 +1,7 @@
 
 Changelog
 =========
-0.3.0 (unreleased)
+0.3.0 (2026-04-29)
 ------------------
 
 A maintenance release: Edify is dragged out of 2022 and back into modern shape. No new patterns or builder API. The minimum supported Python rises to 3.8.
