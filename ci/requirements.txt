@@ -1,5 +1,5 @@
 virtualenv>=21.3.0
 pip>=25.0
-setuptools>=75.0
+setuptools>=82.0.1
 six>=1.17.0
 tox
