@@ -34,6 +34,7 @@ extlinks = {
 # rather than letting docs CI fail every time we bump.
 linkcheck_ignore = [
     r'https://github\.com/luciferreeves/edify/compare/v\d+\.\d+\.\d+\.\.\.main',
+    r'https://github\.com/luciferreeves/edify/(pull|issues)/\d+',
 ]
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
