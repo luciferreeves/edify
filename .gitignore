@@ -75,3 +75,6 @@ docs/_build
 
 # Codecov Binary
 codecov
+
+# Design Docs
+design_docs
