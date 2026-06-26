@@ -10,80 +10,41 @@ jobs:
       matrix:
         include:
           - name: 'check'
-            python: '3.9'
-            toxpython: 'python3.9'
-            tox_env: 'check'
+            python: '3.11'
+            command: 'uv run ruff check . && uv run ruff format --check .'
             os: 'ubuntu-latest'
           - name: 'docs'
-            python: '3.9'
-            toxpython: 'python3.9'
-            tox_env: 'docs'
-            os: 'ubuntu-latest'
-          - name: 'py39 (ubuntu)'
-            python: '3.9'
-            toxpython: 'python3.9'
-            python_arch: 'x64'
-            tox_env: 'py39'
-            os: 'ubuntu-latest'
-          - name: 'py310 (ubuntu)'
-            python: '3.10'
-            toxpython: 'python3.10'
-            python_arch: 'x64'
-            tox_env: 'py310'
+            python: '3.11'
+            command: 'uv run --group docs sphinx-build -b html docs dist/docs && uv run --group docs sphinx-build -b linkcheck docs dist/docs'
             os: 'ubuntu-latest'
           - name: 'py311 (ubuntu)'
             python: '3.11'
-            toxpython: 'python3.11'
-            python_arch: 'x64'
-            tox_env: 'py311'
-            os: 'ubuntu-latest'
-          - name: 'pypy310 (ubuntu)'
-            python: 'pypy-3.10'
-            toxpython: 'pypy3.10'
-            python_arch: 'x64'
-            tox_env: 'pypy310'
+            command: 'uv run pytest'
             os: 'ubuntu-latest'
           - name: 'pypy311 (ubuntu)'
             python: 'pypy-3.11'
-            toxpython: 'pypy3.11'
-            python_arch: 'x64'
-            tox_env: 'pypy311'
+            command: 'uv run pytest'
             os: 'ubuntu-latest'
           - name: 'py312 (ubuntu)'
             python: '3.12'
-            toxpython: 'python3.12'
-            python_arch: 'x64'
-            tox_env: 'py312'
+            command: 'uv run pytest'
             os: 'ubuntu-latest'
           - name: 'py313 (ubuntu)'
             python: '3.13'
-            toxpython: 'python3.13'
-            python_arch: 'x64'
-            tox_env: 'py313'
+            command: 'uv run pytest'
             os: 'ubuntu-latest'
           - name: 'py314 (ubuntu)'
             python: '3.14'
-            toxpython: 'python3.14'
-            python_arch: 'x64'
-            tox_env: 'py314'
+            command: 'uv run pytest'
             os: 'ubuntu-latest'
     steps:
-    - uses: actions/checkout@v5
-      with:
-        fetch-depth: 0
-    - uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python }}
-        architecture: ${{ matrix.python_arch }}
-    - name: install dependencies
-      run: |
-        python -mpip install --progress-bar=off -r ci/requirements.txt
-        virtualenv --version
-        pip --version
-        tox --version
-        pip list --format=freeze
-    - name: test
-      env:
-        TOXPYTHON: '${{ matrix.toxpython }}'
-      run: >
-        tox -e ${{ matrix.tox_env }} -v
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+        with:
+          python-version: ${{ matrix.python }}
+      - name: install dependencies
+        run: uv sync --frozen --all-groups
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.command }}

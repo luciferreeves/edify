@@ -20,7 +20,7 @@ develop-eggs
 .installed.cfg
 lib
 lib64
-venv*/
+*venv*/
 pyvenv*/
 pip-wheel-metadata/
 
@@ -32,6 +32,7 @@ pip-log.txt
 .tox
 .coverage.*
 .pytest_cache/
+.ruff_cache/
 nosetests.xml
 coverage.xml
 htmlcov

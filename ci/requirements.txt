@@ -1,5 +1,0 @@
-virtualenv>=21.5.1
-pip>=25.0
-setuptools>=75.0
-six>=1.17.0
-tox
