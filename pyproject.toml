@@ -1,10 +1,113 @@
 [build-system]
-requires = [
-    "setuptools>=75.0",
-    "wheel",
+requires = ["hatchling>=1.30", "hatch-vcs>=0.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "edify"
+description = "Regular Expressions Made Simple"
+readme = "README.rst"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Bobby", email = "me@shi.foo" },
+    { name = "natsuoto", email = "natsuoto@thatcomputerscientist.com" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: Unix",
+    "Operating System :: POSIX",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Utilities",
+]
+dependencies = []
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://edify.readthedocs.io/"
+Changelog = "https://edify.readthedocs.io/en/latest/changelog.html"
+"Issue Tracker" = "https://github.com/luciferreeves/edify/issues"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.7",
+]
+docs = [
+    "sphinx>=7.4.7",
+    "sphinx-rtd-theme",
 ]
 
-[tool.black]
-line-length = 140
-target-version = ['py39']
-skip-string-normalization = true
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/edify",
+    "/tests",
+    "/docs",
+    "/README.rst",
+    "/CHANGELOG.rst",
+    "/CONTRIBUTING.rst",
+    "/AUTHORS.rst",
+    "/LICENSE",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["edify"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "W",
+    "F",
+    "I",
+    "N",
+    "UP",
+    "B",
+    "C4",
+    "SIM",
+    "PT",
+    "RUF",
+    "PERF",
+    "TID",
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "parents"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["*.test.py"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--tb=short",
+    "--import-mode=importlib",
+]
+filterwarnings = ["error"]
+
+[tool.coverage.run]
+branch = false
+source = ["edify"]
+parallel = true
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
+fail_under = 100
