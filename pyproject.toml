@@ -52,9 +52,6 @@ docs = [
 [tool.hatch.version]
 source = "vcs"
 
-[tool.hatch.build.hooks.vcs]
-version-file = "edify/version.py"
-
 [tool.hatch.build.targets.sdist]
 include = [
     "/edify",
@@ -109,7 +106,6 @@ filterwarnings = ["error"]
 branch = false
 source = ["edify"]
 parallel = true
-omit = ["edify/version.py"]
 
 [tool.coverage.report]
 show_missing = true
