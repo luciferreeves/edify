@@ -5,7 +5,9 @@ to the returned :class:`re.Pattern`. Adding this mixin to a class lets users
 write ``pattern.match("10001")`` instead of ``pattern.to_regex().match("10001")``.
 
 The signatures mirror :class:`re.Pattern` exactly so IDE autocomplete and
-type inference stay unchanged.
+type inference stay unchanged. :meth:`test` is the one non-:mod:`re` method:
+a boolean shortcut that returns ``True`` when the pattern matches anywhere
+in the input, ``False`` otherwise.
 """
 
 from __future__ import annotations
@@ -18,7 +20,11 @@ from edify.builder.types.protocol import BuilderProtocol
 
 
 class MatcherMixin(BuilderProtocol):
-    """Provides eight :class:`re.Pattern` proxy methods on any fluent surface."""
+    """Provides nine :class:`re.Pattern` proxy methods plus :meth:`test` on any fluent surface."""
+
+    def test(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> bool:
+        """Return ``True`` when the pattern matches anywhere in ``string``, else ``False``."""
+        return self.to_regex().search(string, pos, endpos) is not None
 
     def match(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
         """Delegate to :meth:`re.Pattern.match`."""

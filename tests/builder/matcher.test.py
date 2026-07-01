@@ -80,3 +80,36 @@ def test_pattern_and_builder_yield_identical_results_for_same_regex():
 def test_pattern_match_falls_back_when_only_pattern_class_used():
     fluent = Pattern().start_of_input().exactly(5).digit().end_of_input()
     assert fluent.match("10001") is not None
+
+
+def test_test_returns_true_when_pattern_matches_anywhere():
+    lower = one_or_more(range_of("a", "z"))
+    assert lower.test("HELLO world") is True
+
+
+def test_test_returns_false_when_pattern_does_not_match():
+    lower = one_or_more(range_of("a", "z"))
+    assert lower.test("12345") is False
+
+
+def test_test_respects_anchors():
+    zip_code = START + exactly(5, DIGIT) + END
+    assert zip_code.test("10001") is True
+    assert zip_code.test("foo 10001 bar") is False
+
+
+def test_test_returns_a_bool_not_a_match_object():
+    lower = one_or_more(range_of("a", "z"))
+    assert isinstance(lower.test("hello"), bool)
+
+
+def test_test_respects_the_pos_argument():
+    lower = one_or_more(range_of("a", "z"))
+    assert lower.test("!hello", pos=1) is True
+    assert lower.test("!hello", pos=6) is False
+
+
+def test_test_on_regex_builder_works():
+    lower = RegexBuilder().one_or_more().range("a", "z")
+    assert lower.test("hello") is True
+    assert lower.test("12345") is False
