@@ -33,6 +33,19 @@ class BuilderCore:
         new_instance._state = new_state
         return new_instance
 
+    def fork(self) -> Self:
+        """Return a fresh builder with the same immutable state.
+
+        Chain methods already return new instances so implicit forking works
+        (``root.digit()`` and ``root.word()`` share nothing after the split);
+        this method makes the intent explicit and discoverable via autocomplete.
+        """
+        return self._with_state(self._state)
+
+    def copy(self) -> Self:
+        """Alias for :meth:`fork` — return a fresh builder with the same immutable state."""
+        return self._with_state(self._state)
+
     def __repr__(self) -> str:
         """Return ``<ClassName 'pattern-so-far'>`` for interactive display."""
         rendered = _render_or_marker(self)
