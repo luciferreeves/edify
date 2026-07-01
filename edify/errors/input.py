@@ -78,3 +78,11 @@ class MustBeLessThanError(EdifySyntaxError):
     def __init__(self, first_label: str, second_label: str) -> None:
         message = f"{first_label} must be less than {second_label}."
         super().__init__(message)
+
+
+class MustBeAtLeastTwoOperandsError(EdifySyntaxError):
+    """Raised when a variadic factory needs at least two operands but got fewer."""
+
+    def __init__(self, label: str) -> None:
+        message = f"{label} requires at least two operands."
+        super().__init__(message)
