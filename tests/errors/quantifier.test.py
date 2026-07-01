@@ -1,9 +1,9 @@
-"""Tests for :class:`DanglingQuantifierError` raised at emit time."""
+"""Tests for the :mod:`edify.errors.quantifier` exception classes."""
 
 import pytest
 
 from edify import Pattern, RegexBuilder
-from edify.errors.quantifier import DanglingQuantifierError
+from edify.errors.quantifier import DanglingQuantifierError, StackedQuantifierError
 
 
 def test_to_regex_string_raises_when_a_bare_quantifier_has_no_operand():
@@ -41,7 +41,7 @@ def test_to_regex_raises_when_a_bare_quantifier_has_no_operand():
         RegexBuilder().at_least(2).to_regex()
 
 
-def test_message_hints_at_appending_an_operand():
+def test_dangling_message_hints_at_appending_an_operand():
     with pytest.raises(DanglingQuantifierError, match="Append an element"):
         RegexBuilder().exactly(3).to_regex_string()
 
@@ -50,3 +50,39 @@ def test_dangling_quantifier_error_message_contains_expected_text():
     error = DanglingQuantifierError()
     assert "Dangling quantifier" in str(error)
     assert "no operand" in str(error)
+
+
+def test_stacking_one_or_more_over_exactly_raises():
+    with pytest.raises(StackedQuantifierError):
+        RegexBuilder().one_or_more().exactly(3).digit()
+
+
+def test_stacking_optional_over_at_least_raises():
+    with pytest.raises(StackedQuantifierError):
+        RegexBuilder().optional().at_least(2).digit()
+
+
+def test_stacking_between_over_zero_or_more_raises():
+    with pytest.raises(StackedQuantifierError):
+        RegexBuilder().zero_or_more().between(1, 3).digit()
+
+
+def test_stacking_lazy_variants_also_raises():
+    with pytest.raises(StackedQuantifierError):
+        RegexBuilder().one_or_more_lazy().exactly(2).digit()
+
+
+def test_stacking_on_pattern_raises():
+    with pytest.raises(StackedQuantifierError):
+        Pattern().one_or_more().exactly(3).digit()
+
+
+def test_a_valid_quantifier_element_quantifier_element_chain_works():
+    expr = RegexBuilder().one_or_more().digit().exactly(3).word()
+    assert expr.to_regex_string() == "\\d+\\w{3}"
+
+
+def test_stacked_quantifier_error_message_contains_expected_text():
+    error = StackedQuantifierError()
+    assert "stack" in str(error)
+    assert "pending" in str(error)
