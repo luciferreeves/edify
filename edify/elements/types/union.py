@@ -34,10 +34,13 @@ from edify.elements.types.groups import (
     SubexpressionElement,
 )
 from edify.elements.types.leaves import (
+    AlphanumericElement,
     AnyCharElement,
     CarriageReturnElement,
     DigitElement,
     EndOfInputElement,
+    LetterElement,
+    LowercaseElement,
     NewLineElement,
     NonDigitElement,
     NonWhitespaceCharElement,
@@ -47,6 +50,7 @@ from edify.elements.types.leaves import (
     NullByteElement,
     StartOfInputElement,
     TabElement,
+    UppercaseElement,
     WhitespaceCharElement,
     WordBoundaryElement,
     WordElement,
@@ -81,6 +85,10 @@ LeafElement = (
     | CarriageReturnElement
     | TabElement
     | NullByteElement
+    | LetterElement
+    | UppercaseElement
+    | LowercaseElement
+    | AlphanumericElement
     | NoopElement
 )
 
@@ -137,6 +145,10 @@ Element = (
     | CarriageReturnElement
     | TabElement
     | NullByteElement
+    | LetterElement
+    | UppercaseElement
+    | LowercaseElement
+    | AlphanumericElement
     | NoopElement
     | CharElement
     | StringElement

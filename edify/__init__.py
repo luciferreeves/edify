@@ -6,15 +6,19 @@ from edify.errors.syntax import EdifySyntaxError
 from edify.pattern.anchors import END, START
 from edify.pattern.boundaries import NON_WORD_BOUNDARY, WORD_BOUNDARY
 from edify.pattern.classes import (
+    ALPHANUMERIC,
     ANY_CHAR,
     CARRIAGE_RETURN,
     DIGIT,
+    LETTER,
+    LOWERCASE,
     NEW_LINE,
     NON_DIGIT,
     NON_WHITESPACE,
     NON_WORD,
     NULL_BYTE,
     TAB,
+    UPPERCASE,
     WHITESPACE,
     WORD,
 )
@@ -61,10 +65,13 @@ def _resolve_installed_version() -> str:
 __version__ = _resolve_installed_version()
 
 __all__ = [
+    "ALPHANUMERIC",
     "ANY_CHAR",
     "CARRIAGE_RETURN",
     "DIGIT",
     "END",
+    "LETTER",
+    "LOWERCASE",
     "NEW_LINE",
     "NON_DIGIT",
     "NON_WHITESPACE",
@@ -73,6 +80,7 @@ __all__ = [
     "NULL_BYTE",
     "START",
     "TAB",
+    "UPPERCASE",
     "WHITESPACE",
     "WORD",
     "WORD_BOUNDARY",

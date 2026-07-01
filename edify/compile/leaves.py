@@ -8,10 +8,13 @@ never depends on children or quantifier state, so the renderer is a single
 from __future__ import annotations
 
 from edify.elements.types.leaves import (
+    AlphanumericElement,
     AnyCharElement,
     CarriageReturnElement,
     DigitElement,
     EndOfInputElement,
+    LetterElement,
+    LowercaseElement,
     NewLineElement,
     NonDigitElement,
     NonWhitespaceCharElement,
@@ -21,6 +24,7 @@ from edify.elements.types.leaves import (
     NullByteElement,
     StartOfInputElement,
     TabElement,
+    UppercaseElement,
     WhitespaceCharElement,
     WordBoundaryElement,
     WordElement,
@@ -32,7 +36,7 @@ def render_leaf(element: LeafElement) -> str:
     """Return the regex string produced by the given leaf element.
 
     Args:
-        element: One of the 16 leaf element classes.
+        element: One of the 20 leaf element classes.
 
     Returns:
         The exact regex fragment (e.g. ``"^"``, ``"\\d"``, ``""`` for noop).
@@ -68,5 +72,13 @@ def render_leaf(element: LeafElement) -> str:
             return "\\t"
         case NullByteElement():
             return "\\0"
+        case LetterElement():
+            return "[a-zA-Z]"
+        case UppercaseElement():
+            return "[A-Z]"
+        case LowercaseElement():
+            return "[a-z]"
+        case AlphanumericElement():
+            return "[a-zA-Z0-9]"
         case NoopElement():
             return ""
