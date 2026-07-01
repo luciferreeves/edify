@@ -86,3 +86,11 @@ class MustBeAtLeastTwoOperandsError(EdifySyntaxError):
     def __init__(self, label: str) -> None:
         message = f"{label} requires at least two operands."
         super().__init__(message)
+
+
+class MustBeAtLeastOneLiteralError(EdifySyntaxError):
+    """Raised when a variadic literal-alternation chain method got zero literals."""
+
+    def __init__(self, label: str) -> None:
+        message = f"{label} requires at least one literal."
+        super().__init__(message)

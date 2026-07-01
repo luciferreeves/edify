@@ -6,6 +6,7 @@ from edify.errors.anchors import (
 from edify.errors.captures import InvalidTotalCaptureGroupsIndexError
 from edify.errors.input import (
     MustBeAStringError,
+    MustBeAtLeastOneLiteralError,
     MustBeAtLeastTwoOperandsError,
     MustBeInstanceError,
     MustBeIntegerGreaterThanZeroError,
@@ -111,6 +112,11 @@ def test_must_be_less_than():
 def test_must_be_at_least_two_operands():
     error = MustBeAtLeastTwoOperandsError("any_of")
     assert "any_of requires at least two operands" in str(error)
+
+
+def test_must_be_at_least_one_literal():
+    error = MustBeAtLeastOneLiteralError("one_of")
+    assert "one_of requires at least one literal" in str(error)
 
 
 def test_name_not_valid():
