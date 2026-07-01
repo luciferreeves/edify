@@ -43,15 +43,38 @@ class TerminalsMixin(BuilderProtocol):
             return _EMPTY_NON_CAPTURING_GROUP
         return unescaped_pattern
 
-    def to_regex(self) -> Regex:
+    def to_regex(
+        self,
+        *,
+        ascii_only: bool = False,
+        debug: bool = False,
+        ignore_case: bool = False,
+        multiline: bool = False,
+        dotall: bool = False,
+        verbose: bool = False,
+    ) -> Regex:
         """Return the pattern + flags compiled and wrapped in :class:`edify.result.Regex`.
 
         The wrapper exposes the pattern string as ``.source`` and the underlying
         :class:`re.Pattern` as ``.compiled``, plus the eight :mod:`re` query
         methods as direct delegates.
+
+        Keyword arguments are OR-merged into the flag snapshot the builder
+        already carries — passing ``ignore_case=True`` here is equivalent to
+        having called ``.ignore_case()`` in the chain. Flags never turn off,
+        only on.
         """
         pattern_string = self.to_regex_string()
-        flag_bitmask = _build_flag_bitmask(self._state.flags)
+        kwarg_flags = Flags(
+            ascii_only=ascii_only,
+            debug=debug,
+            ignore_case=ignore_case,
+            multiline=multiline,
+            dotall=dotall,
+            verbose=verbose,
+        )
+        effective_flags = self._state.flags.with_merged(kwarg_flags)
+        flag_bitmask = _build_flag_bitmask(effective_flags)
         try:
             compiled_pattern = re.compile(pattern_string, flags=flag_bitmask)
         except re.error as compile_error:
