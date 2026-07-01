@@ -35,15 +35,11 @@ class Regex:
         """The underlying :class:`re.Pattern`; callers that need identity checks read this."""
         return self._compiled
 
-    def match(
-        self, string: str, pos: int = 0, endpos: int = sys.maxsize
-    ) -> re.Match[str] | None:
+    def match(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
         """Delegate to :meth:`re.Pattern.match`."""
         return self._compiled.match(string, pos, endpos)
 
-    def search(
-        self, string: str, pos: int = 0, endpos: int = sys.maxsize
-    ) -> re.Match[str] | None:
+    def search(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
         """Delegate to :meth:`re.Pattern.search`."""
         return self._compiled.search(string, pos, endpos)
 

@@ -23,6 +23,7 @@ from edify.pattern.classes import (
     WORD,
 )
 from edify.pattern.composition import Pattern
+from edify.result import Regex
 from edify.pattern.factories import (
     any_of,
     assert_ahead,
@@ -87,6 +88,7 @@ __all__ = [
     "EdifyError",
     "EdifySyntaxError",
     "Pattern",
+    "Regex",
     "RegexBuilder",
     "__version__",
     "any_of",

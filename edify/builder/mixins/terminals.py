@@ -3,7 +3,8 @@
 Both methods require the builder to be fully specified: every opened frame
 must have been closed with ``.end()`` so only the root frame remains. The
 string terminal returns exactly the pattern you'd hand to ``re.compile``;
-the compiled terminal performs that compilation with the current flag set.
+the compiled terminal performs that compilation with the current flag set
+and returns the emitted string wrapped in an :class:`edify.result.Regex`.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from edify.elements.types.root import RootElement
 from edify.errors.internal import FailedToCompileRegexError
 from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
+from edify.result import Regex
 
 _EMPTY_NON_CAPTURING_GROUP = "(?:)"
 _ESCAPED_SPACE = "\\ "
@@ -41,14 +43,20 @@ class TerminalsMixin(BuilderProtocol):
             return _EMPTY_NON_CAPTURING_GROUP
         return unescaped_pattern
 
-    def to_regex(self) -> re.Pattern[str]:
-        """Return a :class:`re.Pattern` compiled from the builder's pattern + flags."""
+    def to_regex(self) -> Regex:
+        """Return the pattern + flags compiled and wrapped in :class:`edify.result.Regex`.
+
+        The wrapper exposes the pattern string as ``.source`` and the underlying
+        :class:`re.Pattern` as ``.compiled``, plus the eight :mod:`re` query
+        methods as direct delegates.
+        """
         pattern_string = self.to_regex_string()
         flag_bitmask = _build_flag_bitmask(self._state.flags)
         try:
-            return re.compile(pattern_string, flags=flag_bitmask)
+            compiled_pattern = re.compile(pattern_string, flags=flag_bitmask)
         except re.error as compile_error:
             raise FailedToCompileRegexError(str(compile_error)) from compile_error
+        return Regex(source=pattern_string, compiled=compiled_pattern)
 
 
 def _ensure_fully_specified(builder: BuilderProtocol) -> None:

@@ -47,7 +47,7 @@ def regex_equality(regex, rb_expression):
 
 def regex_compilation(regex, rb_expression, f=0):
     rb_expression_c = rb_expression.to_regex()
-    assert re.compile(regex, flags=f) == rb_expression_c
+    assert re.compile(regex, flags=f) == rb_expression_c.compiled
 
 
 def test_empty_regex():
