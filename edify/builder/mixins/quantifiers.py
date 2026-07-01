@@ -30,6 +30,7 @@ from edify.errors.input import (
     MustBeLessThanError,
     MustBePositiveIntegerError,
 )
+from edify.errors.quantifier import StackedQuantifierError
 
 
 class QuantifiersMixin(BuilderProtocol):
@@ -86,7 +87,14 @@ class QuantifiersMixin(BuilderProtocol):
 
 
 def _set_pending(builder: BuilderProtocol, pending_quantifier: PendingQuantifier):
-    """Replace the top frame with one carrying the given pending quantifier."""
+    """Replace the top frame with one carrying the given pending quantifier.
+
+    Raises :class:`StackedQuantifierError` when the top frame already carries
+    an unconsumed pending quantifier — stacking would silently drop the outer
+    one at emit time.
+    """
+    if builder._state.top_frame.quantifier is not None:
+        raise StackedQuantifierError()
     new_top_frame = builder._state.top_frame.with_quantifier(pending_quantifier)
     new_state = builder._state.with_top_frame_replaced(new_top_frame)
     return builder._with_state(new_state)
