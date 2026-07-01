@@ -52,6 +52,7 @@ from edify.pattern.factories import (
     zero_or_more,
     zero_or_more_lazy,
 )
+from edify.result import Regex
 
 
 def _resolve_installed_version() -> str:
@@ -87,6 +88,7 @@ __all__ = [
     "EdifyError",
     "EdifySyntaxError",
     "Pattern",
+    "Regex",
     "RegexBuilder",
     "__version__",
     "any_of",

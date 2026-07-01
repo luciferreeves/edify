@@ -20,7 +20,7 @@ def test_pattern_exposes_to_regex_string_terminal():
 def test_pattern_exposes_to_regex_terminal():
     pattern = Pattern().digit()
     compiled = pattern.to_regex()
-    assert compiled.pattern == "\\d"
+    assert compiled.source == "\\d"
 
 
 def test_pattern_supports_nested_use_composition():

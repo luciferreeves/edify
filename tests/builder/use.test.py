@@ -21,7 +21,7 @@ def test_use_drops_the_pattern_flag_snapshot_by_default():
     case_insensitive_pattern = Pattern().ignore_case().string("hello")
     expression = RegexBuilder().use(case_insensitive_pattern)
     compiled = expression.to_regex()
-    assert compiled.flags & 2 == 0
+    assert compiled.compiled.flags & 2 == 0
 
 
 def test_use_accepts_another_regex_builder_as_the_source():
