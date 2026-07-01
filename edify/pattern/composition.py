@@ -1,13 +1,14 @@
-"""The composition root for :class:`RegexBuilder` — the fluent regex-builder class.
+"""The composition root for :class:`Pattern` — a reusable regex fragment.
 
-The class itself defines no chain methods; every method comes from one of
-the mixins under :mod:`edify.builder.mixins`. The composition order does
-not matter for behavior because the mixins do not override each other's
-methods, but they are listed alphabetically by mixin name for predictability.
+:class:`Pattern` shares every chain-method mixin with :class:`RegexBuilder`
+except the terminals: a pattern is not intended to compile itself, it is
+intended to compose *into* a builder (or into another pattern) via
+``.use()`` or ``.subexpression()``. To emit a regex from a pattern, embed it
+in a builder: ``RegexBuilder().use(my_pattern).to_regex()``.
 
 The immutable-state plumbing (``_state`` attribute + ``_with_state`` helper)
-lives on :class:`edify.builder.core.BuilderCore`, which every fluent surface
-in the package inherits from.
+comes from :class:`edify.builder.core.BuilderCore`, the same base
+:class:`edify.builder.builder.RegexBuilder` inherits from.
 """
 
 from __future__ import annotations
@@ -23,10 +24,9 @@ from edify.builder.mixins.flags import FlagsMixin
 from edify.builder.mixins.groups import GroupsMixin
 from edify.builder.mixins.quantifiers import QuantifiersMixin
 from edify.builder.mixins.subexpression import SubexpressionMixin
-from edify.builder.mixins.terminals import TerminalsMixin
 
 
-class RegexBuilder(
+class Pattern(
     BuilderCore,
     AnchorsMixin,
     AssertionsMixin,
@@ -38,6 +38,5 @@ class RegexBuilder(
     GroupsMixin,
     QuantifiersMixin,
     SubexpressionMixin,
-    TerminalsMixin,
 ):
-    """A fluent, immutable, strongly-typed regex builder."""
+    """A named, reusable regex fragment. Composes into a builder via ``.use()``."""

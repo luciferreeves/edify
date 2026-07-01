@@ -1,9 +1,15 @@
 """The :class:`SubexpressionMixin` — merge another builder as a quantifiable atom.
 
-Validates the incoming expression, transforms its elements through the
-namespace / capture-offset / anchor logic in :mod:`edify.builder.merge`,
-wraps the merged children in a :class:`SubexpressionElement`, and appends
-that to the current frame (applying any pending quantifier).
+Provides both :meth:`SubexpressionMixin.subexpression` (the primitive with
+full option surface) and :meth:`SubexpressionMixin.use` (the ergonomic
+alias that composes a :class:`edify.pattern.Pattern` or another builder
+with the common-case defaults).
+
+Both entry points validate the incoming expression, transform its elements
+through the namespace / capture-offset / anchor logic in
+:mod:`edify.builder.merge`, wrap the merged children in a
+:class:`SubexpressionElement`, and append that to the current frame
+(applying any pending quantifier).
 """
 
 from __future__ import annotations
@@ -19,7 +25,22 @@ from edify.errors.structure import CannotCallSubexpressionError
 
 
 class SubexpressionMixin(BuilderProtocol):
-    """Provides the ``.subexpression`` chain method."""
+    """Provides the ``.subexpression`` and ``.use`` chain methods."""
+
+    def use(self, pattern: BuilderProtocol) -> Self:
+        """Return a new builder with ``pattern`` embedded via subexpression semantics.
+
+        Ergonomic alias for ``self.subexpression(pattern)`` using the
+        common-case defaults (``ignore_flags=True``, ``ignore_start_and_end=True``,
+        no namespace). Use :meth:`subexpression` directly when you need to
+        override any of those.
+
+        Args:
+            pattern: A :class:`edify.pattern.Pattern` — or any fully-specified
+                fluent surface conforming to :class:`BuilderProtocol` — to
+                embed at the current position.
+        """
+        return self.subexpression(pattern)
 
     def subexpression(
         self,
