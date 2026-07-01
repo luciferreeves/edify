@@ -15,6 +15,7 @@ from edify.builder.types.protocol import BuilderProtocol
 from edify.compile.dispatch import render_element
 from edify.elements.types.root import RootElement
 from edify.errors.internal import FailedToCompileRegexError
+from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
 
 _EMPTY_NON_CAPTURING_GROUP = "(?:)"
@@ -32,6 +33,7 @@ class TerminalsMixin(BuilderProtocol):
         no surrounding ``/.../`` delimiters and no embedded flag suffix.
         """
         _ensure_fully_specified(self)
+        _ensure_no_dangling_quantifier(self)
         root_element = RootElement(children=self._state.top_frame.children)
         rendered_pattern = render_element(root_element)
         unescaped_pattern = rendered_pattern.replace(_ESCAPED_SPACE, _RAW_SPACE)
@@ -55,6 +57,13 @@ def _ensure_fully_specified(builder: BuilderProtocol) -> None:
         return
     top_frame_type_name = type(builder._state.top_frame.type_node).__name__
     raise CannotCallSubexpressionError(top_frame_type_name)
+
+
+def _ensure_no_dangling_quantifier(builder: BuilderProtocol) -> None:
+    """Raise :class:`DanglingQuantifierError` when any frame carries an unconsumed quantifier."""
+    for frame in builder._state.stack:
+        if frame.quantifier is not None:
+            raise DanglingQuantifierError()
 
 
 def _build_flag_bitmask(flags: Flags) -> int:
