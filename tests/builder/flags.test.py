@@ -1,8 +1,13 @@
 """Tests for the flag keyword arguments on :meth:`TerminalsMixin.to_regex`."""
 
 import re
+import sys
+
+import pytest
 
 from edify import Pattern, RegexBuilder
+
+_ON_PYPY = hasattr(sys, "pypy_version_info")
 
 
 def test_no_kwargs_uses_only_the_chain_flag_snapshot():
@@ -35,6 +40,10 @@ def test_verbose_kwarg_enables_the_verbose_flag():
     assert compiled.compiled.flags & re.X == re.X
 
 
+@pytest.mark.skipif(
+    _ON_PYPY,
+    reason="PyPy's re.DEBUG opcode disassembler has an upstream IndexError bug",
+)
 def test_debug_kwarg_compiles_without_error():
     compiled = RegexBuilder().string("hi").to_regex(debug=True)
     assert compiled.source == "hi"
