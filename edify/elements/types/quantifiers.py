@@ -11,6 +11,7 @@ Greedy quantifiers:
 * :class:`OneOrMoreElement` — ``+``.
 * :class:`ExactlyElement` — ``{n}``.
 * :class:`AtLeastElement` — ``{n,}``.
+* :class:`AtMostElement` — ``{0,n}``.
 * :class:`BetweenElement` — ``{lower,upper}``.
 
 Lazy variants:
@@ -105,6 +106,19 @@ class AtLeastElement(BaseElement):
 
     Attributes:
         times: The minimum number of repetitions required.
+        child: The element this quantifier applies to.
+    """
+
+    times: int
+    child: BaseElement
+
+
+@dataclass(frozen=True)
+class AtMostElement(BaseElement):
+    """``{0,times}`` quantifier — at most ``times`` matches.
+
+    Attributes:
+        times: The maximum number of repetitions allowed.
         child: The element this quantifier applies to.
     """
 

@@ -109,6 +109,11 @@ def test_at_least_non_positive_raises():
         RegexBuilder().at_least(-1).digit()
 
 
+def test_at_most_non_positive_raises():
+    with pytest.raises(MustBePositiveIntegerError):
+        RegexBuilder().at_most(0).digit()
+
+
 def test_between_negative_lower_raises():
     with pytest.raises(MustBeIntegerGreaterThanZeroError):
         RegexBuilder().between(-1, 5).digit()

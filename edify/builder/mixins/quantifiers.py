@@ -15,6 +15,7 @@ from edify.builder.types.protocol import BuilderProtocol
 from edify.elements.types.base import BaseElement
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtMostElement,
     BetweenElement,
     BetweenLazyElement,
     ExactlyElement,
@@ -63,6 +64,11 @@ class QuantifiersMixin(BuilderProtocol):
         """Return a new builder with ``{count,}`` queued as the pending quantifier."""
         _ensure_positive_integer("count", count)
         return _set_pending(self, _at_least_factory(count))
+
+    def at_most(self, count: int) -> Self:
+        """Return a new builder with ``{0,count}`` queued as the pending quantifier."""
+        _ensure_positive_integer("count", count)
+        return _set_pending(self, _at_most_factory(count))
 
     def between(self, lower: int, upper: int) -> Self:
         """Return a new builder with ``{lower,upper}`` queued as the pending quantifier."""
@@ -116,6 +122,13 @@ def _exactly_factory(count: int) -> PendingQuantifier:
 def _at_least_factory(count: int) -> PendingQuantifier:
     def factory(child: BaseElement) -> AtLeastElement:
         return AtLeastElement(times=count, child=child)
+
+    return factory
+
+
+def _at_most_factory(count: int) -> PendingQuantifier:
+    def factory(child: BaseElement) -> AtMostElement:
+        return AtMostElement(times=count, child=child)
 
     return factory
 

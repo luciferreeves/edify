@@ -7,6 +7,7 @@ from edify import (
     WORD,
     Pattern,
     at_least,
+    at_most,
     between,
     between_lazy,
     char,
@@ -62,6 +63,14 @@ def test_at_least_produces_open_ended_quantifier():
     assert at_least(2, DIGIT).to_regex_string() == "\\d{2,}"
 
 
+def test_at_most_produces_zero_lower_bound_quantifier():
+    assert at_most(3, DIGIT).to_regex_string() == "\\d{0,3}"
+
+
+def test_at_most_groups_a_multi_element_operand():
+    assert at_most(3, DIGIT + WORD).to_regex_string() == "(?:\\d\\w){0,3}"
+
+
 def test_between_produces_greedy_bounded_quantifier():
     assert between(2, 4, DIGIT).to_regex_string() == "\\d{2,4}"
 
@@ -82,6 +91,11 @@ def test_exactly_rejects_zero_count():
 def test_at_least_rejects_negative_count():
     with pytest.raises(MustBePositiveIntegerError):
         at_least(-1, DIGIT)
+
+
+def test_at_most_rejects_zero_count():
+    with pytest.raises(MustBePositiveIntegerError):
+        at_most(0, DIGIT)
 
 
 def test_between_rejects_negative_lower_bound():
