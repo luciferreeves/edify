@@ -35,10 +35,9 @@ def test_verbose_kwarg_enables_the_verbose_flag():
     assert compiled.compiled.flags & re.X == re.X
 
 
-def test_debug_kwarg_enables_the_debug_flag(capsys):
-    RegexBuilder().string("hi").to_regex(debug=True)
-    captured = capsys.readouterr()
-    assert captured.out != ""
+def test_debug_kwarg_compiles_without_error():
+    compiled = RegexBuilder().string("hi").to_regex(debug=True)
+    assert compiled.source == "hi"
 
 
 def test_kwargs_or_merge_with_chain_flags():

@@ -23,7 +23,6 @@ from edify.pattern.classes import (
     WORD,
 )
 from edify.pattern.composition import Pattern
-from edify.result import Regex
 from edify.pattern.factories import (
     any_of,
     assert_ahead,
@@ -53,6 +52,7 @@ from edify.pattern.factories import (
     zero_or_more,
     zero_or_more_lazy,
 )
+from edify.result import Regex
 
 
 def _resolve_installed_version() -> str:
