@@ -12,14 +12,15 @@ def test_pattern_builds_the_same_element_tree_as_a_builder():
     assert pattern._state == builder._state
 
 
-def test_pattern_has_no_to_regex_terminal():
+def test_pattern_exposes_to_regex_string_terminal():
     pattern = Pattern().digit()
-    assert not hasattr(pattern, "to_regex")
+    assert pattern.to_regex_string() == "\\d"
 
 
-def test_pattern_has_no_to_regex_string_terminal():
+def test_pattern_exposes_to_regex_terminal():
     pattern = Pattern().digit()
-    assert not hasattr(pattern, "to_regex_string")
+    compiled = pattern.to_regex()
+    assert compiled.pattern == "\\d"
 
 
 def test_pattern_supports_nested_use_composition():

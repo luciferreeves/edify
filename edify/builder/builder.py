@@ -21,6 +21,8 @@ from edify.builder.mixins.chars import CharsMixin
 from edify.builder.mixins.classes import ClassesMixin
 from edify.builder.mixins.flags import FlagsMixin
 from edify.builder.mixins.groups import GroupsMixin
+from edify.builder.mixins.matcher import MatcherMixin
+from edify.builder.mixins.operators import OperatorsMixin
 from edify.builder.mixins.quantifiers import QuantifiersMixin
 from edify.builder.mixins.subexpression import SubexpressionMixin
 from edify.builder.mixins.terminals import TerminalsMixin
@@ -36,6 +38,8 @@ class RegexBuilder(
     ClassesMixin,
     FlagsMixin,
     GroupsMixin,
+    MatcherMixin,
+    OperatorsMixin,
     QuantifiersMixin,
     SubexpressionMixin,
     TerminalsMixin,
