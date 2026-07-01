@@ -18,6 +18,7 @@ from edify.pattern.factories.groups import (
 )
 from edify.pattern.factories.quantifiers import (
     at_least,
+    at_most,
     between,
     between_lazy,
     exactly,
@@ -44,6 +45,7 @@ __all__ = [
     "assert_not_ahead",
     "assert_not_behind",
     "at_least",
+    "at_most",
     "back_reference",
     "between",
     "between_lazy",

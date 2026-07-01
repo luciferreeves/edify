@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtMostElement,
     BetweenElement,
     BetweenLazyElement,
     ExactlyElement,
@@ -47,6 +48,8 @@ def quantifier_suffix(quantifier: QuantifierElement) -> str:
             return f"{{{exact_count}}}"
         case AtLeastElement(times=minimum_count):
             return f"{{{minimum_count},}}"
+        case AtMostElement(times=maximum_count):
+            return f"{{0,{maximum_count}}}"
         case BetweenElement(lower=lower_bound, upper=upper_bound):
             return f"{{{lower_bound},{upper_bound}}}"
         case BetweenLazyElement(lower=lower_bound, upper=upper_bound):

@@ -348,6 +348,12 @@ def test_at_least():
     regex_compilation("\\w{3,}", expr)
 
 
+def test_at_most():
+    expr = RegexBuilder().at_most(3).word()
+    regex_equality("\\w{0,3}", expr)
+    regex_compilation("\\w{0,3}", expr)
+
+
 def test_between():
     expr = RegexBuilder().between(3, 5).word()
     regex_equality("\\w{3,5}", expr)

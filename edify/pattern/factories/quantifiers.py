@@ -14,6 +14,7 @@ from __future__ import annotations
 from edify.builder.types.protocol import BuilderProtocol
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtMostElement,
     BetweenElement,
     BetweenLazyElement,
     ExactlyElement,
@@ -67,6 +68,12 @@ def at_least(count: int, operand: BuilderProtocol) -> Pattern:
     """Return ``operand`` wrapped in ``{count,}``."""
     _ensure_positive_integer("count", count)
     return pattern_containing(AtLeastElement(times=count, child=target_element(operand)))
+
+
+def at_most(count: int, operand: BuilderProtocol) -> Pattern:
+    """Return ``operand`` wrapped in ``{0,count}``."""
+    _ensure_positive_integer("count", count)
+    return pattern_containing(AtMostElement(times=count, child=target_element(operand)))
 
 
 def between(lower: int, upper: int, operand: BuilderProtocol) -> Pattern:

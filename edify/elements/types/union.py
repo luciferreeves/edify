@@ -53,6 +53,7 @@ from edify.elements.types.leaves import (
 )
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtMostElement,
     BetweenElement,
     BetweenLazyElement,
     ExactlyElement,
@@ -115,6 +116,7 @@ QuantifierElement = (
     | OneOrMoreLazyElement
     | ExactlyElement
     | AtLeastElement
+    | AtMostElement
     | BetweenElement
     | BetweenLazyElement
 )
