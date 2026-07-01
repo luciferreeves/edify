@@ -3,8 +3,9 @@
 Both fluent surfaces carry the same :class:`BuilderState` and use the same
 clone-and-replace pattern for chain methods. :class:`BuilderCore` provides
 the state attribute, the constructor, the ``_with_state`` helper that
-mixins call to produce new instances, and the interactive ``__repr__``
-that shows the pattern-so-far.
+mixins call to produce new instances, the interactive ``__repr__``
+that shows the pattern-so-far, and value-based ``__eq__`` / ``__hash__``
+that make two builders equal when their underlying immutable state matches.
 """
 
 from __future__ import annotations
@@ -36,6 +37,16 @@ class BuilderCore:
         """Return ``<ClassName 'pattern-so-far'>`` for interactive display."""
         rendered = _render_or_marker(self)
         return f"<{type(self).__name__} {rendered!r}>"
+
+    def __eq__(self, other: object) -> bool:
+        """Return True when ``other`` is a builder whose immutable state matches ``self``."""
+        if not isinstance(other, BuilderCore):
+            return NotImplemented
+        return self._state == other._state
+
+    def __hash__(self) -> int:
+        """Return a hash derived from the immutable state; matches :meth:`__eq__`."""
+        return hash(self._state)
 
 
 def _render_or_marker(builder: BuilderCore) -> str:
