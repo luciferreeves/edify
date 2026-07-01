@@ -170,6 +170,30 @@ def test_null_byte():
     regex_compilation("\\0", expr)
 
 
+def test_letter():
+    expr = RegexBuilder().letter()
+    regex_equality("[a-zA-Z]", expr)
+    regex_compilation("[a-zA-Z]", expr)
+
+
+def test_uppercase():
+    expr = RegexBuilder().uppercase()
+    regex_equality("[A-Z]", expr)
+    regex_compilation("[A-Z]", expr)
+
+
+def test_lowercase():
+    expr = RegexBuilder().lowercase()
+    regex_equality("[a-z]", expr)
+    regex_compilation("[a-z]", expr)
+
+
+def test_alphanumeric():
+    expr = RegexBuilder().alphanumeric()
+    regex_equality("[a-zA-Z0-9]", expr)
+    regex_compilation("[a-zA-Z0-9]", expr)
+
+
 def test_any_of_basic():
     expr = RegexBuilder().any_of().string("hello").digit().word().char(".").char("#").end()
     regex_equality("(?:hello|\\d|\\w|[\\.\\#])", expr)

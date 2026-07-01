@@ -11,9 +11,12 @@ from typing import Self
 
 from edify.builder.types.protocol import BuilderProtocol
 from edify.elements.types.leaves import (
+    AlphanumericElement,
     AnyCharElement,
     CarriageReturnElement,
     DigitElement,
+    LetterElement,
+    LowercaseElement,
     NewLineElement,
     NonDigitElement,
     NonWhitespaceCharElement,
@@ -21,6 +24,7 @@ from edify.elements.types.leaves import (
     NonWordElement,
     NullByteElement,
     TabElement,
+    UppercaseElement,
     WhitespaceCharElement,
     WordBoundaryElement,
     WordElement,
@@ -93,4 +97,24 @@ class ClassesMixin(BuilderProtocol):
     def null_byte(self) -> Self:
         """Return a new builder with a ``\\0`` (null byte) appended."""
         new_state = self._state.with_element_added_to_top(NullByteElement())
+        return self._with_state(new_state)
+
+    def letter(self) -> Self:
+        """Return a new builder with ``[a-zA-Z]`` (ASCII letter) appended."""
+        new_state = self._state.with_element_added_to_top(LetterElement())
+        return self._with_state(new_state)
+
+    def uppercase(self) -> Self:
+        """Return a new builder with ``[A-Z]`` (ASCII uppercase letter) appended."""
+        new_state = self._state.with_element_added_to_top(UppercaseElement())
+        return self._with_state(new_state)
+
+    def lowercase(self) -> Self:
+        """Return a new builder with ``[a-z]`` (ASCII lowercase letter) appended."""
+        new_state = self._state.with_element_added_to_top(LowercaseElement())
+        return self._with_state(new_state)
+
+    def alphanumeric(self) -> Self:
+        """Return a new builder with ``[a-zA-Z0-9]`` (ASCII alphanumeric) appended."""
+        new_state = self._state.with_element_added_to_top(AlphanumericElement())
         return self._with_state(new_state)

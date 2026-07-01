@@ -94,5 +94,25 @@ class NullByteElement(BaseElement):
 
 
 @dataclass(frozen=True)
+class LetterElement(BaseElement):
+    """The ``[a-zA-Z]`` ASCII letter character class."""
+
+
+@dataclass(frozen=True)
+class UppercaseElement(BaseElement):
+    """The ``[A-Z]`` ASCII uppercase-letter character class."""
+
+
+@dataclass(frozen=True)
+class LowercaseElement(BaseElement):
+    """The ``[a-z]`` ASCII lowercase-letter character class."""
+
+
+@dataclass(frozen=True)
+class AlphanumericElement(BaseElement):
+    """The ``[a-zA-Z0-9]`` ASCII alphanumeric character class."""
+
+
+@dataclass(frozen=True)
 class NoopElement(BaseElement):
     """A no-op marker that emits an empty string in the compile path."""
