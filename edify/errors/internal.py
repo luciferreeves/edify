@@ -43,7 +43,8 @@ class NonFusableElementError(EdifySyntaxError):
             trigger_hint="pattern compiled here",
             note=(
                 "the character-class fuser accepts only character-shaped elements "
-                f"(CharElement, RangeElement, AnyOfCharsElement); {element_type_name} is not one of them."
+                "(CharElement, RangeElement, AnyOfCharsElement); "
+                f"{element_type_name} is not one of them."
             ),
             help_line=(
                 "help: this is an internal edify bug; please file it at "
@@ -90,9 +91,7 @@ class FailedToCompileRegexError(EdifySyntaxError):
         message = compose_annotated_message(
             summary="the emitted regex was rejected by the re engine",
             trigger_hint=".to_regex() / .to_regex_string() called here",
-            note=(
-                f"re.compile refused the pattern: {underlying_error_message}"
-            ),
+            note=(f"re.compile refused the pattern: {underlying_error_message}"),
             help_line=(
                 "help: inspect the raw pattern with .to_regex_string() and cross-check "
                 "quantifier / group placement; if the pattern looks correct, please file "

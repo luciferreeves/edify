@@ -112,12 +112,12 @@ def test_whitespace_reads_as_backslash_s():
     assert output.startswith("\\s")
 
 
-def test_non_whitespace_reads_as_backslash_S():
+def test_non_whitespace_reads_as_backslash_capital_s():
     output = _verbose(NonWhitespaceCharElement())
     assert output.startswith("\\S")
 
 
-def test_non_digit_reads_as_backslash_D():
+def test_non_digit_reads_as_backslash_capital_d():
     output = _verbose(NonDigitElement())
     assert output.startswith("\\D")
 
@@ -127,7 +127,7 @@ def test_word_reads_as_backslash_w():
     assert output.startswith("\\w")
 
 
-def test_non_word_reads_as_backslash_W():
+def test_non_word_reads_as_backslash_capital_w():
     output = _verbose(NonWordElement())
     assert output.startswith("\\W")
 
@@ -137,7 +137,7 @@ def test_word_boundary_reads_as_backslash_b():
     assert output.startswith("\\b")
 
 
-def test_non_word_boundary_reads_as_backslash_B():
+def test_non_word_boundary_reads_as_backslash_capital_b():
     output = _verbose(NonWordBoundaryElement())
     assert output.startswith("\\B")
 
@@ -162,12 +162,12 @@ def test_null_byte_reads_as_backslash_zero():
     assert output.startswith("\\0")
 
 
-def test_letter_reads_as_a_z_A_Z_class():
+def test_letter_reads_as_alpha_class():
     output = _verbose(LetterElement())
     assert output.startswith("[a-zA-Z]")
 
 
-def test_uppercase_reads_as_A_Z_class():
+def test_uppercase_reads_as_uppercase_class():
     output = _verbose(UppercaseElement())
     assert output.startswith("[A-Z]")
 
@@ -177,7 +177,7 @@ def test_lowercase_reads_as_a_z_class():
     assert output.startswith("[a-z]")
 
 
-def test_alphanumeric_reads_as_a_z_A_Z_0_9_class():
+def test_alphanumeric_reads_as_alphanum_class():
     output = _verbose(AlphanumericElement())
     assert output.startswith("[a-zA-Z0-9]")
 
@@ -333,9 +333,7 @@ def test_alternation_with_no_children_reads_as_empty_alternation():
 
 
 def test_subexpression_inlines_its_children_without_extra_scoping():
-    output = _verbose(
-        SubexpressionElement(children=(DigitElement(), CharElement(value="-")))
-    )
+    output = _verbose(SubexpressionElement(children=(DigitElement(), CharElement(value="-"))))
     assert "begin non-capturing group" not in output
     lines = [line for line in output.splitlines() if line.strip()]
     assert len(lines) == 2
@@ -348,9 +346,7 @@ def test_capture_reads_with_begin_captured_group_comment():
 
 
 def test_named_capture_includes_the_name_in_both_comments():
-    output = _verbose(
-        NamedCaptureElement(name="year", children=(DigitElement(),))
-    )
+    output = _verbose(NamedCaptureElement(name="year", children=(DigitElement(),)))
     assert 'begin group named "year"' in output
     assert 'end group named "year"' in output
     assert "(?P<year>" in output
@@ -431,9 +427,7 @@ def test_output_compiles_and_matches_for_alternation_pattern():
 
 
 def test_alignment_uses_common_comment_column_across_lines():
-    output = _verbose(
-        DigitElement(), CharElement(value="-"), DigitElement()
-    )
+    output = _verbose(DigitElement(), CharElement(value="-"), DigitElement())
     hash_columns = [line.index("#") for line in output.splitlines() if "#" in line]
     assert len(set(hash_columns)) == 1
 

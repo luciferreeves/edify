@@ -74,10 +74,8 @@ def render_ascii(elements: tuple[BaseElement, ...]) -> str:
     """Return an ASCII railroad diagram for ``elements`` as a multi-line string."""
     start_box = _boxed("START")
     end_box = _boxed("END")
-    parts: list[Diagram] = [start_box]
-    for element in elements:
-        parts.append(_element_diagram(element))
-    parts.append(end_box)
+    element_diagrams = [_element_diagram(element) for element in elements]
+    parts: list[Diagram] = [start_box, *element_diagrams, end_box]
     diagram = _join_horizontal(parts)
     indented = _indent_left(diagram, _INDENT)
     return "\n".join(indented.rows)
@@ -228,13 +226,9 @@ def _quantifier_label(element: BaseElement) -> str | None:
     if isinstance(element, AtMostElement):
         return f"at most {element.times} {_child_plural(element.child)}"
     if isinstance(element, BetweenElement):
-        return (
-            f"{element.lower} to {element.upper} {_child_plural(element.child)}"
-        )
+        return f"{element.lower} to {element.upper} {_child_plural(element.child)}"
     if isinstance(element, BetweenLazyElement):
-        return (
-            f"{element.lower} to {element.upper} {_child_plural(element.child)} (lazy)"
-        )
+        return f"{element.lower} to {element.upper} {_child_plural(element.child)} (lazy)"
     return None
 
 
@@ -306,7 +300,7 @@ def _caption_below(diagram: Diagram, caption: str) -> Diagram:
     right_pad = new_width - left_pad - len(caption)
     caption_row = " " * left_pad + caption + " " * right_pad
     return Diagram(
-        rows=tuple(padded_rows) + (caption_row,),
+        rows=(*padded_rows, caption_row),
         entry_row=diagram.entry_row,
         width=new_width,
     )
@@ -396,7 +390,7 @@ def _looks_like_single_box(diagram: Diagram) -> bool:
 def _widen_box(diagram: Diagram, target_width: int) -> Diagram:
     """Return a simple box ``diagram`` widened to ``target_width`` by extending its borders."""
     extra = target_width - diagram.width
-    top, middle, _bottom = diagram.rows
+    _top, middle, _bottom = diagram.rows
     new_border = "+" + "-" * (target_width - 2) + "+"
     interior = middle[1:-1]
     new_middle = "|" + interior + " " * extra + "|"
@@ -416,7 +410,7 @@ def _join_horizontal(diagrams: list[Diagram]) -> Diagram:
 
 
 def _join_two(left: Diagram, right: Diagram) -> Diagram:
-    """Return ``left`` and ``right`` joined on their shared entry row with an ``_EDGE`` connector."""
+    """Return ``left`` and ``right`` joined on their shared entry row with an ``_EDGE`` between."""
     target_entry = max(left.entry_row, right.entry_row)
     left_shifted = _align_entry_row(left, target_entry)
     right_shifted = _align_entry_row(right, target_entry)
@@ -426,9 +420,7 @@ def _join_two(left: Diagram, right: Diagram) -> Diagram:
     new_rows: list[str] = []
     for row_index in range(height):
         connector = _EDGE if row_index == target_entry else " " * _EDGE_WIDTH
-        new_rows.append(
-            left_expanded.rows[row_index] + connector + right_expanded.rows[row_index]
-        )
+        new_rows.append(left_expanded.rows[row_index] + connector + right_expanded.rows[row_index])
     combined_width = left_expanded.width + _EDGE_WIDTH + right_expanded.width
     return Diagram(rows=tuple(new_rows), entry_row=target_entry, width=combined_width)
 

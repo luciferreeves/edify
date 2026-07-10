@@ -16,9 +16,7 @@ class InvalidTotalCaptureGroupsIndexError(EdifySyntaxError):
 
     def __init__(self, index: int, total_capture_groups: int) -> None:
         if total_capture_groups == 0:
-            note = (
-                f"the pattern has no capture groups yet; index {index} refers to nothing."
-            )
+            note = f"the pattern has no capture groups yet; index {index} refers to nothing."
             help_line = "help: add a .capture() call before this back_reference."
         else:
             plural = "s" if total_capture_groups != 1 else ""

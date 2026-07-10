@@ -114,9 +114,7 @@ def test_compose_annotated_message_when_caller_context_is_available():
 
 
 def test_compose_annotated_message_falls_back_when_caller_context_is_none():
-    with mock.patch(
-        "edify.errors.formatting.capture_caller_context", return_value=None
-    ):
+    with mock.patch("edify.errors.formatting.capture_caller_context", return_value=None):
         output = compose_annotated_message(
             summary="bad thing happened",
             trigger_hint="here",

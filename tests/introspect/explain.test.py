@@ -186,9 +186,7 @@ def test_capture_step_describes_children_inline():
 
 
 def test_named_capture_step_describes_children_inline():
-    output = _explain(
-        NamedCaptureElement(name="year", children=(DigitElement(),))
-    )
+    output = _explain(NamedCaptureElement(name="year", children=(DigitElement(),)))
     assert "one digit" in output
 
 
@@ -203,9 +201,7 @@ def test_named_backreference_step_names_the_group_label():
 
 
 def test_assert_ahead_reads_as_must_be_followed_by():
-    output = _explain(
-        DigitElement(), AssertAheadElement(children=(CharElement(value="/"),))
-    )
+    output = _explain(DigitElement(), AssertAheadElement(children=(CharElement(value="/"),)))
     assert "must be followed by" in output
 
 
@@ -218,9 +214,7 @@ def test_assert_not_ahead_reads_as_must_not_be_followed_by():
 
 
 def test_assert_behind_reads_as_just_before_this_point():
-    output = _explain(
-        DigitElement(), AssertBehindElement(children=(CharElement(value="/"),))
-    )
+    output = _explain(DigitElement(), AssertBehindElement(children=(CharElement(value="/"),)))
     assert "Just before this point" in output
 
 
@@ -239,9 +233,7 @@ def test_group_step_describes_children_inline():
 
 def test_alternation_uses_either_or_for_two_alternatives():
     output = _explain(
-        AnyOfElement(
-            children=(StringElement(value="cat"), StringElement(value="dog"))
-        )
+        AnyOfElement(children=(StringElement(value="cat"), StringElement(value="dog")))
     )
     assert 'either "cat" or "dog"' in output
 
@@ -287,9 +279,7 @@ def test_examples_section_omitted_when_only_empty_strings_are_generated():
 
 
 def test_subexpression_is_flattened_into_the_step_list():
-    output = _explain(
-        SubexpressionElement(children=(DigitElement(), CharElement(value="-")))
-    )
+    output = _explain(SubexpressionElement(children=(DigitElement(), CharElement(value="-"))))
     assert output.count("- ") >= 2
 
 
@@ -429,9 +419,7 @@ def test_examples_for_alternation_pick_a_different_branch_per_seed():
 
 
 def test_examples_for_optional_include_both_present_and_absent_forms():
-    output = _explain(
-        DigitElement(), OptionalElement(child=CharElement(value="x")), DigitElement()
-    )
+    output = _explain(DigitElement(), OptionalElement(child=CharElement(value="x")), DigitElement())
     strings = _accepted_examples(output)
     assert any("x" in text for text in strings)
 
@@ -669,9 +657,7 @@ def test_plural_anything_but_chars_reads_as_not_from_the_set():
 
 
 def test_plural_anything_but_range_reads_as_outside_range():
-    assert 'outside "a" through "z"' in _plural(
-        AnythingButRangeElement(start="a", end="z")
-    )
+    assert 'outside "a" through "z"' in _plural(AnythingButRangeElement(start="a", end="z"))
 
 
 def test_plural_unknown_element_falls_back_to_of_inline_form():
@@ -756,9 +742,7 @@ def test_inline_at_most_reads_as_at_most_n_x():
 
 
 def test_inline_between_reads_as_between_lower_and_upper():
-    assert "between 2 and 5" in _inline(
-        BetweenElement(lower=2, upper=5, child=DigitElement())
-    )
+    assert "between 2 and 5" in _inline(BetweenElement(lower=2, upper=5, child=DigitElement()))
 
 
 def test_inline_between_lazy_notes_as_few_as_possible():
@@ -772,9 +756,7 @@ def test_inline_capture_reads_as_child_captured_marker():
 
 
 def test_inline_named_capture_includes_the_label():
-    assert 'label "year"' in _inline(
-        NamedCaptureElement(name="year", children=(DigitElement(),))
-    )
+    assert 'label "year"' in _inline(NamedCaptureElement(name="year", children=(DigitElement(),)))
 
 
 def test_inline_group_reads_as_children_inline():
@@ -787,9 +769,7 @@ def test_inline_subexpression_reads_as_children_inline():
 
 def test_inline_alternation_reads_as_either_or_phrase():
     assert "either" in _inline(
-        AnyOfElement(
-            children=(StringElement(value="a"), StringElement(value="b"))
-        )
+        AnyOfElement(children=(StringElement(value="a"), StringElement(value="b")))
     )
 
 
@@ -802,9 +782,7 @@ def test_inline_named_backreference_reads_as_that_the_name_group_captured():
 
 
 def test_optional_inner_reads_group_children_inline():
-    assert "one digit" in _describe_optional_inner(
-        GroupElement(children=(DigitElement(),))
-    )
+    assert "one digit" in _describe_optional_inner(GroupElement(children=(DigitElement(),)))
 
 
 def test_describe_inline_children_reads_as_nothing_when_empty():

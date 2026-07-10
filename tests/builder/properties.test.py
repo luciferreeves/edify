@@ -90,7 +90,11 @@ _element_pick = st.one_of(*_ELEMENT_STRATEGIES)
 _quantifier_pick_or_none = st.one_of(st.none(), *_QUANTIFIER_STRATEGIES)
 
 
-def _build_leaf(pair: tuple[tuple[str, tuple[int, ...], str], tuple[str, tuple[int, ...], str] | None]) -> LeafNode:
+_ElementCall = tuple[str, tuple[int, ...], str]
+_QuantifierCall = tuple[str, tuple[int, ...], str]
+
+
+def _build_leaf(pair: tuple[_ElementCall, _QuantifierCall | None]) -> LeafNode:
     element, quantifier = pair
     element_name, element_args, element_regex = element
     return LeafNode(

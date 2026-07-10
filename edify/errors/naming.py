@@ -22,8 +22,7 @@ class NameNotValidError(EdifySyntaxError):
                 "and underscores (no spaces, hyphens, or punctuation)."
             ),
             help_line=(
-                f"help: rename {name!r} to a bare identifier "
-                "(e.g. 'year', 'user_id', 'scheme')."
+                f"help: rename {name!r} to a bare identifier (e.g. 'year', 'user_id', 'scheme')."
             ),
         )
         super().__init__(message)

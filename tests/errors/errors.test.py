@@ -129,8 +129,10 @@ def test_must_have_a_smaller_value_reports_the_codepoints():
     error = MustHaveASmallerValueError("z", "a")
     text = str(error)
     assert "range bounds are inverted" in text
-    assert "'z'" in text and "'a'" in text
-    assert "= 122" in text and "= 97" in text
+    assert "'z'" in text
+    assert "'a'" in text
+    assert "= 122" in text
+    assert "= 97" in text
 
 
 def test_must_be_less_than():

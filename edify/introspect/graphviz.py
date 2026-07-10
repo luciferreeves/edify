@@ -131,9 +131,7 @@ def _emit_leaf(label: str, counter: _Counter) -> Emission:
     return Emission(entry_id=node_id, exit_id=node_id, lines=lines)
 
 
-def _emit_alternation(
-    children: tuple[BaseElement, ...], counter: _Counter
-) -> Emission:
+def _emit_alternation(children: tuple[BaseElement, ...], counter: _Counter) -> Emission:
     """Emit an alternation as fork/merge over ``children`` using junction points."""
     if not children:
         return _emit_leaf("nothing", counter)
@@ -152,9 +150,7 @@ def _emit_alternation(
     return Emission(entry_id=fork_id, exit_id=merge_id, lines=lines_tuple)
 
 
-def _emit_subexpression(
-    children: tuple[BaseElement, ...], counter: _Counter
-) -> Emission:
+def _emit_subexpression(children: tuple[BaseElement, ...], counter: _Counter) -> Emission:
     """Emit a transparent subexpression as a plain sequence of ``children``."""
     if not children:
         return _emit_leaf("empty subexpression", counter)

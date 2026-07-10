@@ -46,9 +46,7 @@ class MustBeOneCharacterError(EdifySyntaxError):
                 f"this builder method needs {lowered} to be a non-empty string; an "
                 "empty string has no character to match."
             ),
-            help_line=(
-                f"help: pass a single-character string for {lowered} (e.g. \"a\")."
-            ),
+            help_line=(f'help: pass a single-character string for {lowered} (e.g. "a").'),
         )
         super().__init__(message)
 
@@ -72,7 +70,7 @@ class MustBeSingleCharacterError(EdifySyntaxError):
             ),
             help_line=(
                 f"help: pass a single-character string for {lowered} "
-                "(e.g. \"a\" — not \"ab\" or a non-string value)."
+                '(e.g. "a" — not "ab" or a non-string value).'
             ),
         )
         super().__init__(message)
@@ -95,8 +93,7 @@ class MustBePositiveIntegerError(EdifySyntaxError):
                 "equal to 1; zero and negative counts have no matching semantics."
             ),
             help_line=(
-                f"help: pass an int >= 1 for {lowered}; use .optional() if you meant "
-                "zero-or-one."
+                f"help: pass an int >= 1 for {lowered}; use .optional() if you meant zero-or-one."
             ),
         )
         super().__init__(message)
@@ -119,8 +116,7 @@ class MustBeIntegerGreaterThanZeroError(EdifySyntaxError):
                 "than 0; zero and negative counts have no matching semantics."
             ),
             help_line=(
-                f"help: pass an int > 0 for {lowered}; use .optional() if you meant "
-                "zero-or-one."
+                f"help: pass an int > 0 for {lowered}; use .optional() if you meant zero-or-one."
             ),
         )
         super().__init__(message)
@@ -139,8 +135,7 @@ class MustBeInstanceError(EdifySyntaxError):
         lowered = label.lower()
         message = compose_annotated_message(
             summary=(
-                f"{label} must be an instance of {expected_class_name} "
-                f"(got {actual_type_name})"
+                f"{label} must be an instance of {expected_class_name} (got {actual_type_name})"
             ),
             trigger_hint=f"{lowered} passed here",
             note=(
@@ -202,9 +197,7 @@ class MustBeLessThanError(EdifySyntaxError):
                 f"{first_label} must be strictly less than {second_label} for the range "
                 "to contain any matches."
             ),
-            help_line=(
-                f"help: swap the two arguments so {first_label} is the smaller value."
-            ),
+            help_line=(f"help: swap the two arguments so {first_label} is the smaller value."),
         )
         super().__init__(message)
 

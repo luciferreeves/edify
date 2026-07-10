@@ -1,6 +1,6 @@
 """Tests for the ASCII railroad-diagram renderer in :mod:`edify.introspect.ascii`."""
 
-from edify import Pattern, RegexBuilder
+from edify import RegexBuilder
 from edify.elements.types.captures import (
     BackReferenceElement,
     CaptureElement,
@@ -74,11 +74,7 @@ def _render(*elements) -> str:
 
 
 def test_empty_pattern_renders_start_arrow_end():
-    assert _render() == (
-        "   +-------+   +-----+\n"
-        "   | START |-->| END |\n"
-        "   +-------+   +-----+"
-    )
+    assert _render() == ("   +-------+   +-----+\n   | START |-->| END |\n   +-------+   +-----+")
 
 
 def test_single_digit_pattern():
@@ -179,9 +175,7 @@ def test_named_capture_places_caption_below_child():
 
 
 def test_unnamed_capture_places_captured_caption_below_child():
-    output = _render(
-        CaptureElement(children=(DigitElement(),))
-    )
+    output = _render(CaptureElement(children=(DigitElement(),)))
     assert "(captured)" in output
 
 
@@ -191,9 +185,7 @@ def test_group_places_grouped_caption_below_child():
 
 
 def test_subexpression_flattens_into_the_sequence():
-    output = _render(
-        SubexpressionElement(children=(DigitElement(), DigitElement()))
-    )
+    output = _render(SubexpressionElement(children=(DigitElement(), DigitElement())))
     assert output.count("digit") == 2
 
 
@@ -400,28 +392,14 @@ def test_visualize_with_alternation_end_to_end():
 
 
 def test_visualize_named_capture_end_to_end():
-    regex = (
-        RegexBuilder()
-        .named_capture("year")
-        .exactly(4)
-        .digit()
-        .end()
-        .to_regex()
-    )
+    regex = RegexBuilder().named_capture("year").exactly(4).digit().end().to_regex()
     output = regex.visualize()
     assert '(saved as "year")' in output
     assert "4 digits" in output
 
 
 def test_visualize_anchored_pattern_end_to_end():
-    regex = (
-        RegexBuilder()
-        .start_of_input()
-        .one_or_more()
-        .digit()
-        .end_of_input()
-        .to_regex()
-    )
+    regex = RegexBuilder().start_of_input().one_or_more().digit().end_of_input().to_regex()
     output = regex.visualize()
     assert "text starts here" in output
     assert "text ends here" in output
@@ -513,9 +491,7 @@ def test_nested_alternation_pads_wider_branch_with_spaces():
 
 
 def test_single_branch_alternation_looks_like_single_branch():
-    output = _render(
-        AnyOfElement(children=(StringElement(value="only-one"),))
-    )
+    output = _render(AnyOfElement(children=(StringElement(value="only-one"),)))
     assert '"only-one"' in output
     assert "+--->" in output
 
@@ -526,9 +502,7 @@ def test_looks_like_single_box_rejects_multi_row_diagram():
 
 
 def test_looks_like_single_box_rejects_asymmetric_borders():
-    asymmetric = Diagram(
-        rows=("+---+", "| a |", "+xxx+"), entry_row=1, width=5
-    )
+    asymmetric = Diagram(rows=("+---+", "| a |", "+xxx+"), entry_row=1, width=5)
     assert _looks_like_single_box(asymmetric) is False
 
 
@@ -538,16 +512,12 @@ def test_looks_like_single_box_rejects_non_box_borders():
 
 
 def test_looks_like_single_box_rejects_middle_without_pipes():
-    bad_middle = Diagram(
-        rows=("+---+", "  a  ", "+---+"), entry_row=1, width=5
-    )
+    bad_middle = Diagram(rows=("+---+", "  a  ", "+---+"), entry_row=1, width=5)
     assert _looks_like_single_box(bad_middle) is False
 
 
 def test_looks_like_single_box_rejects_border_with_non_dash_interior():
-    striped = Diagram(
-        rows=("+-x-+", "| a |", "+-x-+"), entry_row=1, width=5
-    )
+    striped = Diagram(rows=("+-x-+", "| a |", "+-x-+"), entry_row=1, width=5)
     assert _looks_like_single_box(striped) is False
 
 

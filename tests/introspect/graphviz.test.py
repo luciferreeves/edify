@@ -6,7 +6,7 @@ import sys
 
 import pytest
 
-from edify import Pattern, RegexBuilder
+from edify import RegexBuilder
 from edify.elements.types.captures import (
     BackReferenceElement,
     CaptureElement,
@@ -143,7 +143,7 @@ def test_alternation_creates_fork_and_merge_junction_points():
             )
         )
     )
-    assert 'shape=point, width=0.08' in output
+    assert "shape=point, width=0.08" in output
     assert output.count("shape=point") == 2
     assert output.count("fork_") >= 1
     assert output.count("merge_") >= 1
@@ -196,9 +196,7 @@ def test_group_wraps_children_in_grouped_cluster():
 
 
 def test_subexpression_flattens_into_a_plain_sequence():
-    output = _dot(
-        SubexpressionElement(children=(DigitElement(), WordElement()))
-    )
+    output = _dot(SubexpressionElement(children=(DigitElement(), WordElement())))
     assert "cluster_" not in output
     assert 'label="digit"' in output
     assert 'label="word character"' in output
@@ -255,9 +253,7 @@ def test_character_literal_display_strips_regex_escaping():
 
 
 def test_quantifier_wrapping_complex_child_uses_cluster_not_inline_label():
-    inner = AnyOfElement(
-        children=(StringElement(value="a"), StringElement(value="b"))
-    )
+    inner = AnyOfElement(children=(StringElement(value="a"), StringElement(value="b")))
     output = _dot(OneOrMoreElement(child=inner))
     assert '"one or more"' in output
     assert "subgraph cluster_" in output
