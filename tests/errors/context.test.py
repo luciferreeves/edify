@@ -1,6 +1,5 @@
 """Tests for the caller-source-location capture helpers in :mod:`edify.errors.context`."""
 
-from types import SimpleNamespace
 from unittest import mock
 
 from edify.errors.context import (
@@ -37,9 +36,7 @@ class _FakeFrame:
 
 
 def test_capture_caller_context_returns_none_when_every_frame_is_inside_edify():
-    with mock.patch(
-        "edify.errors.context.sys._getframe", return_value=None
-    ):
+    with mock.patch("edify.errors.context.sys._getframe", return_value=None):
         assert capture_caller_context() is None
 
 
@@ -105,8 +102,6 @@ def test_context_for_frame_defaults_end_col_when_position_end_col_is_none():
 
 
 def test_caller_context_dataclass_is_frozen_and_holds_all_five_fields():
-    context = CallerContext(
-        filename="a.py", lineno=1, colno=1, end_colno=5, source_line="x = 1"
-    )
+    context = CallerContext(filename="a.py", lineno=1, colno=1, end_colno=5, source_line="x = 1")
     assert context.filename == "a.py"
     assert context.source_line == "x = 1"
