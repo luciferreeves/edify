@@ -95,3 +95,32 @@ def test_hash_matches_when_equal():
 def test_equality_with_non_regex_returns_not_implemented():
     a = Regex("\\d+", re.compile("\\d+"))
     assert a.__eq__("foo") is NotImplemented
+
+
+def test_pattern_attribute_delegates_via_getattr(digit_regex):
+    assert digit_regex.pattern == "\\d+"
+
+
+def test_flags_attribute_delegates_via_getattr(digit_regex):
+    assert isinstance(digit_regex.flags, int)
+
+
+def test_groups_attribute_delegates_via_getattr():
+    with_groups = Regex("(\\d)(\\w)", re.compile("(\\d)(\\w)"))
+    assert with_groups.groups == 2
+
+
+def test_groupindex_attribute_delegates_via_getattr():
+    with_named = Regex(
+        "(?P<num>\\d)(?P<char>\\w)",
+        re.compile("(?P<num>\\d)(?P<char>\\w)"),
+    )
+    assert dict(with_named.groupindex) == {"num": 0, "char": 1} or dict(with_named.groupindex) == {
+        "num": 1,
+        "char": 2,
+    }
+
+
+def test_missing_attribute_raises_attribute_error(digit_regex):
+    with pytest.raises(AttributeError):
+        _ = digit_regex.no_such_attribute

@@ -1,39 +1,56 @@
-""":class:`Regex` — composition wrapper over :class:`re.Pattern`.
-
-:class:`re.Pattern` is a CPython C type and cannot be subclassed, so we
-compose: :class:`Regex` holds both the source string and the compiled
-:class:`re.Pattern`, exposing them as ``.source`` and ``.compiled``, and
-delegates the eight canonical query methods (``match``, ``search``,
-``fullmatch``, ``findall``, ``finditer``, ``sub``, ``subn``, ``split``)
-to the underlying compiled pattern.
-
-This wrapper is what :meth:`edify.builder.mixins.terminals.TerminalsMixin.to_regex`
-returns; the raw :class:`re.Pattern` is still available via ``.compiled``.
-"""
+"""The :class:`Regex` composition wrapper over :class:`re.Pattern`."""
 
 from __future__ import annotations
 
 import re
 import sys
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Mapping
+
+from edify.elements.types.base import BaseElement
+from edify.introspect.explain import explain_elements
+from edify.introspect.verbose import verbose_elements
+from edify.introspect.visualize import visualize_elements
+
+_RePatternMethodReturn = (
+    re.Match[str]
+    | list[str]
+    | list[tuple[str, ...]]
+    | Iterator[re.Match[str]]
+    | str
+    | tuple[str, int]
+    | None
+)
+
+_RePatternAttribute = int | str | Mapping[str, int] | Callable[..., _RePatternMethodReturn]
 
 
 class Regex:
     """A compiled edify pattern; wraps :class:`re.Pattern` by composition."""
 
-    def __init__(self, source: str, compiled: re.Pattern[str]) -> None:
+    def __init__(
+        self,
+        source: str,
+        compiled: re.Pattern[str],
+        elements: tuple[BaseElement, ...] = (),
+    ) -> None:
         self._source = source
         self._compiled = compiled
+        self._elements = elements
 
     @property
     def source(self) -> str:
-        """The regex string that produced this wrapper (identical to :meth:`re.Pattern.pattern`)."""
+        """The regex string this wrapper was built from."""
         return self._source
 
     @property
     def compiled(self) -> re.Pattern[str]:
-        """The underlying :class:`re.Pattern`; callers that need identity checks read this."""
+        """The underlying :class:`re.Pattern` for direct interop with :mod:`re`."""
         return self._compiled
+
+    @property
+    def elements(self) -> tuple[BaseElement, ...]:
+        """The AST elements produced by the builder, in emission order."""
+        return self._elements
 
     def match(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
         """Delegate to :meth:`re.Pattern.match`."""
@@ -82,6 +99,42 @@ class Regex:
     def split(self, string: str, maxsplit: int = 0) -> list[str | None]:
         """Delegate to :meth:`re.Pattern.split`."""
         return self._compiled.split(string, maxsplit=maxsplit)
+
+    def explain(self) -> str:
+        """Return a human-readable narrative describing what the pattern matches."""
+        return explain_elements(self._elements)
+
+    def to_verbose_string(self) -> str:
+        """Return the pattern as an annotated ``re.VERBOSE``-compatible string."""
+        return verbose_elements(self._elements)
+
+    def visualize(self, format: str = "ascii", engine: str = "ascii") -> str:
+        """Return a visual rendering of the pattern in ``format``.
+
+        Args:
+            format: ``"ascii"`` (default) for an ASCII railroad diagram, or
+                ``"svg"`` for a Graphviz-rendered SVG string.
+            engine: Rendering engine identifier; ``"ascii"`` for the built-in
+                ASCII layout, ``"graphviz"`` for the SVG renderer. Must match
+                ``format``.
+
+        Returns:
+            The rendered diagram as a string.
+
+        Raises:
+            edify.errors.introspect.UnsupportedVisualizationFormatError: when
+                ``format`` is not one of ``"ascii"`` or ``"svg"``.
+            edify.errors.introspect.UnsupportedVisualizationEngineError: when
+                ``engine`` does not match the requested ``format``.
+            edify.errors.introspect.MissingGraphvizDependencyError: when
+                ``format="svg"`` is requested but the ``graphviz`` extra is
+                not installed.
+        """
+        return visualize_elements(self._elements, format=format, engine=engine)
+
+    def __getattr__(self, name: str) -> _RePatternAttribute:
+        """Delegate any attribute access not explicitly defined here to the compiled pattern."""
+        return getattr(self._compiled, name)
 
     def __repr__(self) -> str:
         """Return ``<Regex 'source-string'>``."""
