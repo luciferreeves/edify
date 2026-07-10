@@ -51,3 +51,20 @@ class Pattern(
     Composes into a builder via ``.use()`` or emits its own regex via
     ``.to_regex_string()`` / ``.to_regex()``.
     """
+
+    def __call__(self, value: str) -> bool:
+        """Return True when ``value`` matches this pattern from its first character.
+
+        A non-string ``value`` always returns False rather than raising, so callers
+        can pass user input directly without a pre-check.
+
+        Args:
+            value: The string to test against the pattern.
+
+        Returns:
+            True when the pattern matches ``value`` from its start; False otherwise.
+        """
+        if not isinstance(value, str):
+            return False
+        compiled = self.to_regex()
+        return compiled.match(value) is not None
