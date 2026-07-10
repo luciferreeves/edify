@@ -257,7 +257,7 @@ Edify turns those complex and unwieldy regexes that appear in code reviews into 
 License & Contributing
 ======================
 
-This project is licensed under `Apache Software License 2.0 <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_. See `Contributing Guidelines <https://github.com/luciferreeves/edify/blob/main/CONTRIBUTING.rst>`_ for information on how to contribute to this project.
+This project is licensed under the `MIT License <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_. See `Contributing Guidelines <https://github.com/luciferreeves/edify/blob/main/CONTRIBUTING.rst>`_ for information on how to contribute to this project.
 
 Contributors
 ------------
