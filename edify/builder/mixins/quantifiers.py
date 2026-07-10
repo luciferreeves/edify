@@ -1,10 +1,4 @@
-"""The :class:`QuantifiersMixin` — chain methods that set the pending quantifier.
-
-A quantifier method does NOT consume the previous element — it stores a
-deferred factory on the top frame. The next call that appends an element
-sees the pending quantifier and wraps the element with it before storing
-the result.
-"""
+"""The :class:`QuantifiersMixin` — chain methods that set the pending quantifier."""
 
 from __future__ import annotations
 
@@ -25,6 +19,7 @@ from edify.elements.types.quantifiers import (
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
 )
+from edify.errors.context import capture_caller_context
 from edify.errors.input import (
     MustBeIntegerGreaterThanZeroError,
     MustBeLessThanError,
@@ -38,64 +33,83 @@ class QuantifiersMixin(BuilderProtocol):
 
     def optional(self) -> Self:
         """Return a new builder with ``?`` queued as the pending quantifier."""
-        return _set_pending(self, _optional_factory)
+        call_site = capture_caller_context()
+        return _set_pending(self, _optional_factory, call_site, "optional()")
 
     def zero_or_more(self) -> Self:
         """Return a new builder with ``*`` queued as the pending quantifier."""
-        return _set_pending(self, _zero_or_more_factory)
+        call_site = capture_caller_context()
+        return _set_pending(self, _zero_or_more_factory, call_site, "zero_or_more()")
 
     def zero_or_more_lazy(self) -> Self:
         """Return a new builder with ``*?`` queued as the pending quantifier."""
-        return _set_pending(self, _zero_or_more_lazy_factory)
+        call_site = capture_caller_context()
+        return _set_pending(self, _zero_or_more_lazy_factory, call_site, "zero_or_more_lazy()")
 
     def one_or_more(self) -> Self:
         """Return a new builder with ``+`` queued as the pending quantifier."""
-        return _set_pending(self, _one_or_more_factory)
+        call_site = capture_caller_context()
+        return _set_pending(self, _one_or_more_factory, call_site, "one_or_more()")
 
     def one_or_more_lazy(self) -> Self:
         """Return a new builder with ``+?`` queued as the pending quantifier."""
-        return _set_pending(self, _one_or_more_lazy_factory)
+        call_site = capture_caller_context()
+        return _set_pending(self, _one_or_more_lazy_factory, call_site, "one_or_more_lazy()")
 
     def exactly(self, count: int) -> Self:
         """Return a new builder with ``{count}`` queued as the pending quantifier."""
         _ensure_positive_integer("count", count)
-        return _set_pending(self, _exactly_factory(count))
+        call_site = capture_caller_context()
+        return _set_pending(self, _exactly_factory(count), call_site, f"exactly({count})")
 
     def at_least(self, count: int) -> Self:
         """Return a new builder with ``{count,}`` queued as the pending quantifier."""
         _ensure_positive_integer("count", count)
-        return _set_pending(self, _at_least_factory(count))
+        call_site = capture_caller_context()
+        return _set_pending(self, _at_least_factory(count), call_site, f"at_least({count})")
 
     def at_most(self, count: int) -> Self:
         """Return a new builder with ``{0,count}`` queued as the pending quantifier."""
         _ensure_positive_integer("count", count)
-        return _set_pending(self, _at_most_factory(count))
+        call_site = capture_caller_context()
+        return _set_pending(self, _at_most_factory(count), call_site, f"at_most({count})")
 
     def between(self, lower: int, upper: int) -> Self:
         """Return a new builder with ``{lower,upper}`` queued as the pending quantifier."""
         _ensure_non_negative_integer("x", lower)
         _ensure_positive_integer("y", upper)
         _ensure_strictly_ascending("X", "Y", lower, upper)
-        return _set_pending(self, _between_factory(lower, upper))
+        call_site = capture_caller_context()
+        return _set_pending(
+            self, _between_factory(lower, upper), call_site, f"between({lower}, {upper})"
+        )
 
     def between_lazy(self, lower: int, upper: int) -> Self:
         """Return a new builder with ``{lower,upper}?`` queued as the pending quantifier."""
         _ensure_non_negative_integer("x", lower)
         _ensure_positive_integer("y", upper)
         _ensure_strictly_ascending("X", "Y", lower, upper)
-        return _set_pending(self, _between_lazy_factory(lower, upper))
+        call_site = capture_caller_context()
+        return _set_pending(
+            self,
+            _between_lazy_factory(lower, upper),
+            call_site,
+            f"between_lazy({lower}, {upper})",
+        )
 
 
-def _set_pending(builder: BuilderProtocol, pending_quantifier: PendingQuantifier):
-    """Replace the top frame with one carrying the given pending quantifier.
-
-    Raises :class:`StackedQuantifierError` when the top frame already carries
-    an unconsumed pending quantifier — stacking would silently drop the outer
-    one at emit time.
-    """
+def _set_pending(
+    builder: BuilderProtocol,
+    pending_quantifier: PendingQuantifier,
+    call_site,
+    quantifier_name: str,
+):
+    """Replace the top frame with one carrying the given pending quantifier."""
     if builder._state.top_frame.quantifier is not None:
         raise StackedQuantifierError()
-    new_top_frame = builder._state.top_frame.with_quantifier(pending_quantifier)
+    new_top_frame = builder._state.top_frame.with_quantifier(
+        pending_quantifier, call_site, quantifier_name
+    )
     new_state = builder._state.with_top_frame_replaced(new_top_frame)
     return builder._with_state(new_state)
 

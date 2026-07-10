@@ -1,10 +1,4 @@
-"""The :class:`BuilderState` dataclass — the entire mutable state of a builder.
-
-State is frozen; chain methods produce new states with
-:func:`dataclasses.replace` rather than mutating in place. That immutability
-is what makes ``b0.digit()`` and ``b0.word()`` produce independent chains
-from the same starting point.
-"""
+"""The :class:`BuilderState` dataclass."""
 
 from __future__ import annotations
 
@@ -14,6 +8,7 @@ from edify.builder.types.flags import Flags
 from edify.builder.types.frame import StackFrame
 from edify.elements.types.base import BaseElement
 from edify.elements.types.root import RootElement
+from edify.errors.context import CallerContext, capture_caller_context
 
 
 def _initial_stack() -> tuple[StackFrame, ...]:
@@ -32,8 +27,7 @@ class BuilderState:
         flags: The current pattern-global flag snapshot.
         stack: Ordered frames; the root frame is always at index 0.
         named_groups: Names declared by ``named_capture`` so far.
-        total_capture_groups: Total number of capture groups declared so far
-            (numbered + named).
+        total_capture_groups: Total number of capture groups declared so far.
     """
 
     has_defined_start: bool = False
@@ -67,8 +61,18 @@ class BuilderState:
         return replace(self, stack=new_stack)
 
     def with_frame_pushed(self, frame: StackFrame) -> BuilderState:
-        """Return a new state with ``frame`` pushed onto the top of the stack."""
-        new_stack = (*self.stack, frame)
+        """Return a new state with ``frame`` pushed onto the top of the stack.
+
+        When ``frame.call_site`` is ``None`` this helper captures the caller's
+        source location automatically so error messages can point at the chain
+        method that opened the frame.
+        """
+        stamped_frame = (
+            frame
+            if frame.call_site is not None
+            else replace(frame, call_site=capture_caller_context())
+        )
+        new_stack = (*self.stack, stamped_frame)
         return replace(self, stack=new_stack)
 
     def with_top_frame_popped(self) -> tuple[BuilderState, StackFrame]:
@@ -93,16 +97,27 @@ class BuilderState:
         new_total = self.total_capture_groups + count
         return replace(self, total_capture_groups=new_total)
 
-    def with_element_added_to_top(self, element: BaseElement) -> BuilderState:
+    def with_element_added_to_top(
+        self,
+        element: BaseElement,
+        call_site: CallerContext | None = None,
+    ) -> BuilderState:
         """Return a new state with ``element`` added to the top frame's children.
 
         If the top frame carries a pending quantifier, it wraps ``element``
         before appending and the quantifier slot is cleared.
+
+        Args:
+            element: The element to append to the top frame's children.
+            call_site: The source location of the chain call responsible for
+                appending ``element``. When ``None`` this helper captures the
+                caller's source location automatically.
         """
+        effective_call_site = call_site if call_site is not None else capture_caller_context()
         top = self.top_frame
         if top.quantifier is not None:
             wrapped_element = top.quantifier(element)
-            new_top_frame = top.with_appended_child(wrapped_element)
+            new_top_frame = top.with_appended_child(wrapped_element, effective_call_site)
         else:
-            new_top_frame = top.with_appended_child(element)
+            new_top_frame = top.with_appended_child(element, effective_call_site)
         return self.with_top_frame_replaced(new_top_frame)
