@@ -1,8 +1,4 @@
-"""Escape user-provided string fragments for safe insertion into a regex pattern.
-
-Single-purpose wrapper around :func:`re.escape` so the builder never embeds
-user input directly into a compiled pattern.
-"""
+"""Escape user-provided string fragments for safe insertion into a regex pattern."""
 
 from __future__ import annotations
 

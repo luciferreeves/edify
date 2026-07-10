@@ -1,9 +1,4 @@
-"""Render leaf elements to their regex string.
-
-Every leaf in :mod:`edify.elements.types.leaves` maps to a fixed string that
-never depends on children or quantifier state, so the renderer is a single
-``match`` over the leaf union.
-"""
+"""Render leaf elements to their regex string."""
 
 from __future__ import annotations
 

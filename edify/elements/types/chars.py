@@ -11,9 +11,6 @@ bounds) and emit the corresponding regex fragment at compile time.
 * :class:`AnythingButCharsElement` — an inline ``[^abc]`` negated class.
 * :class:`AnythingButRangeElement` — a negated ``[^a-z]`` range.
 * :class:`AnythingButStringElement` — a sequence of negated single-character classes.
-
-Every class inherits from :class:`edify.elements.types.base.BaseElement` so
-it participates in the ``Element`` union and in :func:`isinstance` dispatch.
 """
 
 from __future__ import annotations
@@ -37,10 +34,6 @@ class CharElement(BaseElement):
 @dataclass(frozen=True)
 class StringElement(BaseElement):
     """A multi-character literal string.
-
-    A literal string needs to be wrapped in a non-capturing group when a
-    quantifier is applied to it, hence the dedicated class separate from
-    :class:`CharElement`.
 
     Attributes:
         value: The string to match; already escaped for the compile path.

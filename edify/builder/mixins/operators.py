@@ -1,16 +1,9 @@
 """The :class:`OperatorsMixin` — ``+`` concatenation and ``|`` alternation.
 
-Both operators produce a new instance of the same concrete fluent surface
-(a :class:`edify.builder.builder.RegexBuilder` or a
-:class:`edify.pattern.composition.Pattern`), leaving both operands untouched
-per the immutable-builder contract.
-
-Semantically:
-
-* ``a + b`` embeds ``b`` at the end of ``a`` — the algebra equivalent of
+* ``a + b`` embeds ``b`` at the end of ``a`` — equivalent to
   ``a.subexpression(b)``.
 * ``a | b`` produces a fresh instance whose sole element is an
-  ``AnyOfElement`` containing ``a`` and ``b`` — the algebra equivalent of
+  ``AnyOfElement`` containing ``a`` and ``b`` — equivalent to
   ``fresh.any_of().subexpression(a).subexpression(b).end()``.
 """
 
