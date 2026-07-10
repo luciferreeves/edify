@@ -42,14 +42,15 @@ def test_to_regex_raises_when_a_bare_quantifier_has_no_operand():
 
 
 def test_dangling_message_hints_at_appending_an_operand():
-    with pytest.raises(DanglingQuantifierError, match="Append an element"):
+    with pytest.raises(DanglingQuantifierError, match="append the element"):
         RegexBuilder().exactly(3).to_regex_string()
 
 
 def test_dangling_quantifier_error_message_contains_expected_text():
     error = DanglingQuantifierError()
-    assert "Dangling quantifier" in str(error)
-    assert "no operand" in str(error)
+    text = str(error)
+    assert "dangling quantifier" in text
+    assert "no operand" in text
 
 
 def test_stacking_one_or_more_over_exactly_raises():
@@ -84,5 +85,6 @@ def test_a_valid_quantifier_element_quantifier_element_chain_works():
 
 def test_stacked_quantifier_error_message_contains_expected_text():
     error = StackedQuantifierError()
-    assert "stack" in str(error)
-    assert "pending" in str(error)
+    text = str(error)
+    assert "stack a quantifier" in text
+    assert "pending quantifier" in text
