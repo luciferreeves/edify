@@ -11,9 +11,6 @@ construct that does not introduce a numbered capture:
 * :class:`AssertNotAheadElement` — ``(?!...)`` negative lookahead.
 * :class:`AssertBehindElement` — ``(?<=...)`` positive lookbehind.
 * :class:`AssertNotBehindElement` — ``(?<!...)`` negative lookbehind.
-
-Recursive ``children`` references use :class:`BaseElement` so the dataclass
-field annotations type-check without importing the full ``Element`` union.
 """
 
 from __future__ import annotations

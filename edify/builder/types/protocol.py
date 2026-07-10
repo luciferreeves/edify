@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import Protocol, Self, runtime_checkable
 
 from edify.builder.types.state import BuilderState
+from edify.result.regex import Regex
 
 
 @runtime_checkable
@@ -21,4 +22,16 @@ class BuilderProtocol(Protocol):
 
     def _with_state(self, new_state: BuilderState) -> Self:
         """Return a new builder carrying the given state, leaving ``self`` untouched."""
+        ...
+
+    def _lazy_regex(self) -> Regex:
+        """Return the memoised :class:`Regex` produced from ``self``, compiling once."""
+        ...
+
+    def to_regex_string(self) -> str:
+        """Return the emitted regex string for ``self``."""
+        ...
+
+    def to_regex(self) -> Regex:
+        """Compile ``self`` into a :class:`Regex` wrapper."""
         ...

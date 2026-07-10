@@ -1,14 +1,4 @@
-"""The composition root for :class:`RegexBuilder` — the fluent regex-builder class.
-
-The class itself defines no chain methods; every method comes from one of
-the mixins under :mod:`edify.builder.mixins`. The composition order does
-not matter for behavior because the mixins do not override each other's
-methods, but they are listed alphabetically by mixin name for predictability.
-
-The immutable-state plumbing (``_state`` attribute + ``_with_state`` helper)
-lives on :class:`edify.builder.core.BuilderCore`, which every fluent surface
-in the package inherits from.
-"""
+"""The composition root for :class:`RegexBuilder` — the fluent regex-builder class."""
 
 from __future__ import annotations
 

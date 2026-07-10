@@ -33,6 +33,9 @@ classifiers = [
 dependencies = []
 dynamic = ["version"]
 
+[project.optional-dependencies]
+graphviz = ["graphviz>=0.20"]
+
 [project.urls]
 Documentation = "https://edify.readthedocs.io/"
 Changelog = "https://edify.readthedocs.io/en/latest/changelog.html"
@@ -40,6 +43,7 @@ Changelog = "https://edify.readthedocs.io/en/latest/changelog.html"
 
 [dependency-groups]
 dev = [
+    "graphviz>=0.20",
     "hypothesis>=6.100",
     "pytest>=8.0",
     "pytest-cov>=5.0",

@@ -11,6 +11,8 @@ jobs:
       - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
         with:
           python-version: '3.11'
+      - name: install graphviz system package
+        run: sudo apt-get update && sudo apt-get install -y graphviz
       - name: install dependencies
         run: uv sync --frozen
       - name: run tests with coverage

@@ -1,19 +1,18 @@
-"""Shared immutable-state plumbing for :class:`RegexBuilder` and :class:`Pattern`.
-
-Both fluent surfaces carry the same :class:`BuilderState` and use the same
-clone-and-replace pattern for chain methods. :class:`BuilderCore` provides
-the state attribute, the constructor, the ``_with_state`` helper that
-mixins call to produce new instances, the interactive ``__repr__``
-that shows the pattern-so-far, and value-based ``__eq__`` / ``__hash__``
-that make two builders equal when their underlying immutable state matches.
-"""
+"""Shared immutable-state plumbing for :class:`RegexBuilder` and :class:`Pattern`."""
 
 from __future__ import annotations
 
 from typing import Self
 
+from edify.builder.diagnose import diagnose_unfinished
 from edify.builder.types.state import BuilderState
+from edify.errors.comparison import (
+    CannotCompareUnfinishedBuilderError,
+    CannotHashUnfinishedBuilderError,
+)
+from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
+from edify.result.regex import Regex
 
 _UNCLOSED_FRAME_MARKER = "<unclosed>"
 
@@ -22,24 +21,31 @@ class BuilderCore:
     """Holds the immutable :class:`BuilderState` and clones it on chain steps."""
 
     _state: BuilderState
+    _cached_regex: Regex | None
 
     def __init__(self) -> None:
         self._state = BuilderState()
+        self._cached_regex = None
 
     def _with_state(self, new_state: BuilderState) -> Self:
         """Return a fresh instance of the same concrete type carrying ``new_state``."""
         concrete_class = type(self)
         new_instance = concrete_class.__new__(concrete_class)
         new_instance._state = new_state
+        new_instance._cached_regex = None
         return new_instance
 
-    def fork(self) -> Self:
-        """Return a fresh builder with the same immutable state.
+    def _lazy_regex(self) -> Regex:
+        """Return the memoised :class:`Regex` for this builder, compiling once on first call."""
+        cached = self._cached_regex
+        if cached is None:
+            to_regex = self.to_regex
+            cached = to_regex()
+            self._cached_regex = cached
+        return cached
 
-        Chain methods already return new instances so implicit forking works
-        (``root.digit()`` and ``root.word()`` share nothing after the split);
-        this method makes the intent explicit and discoverable via autocomplete.
-        """
+    def fork(self) -> Self:
+        """Return a fresh builder with the same immutable state."""
         return self._with_state(self._state)
 
     def copy(self) -> Self:
@@ -52,14 +58,29 @@ class BuilderCore:
         return f"<{type(self).__name__} {rendered!r}>"
 
     def __eq__(self, other: object) -> bool:
-        """Return True when ``other`` is a builder whose immutable state matches ``self``."""
+        """Return True when ``other`` is a builder with the same emitted pattern and flags."""
         if not isinstance(other, BuilderCore):
             return NotImplemented
-        return self._state == other._state
+        problems: list = []
+        left_problem = diagnose_unfinished(self._state, "left operand")
+        right_problem = diagnose_unfinished(other._state, "right operand")
+        if left_problem is not None:
+            problems.append(left_problem)
+        if right_problem is not None:
+            problems.append(right_problem)
+        if problems:
+            raise CannotCompareUnfinishedBuilderError(problems)
+        self_source = self.to_regex_string()
+        other_source = other.to_regex_string()
+        return self_source == other_source and self._state.flags == other._state.flags
 
     def __hash__(self) -> int:
-        """Return a hash derived from the immutable state; matches :meth:`__eq__`."""
-        return hash(self._state)
+        """Return a hash derived from ``(emitted_pattern, flags)``."""
+        problem = diagnose_unfinished(self._state, "builder")
+        if problem is not None:
+            raise CannotHashUnfinishedBuilderError(problem)
+        source = self.to_regex_string()
+        return hash((source, self._state.flags))
 
 
 def _render_or_marker(builder: BuilderCore) -> str:
@@ -69,5 +90,5 @@ def _render_or_marker(builder: BuilderCore) -> str:
         return _UNCLOSED_FRAME_MARKER
     try:
         return to_regex_string()
-    except CannotCallSubexpressionError:
+    except (CannotCallSubexpressionError, DanglingQuantifierError):
         return _UNCLOSED_FRAME_MARKER

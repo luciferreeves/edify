@@ -19,10 +19,6 @@ Lazy variants:
 * :class:`ZeroOrMoreLazyElement` — ``*?``.
 * :class:`OneOrMoreLazyElement` — ``+?``.
 * :class:`BetweenLazyElement` — ``{lower,upper}?``.
-
-The wrapped ``child`` is annotated as :class:`BaseElement` to avoid forming
-a cycle with the full ``Element`` union; the compile path dispatches on the
-concrete child type.
 """
 
 from __future__ import annotations

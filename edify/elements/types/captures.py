@@ -9,10 +9,6 @@ capture group already matched, addressed by index (``\\1``) or by name
 * :class:`NamedCaptureElement` — ``(?P<name>...)`` named capture.
 * :class:`BackReferenceElement` — ``\\<index>`` numbered back-reference.
 * :class:`NamedBackReferenceElement` — ``(?P=name)`` named back-reference.
-
-Recursive ``children`` references use :class:`BaseElement` so the dataclass
-field annotations type-check without importing the full ``Element`` union
-(which would form a cycle).
 """
 
 from __future__ import annotations

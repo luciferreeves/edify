@@ -1,11 +1,4 @@
-"""The sealed :data:`Element` union — every concrete element class spelled out.
-
-Function signatures that consume or return AST nodes use this union so the
-type checker enforces that every reachable case is one of the listed
-classes. Internal recursive references inside the dataclass definitions use
-:class:`edify.elements.types.base.BaseElement` to avoid forming an import
-cycle with this module.
-"""
+"""The sealed :data:`Element` union — every concrete element class spelled out."""
 
 from __future__ import annotations
 

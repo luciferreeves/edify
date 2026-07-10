@@ -4,11 +4,6 @@ Each leaf represents a regex construct that emits a fixed string and carries
 no parameters: ``\\d`` for :class:`DigitElement`, ``\\b`` for
 :class:`WordBoundaryElement`, ``^`` for :class:`StartOfInputElement`, etc.
 
-Every leaf is :func:`dataclasses.dataclass` with ``frozen=True`` so the whole
-AST is immutable; the builder produces new branches by constructing new
-elements rather than mutating existing ones. All leaves inherit from
-:class:`edify.elements.types.base.BaseElement` so they participate in the
-``Element`` union and in :func:`isinstance` dispatch.
 """
 
 from __future__ import annotations

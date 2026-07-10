@@ -2,8 +2,7 @@
 
 Each method returns a new builder whose flags snapshot has the corresponding
 field enabled. Flags are pattern-global — position in the chain does not
-matter — so the methods read identically whether placed at the start, the
-end, or anywhere in between.
+matter.
 """
 
 from __future__ import annotations

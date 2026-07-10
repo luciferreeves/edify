@@ -79,7 +79,11 @@ class TerminalsMixin(BuilderProtocol):
             compiled_pattern = re.compile(pattern_string, flags=flag_bitmask)
         except re.error as compile_error:
             raise FailedToCompileRegexError(str(compile_error)) from compile_error
-        return Regex(source=pattern_string, compiled=compiled_pattern)
+        return Regex(
+            source=pattern_string,
+            compiled=compiled_pattern,
+            elements=tuple(self._state.top_frame.children),
+        )
 
 
 def _ensure_fully_specified(builder: BuilderProtocol) -> None:
