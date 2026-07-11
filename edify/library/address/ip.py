@@ -10,15 +10,7 @@ def _hex_group() -> Pattern:
     return Pattern().between(1, 4).subexpression(hex_any)
 
 
-_ipv4 = (
-    Pattern()
-    .subexpression(octet)
-    .exactly(3)
-    .group()
-    .char(".")
-    .subexpression(octet)
-    .end()
-)
+_ipv4 = Pattern().subexpression(octet).exactly(3).group().char(".").subexpression(octet).end()
 
 
 def _b1() -> Pattern:
@@ -34,15 +26,7 @@ def _b1() -> Pattern:
 
 
 def _b2() -> Pattern:
-    return (
-        Pattern()
-        .between(1, 7)
-        .group()
-        .subexpression(_hex_group())
-        .char(":")
-        .end()
-        .char(":")
-    )
+    return Pattern().between(1, 7).group().subexpression(_hex_group()).char(":").end().char(":")
 
 
 def _b3() -> Pattern:
@@ -95,14 +79,7 @@ def _b9() -> Pattern:
         .char(":")
         .group()
         .any_of()
-        .subexpression(
-            Pattern()
-            .between(1, 7)
-            .group()
-            .char(":")
-            .subexpression(_hex_group())
-            .end()
-        )
+        .subexpression(Pattern().between(1, 7).group().char(":").subexpression(_hex_group()).end())
         .char(":")
         .end()
         .end()
@@ -205,10 +182,5 @@ _ipv6 = any_of(
     _b_hybrid(),
 )
 
-ip = (
-    Pattern()
-    .start_of_input()
-    .subexpression(any_of(_ipv4, _ipv6))
-    .end_of_input()
-)
+ip = Pattern().start_of_input().subexpression(any_of(_ipv4, _ipv6)).end_of_input()
 """Callable :class:`Pattern` for IPv4 dotted-quad or any IPv6 form."""

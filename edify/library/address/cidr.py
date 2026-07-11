@@ -17,15 +17,7 @@ _ipv4_prefix = any_of(
     Pattern().optional().any_of_chars("12").digit(),
 )
 
-_hextet = (
-    Pattern()
-    .between(1, 4)
-    .any_of()
-    .range("0", "9")
-    .range("a", "f")
-    .range("A", "F")
-    .end()
-)
+_hextet = Pattern().between(1, 4).any_of().range("0", "9").range("a", "f").range("A", "F").end()
 
 _ipv6_prefix = any_of(
     Pattern().string("12").any_of().range("0", "8").end(),
@@ -57,12 +49,7 @@ _ipv6_cidr = (
     .subexpression(_ipv6_prefix)
 )
 
-cidr = (
-    Pattern()
-    .start_of_input()
-    .subexpression(any_of(_ipv4_cidr, _ipv6_cidr))
-    .end_of_input()
-)
+cidr = Pattern().start_of_input().subexpression(any_of(_ipv4_cidr, _ipv6_cidr)).end_of_input()
 """Callable :class:`Pattern` for CIDR notation: IPv4 address + ``/0``-``/32``
 or IPv6 address + ``/0``-``/128``.
 """

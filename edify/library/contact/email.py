@@ -79,12 +79,7 @@ _basic_domain = (
     .subexpression(_domain_label())
 )
 
-_basic = (
-    Pattern()
-    .subexpression(_basic_local)
-    .char("@")
-    .subexpression(_basic_domain)
-)
+_basic = Pattern().subexpression(_basic_local).char("@").subexpression(_basic_domain)
 
 
 def _quoted_text() -> Pattern:
@@ -193,19 +188,9 @@ _ip_literal = (
 
 _rfc_local = any_of(_basic_local, _quoted_local)
 _rfc_domain = any_of(_basic_domain, _ip_literal)
-_rfc = (
-    Pattern()
-    .subexpression(_rfc_local)
-    .char("@")
-    .subexpression(_rfc_domain)
-)
+_rfc = Pattern().subexpression(_rfc_local).char("@").subexpression(_rfc_domain)
 
-email = (
-    Pattern()
-    .start_of_input()
-    .subexpression(any_of(_basic, _rfc))
-    .end_of_input()
-)
+email = Pattern().start_of_input().subexpression(any_of(_basic, _rfc)).end_of_input()
 """Callable :class:`Pattern` that accepts either the common permissive email
 shape or the full RFC 5322 mailbox shape.
 """

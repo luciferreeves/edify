@@ -4,16 +4,7 @@ from __future__ import annotations
 
 from edify import Pattern, any_of
 
-_lat_ninety = (
-    Pattern()
-    .string("90")
-    .optional()
-    .group()
-    .char(".")
-    .one_or_more()
-    .char("0")
-    .end()
-)
+_lat_ninety = Pattern().string("90").optional().group().char(".").one_or_more().char("0").end()
 
 _lat_below_ninety = (
     Pattern()
@@ -28,16 +19,7 @@ _lat_below_ninety = (
     .end()
 )
 
-_lon_one_eighty = (
-    Pattern()
-    .string("180")
-    .optional()
-    .group()
-    .char(".")
-    .one_or_more()
-    .char("0")
-    .end()
-)
+_lon_one_eighty = Pattern().string("180").optional().group().char(".").one_or_more().char("0").end()
 
 _lon_below_one_eighty_integer = any_of(
     Pattern().char("1").range("0", "7").digit(),

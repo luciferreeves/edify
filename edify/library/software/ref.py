@@ -31,14 +31,7 @@ def _forbidden_incl_slash() -> Pattern:
     )
 
 
-_sha = (
-    Pattern()
-    .between(7, 40)
-    .any_of()
-    .range("a", "f")
-    .range("0", "9")
-    .end()
-)
+_sha = Pattern().between(7, 40).any_of().range("a", "f").range("0", "9").end()
 _refs = (
     Pattern()
     .string("refs/")
@@ -53,17 +46,7 @@ _refs = (
     .one_or_more()
     .subexpression(_forbidden())
 )
-_bare = (
-    Pattern()
-    .subexpression(_forbidden_incl_slash())
-    .between(0, 127)
-    .subexpression(_forbidden())
-)
+_bare = Pattern().subexpression(_forbidden_incl_slash()).between(0, 127).subexpression(_forbidden())
 
-ref = (
-    Pattern()
-    .start_of_input()
-    .subexpression(any_of(_sha, _refs, _bare))
-    .end_of_input()
-)
+ref = Pattern().start_of_input().subexpression(any_of(_sha, _refs, _bare)).end_of_input()
 """Callable :class:`Pattern` for a git ref: SHA, ``refs/heads/…``, or bare branch/tag name."""

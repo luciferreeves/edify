@@ -33,12 +33,7 @@ _short = any_of(
 )
 _abbrev = Pattern().between(2, 5).uppercase()
 
-timezone = (
-    Pattern()
-    .start_of_input()
-    .subexpression(any_of(_iana, _short, _abbrev))
-    .end_of_input()
-)
+timezone = Pattern().start_of_input().subexpression(any_of(_iana, _short, _abbrev)).end_of_input()
 """Callable :class:`Pattern` for the timezone shape:
 IANA region/city (``America/Los_Angeles``), or short abbreviation
 (``UTC``, ``PST``, ``EST``, …).

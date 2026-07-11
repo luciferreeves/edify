@@ -39,10 +39,5 @@ _old = (
     .end()
 )
 
-arxiv = (
-    Pattern()
-    .start_of_input()
-    .subexpression(any_of(_new, _old))
-    .end_of_input()
-)
+arxiv = Pattern().start_of_input().subexpression(any_of(_new, _old)).end_of_input()
 """Callable :class:`Pattern` for an arXiv identifier."""

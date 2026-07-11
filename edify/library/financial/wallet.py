@@ -19,13 +19,7 @@ _bitcoin_legacy = (
 )
 
 _bitcoin_bech32 = (
-    Pattern()
-    .string("bc1")
-    .between(25, 89)
-    .any_of()
-    .range("a", "z")
-    .range("0", "9")
-    .end()
+    Pattern().string("bc1").between(25, 89).any_of().range("a", "z").range("0", "9").end()
 )
 
 _ethereum = (

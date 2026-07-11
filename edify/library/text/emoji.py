@@ -9,7 +9,7 @@ emoji = (
     .start_of_input()
     .one_or_more()
     .any_of()
-    .range("\U0001F300", "\U0001FAFF")
+    .range("\U0001f300", "\U0001faff")
     .range("☀", "➿")
     .end()
     .end_of_input()

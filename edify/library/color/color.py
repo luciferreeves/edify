@@ -123,10 +123,6 @@ color = any_of(
     .whitespace_char()
     .char(")")
     .end_of_input(),
-    Pattern()
-    .start_of_input()
-    .between(3, 20)
-    .letter()
-    .end_of_input(),
+    Pattern().start_of_input().between(3, 20).letter().end_of_input(),
 )
 """Callable :class:`Pattern` for any common CSS colour shape."""

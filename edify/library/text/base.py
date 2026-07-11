@@ -4,24 +4,9 @@ from __future__ import annotations
 
 from edify import Pattern, any_of
 
-_base16 = (
-    Pattern()
-    .one_or_more()
-    .any_of()
-    .range("0", "9")
-    .range("A", "F")
-    .range("a", "f")
-    .end()
-)
+_base16 = Pattern().one_or_more().any_of().range("0", "9").range("A", "F").range("a", "f").end()
 _base32 = (
-    Pattern()
-    .one_or_more()
-    .any_of()
-    .range("A", "Z")
-    .range("2", "7")
-    .end()
-    .zero_or_more()
-    .char("=")
+    Pattern().one_or_more().any_of().range("A", "Z").range("2", "7").end().zero_or_more().char("=")
 )
 _base58 = (
     Pattern()

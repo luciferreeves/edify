@@ -6,15 +6,7 @@ from edify import Pattern
 
 
 def _not_ctrl() -> Pattern:
-    return (
-        Pattern()
-        .assert_not_ahead()
-        .any_of()
-        .range("\x00", "\x1f")
-        .end()
-        .end()
-        .any_char()
-    )
+    return Pattern().assert_not_ahead().any_of().range("\x00", "\x1f").end().end().any_char()
 
 
 glob = (

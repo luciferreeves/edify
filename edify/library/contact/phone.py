@@ -49,12 +49,7 @@ _international = (
 )
 _short = Pattern().between(2, 4).digit()
 
-phone = (
-    Pattern()
-    .start_of_input()
-    .subexpression(any_of(_international, _short))
-    .end_of_input()
-)
+phone = Pattern().start_of_input().subexpression(any_of(_international, _short)).end_of_input()
 """Callable :class:`Pattern` for phone-number shapes: permissive international
 form (optional ``+``, country code, area code, and dash/dot/space separators)
 or 2-4 digit short-code fallback.

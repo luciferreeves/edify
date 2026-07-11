@@ -33,12 +33,7 @@ _ipv6_ptr = (
     .char(".")
 )
 
-ptr = (
-    Pattern()
-    .start_of_input()
-    .subexpression(any_of(_ipv4_ptr, _ipv6_ptr))
-    .end_of_input()
-)
+ptr = Pattern().start_of_input().subexpression(any_of(_ipv4_ptr, _ipv6_ptr)).end_of_input()
 """Callable :class:`Pattern` for the reverse-DNS PTR shape: IPv4
 ``d.c.b.a.in-addr.arpa`` or IPv6 32-nibble ``…ip6.arpa`` form.
 """

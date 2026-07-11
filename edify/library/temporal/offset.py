@@ -15,11 +15,7 @@ offset = (
     .any_of()
     .char("Z")
     .subexpression(
-        Pattern()
-        .any_of_chars("+-")
-        .subexpression(_hh)
-        .optional().char(":")
-        .range("0", "5").digit()
+        Pattern().any_of_chars("+-").subexpression(_hh).optional().char(":").range("0", "5").digit()
     )
     .end()
     .end_of_input()

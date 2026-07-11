@@ -10,15 +10,7 @@ def _sign() -> Pattern:
 
 
 _int = Pattern().subexpression(_sign()).one_or_more().digit()
-_dec = (
-    Pattern()
-    .subexpression(_sign())
-    .one_or_more()
-    .digit()
-    .char(".")
-    .one_or_more()
-    .digit()
-)
+_dec = Pattern().subexpression(_sign()).one_or_more().digit().char(".").one_or_more().digit()
 _ldec = Pattern().subexpression(_sign()).char(".").one_or_more().digit()
 _sci_dec = (
     Pattern()

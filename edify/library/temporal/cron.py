@@ -42,12 +42,7 @@ _expr = (
     .subexpression(_field)
 )
 
-cron = (
-    Pattern()
-    .start_of_input()
-    .subexpression(any_of(_alias, _expr))
-    .end_of_input()
-)
+cron = Pattern().start_of_input().subexpression(any_of(_alias, _expr)).end_of_input()
 """Callable :class:`Pattern` for cron-expression shapes: shortcut aliases
 (``@daily`` etc.) or 5-/6-field whitespace-separated expressions.
 """
