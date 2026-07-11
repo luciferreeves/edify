@@ -1,10 +1,16 @@
-"""``ascii`` — printable-ASCII-only string shape."""
+"""``ascii`` — printable-ASCII string shape."""
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-ascii = RegexBackedPattern(r"^[\x20-\x7E]+$")
+ascii = (
+    Pattern()
+    .start_of_input()
+    .one_or_more()
+    .range("\x20", "\x7E")
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a printable-ASCII-only string
-(characters ``0x20``-``0x7E``).
+(``0x20``-``0x7E`` — space through tilde).
 """

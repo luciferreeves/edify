@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-alphanumeric = RegexBackedPattern(r"^[A-Za-z0-9]+$")
+alphanumeric = (
+    Pattern()
+    .start_of_input()
+    .one_or_more()
+    .alphanumeric()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a letters-and-digits-only string."""

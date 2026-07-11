@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-numeric = RegexBackedPattern(r"^\d+$")
+numeric = (
+    Pattern()
+    .start_of_input()
+    .one_or_more()
+    .digit()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a digits-only string."""

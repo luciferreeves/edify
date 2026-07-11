@@ -1,10 +1,16 @@
-"""``word`` — Python word-character string shape (``\\w+``)."""
+"""``word`` — word-character string shape."""
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-word = RegexBackedPattern(r"^\w+$")
+word = (
+    Pattern()
+    .start_of_input()
+    .one_or_more()
+    .word()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a word-character string:
-letters, digits, and underscores.
+letters, digits, and underscore.
 """
