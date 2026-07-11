@@ -2,7 +2,34 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-roman = RegexBackedPattern(r"^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")
+roman = (
+    Pattern()
+    .start_of_input()
+    .between(0, 3)
+    .char("M")
+    .group()
+    .any_of()
+    .string("CM")
+    .string("CD")
+    .subexpression(Pattern().optional().char("D").between(0, 3).char("C"))
+    .end()
+    .end()
+    .group()
+    .any_of()
+    .string("XC")
+    .string("XL")
+    .subexpression(Pattern().optional().char("L").between(0, 3).char("X"))
+    .end()
+    .end()
+    .group()
+    .any_of()
+    .string("IX")
+    .string("IV")
+    .subexpression(Pattern().optional().char("V").between(0, 3).char("I"))
+    .end()
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a Roman-numeral value 1-3999."""

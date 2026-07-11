@@ -2,7 +2,21 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-ordinal = RegexBackedPattern(r"^\d+(?:st|nd|rd|th)$")
+ordinal = (
+    Pattern()
+    .start_of_input()
+    .one_or_more()
+    .digit()
+    .group()
+    .any_of()
+    .string("st")
+    .string("nd")
+    .string("rd")
+    .string("th")
+    .end()
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for an English ordinal number."""

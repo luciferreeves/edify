@@ -2,7 +2,16 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-ratio = RegexBackedPattern(r"^\d+:\d+$")
+ratio = (
+    Pattern()
+    .start_of_input()
+    .one_or_more()
+    .digit()
+    .char(":")
+    .one_or_more()
+    .digit()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a ratio shape: ``digits:digits``."""
