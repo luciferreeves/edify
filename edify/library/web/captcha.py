@@ -2,7 +2,29 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-captcha = RegexBackedPattern(r"^[A-Za-z0-9_.\-/+=?&#:%~]{2,4096}$")
+captcha = (
+    Pattern()
+    .start_of_input()
+    .between(2, 4096)
+    .any_of()
+    .range("A", "Z")
+    .range("a", "z")
+    .range("0", "9")
+    .char("_")
+    .char(".")
+    .char("-")
+    .char("/")
+    .char("+")
+    .char("=")
+    .char("?")
+    .char("&")
+    .char("#")
+    .char(":")
+    .char("%")
+    .char("~")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for captcha web-artifact identifier or content marker."""

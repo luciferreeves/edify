@@ -2,7 +2,21 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-codec = RegexBackedPattern(r"^[a-zA-Z][a-zA-Z0-9_.\-]{1,29}$")
+codec = (
+    Pattern()
+    .start_of_input()
+    .letter()
+    .between(1, 29)
+    .any_of()
+    .range("a", "z")
+    .range("A", "Z")
+    .range("0", "9")
+    .char("_")
+    .char(".")
+    .char("-")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a media codec name (``h264``, ``vp9``, ``aac``, etc.)."""

@@ -1,8 +1,15 @@
-"""``extension`` — file extension shape (``.ext``)."""
+"""``extension`` — file extension shape."""
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-extension = RegexBackedPattern(r"^\.[a-zA-Z0-9]{1,10}$")
+extension = (
+    Pattern()
+    .start_of_input()
+    .char(".")
+    .between(1, 10)
+    .alphanumeric()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a file extension: dot + 1-10 alphanumeric."""
