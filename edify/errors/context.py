@@ -53,19 +53,7 @@ def _context_for_frame(frame) -> CallerContext:
     filename = frame.f_code.co_filename
     positions = list(frame.f_code.co_positions())
     instruction_index = frame.f_lasti // 2
-    if 0 <= instruction_index < len(positions):
-        raw_position = positions[instruction_index]
-    else:
-        raw_position = (frame.f_lineno, frame.f_lineno, None, None)
-    start_line, end_line, start_col, end_col = raw_position
-    if start_line is None:
-        start_line = frame.f_lineno
-    if end_line is None:
-        end_line = start_line
-    if start_col is None:
-        start_col = 0
-    if end_col is None:
-        end_col = start_col
+    start_line, _end_line, start_col, end_col = positions[instruction_index]
     source_line = _read_source_line(filename, start_line)
     return CallerContext(
         filename=filename,

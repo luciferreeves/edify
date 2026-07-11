@@ -62,7 +62,7 @@ from edify.elements.types.quantifiers import (
     ZeroOrMoreLazyElement,
 )
 from edify.introspect import verbose as verbose_module
-from edify.introspect.verbose import _render_line, verbose_elements
+from edify.introspect.verbose import verbose_elements
 
 
 def _verbose(*elements) -> str:
@@ -432,14 +432,9 @@ def test_alignment_uses_common_comment_column_across_lines():
     assert len(set(hash_columns)) == 1
 
 
-def test_line_without_comment_returns_bare_fragment():
-    assert _render_line("", "\\d", "") == "\\d"
-
-
 def test_line_with_long_fragment_still_leaves_two_space_gap_before_comment():
-    long_fragment = "a" * 30
-    output = _render_line("", long_fragment, "note")
-    assert "  # note" in output
+    output = _verbose(StringElement(value="a" * 30))
+    assert "  # " in output
 
 
 def test_regex_to_verbose_string_end_to_end_via_builder():

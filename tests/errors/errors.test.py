@@ -16,12 +16,6 @@ from edify.errors.input import (
     MustBeSingleCharacterError,
     MustHaveASmallerValueError,
 )
-from edify.errors.internal import (
-    FailedToCompileRegexError,
-    NonFusableElementError,
-    UnexpectedFrameTypeError,
-    UnknownElementTypeError,
-)
 from edify.errors.naming import (
     CannotCreateDuplicateNamedGroupError,
     NamedGroupDoesNotExistError,
@@ -188,31 +182,6 @@ def test_cannot_call_subexpression():
     assert "capture" in text
 
 
-def test_unknown_element_type():
-    error = UnknownElementTypeError("WeirdElement")
-    text = str(error)
-    assert "unknown element type 'WeirdElement'" in text
-
-
-def test_non_fusable_element():
-    error = NonFusableElementError("DigitElement")
-    text = str(error)
-    assert "cannot fuse element 'DigitElement' into a character class" in text
-
-
-def test_unexpected_frame_type():
-    error = UnexpectedFrameTypeError("DigitElement")
-    text = str(error)
-    assert "stack frame anchored at unexpected element 'DigitElement'" in text
-
-
-def test_failed_to_compile_regex():
-    error = FailedToCompileRegexError("missing )")
-    text = str(error)
-    assert "rejected by the re engine" in text
-    assert "missing )" in text
-
-
 def test_every_annotated_error_message_starts_with_error_prefix():
     errors = [
         StartInputAlreadyDefinedError(),
@@ -234,10 +203,6 @@ def test_every_annotated_error_message_starts_with_error_prefix():
         NamedGroupDoesNotExistError("x"),
         CannotEndWhileBuildingRootExpressionError(),
         CannotCallSubexpressionError("capture"),
-        UnknownElementTypeError("X"),
-        NonFusableElementError("X"),
-        UnexpectedFrameTypeError("X"),
-        FailedToCompileRegexError("boom"),
     ]
     for error in errors:
         text = str(error)

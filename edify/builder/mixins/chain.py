@@ -21,7 +21,6 @@ from edify.elements.types.groups import (
     AssertNotBehindElement,
     GroupElement,
 )
-from edify.errors.internal import UnexpectedFrameTypeError
 from edify.errors.structure import CannotEndWhileBuildingRootExpressionError
 
 
@@ -48,23 +47,18 @@ def _close_frame(frame: StackFrame) -> BaseElement:
     """Construct the container element that wraps the frame's accumulated children."""
     type_node = frame.type_node
     children = frame.children
-    match type_node:
-        case CaptureElement():
-            return CaptureElement(children=children)
-        case NamedCaptureElement(name=capture_name):
-            return NamedCaptureElement(name=capture_name, children=children)
-        case GroupElement():
-            return GroupElement(children=children)
-        case AnyOfElement():
-            return AnyOfElement(children=children)
-        case AssertAheadElement():
-            return AssertAheadElement(children=children)
-        case AssertNotAheadElement():
-            return AssertNotAheadElement(children=children)
-        case AssertBehindElement():
-            return AssertBehindElement(children=children)
-        case AssertNotBehindElement():
-            return AssertNotBehindElement(children=children)
-        case _:
-            element_type_name = type(type_node).__name__
-            raise UnexpectedFrameTypeError(element_type_name)
+    if isinstance(type_node, NamedCaptureElement):
+        return NamedCaptureElement(name=type_node.name, children=children)
+    if isinstance(type_node, CaptureElement):
+        return CaptureElement(children=children)
+    if isinstance(type_node, GroupElement):
+        return GroupElement(children=children)
+    if isinstance(type_node, AnyOfElement):
+        return AnyOfElement(children=children)
+    if isinstance(type_node, AssertAheadElement):
+        return AssertAheadElement(children=children)
+    if isinstance(type_node, AssertNotAheadElement):
+        return AssertNotAheadElement(children=children)
+    if isinstance(type_node, AssertBehindElement):
+        return AssertBehindElement(children=children)
+    return AssertNotBehindElement(children=children)

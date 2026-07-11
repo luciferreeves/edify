@@ -301,13 +301,6 @@ def test_render_graphviz_svg_returns_svg_string_when_graphviz_available():
     assert "</svg>" in output
 
 
-def test_render_graphviz_svg_raises_missing_dependency_when_graphviz_absent(monkeypatch):
-    monkeypatch.setattr(graphviz_module, "_graphviz_module", None)
-    regex = RegexBuilder().digit().to_regex()
-    with pytest.raises(MissingGraphvizDependencyError):
-        render_graphviz_svg(regex.elements)
-
-
 def test_module_level_import_falls_back_to_none_when_graphviz_missing(monkeypatch):
     saved_module = sys.modules.pop("graphviz", None)
     real_import = builtins.__import__
@@ -321,7 +314,9 @@ def test_module_level_import_falls_back_to_none_when_graphviz_missing(monkeypatc
     monkeypatch.setitem(sys.modules, "graphviz", None)
     reloaded = importlib.reload(graphviz_module)
     try:
-        assert reloaded._graphviz_module is None
+        regex = RegexBuilder().digit().to_regex()
+        with pytest.raises(MissingGraphvizDependencyError):
+            reloaded.render_graphviz_svg(regex.elements)
     finally:
         monkeypatch.undo()
         if saved_module is not None:

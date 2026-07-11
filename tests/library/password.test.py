@@ -13,3 +13,7 @@ def test_password():
         )
         is False
     )
+
+
+def test_password_rejects_non_string():
+    assert password(42) is False

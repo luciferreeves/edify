@@ -9,7 +9,7 @@ from edify.errors.input import MustBeInstanceError
 def test_pattern_builds_the_same_element_tree_as_a_builder():
     pattern = Pattern().between(3, 20).word()
     builder = RegexBuilder().between(3, 20).word()
-    assert pattern._state == builder._state
+    assert pattern == builder
 
 
 def test_pattern_exposes_to_regex_string_terminal():

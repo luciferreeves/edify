@@ -1,0 +1,45 @@
+"""``cargo`` — Cargo crate identifier shape."""
+
+from __future__ import annotations
+
+from edify import Pattern
+
+cargo = (
+    Pattern()
+    .start_of_input()
+    .letter()
+    .between(0, 63)
+    .any_of()
+    .range("a", "z")
+    .range("A", "Z")
+    .range("0", "9")
+    .char("_")
+    .char("-")
+    .end()
+    .optional()
+    .group()
+    .char("@")
+    .one_or_more()
+    .digit()
+    .between(0, 3)
+    .group()
+    .char(".")
+    .one_or_more()
+    .digit()
+    .end()
+    .optional()
+    .group()
+    .any_of_chars("-.+")
+    .one_or_more()
+    .any_of()
+    .range("a", "z")
+    .range("A", "Z")
+    .range("0", "9")
+    .char(".")
+    .char("-")
+    .end()
+    .end()
+    .end()
+    .end_of_input()
+)
+"""Callable :class:`Pattern` for a Cargo crate identifier."""

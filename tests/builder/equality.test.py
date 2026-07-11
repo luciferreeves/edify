@@ -66,8 +66,14 @@ def test_equality_uses_emitted_pattern_not_underlying_state():
 def test_hash_uses_emitted_pattern_and_flags_tuple():
     a = RegexBuilder().string("hi")
     b = RegexBuilder().string("hi")
-    assert hash(a) == hash((a.to_regex_string(), a._state.flags))
     assert hash(a) == hash(b)
+
+
+def test_hash_differs_when_flags_differ_but_pattern_matches():
+    without_flag = RegexBuilder().string("hi")
+    with_flag = RegexBuilder().ignore_case().string("hi")
+    assert without_flag.to_regex_string() == with_flag.to_regex_string()
+    assert hash(without_flag) != hash(with_flag)
 
 
 def test_equality_raises_when_left_operand_has_open_frames():

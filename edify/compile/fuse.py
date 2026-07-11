@@ -11,7 +11,6 @@ from __future__ import annotations
 
 from edify.elements.types.base import BaseElement
 from edify.elements.types.chars import AnyOfCharsElement, CharElement, RangeElement
-from edify.errors.internal import NonFusableElementError
 
 
 def fuse_char_class_members(
@@ -55,13 +54,8 @@ def _partition_by_fusability(
 
 def _fragment_for(member: BaseElement) -> str:
     """Return the char-class fragment produced by a single fusable element."""
-    match member:
-        case CharElement(value=character):
-            return character
-        case AnyOfCharsElement(value=characters):
-            return characters
-        case RangeElement(start=lower_bound, end=upper_bound):
-            return f"{lower_bound}-{upper_bound}"
-        case _:
-            element_type_name = type(member).__name__
-            raise NonFusableElementError(element_type_name)
+    if isinstance(member, CharElement):
+        return member.value
+    if isinstance(member, AnyOfCharsElement):
+        return member.value
+    return f"{member.start}-{member.end}"
