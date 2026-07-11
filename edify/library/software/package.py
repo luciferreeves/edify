@@ -1,8 +1,39 @@
-"""``package`` — package identifier shape (``@scope/name`` or ``name``)."""
+"""``package`` — npm/pypi-style package identifier shape."""
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-package = RegexBackedPattern(r"^(?:@[a-z0-9][a-z0-9-]*/)?[a-z0-9][a-z0-9._-]{0,213}$")
+package = (
+    Pattern()
+    .start_of_input()
+    .optional()
+    .group()
+    .char("@")
+    .any_of()
+    .range("a", "z")
+    .range("0", "9")
+    .end()
+    .zero_or_more()
+    .any_of()
+    .range("a", "z")
+    .range("0", "9")
+    .char("-")
+    .end()
+    .char("/")
+    .end()
+    .any_of()
+    .range("a", "z")
+    .range("0", "9")
+    .end()
+    .between(0, 213)
+    .any_of()
+    .range("a", "z")
+    .range("0", "9")
+    .char(".")
+    .char("_")
+    .char("-")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for an npm/pypi-style package identifier."""

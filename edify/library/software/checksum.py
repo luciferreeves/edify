@@ -1,8 +1,18 @@
-"""``checksum`` — hex checksum shape (CRC through SHA)."""
+"""``checksum`` — hex checksum shape (any common hash width)."""
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-checksum = RegexBackedPattern(r"^[a-fA-F0-9]{8,128}$")
+checksum = (
+    Pattern()
+    .start_of_input()
+    .between(8, 128)
+    .any_of()
+    .range("a", "f")
+    .range("A", "F")
+    .range("0", "9")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a hex checksum (any common hash width)."""
