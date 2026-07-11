@@ -19,7 +19,23 @@ from edify.library.auth.token import token
 from edify.library.auth.webauthn import webauthn
 
 __all__ = [
-    "apikey", "bearer", "challenge", "csrf", "hmac", "jwt", "mfa", "mnemonic",
-    "otp", "passkey", "password", "pin", "refresh", "secret", "session",
-    "signing", "sso", "token", "webauthn",
+    "apikey",
+    "bearer",
+    "challenge",
+    "csrf",
+    "hmac",
+    "jwt",
+    "mfa",
+    "mnemonic",
+    "otp",
+    "passkey",
+    "password",
+    "pin",
+    "refresh",
+    "secret",
+    "session",
+    "signing",
+    "sso",
+    "token",
+    "webauthn",
 ]

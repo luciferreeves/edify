@@ -10,7 +10,18 @@ from edify.library.software.package import package
 from edify.library.software.ref import ref
 from edify.library.software.semver import semver
 from edify.library.software.version import version
+
 __all__ = [
-    "cargo", "checksum", "component", "digest", "docker", "git",
-    "image", "makefile", "package", "ref", "semver", "version",
+    "cargo",
+    "checksum",
+    "component",
+    "digest",
+    "docker",
+    "git",
+    "image",
+    "makefile",
+    "package",
+    "ref",
+    "semver",
+    "version",
 ]

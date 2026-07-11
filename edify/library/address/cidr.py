@@ -13,6 +13,6 @@ cidr = RegexBackedPattern(
     r"/(?:12[0-8]|1[01]\d|[1-9]?\d)"
     r")$"
 )
-"""Callable :class:`Pattern` for CIDR notation: IPv4 address + ``/0``–``/32``
-or IPv6 address + ``/0``–``/128``.
+"""Callable :class:`Pattern` for CIDR notation: IPv4 address + ``/0``-``/32``
+or IPv6 address + ``/0``-``/128``.
 """

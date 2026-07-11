@@ -1,0 +1,65 @@
+.. _upgrading-0-3-to-1-0:
+
+Upgrading from 0.3 to 1.0
+==========================
+
+.. _validators-callable:
+
+Validators are callable ``Pattern`` instances
+---------------------------------------------
+
+In 0.3 the built-in validators under ``edify.library`` were plain functions.
+In 1.0 every validator exposes itself as a :class:`edify.Pattern` instance
+that is *callable* — ``email(value)`` still returns a ``bool``, and the
+underlying pattern is available via ``email.match(value)``,
+``email.to_regex_string()``, and every other :class:`Pattern` method:
+
+.. code-block:: python
+
+    import inspect
+    from edify import Pattern
+    from edify.library import email
+
+    inspect.isfunction(email)        # False   (was True in 0.3)
+    isinstance(email, Pattern)       # True    (was False in 0.3)
+    email("user@example.com")        # True    (call form unchanged)
+    email.match("user@example.com")  # <re.Match object>
+
+The library is also reorganized into 22 category folders (``identifier/``,
+``address/``, ``contact/``, ``auth/``, ``financial/``, ``temporal/``,
+``geo/``, ``numeric/``, ``text/``, ``color/``, ``media/``, ``software/``,
+``transport/``, ``publishing/``, ``product/``, ``medical/``, ``api/``,
+``data/``, ``document/``, ``security/``, ``grammar/``, ``web/``). Every
+validator is importable both from its category submodule and from the
+flat top-level ``edify.library`` namespace:
+
+.. code-block:: python
+
+    from edify.library import uuid                    # flat top-level
+    from edify.library.identifier import uuid         # category submodule
+
+The library grew from 14 validators to **200 exported validators** across
+these categories.
+
+Renamed and merged validators
+-----------------------------
+
+Several 0.3 names have been merged into more general patterns in 1.0:
+
++---------------------------------+-------------------------------+
+| 0.3 name                        | 1.0 replacement               |
++=================================+===============================+
+| ``iso_date``                    | ``date``                      |
++---------------------------------+-------------------------------+
+| ``email_rfc_5322``              | ``email``                     |
++---------------------------------+-------------------------------+
+| ``ipv4``, ``ipv6``              | ``ip``                        |
++---------------------------------+-------------------------------+
+| ``phone_number``                | ``phone``                     |
++---------------------------------+-------------------------------+
+| ``zip``                         | ``postal``                    |
++---------------------------------+-------------------------------+
+
+The new names accept any recognised form of their concept, and the old
+name-plus-``form`` variants continue to work via each validator's
+``form`` / ``strict`` / ``version`` keyword arguments where applicable.

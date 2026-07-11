@@ -7,8 +7,8 @@ from edify.library.identifier.ein import ein
 from edify.library.identifier.guid import guid
 from edify.library.identifier.iata import iata
 from edify.library.identifier.iban import iban
-from edify.library.identifier.iccid import iccid
 from edify.library.identifier.icao import icao
+from edify.library.identifier.iccid import iccid
 from edify.library.identifier.imei import imei
 from edify.library.identifier.imo import imo
 from edify.library.identifier.isin import isin
@@ -35,8 +35,8 @@ __all__ = [
     "guid",
     "iata",
     "iban",
-    "iccid",
     "icao",
+    "iccid",
     "imei",
     "imo",
     "isin",

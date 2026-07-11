@@ -1,6 +1,9 @@
 """``ref`` — git ref shape (branch, tag, or SHA)."""
+
 from __future__ import annotations
+
 from edify.library._support.regex import RegexBackedPattern
+
 ref = RegexBackedPattern(
     r"^(?:"
     r"[a-f0-9]{7,40}"

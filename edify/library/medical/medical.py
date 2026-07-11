@@ -1,6 +1,9 @@
 """``medical`` — medical-coding-system code shape (SNOMED, ICD, NPI, RxNorm, LOINC)."""
+
 from __future__ import annotations
+
 from edify.library._support.regex import RegexBackedPattern
+
 medical = RegexBackedPattern(
     r"^(?:"
     r"\d{6,18}"

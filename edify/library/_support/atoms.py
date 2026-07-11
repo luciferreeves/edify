@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from edify import Pattern, any_of
 
-
 hex_lower = Pattern().any_of().range("0", "9").range("a", "f").end()
 """A single lowercase hex nibble: ``[0-9a-f]``."""
 

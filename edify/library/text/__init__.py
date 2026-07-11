@@ -11,6 +11,15 @@ from edify.library.text.unicode import unicode
 from edify.library.text.word import word
 
 __all__ = [
-    "alpha", "alphanumeric", "ascii", "base", "emoji", "numeric",
-    "printable", "script", "slug", "unicode", "word",
+    "alpha",
+    "alphanumeric",
+    "ascii",
+    "base",
+    "emoji",
+    "numeric",
+    "printable",
+    "script",
+    "slug",
+    "unicode",
+    "word",
 ]

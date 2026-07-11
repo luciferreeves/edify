@@ -6,5 +6,5 @@ from edify.library._support.regex import RegexBackedPattern
 
 timestamp = RegexBackedPattern(r"^-?\d{10,13}$")
 """Callable :class:`Pattern` for a Unix epoch timestamp in seconds or
-milliseconds: optional sign followed by 10–13 digits.
+milliseconds: optional sign followed by 10-13 digits.
 """

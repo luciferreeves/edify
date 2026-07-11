@@ -1,4 +1,4 @@
-"""``number`` — number in any base or form (integer, decimal, hex, binary, octal, scientific, complex)."""
+"""``number`` — number in any base or common form."""
 
 from __future__ import annotations
 

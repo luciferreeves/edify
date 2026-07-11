@@ -13,5 +13,5 @@ phone = RegexBackedPattern(
 )
 """Callable :class:`Pattern` for phone-number shapes: permissive international
 form (optional ``+``, country code, area code, and dash/dot/space separators)
-or 2–4 digit short-code fallback.
+or 2-4 digit short-code fallback.
 """

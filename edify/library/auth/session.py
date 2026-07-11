@@ -1,4 +1,4 @@
-"""``session`` — session identifier shape (16–128 URL-safe chars)."""
+"""``session`` — session identifier shape (16-128 URL-safe chars)."""
 
 from __future__ import annotations
 
@@ -8,7 +8,12 @@ session = (
     Pattern()
     .start_of_input()
     .between(16, 128)
-    .any_of().range("A", "Z").range("a", "z").range("0", "9").any_of_chars("_-").end()
+    .any_of()
+    .range("A", "Z")
+    .range("a", "z")
+    .range("0", "9")
+    .any_of_chars("_-")
+    .end()
     .end_of_input()
 )
-"""Callable :class:`Pattern` for a session-identifier shape: 16–128 URL-safe characters."""
+"""Callable :class:`Pattern` for a session-identifier shape: 16-128 URL-safe characters."""

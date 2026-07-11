@@ -10,7 +10,18 @@ from edify.library.api.saml import saml
 from edify.library.api.soap import soap
 from edify.library.api.swagger import swagger
 from edify.library.api.webhook import webhook
+
 __all__ = [
-    "atom", "graphql", "hal", "jsonapi", "oauth", "openapi", "openid",
-    "rss", "saml", "soap", "swagger", "webhook",
+    "atom",
+    "graphql",
+    "hal",
+    "jsonapi",
+    "oauth",
+    "openapi",
+    "openid",
+    "rss",
+    "saml",
+    "soap",
+    "swagger",
+    "webhook",
 ]

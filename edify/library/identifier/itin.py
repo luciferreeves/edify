@@ -17,15 +17,17 @@ itin = (
     Pattern()
     .start_of_input()
     .char("9")
-    .exactly(2).digit()
+    .exactly(2)
+    .digit()
     .char("-")
     .subexpression(_group_range)
     .char("-")
-    .exactly(4).digit()
+    .exactly(4)
+    .digit()
     .end_of_input()
 )
 """Callable :class:`Pattern` for the US ITIN ``9NN-YY-ZZZZ`` shape (area starts
-with 9; group in ``50``–``65``, ``70``–``88``, ``90``–``92``, or ``94``–``99``).
+with 9; group in ``50``-``65``, ``70``-``88``, ``90``-``92``, or ``94``-``99``).
 """
 
 del _group_range

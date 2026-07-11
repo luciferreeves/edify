@@ -1,4 +1,4 @@
-"""``mnemonic`` — BIP-39 mnemonic phrase shape (12–24 lowercase words separated by single spaces)."""
+"""``mnemonic`` — BIP-39 mnemonic phrase shape."""
 
 from __future__ import annotations
 

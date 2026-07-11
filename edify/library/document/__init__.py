@@ -7,6 +7,15 @@ from edify.library.document.pptx import pptx
 from edify.library.document.readme import readme
 from edify.library.document.svg import svg
 from edify.library.document.xlsx import xlsx
+
 __all__ = [
-    "docx", "epub", "mobi", "odt", "pdf", "pptx", "readme", "svg", "xlsx",
+    "docx",
+    "epub",
+    "mobi",
+    "odt",
+    "pdf",
+    "pptx",
+    "readme",
+    "svg",
+    "xlsx",
 ]

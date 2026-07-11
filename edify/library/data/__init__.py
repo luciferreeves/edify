@@ -10,7 +10,18 @@ from edify.library.data.toml import toml
 from edify.library.data.tsv import tsv
 from edify.library.data.xml import xml
 from edify.library.data.yaml import yaml
+
 __all__ = [
-    "avro", "csv", "hdf5", "html", "ini", "json", "msgpack",
-    "protobuf", "toml", "tsv", "xml", "yaml",
+    "avro",
+    "csv",
+    "hdf5",
+    "html",
+    "ini",
+    "json",
+    "msgpack",
+    "protobuf",
+    "toml",
+    "tsv",
+    "xml",
+    "yaml",
 ]

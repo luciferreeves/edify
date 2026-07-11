@@ -9,5 +9,5 @@ domain = RegexBackedPattern(
     r"[a-zA-Z]{2,63}$"
 )
 """Callable :class:`Pattern` for the DNS domain name shape:
-at least one label followed by a TLD of 2–63 letters.
+at least one label followed by a TLD of 2-63 letters.
 """

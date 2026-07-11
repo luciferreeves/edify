@@ -1,4 +1,4 @@
-"""``port`` — TCP/UDP port number 0–65535."""
+"""``port`` — TCP/UDP port number 0-65535."""
 
 from __future__ import annotations
 
@@ -13,4 +13,4 @@ port = any_of(
     Pattern().start_of_input().range("1", "9").between(0, 3).digit().end_of_input(),
     Pattern().start_of_input().char("0").end_of_input(),
 )
-"""Callable :class:`Pattern` for a TCP/UDP port number 0–65535."""
+"""Callable :class:`Pattern` for a TCP/UDP port number 0-65535."""

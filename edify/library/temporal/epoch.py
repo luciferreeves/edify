@@ -6,5 +6,5 @@ from edify.library._support.regex import RegexBackedPattern
 
 epoch = RegexBackedPattern(r"^-?\d{1,10}$")
 """Callable :class:`Pattern` for a Unix epoch-seconds value: optional sign
-followed by 1–10 digits (fits in a 32-bit signed integer).
+followed by 1-10 digits (fits in a 32-bit signed integer).
 """

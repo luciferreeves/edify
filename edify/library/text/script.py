@@ -1,4 +1,4 @@
-"""``script`` — text in a specific Unicode script (Latin/Cyrillic/Greek/CJK/etc.)."""
+"""``script`` — text in a specific Unicode script."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ script = RegexBackedPattern(
     r"[A-Za-zÀ-ɏ]+"
     r"|[Ѐ-ӿ]+"
     r"|[Ͱ-Ͽ]+"
-    r"|[一-鿿぀-ゟ゠-ヿ가-힯]+"
+    r"|[一-鿿぀-ゟ゠-ヿ가-힯]+"  # noqa: RUF001
     r"|[؀-ۿ]+"
     r"|[֐-׿]+"
     r"|[ऀ-ॿ]+"

@@ -9,6 +9,13 @@ from edify.library.numeric.roman import roman
 from edify.library.numeric.scientific import scientific
 
 __all__ = [
-    "fraction", "hash", "integer", "number", "ordinal", "percentage",
-    "ratio", "roman", "scientific",
+    "fraction",
+    "hash",
+    "integer",
+    "number",
+    "ordinal",
+    "percentage",
+    "ratio",
+    "roman",
+    "scientific",
 ]
