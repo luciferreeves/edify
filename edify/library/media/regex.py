@@ -8,7 +8,7 @@ from edify.pattern.composition import Pattern
 
 
 class _RegexPattern(Pattern):
-    def __call__(self, value: str) -> bool:  # type: ignore[override]
+    def __call__(self, value: str) -> bool:
         if not isinstance(value, str):
             return False
         try:

@@ -20,8 +20,8 @@ def test_non_word_boundary_compiles_to_backslash_capital_b():
 
 
 def test_word_boundary_matches_fluent_chain_output():
-    assert WORD_BOUNDARY._state == Pattern().word_boundary()._state
+    assert Pattern().word_boundary() == WORD_BOUNDARY
 
 
 def test_non_word_boundary_matches_fluent_chain_output():
-    assert NON_WORD_BOUNDARY._state == Pattern().non_word_boundary()._state
+    assert Pattern().non_word_boundary() == NON_WORD_BOUNDARY

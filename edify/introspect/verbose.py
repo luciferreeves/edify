@@ -341,8 +341,6 @@ def _render_children(children: tuple[BaseElement, ...], depth: int) -> list[str]
 def _render_line(prefix: str, fragment: str, comment: str) -> str:
     """Return one aligned output line: ``<prefix><fragment>   # <comment>``."""
     left = f"{prefix}{fragment}"
-    if not comment:
-        return left.rstrip()
     padding_needed = _COMMENT_COLUMN - len(left)
     if padding_needed < 2:
         padding_needed = 2

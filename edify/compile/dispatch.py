@@ -14,7 +14,6 @@ from edify.compile.groups import render_grouping
 from edify.compile.leaves import render_leaf
 from edify.compile.quantifier import render_quantifier
 from edify.compile.root import render_root
-from edify.elements.types.root import RootElement
 from edify.elements.types.union import (
     CaptureGroupElement,
     CharShapedElement,
@@ -23,7 +22,6 @@ from edify.elements.types.union import (
     LeafElement,
     QuantifierElement,
 )
-from edify.errors.internal import UnknownElementTypeError
 
 
 def render_element(element: Element) -> str:
@@ -34,10 +32,6 @@ def render_element(element: Element) -> str:
 
     Returns:
         The rendered regex fragment for the element.
-
-    Raises:
-        UnknownElementTypeError: If ``element`` is not one of the recognised
-            element kinds (which would indicate an AST built outside the builder).
     """
     if isinstance(element, LeafElement):
         return render_leaf(element)
@@ -49,7 +43,4 @@ def render_element(element: Element) -> str:
         return render_grouping(element, render_element)
     if isinstance(element, QuantifierElement):
         return render_quantifier(element, render_element)
-    if isinstance(element, RootElement):
-        return render_root(element, render_element)
-    element_type_name = type(element).__name__
-    raise UnknownElementTypeError(element_type_name)
+    return render_root(element, render_element)

@@ -15,7 +15,6 @@ from edify.builder.types.flags import Flags
 from edify.builder.types.protocol import BuilderProtocol
 from edify.compile.dispatch import render_element
 from edify.elements.types.root import RootElement
-from edify.errors.internal import FailedToCompileRegexError
 from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
 from edify.result import Regex
@@ -75,10 +74,7 @@ class TerminalsMixin(BuilderProtocol):
         )
         effective_flags = self._state.flags.with_merged(kwarg_flags)
         flag_bitmask = _build_flag_bitmask(effective_flags)
-        try:
-            compiled_pattern = re.compile(pattern_string, flags=flag_bitmask)
-        except re.error as compile_error:
-            raise FailedToCompileRegexError(str(compile_error)) from compile_error
+        compiled_pattern = re.compile(pattern_string, flags=flag_bitmask)
         return Regex(
             source=pattern_string,
             compiled=compiled_pattern,

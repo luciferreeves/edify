@@ -20,8 +20,8 @@ def test_end_compiles_to_dollar_sign():
 
 
 def test_start_matches_start_of_input_element_from_the_fluent_chain():
-    assert START._state == Pattern().start_of_input()._state
+    assert Pattern().start_of_input() == START
 
 
 def test_end_matches_end_of_input_element_from_the_fluent_chain():
-    assert END._state == Pattern().end_of_input()._state
+    assert Pattern().end_of_input() == END

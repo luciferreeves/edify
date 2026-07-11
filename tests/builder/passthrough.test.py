@@ -26,15 +26,3 @@ def test_subexpression_called_with_unfinished_expression_raises():
     parent = RegexBuilder()
     with pytest.raises(CannotCallSubexpressionError):
         parent.subexpression(unfinished_sub)
-
-
-def test_to_regex_with_invalid_pattern_raises_failed_to_compile():
-    import pytest
-
-    from edify.errors.internal import FailedToCompileRegexError
-
-    expr = RegexBuilder().capture().digit().end().back_reference(1)
-    state_with_extra = expr._state.with_capture_groups_added(98)
-    bogus = expr._with_state(state_with_extra).back_reference(99)
-    with pytest.raises(FailedToCompileRegexError):
-        bogus.to_regex()

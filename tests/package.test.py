@@ -1,8 +1,9 @@
 """Tests for the top-level :mod:`edify` package surface."""
 
+import importlib
 import importlib.metadata
 
-from edify import _resolve_installed_version
+import edify
 
 
 def test_version_falls_back_when_package_metadata_missing(monkeypatch):
@@ -10,4 +11,5 @@ def test_version_falls_back_when_package_metadata_missing(monkeypatch):
         raise importlib.metadata.PackageNotFoundError(distribution_name)
 
     monkeypatch.setattr(importlib.metadata, "version", raise_not_found)
-    assert _resolve_installed_version() == "0.0.0"
+    reloaded = importlib.reload(edify)
+    assert reloaded.__version__ == "0.0.0"

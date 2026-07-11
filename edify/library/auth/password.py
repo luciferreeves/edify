@@ -44,7 +44,7 @@ class _PasswordPattern(Pattern):
         self.min_special = min_special
         self.special_chars = special_chars
 
-    def __call__(  # type: ignore[override]
+    def __call__(
         self,
         value: str,
         min_length: int | None = None,
