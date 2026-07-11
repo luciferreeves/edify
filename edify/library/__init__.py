@@ -1,31 +1,98 @@
-from edify.library.date.basic import date
-from edify.library.date.iso import iso_date
-from edify.library.email.basic import email
-from edify.library.email.strict import email_rfc_5322
-from edify.library.guid import guid
-from edify.library.ip.v4 import ipv4
-from edify.library.ip.v6 import ipv6
-from edify.library.mac import mac
-from edify.library.password import password
-from edify.library.phone import phone_number
-from edify.library.ssn import ssn
-from edify.library.url import url
-from edify.library.uuid import uuid
-from edify.library.zip import zip
+"""Flat re-export of every validator :class:`Pattern` in :mod:`edify.library`.
+
+Users can import any pattern directly (``from edify.library import uuid``);
+category submodules (``edify.library.identifier.uuid``) remain the canonical
+location for the individual patterns.
+"""
+from __future__ import annotations
+from edify.library.address import (
+    cidr, domain, hostname, ip, path, port, ptr, socket, subdomain, subnet,
+    tld, uri, url,
+)
+from edify.library.api import (
+    atom, graphql, hal, jsonapi, oauth, openapi, openid, rss, saml, soap,
+    swagger, webhook,
+)
+from edify.library.auth import (
+    apikey, bearer, challenge, csrf, hmac, jwt, mfa, mnemonic, otp, passkey,
+    password, pin, refresh, secret, session, signing, sso, token, webauthn,
+)
+from edify.library.color import color, filter, gradient, palette, swatch
+from edify.library.contact import (
+    address, email, fax, pager, phone, username,
+)
+from edify.library.data import (
+    avro, csv, hdf5, html, ini, json, msgpack, protobuf, toml, tsv, xml, yaml,
+)
+from edify.library.document import (
+    docx, epub, mobi, odt, pdf, pptx, readme, svg, xlsx,
+)
+from edify.library.financial import card, crypto, currency, wallet
+from edify.library.geo import (
+    altitude, coordinate, geohash, place, plus, postal,
+)
+from edify.library.grammar import abnf, bnf, ebnf, peg, pest
+from edify.library.identifier import (
+    arn, asin, bic, cusip, did, ein, guid, iata, iban, iccid, icao, imei,
+    imo, isin, itin, lei, mac, meid, mmsi, orcid, sedol, sku, ssn, tin,
+    uuid, vin,
+)
+from edify.library.medical import medical
+from edify.library.media import (
+    charset, codec, encoding, extension, favicon, filename, glob, locale,
+    mimetype, regex, shebang,
+)
+from edify.library.numeric import (
+    fraction, hash, integer, number, ordinal, percentage, ratio, roman,
+    scientific,
+)
+from edify.library.product import barcode, gtin, mpn
+from edify.library.publishing import arxiv, doi, isbn, issn, pmc, pmid
+from edify.library.security import (
+    age, certificate, csr, der, keyring, pem, pgp, ssh, x509,
+)
+from edify.library.software import (
+    cargo, checksum, component, digest, docker, git, image, makefile,
+    package, ref, semver, version,
+)
+from edify.library.temporal import (
+    cron, date, datetime, duration, epoch, interval, offset, time, timestamp,
+    timezone, year,
+)
+from edify.library.text import (
+    alpha, alphanumeric, ascii, base, emoji, numeric, printable, script,
+    slug, unicode, word,
+)
+from edify.library.transport import aircraft, vehicle
+from edify.library.web import (
+    apache, captcha, htaccess, humans, manifest, nginx, robots, sitemap,
+)
 
 __all__ = [
-    "date",
-    "email",
-    "email_rfc_5322",
-    "guid",
-    "ipv4",
-    "ipv6",
-    "iso_date",
-    "mac",
-    "password",
-    "phone_number",
-    "ssn",
-    "url",
-    "uuid",
-    "zip",
+    "abnf", "address", "age", "aircraft", "alpha", "alphanumeric", "altitude",
+    "apache", "apikey", "arn", "arxiv", "ascii", "asin", "atom", "avro",
+    "barcode", "base", "bearer", "bic", "bnf", "captcha", "card", "cargo",
+    "certificate", "challenge", "charset", "checksum", "cidr", "codec", "color",
+    "component", "coordinate", "cron", "crypto", "csr", "csrf", "csv",
+    "currency", "cusip", "date", "datetime", "der", "did", "digest", "docker",
+    "docx", "doi", "domain", "duration", "ebnf", "ein", "email", "emoji",
+    "encoding", "epoch", "epub", "extension", "favicon", "fax", "filename",
+    "filter", "fraction", "geohash", "git", "glob", "gradient", "graphql",
+    "gtin", "guid", "hal", "hash", "hdf5", "hmac", "hostname", "htaccess",
+    "html", "humans", "iata", "iban", "icao", "iccid", "image", "imei", "imo",
+    "ini", "integer", "interval", "ip", "isbn", "isin", "issn", "itin", "json",
+    "jsonapi", "jwt", "keyring", "lei", "locale", "mac", "makefile", "manifest",
+    "medical", "meid", "mfa", "mimetype", "mmsi", "mnemonic", "mobi", "mpn",
+    "msgpack", "nginx", "number", "numeric", "oauth", "odt", "offset",
+    "openapi", "openid", "orcid", "ordinal", "otp", "package", "pager",
+    "palette", "passkey", "password", "path", "pdf", "peg", "pem", "percentage",
+    "pest", "pgp", "phone", "pin", "place", "plus", "pmc", "pmid", "port",
+    "postal", "pptx", "printable", "protobuf", "ptr", "ratio", "readme", "ref",
+    "refresh", "regex", "robots", "roman", "rss", "saml", "scientific",
+    "script", "secret", "sedol", "semver", "session", "shebang", "signing",
+    "sitemap", "sku", "slug", "soap", "socket", "ssh", "ssn", "sso",
+    "subdomain", "subnet", "svg", "swagger", "swatch", "time", "timestamp",
+    "timezone", "tin", "tld", "token", "toml", "tsv", "unicode", "uri", "url",
+    "username", "uuid", "vehicle", "version", "vin", "wallet", "webauthn",
+    "webhook", "word", "x509", "xlsx", "xml", "yaml", "year",
 ]
