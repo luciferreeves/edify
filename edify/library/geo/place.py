@@ -2,7 +2,22 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-place = RegexBackedPattern(r"^[A-Za-z][A-Za-z .,'\-]{1,99}$")
+place = (
+    Pattern()
+    .start_of_input()
+    .letter()
+    .between(1, 99)
+    .any_of()
+    .range("A", "Z")
+    .range("a", "z")
+    .char(" ")
+    .char(".")
+    .char(",")
+    .char("'")
+    .char("-")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a permissive place-name shape."""

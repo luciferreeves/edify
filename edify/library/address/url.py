@@ -2,14 +2,70 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-url = RegexBackedPattern(
-    r"^(?:https?://)?"
-    r"(?:www\.)?"
-    r"[-a-zA-Z0-9@:%._\+~#=]{1,256}"
-    r"\.[a-zA-Z0-9()]{1,6}"
-    r"\b(?:[-a-zA-Z0-9()@:%_\+.~#?&/=]*)$"
+url = (
+    Pattern()
+    .start_of_input()
+    .optional()
+    .group()
+    .string("http")
+    .optional()
+    .char("s")
+    .string("://")
+    .end()
+    .optional()
+    .group()
+    .string("www.")
+    .end()
+    .between(1, 256)
+    .any_of()
+    .char("-")
+    .range("a", "z")
+    .range("A", "Z")
+    .range("0", "9")
+    .char("@")
+    .char(":")
+    .char("%")
+    .char(".")
+    .char("_")
+    .char("+")
+    .char("~")
+    .char("#")
+    .char("=")
+    .end()
+    .char(".")
+    .between(1, 6)
+    .any_of()
+    .range("a", "z")
+    .range("A", "Z")
+    .range("0", "9")
+    .char("(")
+    .char(")")
+    .end()
+    .word_boundary()
+    .zero_or_more()
+    .any_of()
+    .char("-")
+    .range("a", "z")
+    .range("A", "Z")
+    .range("0", "9")
+    .char("(")
+    .char(")")
+    .char("@")
+    .char(":")
+    .char("%")
+    .char("_")
+    .char("+")
+    .char(".")
+    .char("~")
+    .char("#")
+    .char("?")
+    .char("&")
+    .char("/")
+    .char("=")
+    .end()
+    .end_of_input()
 )
 """Callable :class:`Pattern` for the URL shape: optional ``http[s]://``,
 optional ``www.``, host with dot-separated labels, TLD, and optional path.

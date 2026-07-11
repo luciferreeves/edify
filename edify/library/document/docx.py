@@ -2,7 +2,21 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-docx = RegexBackedPattern(r"^[A-Za-z0-9_.\-/]{1,256}$")
+docx = (
+    Pattern()
+    .start_of_input()
+    .between(1, 256)
+    .any_of()
+    .range("A", "Z")
+    .range("a", "z")
+    .range("0", "9")
+    .char("_")
+    .char(".")
+    .char("-")
+    .char("/")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a docx document identifier or file name."""

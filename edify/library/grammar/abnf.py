@@ -2,7 +2,40 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-abnf = RegexBackedPattern(r"^[A-Za-z0-9_\-<>:=|*+?()\[\]{}\s.'\"/;,]{4,65536}$")
+abnf = (
+    Pattern()
+    .start_of_input()
+    .between(4, 65536)
+    .any_of()
+    .range("A", "Z")
+    .range("a", "z")
+    .range("0", "9")
+    .char("_")
+    .char("-")
+    .char("<")
+    .char(">")
+    .char(":")
+    .char("=")
+    .char("|")
+    .char("*")
+    .char("+")
+    .char("?")
+    .char("(")
+    .char(")")
+    .char("[")
+    .char("]")
+    .char("{")
+    .char("}")
+    .whitespace_char()
+    .char(".")
+    .char("'")
+    .char('"')
+    .char("/")
+    .char(";")
+    .char(",")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for abnf grammar-specification content."""

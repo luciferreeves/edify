@@ -2,7 +2,22 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-avro = RegexBackedPattern(r"^[A-Za-z0-9_.\-/+]{2,256}$")
+avro = (
+    Pattern()
+    .start_of_input()
+    .between(2, 256)
+    .any_of()
+    .range("A", "Z")
+    .range("a", "z")
+    .range("0", "9")
+    .char("_")
+    .char(".")
+    .char("-")
+    .char("/")
+    .char("+")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for avro data-format identifier or content marker."""

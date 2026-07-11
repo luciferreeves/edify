@@ -2,7 +2,20 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-aircraft = RegexBackedPattern(r"^[A-Z]{1,2}-?[A-Z0-9]{1,5}$")
+aircraft = (
+    Pattern()
+    .start_of_input()
+    .between(1, 2)
+    .uppercase()
+    .optional()
+    .char("-")
+    .between(1, 5)
+    .any_of()
+    .range("A", "Z")
+    .range("0", "9")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for an aircraft-registration mark."""

@@ -2,7 +2,29 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-doi = RegexBackedPattern(r"^10\.\d{4,9}/[-._;()/:A-Za-z0-9]+$")
+doi = (
+    Pattern()
+    .start_of_input()
+    .string("10.")
+    .between(4, 9)
+    .digit()
+    .char("/")
+    .one_or_more()
+    .any_of()
+    .char("-")
+    .char(".")
+    .char("_")
+    .char(";")
+    .char("(")
+    .char(")")
+    .char("/")
+    .char(":")
+    .range("A", "Z")
+    .range("a", "z")
+    .range("0", "9")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for the DOI shape."""

@@ -2,7 +2,23 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-mpn = RegexBackedPattern(r"^[A-Z0-9][A-Z0-9\-_.]{1,63}$")
+mpn = (
+    Pattern()
+    .start_of_input()
+    .any_of()
+    .range("A", "Z")
+    .range("0", "9")
+    .end()
+    .between(1, 63)
+    .any_of()
+    .range("A", "Z")
+    .range("0", "9")
+    .char("-")
+    .char("_")
+    .char(".")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a permissive Manufacturer Part Number."""

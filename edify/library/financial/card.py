@@ -2,9 +2,27 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-card = RegexBackedPattern(r"^\d{4}[- ]?\d{4}[- ]?\d{4}[- ]?\d{1,7}$")
+card = (
+    Pattern()
+    .start_of_input()
+    .exactly(4)
+    .digit()
+    .optional()
+    .any_of_chars("- ")
+    .exactly(4)
+    .digit()
+    .optional()
+    .any_of_chars("- ")
+    .exactly(4)
+    .digit()
+    .optional()
+    .any_of_chars("- ")
+    .between(1, 7)
+    .digit()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for credit-card number shape:
 groups of 4 digits with optional dash/space separators, 13-19 digits total.
 """

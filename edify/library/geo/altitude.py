@@ -2,7 +2,25 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-altitude = RegexBackedPattern(r"^-?\d+(?:\.\d+)?\s?(?:m|ft|km|mi)?$")
+altitude = (
+    Pattern()
+    .start_of_input()
+    .optional()
+    .char("-")
+    .one_or_more()
+    .digit()
+    .optional()
+    .group()
+    .char(".")
+    .one_or_more()
+    .digit()
+    .end()
+    .optional()
+    .whitespace_char()
+    .optional()
+    .any_of("m", "ft", "km", "mi")
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a signed altitude value with optional unit."""

@@ -2,7 +2,14 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-pmc = RegexBackedPattern(r"^PMC\d{1,9}$")
+pmc = (
+    Pattern()
+    .start_of_input()
+    .string("PMC")
+    .between(1, 9)
+    .digit()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a PubMed Central identifier."""

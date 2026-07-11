@@ -2,7 +2,21 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-issn = RegexBackedPattern(r"^\d{4}-\d{3}[\dXx]$")
+issn = (
+    Pattern()
+    .start_of_input()
+    .exactly(4)
+    .digit()
+    .char("-")
+    .exactly(3)
+    .digit()
+    .any_of()
+    .digit()
+    .char("X")
+    .char("x")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for the ISSN shape."""

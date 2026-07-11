@@ -2,10 +2,45 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-palette = RegexBackedPattern(
-    r"^(?:#[0-9A-Fa-f]{3,8}|[a-zA-Z]{3,20})"
-    r"(?:\s*,\s*(?:#[0-9A-Fa-f]{3,8}|[a-zA-Z]{3,20})){1,15}$"
+palette = (
+    Pattern()
+    .start_of_input()
+    .any_of()
+    .group()
+    .char("#")
+    .between(3, 8)
+    .any_of()
+    .range("0", "9")
+    .range("A", "F")
+    .range("a", "f")
+    .end()
+    .end()
+    .between(3, 20)
+    .letter()
+    .end()
+    .between(1, 15)
+    .group()
+    .zero_or_more()
+    .whitespace_char()
+    .char(",")
+    .zero_or_more()
+    .whitespace_char()
+    .any_of()
+    .group()
+    .char("#")
+    .between(3, 8)
+    .any_of()
+    .range("0", "9")
+    .range("A", "F")
+    .range("a", "f")
+    .end()
+    .end()
+    .between(3, 20)
+    .letter()
+    .end()
+    .end()
+    .end_of_input()
 )
 """Callable :class:`Pattern` for a comma-separated list of 2-16 colours."""

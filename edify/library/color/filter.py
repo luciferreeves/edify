@@ -2,11 +2,27 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-filter = RegexBackedPattern(
-    r"^(?:blur|brightness|contrast|grayscale|hue-rotate|invert|opacity"
-    r"|saturate|sepia|drop-shadow)"
-    r"\([^)]+\)$"
+filter = (
+    Pattern()
+    .start_of_input()
+    .any_of(
+        "blur",
+        "brightness",
+        "contrast",
+        "grayscale",
+        "hue-rotate",
+        "invert",
+        "opacity",
+        "saturate",
+        "sepia",
+        "drop-shadow",
+    )
+    .char("(")
+    .one_or_more()
+    .anything_but_chars(")")
+    .char(")")
+    .end_of_input()
 )
 """Callable :class:`Pattern` for a CSS filter function call."""

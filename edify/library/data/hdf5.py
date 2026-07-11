@@ -2,7 +2,22 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-hdf5 = RegexBackedPattern(r"^[A-Za-z0-9_.\-/+]{2,256}$")
+hdf5 = (
+    Pattern()
+    .start_of_input()
+    .between(2, 256)
+    .any_of()
+    .range("A", "Z")
+    .range("a", "z")
+    .range("0", "9")
+    .char("_")
+    .char(".")
+    .char("-")
+    .char("/")
+    .char("+")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for hdf5 data-format identifier or content marker."""

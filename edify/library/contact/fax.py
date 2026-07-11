@@ -2,10 +2,51 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-fax = RegexBackedPattern(
-    r"^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?"
-    r"\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$"
+fax = (
+    Pattern()
+    .start_of_input()
+    .optional()
+    .char("+")
+    .between_lazy(1, 4)
+    .digit()
+    .optional()
+    .any_of()
+    .char("-")
+    .char(".")
+    .whitespace_char()
+    .end()
+    .optional()
+    .char("(")
+    .between_lazy(1, 3)
+    .digit()
+    .optional()
+    .char(")")
+    .optional()
+    .any_of()
+    .char("-")
+    .char(".")
+    .whitespace_char()
+    .end()
+    .between(1, 4)
+    .digit()
+    .optional()
+    .any_of()
+    .char("-")
+    .char(".")
+    .whitespace_char()
+    .end()
+    .between(1, 4)
+    .digit()
+    .optional()
+    .any_of()
+    .char("-")
+    .char(".")
+    .whitespace_char()
+    .end()
+    .between(1, 9)
+    .digit()
+    .end_of_input()
 )
 """Callable :class:`Pattern` for the permissive international fax-number shape."""

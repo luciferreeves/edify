@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-pmid = RegexBackedPattern(r"^\d{1,8}$")
+pmid = (
+    Pattern()
+    .start_of_input()
+    .between(1, 8)
+    .digit()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a PubMed identifier (1-8 digits)."""

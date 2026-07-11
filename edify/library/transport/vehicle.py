@@ -2,7 +2,22 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern
 
-vehicle = RegexBackedPattern(r"^[A-Z0-9][A-Z0-9\- ]{3,17}$")
+vehicle = (
+    Pattern()
+    .start_of_input()
+    .any_of()
+    .range("A", "Z")
+    .range("0", "9")
+    .end()
+    .between(3, 17)
+    .any_of()
+    .range("A", "Z")
+    .range("0", "9")
+    .char("-")
+    .char(" ")
+    .end()
+    .end_of_input()
+)
 """Callable :class:`Pattern` for a permissive transport-vehicle identifier."""

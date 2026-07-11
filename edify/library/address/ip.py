@@ -2,31 +2,213 @@
 
 from __future__ import annotations
 
-from edify.library._support.regex import RegexBackedPattern
+from edify import Pattern, any_of
+from edify.library._support.atoms import hex_any, octet
 
-_IPV4_OCTET = r"(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)"
-_IPV4 = rf"{_IPV4_OCTET}\.{_IPV4_OCTET}\.{_IPV4_OCTET}\.{_IPV4_OCTET}"
 
-_IPV6 = (
-    r"(?:"
-    r"([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}"
-    r"|([0-9a-fA-F]{1,4}:){1,7}:"
-    r"|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}"
-    r"|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}"
-    r"|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}"
-    r"|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}"
-    r"|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}"
-    r"|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})"
-    r"|:((:[0-9a-fA-F]{1,4}){1,7}|:)"
-    r"|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}"
-    r"|::(ffff(:0{1,4}){0,1}:){0,1}"
-    r"((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}"
-    r"(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])"
-    r"|([0-9a-fA-F]{1,4}:){1,4}:"
-    r"((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}"
-    r"(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])"
-    r")"
+def _hex_group() -> Pattern:
+    return Pattern().between(1, 4).subexpression(hex_any)
+
+
+_ipv4 = (
+    Pattern()
+    .subexpression(octet)
+    .exactly(3)
+    .group()
+    .char(".")
+    .subexpression(octet)
+    .end()
 )
 
-ip = RegexBackedPattern(rf"^(?:{_IPV4}|{_IPV6})$")
+
+def _b1() -> Pattern:
+    return (
+        Pattern()
+        .exactly(7)
+        .group()
+        .subexpression(_hex_group())
+        .char(":")
+        .end()
+        .subexpression(_hex_group())
+    )
+
+
+def _b2() -> Pattern:
+    return (
+        Pattern()
+        .between(1, 7)
+        .group()
+        .subexpression(_hex_group())
+        .char(":")
+        .end()
+        .char(":")
+    )
+
+
+def _b3() -> Pattern:
+    return (
+        Pattern()
+        .between(1, 6)
+        .group()
+        .subexpression(_hex_group())
+        .char(":")
+        .end()
+        .char(":")
+        .subexpression(_hex_group())
+    )
+
+
+def _b_mixed(prefix_count: int, suffix_count: int) -> Pattern:
+    return (
+        Pattern()
+        .between(1, prefix_count)
+        .group()
+        .subexpression(_hex_group())
+        .char(":")
+        .end()
+        .between(1, suffix_count)
+        .group()
+        .char(":")
+        .subexpression(_hex_group())
+        .end()
+    )
+
+
+def _b8() -> Pattern:
+    return (
+        Pattern()
+        .subexpression(_hex_group())
+        .char(":")
+        .group()
+        .between(1, 6)
+        .group()
+        .char(":")
+        .subexpression(_hex_group())
+        .end()
+        .end()
+    )
+
+
+def _b9() -> Pattern:
+    return (
+        Pattern()
+        .char(":")
+        .group()
+        .any_of()
+        .subexpression(
+            Pattern()
+            .between(1, 7)
+            .group()
+            .char(":")
+            .subexpression(_hex_group())
+            .end()
+        )
+        .char(":")
+        .end()
+        .end()
+    )
+
+
+def _b_link_local() -> Pattern:
+    return (
+        Pattern()
+        .string("fe80:")
+        .between(0, 4)
+        .group()
+        .char(":")
+        .between(0, 4)
+        .subexpression(hex_any)
+        .end()
+        .char("%")
+        .one_or_more()
+        .any_of()
+        .range("0", "9")
+        .range("a", "z")
+        .range("A", "Z")
+        .end()
+    )
+
+
+def _map_octet() -> Pattern:
+    return any_of(
+        Pattern().string("25").range("0", "5"),
+        (
+            Pattern()
+            .optional()
+            .group()
+            .any_of()
+            .subexpression(Pattern().char("2").range("0", "4"))
+            .subexpression(Pattern().optional().char("1").digit())
+            .end()
+            .end()
+            .digit()
+        ),
+    )
+
+
+def _mapped_ipv4() -> Pattern:
+    return (
+        Pattern()
+        .exactly(3)
+        .group()
+        .subexpression(_map_octet())
+        .char(".")
+        .end()
+        .subexpression(_map_octet())
+    )
+
+
+def _b_ipv4_mapped() -> Pattern:
+    return (
+        Pattern()
+        .string("::")
+        .optional()
+        .group()
+        .string("ffff")
+        .optional()
+        .group()
+        .char(":")
+        .between(1, 4)
+        .char("0")
+        .end()
+        .char(":")
+        .end()
+        .subexpression(_mapped_ipv4())
+    )
+
+
+def _b_hybrid() -> Pattern:
+    return (
+        Pattern()
+        .between(1, 4)
+        .group()
+        .subexpression(_hex_group())
+        .char(":")
+        .end()
+        .char(":")
+        .subexpression(_mapped_ipv4())
+    )
+
+
+_ipv6 = any_of(
+    _b1(),
+    _b2(),
+    _b3(),
+    _b_mixed(5, 2),
+    _b_mixed(4, 3),
+    _b_mixed(3, 4),
+    _b_mixed(2, 5),
+    _b8(),
+    _b9(),
+    _b_link_local(),
+    _b_ipv4_mapped(),
+    _b_hybrid(),
+)
+
+ip = (
+    Pattern()
+    .start_of_input()
+    .subexpression(any_of(_ipv4, _ipv6))
+    .end_of_input()
+)
 """Callable :class:`Pattern` for IPv4 dotted-quad or any IPv6 form."""
