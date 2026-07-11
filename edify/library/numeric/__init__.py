@@ -1,6 +1,7 @@
 from edify.library.numeric.fraction import fraction
 from edify.library.numeric.hash import hash
 from edify.library.numeric.integer import integer
+from edify.library.numeric.natural import natural
 from edify.library.numeric.number import number
 from edify.library.numeric.ordinal import ordinal
 from edify.library.numeric.percentage import percentage
@@ -12,6 +13,7 @@ __all__ = [
     "fraction",
     "hash",
     "integer",
+    "natural",
     "number",
     "ordinal",
     "percentage",

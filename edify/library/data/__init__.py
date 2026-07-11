@@ -5,6 +5,8 @@ from edify.library.data.html import html
 from edify.library.data.ini import ini
 from edify.library.data.json import json
 from edify.library.data.msgpack import msgpack
+from edify.library.data.orc import orc
+from edify.library.data.parquet import parquet
 from edify.library.data.protobuf import protobuf
 from edify.library.data.toml import toml
 from edify.library.data.tsv import tsv
@@ -19,6 +21,8 @@ __all__ = [
     "ini",
     "json",
     "msgpack",
+    "orc",
+    "parquet",
     "protobuf",
     "toml",
     "tsv",

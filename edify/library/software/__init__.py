@@ -1,3 +1,4 @@
+from edify.library.software.bump import bump
 from edify.library.software.cargo import cargo
 from edify.library.software.checksum import checksum
 from edify.library.software.component import component
@@ -12,6 +13,7 @@ from edify.library.software.semver import semver
 from edify.library.software.version import version
 
 __all__ = [
+    "bump",
     "cargo",
     "checksum",
     "component",
