@@ -4,6 +4,7 @@ Changelog
 Unreleased
 ----------
 
+* **Changed:** Relicensed from Apache-2.0 to `MIT <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_; see the :ref:`license-mit` upgrade note for the patent-grant and pinned-tag caveats.
 * **Breaking:** Dropped support for Python 3.8. Edify now requires Python 3.9 or newer (:pr:`64`). Python 3.8 reached EOL on 2024-10-07; dependencies are now actively dropping it (e.g. ``virtualenv`` 21.5+ requires ``>=3.9``).
 * **Tooling and CI:** Dropped macOS and Windows runners from the CI matrix; Linux-only from here on. Edify is a pure-Python wheel with no platform-specific code, so the multi-OS jobs were buying ~zero signal and produced false negatives. Branch-protection required contexts went from 31 → 13 in lockstep (and now 12 with the Python 3.8 drop) (:pr:`60`).
 * **Dependencies:** Bumped the minimum ``virtualenv`` floor for the CI bootstrap to ``>=21.4.2`` (:pr:`56`, :pr:`58`).

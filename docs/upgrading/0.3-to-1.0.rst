@@ -63,3 +63,24 @@ Several 0.3 names have been merged into more general patterns in 1.0:
 The new names accept any recognised form of their concept, and the old
 name-plus-``form`` variants continue to work via each validator's
 ``form`` / ``strict`` / ``version`` keyword arguments where applicable.
+
+.. _license-mit:
+
+License change: Apache-2.0 to MIT
+---------------------------------
+
+Starting with the 1.0 release, edify is distributed under the `MIT License
+<https://github.com/luciferreeves/edify/blob/main/LICENSE>`_ instead of
+Apache-2.0. Two facts users need to know:
+
+- **No more explicit patent grant.** Apache-2.0 carried an explicit patent
+  grant from every contributor to every user. The MIT License does not.
+  If your compliance policy specifically relies on that patent grant,
+  pin ``edify<1.0``; every 0.3.x wheel on PyPI remains Apache-2.0
+  permanently.
+- **Older tags stay Apache-2.0 forever.** Every git tag ``v0.3.0`` and
+  earlier — and every wheel built from those tags — remains licensed under
+  Apache-2.0. Pinned installs are unaffected; only the ``1.0.0`` tag and
+  later ship under MIT.
+
+No API changes accompany the relicense.

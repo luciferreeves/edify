@@ -1,7 +1,7 @@
 RegexBuilder
 ============
 
-RegexBuilder is a class that helps you build regular expressions. It is based on the `SuperExpressive <https://github.com/francisrstokes/super-expressive>`_ library. The API uses the `fluent builder pattern <https://en.wikipedia.org/wiki/Fluent_interface>`_, and is completely immutable. It is built to be discoverable and predictable.
+RegexBuilder is a class that helps you build regular expressions with a fluent, immutable Python API. The API uses the `fluent builder pattern <https://en.wikipedia.org/wiki/Fluent_interface>`_, and is completely immutable. It is built to be discoverable and predictable.
 
 - Properties and methods describe what they do in plain English.
 - Order matters! Quantifiers are specified before the thing they change, just like in English (e.g. ``RegexBuilder().exactly(5).digit()``.)
@@ -310,17 +310,13 @@ RegexBuilder is a class that helps you build regular expressions. It is based on
 .named_back_reference(name)
 ---------------------------
 
-``.named_back_reference()`` matches exactly what was previously matched by a :ref:`named_capture`.
-
-.. warning::
-
-    Python does not support named back references. If you try to call the ``to_regex()`` method on a named back reference, it will raise an exception. For, those reasons, ``to_regex_string()`` is provided instead. It returns a string that can be used to create a regular expression. You can try using the regular expression directly with another library like `regex <https://pypi.python.org/pypi/regex>`_.
+``.named_back_reference()`` matches exactly what was previously matched by a :ref:`named_capture`. Emits Python's native ``(?P=name)`` syntax, so ``to_regex()`` compiles and matches directly against the standard-library ``re`` module.
 
 .. code-block:: python
 
     from edify import RegexBuilder
 
-    # returns /(?<interestingStuff>[a-f][0-9]hello)something else\k<interestingStuff>/
+    # compiles to '(?P<interestingStuff>[a-f][0-9]hello)something else(?P=interestingStuff)'
     expr = (
         RegexBuilder()
         .named_capture('interestingStuff')
@@ -330,8 +326,9 @@ RegexBuilder is a class that helps you build regular expressions. It is based on
         .end()
         .string('something else')
         .named_back_reference('interestingStuff')
-        .to_regex_string()
+        .to_regex()
     )
+    assert expr.search('a9hellosomething elsea9hello')
 
 .. _backreference:
 
