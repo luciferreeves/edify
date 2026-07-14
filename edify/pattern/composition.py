@@ -68,3 +68,34 @@ class Pattern(
             return False
         compiled = self.to_regex()
         return compiled.match(value) is not None
+
+    def to_dict(self) -> dict[str, object]:
+        """Return the canonical dict representation of this pattern.
+
+        The dict carries a ``"edify"`` schema-version header, a ``"pattern"``
+        AST tree keyed by public element ``kind`` strings, and an optional
+        ``"flags"`` map. See :mod:`edify.serialize`.
+        """
+        from edify.serialize import pattern_to_dict
+
+        return pattern_to_dict(self)
+
+    def to_json(self) -> str:
+        """Return the canonical JSON string for this pattern."""
+        from edify.serialize import pattern_to_json
+
+        return pattern_to_json(self)
+
+    @classmethod
+    def from_dict(cls, document: dict[str, object]) -> Pattern:
+        """Reconstruct a :class:`Pattern` from a canonical dict."""
+        from edify.serialize import pattern_from_dict
+
+        return pattern_from_dict(document)
+
+    @classmethod
+    def from_json(cls, blob: str) -> Pattern:
+        """Reconstruct a :class:`Pattern` from a canonical JSON string."""
+        from edify.serialize import pattern_from_json
+
+        return pattern_from_json(blob)
