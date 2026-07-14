@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from edify import Pattern, any_of
-from edify.library._support.atoms import hex_any
+from edify.atoms.nibble import nibble
 
 _ipv4_ptr = (
     Pattern()
@@ -23,7 +23,7 @@ _ipv6_ptr = (
     Pattern()
     .exactly(32)
     .group()
-    .subexpression(hex_any)
+    .subexpression(nibble)
     .char(".")
     .end()
     .string("ip6")
