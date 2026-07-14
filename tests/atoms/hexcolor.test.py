@@ -1,9 +1,9 @@
 from edify import Pattern
-from edify.atoms import hex_color
+from edify.atoms import hexcolor
 
 
 def _anchored():
-    return Pattern().start_of_input().use(hex_color).end_of_input()
+    return Pattern().start_of_input().use(hexcolor).end_of_input()
 
 
 def test_accepts_sample_from_shape():
@@ -15,12 +15,12 @@ def test_rejects_off_shape_input():
 
 
 def test_atom_composes_inside_a_larger_pattern():
-    embedded = Pattern().start_of_input().string("v=").use(hex_color).end_of_input()
+    embedded = Pattern().start_of_input().string("v=").use(hexcolor).end_of_input()
     assert embedded("v=" + "#abc")
     assert not embedded("#abc")
 
 
 def test_atom_regex_string_is_non_empty():
-    fragment = hex_color.to_regex_string()
+    fragment = hexcolor.to_regex_string()
     assert fragment
     assert isinstance(fragment, str)

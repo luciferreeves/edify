@@ -1,10 +1,10 @@
-"""``domain_label`` — one RFC 1123 DNS label."""
+"""``label`` — one RFC 1123 DNS label."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
-domain_label = (
+label = (
     Pattern()
     .any_of()
     .range("a", "z")

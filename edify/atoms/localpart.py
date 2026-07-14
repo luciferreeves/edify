@@ -1,10 +1,10 @@
-"""``email_local`` — RFC 5322 email local-part shape (permissive)."""
+"""``localpart`` — RFC 5322 email local-part shape (permissive)."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
-email_local = (
+localpart = (
     Pattern()
     .between(1, 64)
     .any_of()

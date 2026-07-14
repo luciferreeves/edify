@@ -1,10 +1,10 @@
-"""``time_24h`` — 24-hour ``HH:MM[:SS]`` clock time."""
+"""``clock`` — 24-hour ``HH:MM[:SS]`` clock time."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
-time_24h = (
+clock = (
     Pattern()
     .any_of()
     .subexpression(Pattern().char("2").range("0", "3"))

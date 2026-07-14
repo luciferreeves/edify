@@ -1,9 +1,9 @@
 from edify import Pattern
-from edify.atoms import time_24h
+from edify.atoms import clock
 
 
 def _anchored():
-    return Pattern().start_of_input().use(time_24h).end_of_input()
+    return Pattern().start_of_input().use(clock).end_of_input()
 
 
 def test_accepts_sample_from_shape():
@@ -15,12 +15,12 @@ def test_rejects_off_shape_input():
 
 
 def test_atom_composes_inside_a_larger_pattern():
-    embedded = Pattern().start_of_input().string("v=").use(time_24h).end_of_input()
+    embedded = Pattern().start_of_input().string("v=").use(clock).end_of_input()
     assert embedded("v=" + "23:59")
     assert not embedded("23:59")
 
 
 def test_atom_regex_string_is_non_empty():
-    fragment = time_24h.to_regex_string()
+    fragment = clock.to_regex_string()
     assert fragment
     assert isinstance(fragment, str)

@@ -3,17 +3,15 @@
 from __future__ import annotations
 
 from edify import Pattern, any_of
-from edify.atoms.hex_nibble import hex_nibble
-from edify.atoms.ipv4_octet import ipv4_octet
+from edify.atoms.nibble import nibble
+from edify.atoms.octet import octet
 
 
 def _hex_group() -> Pattern:
-    return Pattern().between(1, 4).subexpression(hex_nibble)
+    return Pattern().between(1, 4).subexpression(nibble)
 
 
-_ipv4 = (
-    Pattern().subexpression(ipv4_octet).exactly(3).group().char(".").subexpression(ipv4_octet).end()
-)
+_ipv4 = Pattern().subexpression(octet).exactly(3).group().char(".").subexpression(octet).end()
 
 
 def _b1() -> Pattern:
@@ -97,7 +95,7 @@ def _b_link_local() -> Pattern:
         .group()
         .char(":")
         .between(0, 4)
-        .subexpression(hex_nibble)
+        .subexpression(nibble)
         .end()
         .char("%")
         .one_or_more()

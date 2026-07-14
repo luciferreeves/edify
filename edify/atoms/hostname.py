@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from edify import Pattern
-from edify.atoms.domain_label import domain_label
+from edify.atoms.label import label
 
-hostname = Pattern().use(domain_label).zero_or_more().group().char(".").use(domain_label).end()
+hostname = Pattern().use(label).zero_or_more().group().char(".").use(label).end()
 """Composable :class:`Pattern` fragment for an RFC 1123 hostname."""
