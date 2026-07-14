@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 from edify import Pattern, any_of
-from edify.library._support.atoms import octet
+from edify.atoms.ipv4_octet import ipv4_octet
 
-_ipv4 = Pattern().subexpression(octet).exactly(3).group().char(".").subexpression(octet).end()
+_ipv4 = (
+    Pattern().subexpression(ipv4_octet).exactly(3).group().char(".").subexpression(ipv4_octet).end()
+)
 _ipv6_bracket = (
     Pattern()
     .char("[")
