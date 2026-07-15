@@ -37,7 +37,15 @@ class RegexBuilder(
     TerminalsMixin,
     TestingMixin,
 ):
-    """A fluent, immutable, strongly-typed regex builder."""
+    """A fluent, immutable, strongly-typed regex builder.
+
+    Immutability is a hard contract: every chain method returns a *new* builder
+    and leaves the receiver untouched. A base builder held in a constant, closure,
+    or attribute can be extended along multiple independent paths without any of
+    them observing another's state. Repeat no-kwargs ``.to_regex()`` calls on the
+    same builder return the same cached :class:`Regex`; a chain step or ``fork()``
+    yields a fresh builder with its own empty cache.
+    """
 
     @classmethod
     def from_regex(cls, pattern_text: str) -> RegexBuilder:

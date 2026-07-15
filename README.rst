@@ -246,6 +246,7 @@ That's where Edify becomes extremely useful. It allows you to create regular exp
 - Order matters! Quantifiers are specified before the thing they change, just like in English (e.g. ``RegexBuilder().exactly(5).digit()``).
 - If you make a mistake, you'll know how to fix it. Edify will guide you towards a fix if your expression is invalid.
 - ``subexpressions`` can be used to create meaningful, reusable components.
+- Every chain method returns a new builder — the receiver is never mutated. Two extensions of the same base pattern are always independent, so reusable base builders are safe to share across modules, closures, and threads.
 
 Edify turns those complex and unwieldy regexes that appear in code reviews into something that can be read, understood, and **properly reviewed** by your peers - and maintained by anyone!
 
