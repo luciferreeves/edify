@@ -14,11 +14,11 @@ The surface is intentionally limited to ``test``, ``match``, ``search``, ``finda
 
 from __future__ import annotations
 
-import re
 import sys
 from collections.abc import Callable
 
 from edify.builder.types.protocol import BuilderProtocol
+from edify.result.match import Match
 
 
 class MatcherMixin(BuilderProtocol):
@@ -35,8 +35,8 @@ class MatcherMixin(BuilderProtocol):
         endpos: int = sys.maxsize,
         *,
         timeout: float | None = None,
-    ) -> re.Match[str] | None:
-        """Delegate to :meth:`re.Pattern.match`."""
+    ) -> Match | None:
+        """Delegate to :meth:`re.Pattern.match`, returning an edify :class:`Match`."""
         return self._lazy_regex().match(string, pos, endpos, timeout=timeout)
 
     def search(
@@ -46,8 +46,8 @@ class MatcherMixin(BuilderProtocol):
         endpos: int = sys.maxsize,
         *,
         timeout: float | None = None,
-    ) -> re.Match[str] | None:
-        """Delegate to :meth:`re.Pattern.search`."""
+    ) -> Match | None:
+        """Delegate to :meth:`re.Pattern.search`, returning an edify :class:`Match`."""
         return self._lazy_regex().search(string, pos, endpos, timeout=timeout)
 
     def findall(
@@ -63,11 +63,11 @@ class MatcherMixin(BuilderProtocol):
 
     def sub(
         self,
-        replacement: str | Callable[[re.Match[str]], str],
+        replacement: str | Callable[[Match], str],
         string: str,
         count: int = 0,
         *,
         timeout: float | None = None,
     ) -> str:
-        """Delegate to :meth:`re.Pattern.sub`."""
+        """Delegate to :meth:`re.Pattern.sub`; callables receive an edify :class:`Match`."""
         return self._lazy_regex().sub(replacement, string, count=count, timeout=timeout)

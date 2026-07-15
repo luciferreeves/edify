@@ -13,12 +13,13 @@ from edify.errors.backend import TimeoutNotSupportedByEngineError
 from edify.introspect.explain import explain_elements
 from edify.introspect.verbose import verbose_elements
 from edify.introspect.visualize import visualize_elements
+from edify.result.match import Match
 
 _MethodReturn = (
-    re.Match[str]
+    Match
     | list[str]
     | list[tuple[str, ...]]
-    | Iterator[re.Match[str]]
+    | Iterator[Match]
     | str
     | tuple[str, int]
     | list[str | None]
@@ -70,9 +71,10 @@ class Regex:
         endpos: int = sys.maxsize,
         *,
         timeout: float | None = None,
-    ) -> re.Match[str] | None:
+    ) -> Match | None:
         """Delegate to the compiled pattern's ``match`` method."""
-        return self._compiled.match(string, pos, endpos, **_timeout_kwargs(self._engine, timeout))
+        raw = self._compiled.match(string, pos, endpos, **_timeout_kwargs(self._engine, timeout))
+        return Match(raw) if raw is not None else None
 
     def search(
         self,
@@ -81,9 +83,10 @@ class Regex:
         endpos: int = sys.maxsize,
         *,
         timeout: float | None = None,
-    ) -> re.Match[str] | None:
+    ) -> Match | None:
         """Delegate to the compiled pattern's ``search`` method."""
-        return self._compiled.search(string, pos, endpos, **_timeout_kwargs(self._engine, timeout))
+        raw = self._compiled.search(string, pos, endpos, **_timeout_kwargs(self._engine, timeout))
+        return Match(raw) if raw is not None else None
 
     def fullmatch(
         self,
@@ -92,11 +95,12 @@ class Regex:
         endpos: int = sys.maxsize,
         *,
         timeout: float | None = None,
-    ) -> re.Match[str] | None:
+    ) -> Match | None:
         """Delegate to the compiled pattern's ``fullmatch`` method."""
-        return self._compiled.fullmatch(
+        raw = self._compiled.fullmatch(
             string, pos, endpos, **_timeout_kwargs(self._engine, timeout)
         )
+        return Match(raw) if raw is not None else None
 
     def findall(
         self,
@@ -116,36 +120,40 @@ class Regex:
         endpos: int = sys.maxsize,
         *,
         timeout: float | None = None,
-    ) -> Iterator[re.Match[str]]:
+    ) -> Iterator[Match]:
         """Delegate to the compiled pattern's ``finditer`` method."""
-        return self._compiled.finditer(
+        raw_iter = self._compiled.finditer(
             string, pos, endpos, **_timeout_kwargs(self._engine, timeout)
         )
+        for raw in raw_iter:
+            yield Match(raw)
 
     def sub(
         self,
-        replacement: str | Callable[[re.Match[str]], str],
+        replacement: str | Callable[[Match], str],
         string: str,
         count: int = 0,
         *,
         timeout: float | None = None,
     ) -> str:
         """Delegate to the compiled pattern's ``sub`` method."""
+        adapter = _wrap_replacement(replacement)
         return self._compiled.sub(
-            replacement, string, count=count, **_timeout_kwargs(self._engine, timeout)
+            adapter, string, count=count, **_timeout_kwargs(self._engine, timeout)
         )
 
     def subn(
         self,
-        replacement: str | Callable[[re.Match[str]], str],
+        replacement: str | Callable[[Match], str],
         string: str,
         count: int = 0,
         *,
         timeout: float | None = None,
     ) -> tuple[str, int]:
         """Delegate to the compiled pattern's ``subn`` method."""
+        adapter = _wrap_replacement(replacement)
         return self._compiled.subn(
-            replacement, string, count=count, **_timeout_kwargs(self._engine, timeout)
+            adapter, string, count=count, **_timeout_kwargs(self._engine, timeout)
         )
 
     def split(
@@ -222,3 +230,16 @@ def _timeout_kwargs(engine: Engine, timeout: float | None) -> Mapping[str, float
     if engine == "re":
         raise TimeoutNotSupportedByEngineError()
     return {"timeout": timeout}
+
+
+def _wrap_replacement(
+    replacement: str | Callable[[Match], str],
+) -> str | Callable[[re.Match[str]], str]:
+    if isinstance(replacement, str):
+        return replacement
+    caller = replacement
+
+    def adapter(raw_match: re.Match[str]) -> str:
+        return caller(Match(raw_match))
+
+    return adapter
