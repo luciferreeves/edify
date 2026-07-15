@@ -8,11 +8,10 @@ change surfaces every doc example the change touches so their prose stays
 truthful.
 """
 
+import re
 from pathlib import Path
 
 import pytest
-
-import re
 
 import edify
 import edify.library as edify_library
@@ -103,7 +102,9 @@ _BLOCKS_DEFERRED_TO_DOCS_REWRITE = frozenset(
 @pytest.mark.parametrize(
     ("rst_path", "block_start", "block_source", "relative_stem"),
     DISCOVERED_BLOCKS,
-    ids=[f"{relative_stem}:{block_start}" for _, block_start, _, relative_stem in DISCOVERED_BLOCKS],
+    ids=[
+        f"{relative_stem}:{block_start}" for _, block_start, _, relative_stem in DISCOVERED_BLOCKS
+    ],
 )
 def test_doc_code_block_produces_the_snapshotted_regex(
     rst_path, block_start, block_source, relative_stem
