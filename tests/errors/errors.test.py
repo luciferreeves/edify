@@ -24,6 +24,7 @@ from edify.errors.naming import (
 from edify.errors.structure import (
     CannotCallSubexpressionError,
     CannotEndWhileBuildingRootExpressionError,
+    OpenFrameInfo,
 )
 
 
@@ -176,10 +177,26 @@ def test_cannot_end_while_building_root_expression():
 
 
 def test_cannot_call_subexpression():
-    error = CannotCallSubexpressionError("capture")
+    frames = (OpenFrameInfo(kind="capture", opened_at=None),)
+    error = CannotCallSubexpressionError(frames)
     text = str(error)
     assert "cannot merge a subexpression that has an unclosed frame" in text
-    assert "capture" in text
+    assert "1 open frame" in text
+    assert ".capture()" in text
+
+
+def test_cannot_call_subexpression_lists_every_open_frame_in_the_stack():
+    frames = (
+        OpenFrameInfo(kind="capture", opened_at=None),
+        OpenFrameInfo(kind="assert_ahead", opened_at=None),
+        OpenFrameInfo(kind="group", opened_at=None),
+    )
+    error = CannotCallSubexpressionError(frames)
+    text = str(error)
+    assert "3 open frame" in text
+    assert "1. .capture()" in text
+    assert "2. .assert_ahead()" in text
+    assert "3. .group()" in text
 
 
 def test_every_annotated_error_message_starts_with_error_prefix():
@@ -202,7 +219,7 @@ def test_every_annotated_error_message_starts_with_error_prefix():
         CannotCreateDuplicateNamedGroupError("x"),
         NamedGroupDoesNotExistError("x"),
         CannotEndWhileBuildingRootExpressionError(),
-        CannotCallSubexpressionError("capture"),
+        CannotCallSubexpressionError((OpenFrameInfo(kind="capture", opened_at=None),)),
     ]
     for error in errors:
         text = str(error)
