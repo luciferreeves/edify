@@ -114,14 +114,25 @@ filterwarnings = ["error"]
 
 [tool.pyright]
 pythonVersion = "3.11"
-typeCheckingMode = "basic"
-strict = ["edify"]
+include = ["edify"]
+typeCheckingMode = "strict"
 reportMissingImports = "error"
 reportMissingTypeStubs = "error"
+reportPrivateUsage = "none"
+reportUnnecessaryIsInstance = "none"
+reportUnusedFunction = "none"
 
 [[tool.pyright.executionEnvironments]]
 root = "edify/compile"
 reportMissingTypeStubs = "none"
+
+[[tool.pyright.executionEnvironments]]
+root = "edify/introspect"
+reportMissingTypeStubs = "none"
+reportUnknownVariableType = "none"
+reportUnknownMemberType = "none"
+reportUnknownArgumentType = "none"
+reportAttributeAccessIssue = "none"
 
 [tool.mypy]
 python_version = "3.11"
