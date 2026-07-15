@@ -9,6 +9,7 @@ truthful.
 """
 
 import re
+import sys
 from pathlib import Path
 
 import pytest
@@ -18,6 +19,8 @@ import edify.library as edify_library
 from edify import Pattern
 from edify.result import Regex
 from edify.testing import assert_snapshot
+
+_ON_PYPY = hasattr(sys, "pypy_version_info")
 
 _REPO_ROOT = Path(__file__).parent.parent.parent
 _DOCS_ROOT = _REPO_ROOT / "docs"
@@ -98,6 +101,12 @@ _BLOCKS_DEFERRED_TO_DOCS_REWRITE = frozenset(
     }
 )
 
+_BLOCKS_SKIPPED_ON_PYPY = frozenset(
+    {
+        ("regex-builder/flags/index", 38),
+    }
+)
+
 
 @pytest.mark.parametrize(
     ("rst_path", "block_start", "block_source", "relative_stem"),
@@ -112,6 +121,8 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     stem_string = str(relative_stem)
     if (stem_string, block_start) in _BLOCKS_DEFERRED_TO_DOCS_REWRITE:
         pytest.skip("doc block references validators / kwargs slated for the docs rewrite")
+    if _ON_PYPY and (stem_string, block_start) in _BLOCKS_SKIPPED_ON_PYPY:
+        pytest.skip("doc block hits PyPy's re.DEBUG upstream disassembler bug")
     namespace = _prepared_exec_namespace()
     exec(compile(block_source, str(rst_path), "exec"), namespace)
     rendered = _snapshot_bodies_for_block(namespace)
