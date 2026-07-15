@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
 from dataclasses import fields
-from typing import cast
 
 from edify.builder.types.flags import Flags
 from edify.builder.types.frame import StackFrame
@@ -13,6 +11,7 @@ from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import CaptureElement, NamedCaptureElement
 from edify.elements.types.leaves import EndOfInputElement, StartOfInputElement
 from edify.elements.types.root import RootElement
+from edify.elements.walk import walk_elements
 from edify.errors.serialize import (
     IncompatibleSchemaVersionError,
     MissingSchemaKeyError,
@@ -101,29 +100,10 @@ def _flags_from_document(document: dict[str, JSONValue]) -> Flags:
 
 
 def _collect_named_groups(children: tuple[BaseElement, ...]) -> tuple[str, ...]:
-    return tuple(
-        element.name
-        for element in _walk_elements(children)
-        if isinstance(element, NamedCaptureElement)
-    )
+    walked = walk_elements(children)
+    return tuple(element.name for element in walked if isinstance(element, NamedCaptureElement))
 
 
 def _count_capture_groups(children: tuple[BaseElement, ...]) -> int:
-    return sum(
-        1
-        for element in _walk_elements(children)
-        if isinstance(element, CaptureElement | NamedCaptureElement)
-    )
-
-
-def _walk_elements(children: tuple[BaseElement, ...]) -> Iterator[BaseElement]:
-    for element in children:
-        yield element
-        for spec in fields(element):
-            value: object = getattr(element, spec.name)
-            if isinstance(value, BaseElement):
-                yield from _walk_elements((value,))
-                continue
-            if isinstance(value, tuple):
-                narrowed_tuple = cast(tuple[BaseElement, ...], value)
-                yield from _walk_elements(narrowed_tuple)
+    walked = walk_elements(children)
+    return sum(1 for element in walked if isinstance(element, CaptureElement | NamedCaptureElement))
