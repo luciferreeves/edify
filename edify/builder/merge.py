@@ -19,6 +19,7 @@ groups it introduced (zero for non-capture elements).
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Protocol
 
 from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import (
@@ -185,14 +186,53 @@ def _merge_end_of_input(element: EndOfInputElement, context: MergeContext) -> Me
     return MergeResult(element=element, captures_added=0)
 
 
-def _merge_container(element: BaseElement, context: MergeContext, container_class) -> MergeResult:
+_ContainerElement = (
+    GroupElement
+    | AnyOfElement
+    | SubexpressionElement
+    | AssertAheadElement
+    | AssertNotAheadElement
+    | AssertBehindElement
+    | AssertNotBehindElement
+)
+
+_QuantifierElement = (
+    OptionalElement
+    | ZeroOrMoreElement
+    | ZeroOrMoreLazyElement
+    | OneOrMoreElement
+    | OneOrMoreLazyElement
+)
+
+
+class _ContainerFactory(Protocol):
+    """Structural type for a container-class constructor."""
+
+    def __call__(self, children: tuple[BaseElement, ...]) -> BaseElement: ...
+
+
+class _QuantifierFactory(Protocol):
+    """Structural type for a no-parameter quantifier constructor."""
+
+    def __call__(self, child: BaseElement) -> BaseElement: ...
+
+
+def _merge_container(
+    element: _ContainerElement,
+    context: MergeContext,
+    container_class: _ContainerFactory,
+) -> MergeResult:
     """Recurse into a container element's children and re-wrap in the same class."""
     merged_children, child_captures_added = _merge_children(element.children, context)
     new_element = container_class(children=merged_children)
     return MergeResult(element=new_element, captures_added=child_captures_added)
 
 
-def _merge_quantifier(element: BaseElement, context: MergeContext, quantifier_class) -> MergeResult:
+def _merge_quantifier(
+    element: _QuantifierElement,
+    context: MergeContext,
+    quantifier_class: _QuantifierFactory,
+) -> MergeResult:
     """Recurse into a no-parameter quantifier's child and re-wrap in the same class."""
     child_result = merge_element(element.child, context)
     new_element = quantifier_class(child=child_result.element)

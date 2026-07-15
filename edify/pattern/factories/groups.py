@@ -14,6 +14,7 @@ single grouping element built from the supplied operand(s).
 from __future__ import annotations
 
 from edify.builder.types.protocol import BuilderProtocol
+from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import (
     BackReferenceElement,
     CaptureElement,
@@ -60,7 +61,7 @@ def any_of(*operands: BuilderProtocol) -> Pattern:
     return pattern_containing(AnyOfElement(children=children))
 
 
-def _operand_children(operand: BuilderProtocol) -> tuple:
+def _operand_children(operand: BuilderProtocol) -> tuple[BaseElement, ...]:
     """Return ``operand``'s root-frame children as an immutable tuple."""
     return tuple(operand._state.top_frame.children)
 

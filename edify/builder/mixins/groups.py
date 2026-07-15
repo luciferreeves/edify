@@ -12,7 +12,7 @@
 
 from __future__ import annotations
 
-from typing import Self
+from typing import Self, TypeVar
 
 from edify.builder.types.frame import StackFrame
 from edify.builder.types.protocol import BuilderProtocol
@@ -25,6 +25,8 @@ from edify.errors.input import (
     MustBeAtLeastOneLiteralError,
     MustBeOneCharacterError,
 )
+
+_TBuilder = TypeVar("_TBuilder", bound=BuilderProtocol)
 
 
 class GroupsMixin(BuilderProtocol):
@@ -56,14 +58,14 @@ class GroupsMixin(BuilderProtocol):
         return _open_frame(self, GroupElement())
 
 
-def _open_frame(builder: BuilderProtocol, type_node: BaseElement):
+def _open_frame(builder: _TBuilder, type_node: BaseElement) -> _TBuilder:
     """Push a new frame anchored at ``type_node`` and return the updated builder."""
     new_frame = StackFrame(type_node=type_node)
     new_state = builder._state.with_frame_pushed(new_frame)
     return builder._with_state(new_state)
 
 
-def _add_literal_alternation(builder: BuilderProtocol, literals: tuple[str, ...]):
+def _add_literal_alternation(builder: _TBuilder, literals: tuple[str, ...]) -> _TBuilder:
     """Append a single :class:`AnyOfElement` built from ``literals`` to the top frame."""
     children = tuple(_literal_to_element(literal) for literal in literals)
     element = AnyOfElement(children=children)

@@ -11,10 +11,12 @@ from __future__ import annotations
 
 import re
 
+from edify.builder.types.engine import Engine
 from edify.builder.types.flags import Flags
 from edify.builder.types.protocol import BuilderProtocol
 from edify.compile.dispatch import render_element
 from edify.elements.types.root import RootElement
+from edify.errors.engine import EngineNotWiredError
 from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
 from edify.result import Regex
@@ -51,6 +53,7 @@ class TerminalsMixin(BuilderProtocol):
         multiline: bool = False,
         dotall: bool = False,
         verbose: bool = False,
+        engine: Engine = "re",
     ) -> Regex:
         """Return the pattern + flags compiled and wrapped in :class:`edify.result.Regex`.
 
@@ -62,8 +65,14 @@ class TerminalsMixin(BuilderProtocol):
         already carries — passing ``ignore_case=True`` here is equivalent to
         having called ``.ignore_case()`` in the chain. Flags never turn off,
         only on.
+
+        The ``engine`` kwarg selects the compilation backend. Only ``"re"`` is
+        wired today; ``"regex"`` is reserved for the opt-in third-party engine
+        and raises :class:`NotImplementedError` until that dispatch lands.
         """
         pattern_string = self.to_regex_string()
+        if engine != "re":
+            raise EngineNotWiredError(engine)
         kwarg_flags = Flags(
             ascii_only=ascii_only,
             debug=debug,

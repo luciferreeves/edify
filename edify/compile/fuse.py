@@ -58,4 +58,5 @@ def _fragment_for(member: BaseElement) -> str:
         return member.value
     if isinstance(member, AnyOfCharsElement):
         return member.value
+    assert isinstance(member, RangeElement)
     return f"{member.start}-{member.end}"

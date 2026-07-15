@@ -30,6 +30,7 @@ from edify.elements.types.quantifiers import (
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
 )
+from edify.elements.types.union import QuantifierElement
 from edify.errors.introspect import MissingGraphvizDependencyError
 from edify.introspect.ascii import _char_label, _leaf_label
 from edify.introspect.types import Emission
@@ -46,7 +47,7 @@ def render_graphviz_svg(elements: tuple[BaseElement, ...]) -> str:
         raise MissingGraphvizDependencyError()
     dot_source = render_dot(elements)
     source = _graphviz_module.Source(dot_source, format="svg")
-    piped_bytes = source.pipe(format="svg")
+    piped_bytes: bytes = source.pipe(format="svg")
     return piped_bytes.decode("utf-8")
 
 
@@ -185,6 +186,7 @@ def _emit_quantifier_cluster(element: BaseElement, counter: _Counter) -> Emissio
     quantifier_phrase = _quantifier_phrase(element)
     if quantifier_phrase is None:
         return None
+    assert isinstance(element, QuantifierElement)
     child_emission = _emit_element(element.child, counter)
     cluster_id = counter.next("cluster")
     lines: list[str] = [
@@ -220,6 +222,7 @@ def _simple_quantifier_label(element: BaseElement) -> str | None:
     quantifier_phrase = _quantifier_phrase(element)
     if quantifier_phrase is None:
         return None
+    assert isinstance(element, QuantifierElement)
     child = element.child
     child_label = _leaf_label(child) or _char_label(child)
     if child_label is None:

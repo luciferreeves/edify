@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from edify.errors.formatting import compose_annotated_message
 from edify.errors.syntax import EdifySyntaxError
+from edify.serialize.types import JSONValue
 
 
 class MissingSchemaKeyError(EdifySyntaxError):
@@ -37,7 +38,7 @@ class IncompatibleSchemaVersionError(EdifySyntaxError):
         supported_version: The version this build emits and accepts.
     """
 
-    def __init__(self, seen_version: object, supported_version: int) -> None:
+    def __init__(self, seen_version: JSONValue, supported_version: int) -> None:
         message = compose_annotated_message(
             summary=(
                 f"canonical dict declares schema version {seen_version!r}, but this build "

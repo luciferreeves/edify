@@ -13,10 +13,18 @@ from edify.elements.types.groups import (
     AssertNotBehindElement,
     GroupElement,
 )
+from edify.errors.context import CallerContext
 from edify.errors.formatting import FixInsertion, Problem
 
 _END_INSERTION_TEXT = ".end()"
 _DANGLING_INSERTION_TEXT = ".digit()"
+_UNKNOWN_CALL_SITE = CallerContext(
+    filename="<unknown>",
+    lineno=0,
+    colno=1,
+    end_colno=1,
+    source_line="",
+)
 
 
 def diagnose_unfinished(state: BuilderState, subject: str) -> Problem | None:
@@ -32,8 +40,8 @@ def diagnose_unfinished(state: BuilderState, subject: str) -> Problem | None:
 def _diagnose_open_frame(frame: StackFrame, subject: str) -> Problem:
     """Return a :class:`Problem` describing an unclosed frame."""
     frame_name = _frame_display_name(frame)
-    problem_context = frame.call_site
-    fix_context = frame.last_child_call_site or frame.call_site
+    problem_context = frame.call_site or _UNKNOWN_CALL_SITE
+    fix_context = frame.last_child_call_site or frame.call_site or _UNKNOWN_CALL_SITE
     fix_insertion = FixInsertion(
         column=fix_context.end_colno,
         text=_END_INSERTION_TEXT,
@@ -51,8 +59,8 @@ def _diagnose_open_frame(frame: StackFrame, subject: str) -> Problem:
 def _diagnose_dangling_quantifier(frame: StackFrame, subject: str) -> Problem:
     """Return a :class:`Problem` describing a pending quantifier with no operand."""
     quantifier_name = frame.quantifier_name or "quantifier"
-    problem_context = frame.quantifier_call_site
-    fix_context = frame.quantifier_call_site
+    problem_context = frame.quantifier_call_site or _UNKNOWN_CALL_SITE
+    fix_context = frame.quantifier_call_site or _UNKNOWN_CALL_SITE
     fix_insertion = FixInsertion(
         column=fix_context.end_colno,
         text=_DANGLING_INSERTION_TEXT,

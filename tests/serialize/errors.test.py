@@ -49,3 +49,14 @@ def test_unknown_kind_raises():
 def test_bad_json_string_raises_decode_error():
     with pytest.raises(json.JSONDecodeError):
         Pattern.from_json("{not-valid-json}")
+
+
+def test_non_object_json_payload_raises_type_error():
+    with pytest.raises(TypeError, match="canonical JSON payload must be an object"):
+        Pattern.from_json("[1, 2, 3]")
+
+
+def test_pattern_key_not_a_root_element_produces_empty_pattern():
+    document = {"edify": 0, "pattern": {"kind": "digit"}}
+    restored = Pattern.from_dict(document)
+    assert restored.to_regex_string() == "(?:)"

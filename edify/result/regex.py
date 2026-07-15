@@ -18,6 +18,7 @@ _RePatternMethodReturn = (
     | Iterator[re.Match[str]]
     | str
     | tuple[str, int]
+    | list[str | None]
     | None
 )
 
@@ -133,8 +134,9 @@ class Regex:
         return visualize_elements(self._elements, format=format, engine=engine)
 
     def __getattr__(self, name: str) -> _RePatternAttribute:
-        """Delegate any attribute access not explicitly defined here to the compiled pattern."""
-        return getattr(self._compiled, name)
+        """Return the underlying :class:`re.Pattern` attribute named ``name``."""
+        attribute: _RePatternAttribute = getattr(self._compiled, name)
+        return attribute
 
     def __repr__(self) -> str:
         """Return ``<Regex 'source-string'>``."""

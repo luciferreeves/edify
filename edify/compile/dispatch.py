@@ -14,17 +14,18 @@ from edify.compile.groups import render_grouping
 from edify.compile.leaves import render_leaf
 from edify.compile.quantifier import render_quantifier
 from edify.compile.root import render_root
+from edify.elements.types.base import BaseElement
+from edify.elements.types.root import RootElement
 from edify.elements.types.union import (
     CaptureGroupElement,
     CharShapedElement,
-    Element,
     GroupingElement,
     LeafElement,
     QuantifierElement,
 )
 
 
-def render_element(element: Element) -> str:
+def render_element(element: BaseElement) -> str:
     """Return the regex string produced by any element.
 
     Args:
@@ -43,4 +44,5 @@ def render_element(element: Element) -> str:
         return render_grouping(element, render_element)
     if isinstance(element, QuantifierElement):
         return render_quantifier(element, render_element)
+    assert isinstance(element, RootElement)
     return render_root(element, render_element)

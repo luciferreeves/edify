@@ -127,7 +127,7 @@ def _build_lines(elements: tuple[BaseElement, ...]) -> list[str]:
 
 
 def _wrap_step(step_number: int, description: str) -> str:
-    """Return the description prefixed with the step number and 3-space continuation indent."""
+    """Return the description prefixed with the step number and indented continuation."""
     prefix = f"  {step_number}. "
     continuation_prefix = " " * len(prefix)
     words = description.split()

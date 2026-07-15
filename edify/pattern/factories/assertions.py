@@ -12,6 +12,7 @@ single lookaround element wrapping the supplied operand's children.
 from __future__ import annotations
 
 from edify.builder.types.protocol import BuilderProtocol
+from edify.elements.types.base import BaseElement
 from edify.elements.types.groups import (
     AssertAheadElement,
     AssertBehindElement,
@@ -42,6 +43,6 @@ def assert_not_behind(operand: BuilderProtocol) -> Pattern:
     return pattern_containing(AssertNotBehindElement(children=_operand_children(operand)))
 
 
-def _operand_children(operand: BuilderProtocol) -> tuple:
+def _operand_children(operand: BuilderProtocol) -> tuple[BaseElement, ...]:
     """Return ``operand``'s root-frame children as an immutable tuple."""
     return tuple(operand._state.top_frame.children)
