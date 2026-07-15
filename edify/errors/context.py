@@ -6,6 +6,7 @@ import linecache
 import os
 import sys
 from dataclasses import dataclass
+from types import FrameType
 
 _EDIFY_PACKAGE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _EDIFY_PACKAGE_PREFIX = _EDIFY_PACKAGE_ROOT + os.sep
@@ -36,7 +37,7 @@ def capture_caller_context() -> CallerContext | None:
     Returns ``None`` when every frame on the stack lives inside the ``edify/``
     package tree.
     """
-    current_frame = sys._getframe(1)
+    current_frame: FrameType | None = sys._getframe(1)
     while current_frame is not None:
         filename = current_frame.f_code.co_filename
         absolute_filename = (
@@ -48,18 +49,21 @@ def capture_caller_context() -> CallerContext | None:
     return None
 
 
-def _context_for_frame(frame) -> CallerContext:
+def _context_for_frame(frame: FrameType) -> CallerContext:
     """Return a :class:`CallerContext` describing ``frame``'s current instruction."""
     filename = frame.f_code.co_filename
     positions = list(frame.f_code.co_positions())
     instruction_index = frame.f_lasti // 2
-    start_line, _end_line, start_col, end_col = positions[instruction_index]
-    source_line = _read_source_line(filename, start_line)
+    raw_start_line, _end_line, raw_start_col, raw_end_col = positions[instruction_index]
+    resolved_start_line = raw_start_line if raw_start_line is not None else frame.f_lineno
+    resolved_start_col = raw_start_col if raw_start_col is not None else 0
+    resolved_end_col = raw_end_col if raw_end_col is not None else resolved_start_col
+    source_line = _read_source_line(filename, resolved_start_line)
     return CallerContext(
         filename=filename,
-        lineno=start_line,
-        colno=start_col + 1,
-        end_colno=end_col + 1,
+        lineno=resolved_start_line,
+        colno=resolved_start_col + 1,
+        end_colno=resolved_end_col + 1,
         source_line=source_line,
     )
 

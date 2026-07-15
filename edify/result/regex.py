@@ -135,7 +135,8 @@ class Regex:
 
     def __getattr__(self, name: str) -> _RePatternAttribute:
         """Return the underlying :class:`re.Pattern` attribute named ``name``."""
-        return getattr(self._compiled, name)
+        attribute: _RePatternAttribute = getattr(self._compiled, name)
+        return attribute
 
     def __repr__(self) -> str:
         """Return ``<Regex 'source-string'>``."""

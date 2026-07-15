@@ -5,11 +5,13 @@ from __future__ import annotations
 from typing import Self
 
 from edify.builder.diagnose import diagnose_unfinished
+from edify.builder.types.protocol import BuilderProtocol
 from edify.builder.types.state import BuilderState
 from edify.errors.comparison import (
     CannotCompareUnfinishedBuilderError,
     CannotHashUnfinishedBuilderError,
 )
+from edify.errors.formatting import Problem
 from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
 from edify.result.regex import Regex
@@ -17,7 +19,7 @@ from edify.result.regex import Regex
 _UNCLOSED_FRAME_MARKER = "<unclosed>"
 
 
-class BuilderCore:
+class BuilderCore(BuilderProtocol):
     """Holds the immutable :class:`BuilderState` and clones it on chain steps."""
 
     _state: BuilderState
@@ -54,14 +56,14 @@ class BuilderCore:
 
     def __repr__(self) -> str:
         """Return ``<ClassName 'pattern-so-far'>`` for interactive display."""
-        rendered = _render_or_marker(self)
+        rendered = _rendered_or_unclosed_marker(self)
         return f"<{type(self).__name__} {rendered!r}>"
 
     def __eq__(self, other: object) -> bool:
         """Return True when ``other`` is a builder with the same emitted pattern and flags."""
         if not isinstance(other, BuilderCore):
             return NotImplemented
-        problems: list = []
+        problems: list[Problem] = []
         left_problem = diagnose_unfinished(self._state, "left operand")
         right_problem = diagnose_unfinished(other._state, "right operand")
         if left_problem is not None:
@@ -83,12 +85,9 @@ class BuilderCore:
         return hash((source, self._state.flags))
 
 
-def _render_or_marker(builder: BuilderCore) -> str:
+def _rendered_or_unclosed_marker(builder: BuilderCore) -> str:
     """Return the emitted regex string, or a placeholder when frames are unclosed."""
-    to_regex_string = getattr(builder, "to_regex_string", None)
-    if to_regex_string is None:
-        return _UNCLOSED_FRAME_MARKER
     try:
-        return to_regex_string()
+        return builder.to_regex_string()
     except (CannotCallSubexpressionError, DanglingQuantifierError):
         return _UNCLOSED_FRAME_MARKER

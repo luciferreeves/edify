@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from dataclasses import fields
+from typing import cast
 
 from edify.builder.types.flags import Flags
 from edify.builder.types.frame import StackFrame
@@ -119,8 +120,10 @@ def _walk_elements(children: tuple[BaseElement, ...]) -> Iterator[BaseElement]:
     for element in children:
         yield element
         for spec in fields(element):
-            value = getattr(element, spec.name)
-            if isinstance(value, tuple):
-                yield from _walk_elements(value)
-            elif isinstance(value, BaseElement):
+            value: object = getattr(element, spec.name)
+            if isinstance(value, BaseElement):
                 yield from _walk_elements((value,))
+                continue
+            if isinstance(value, tuple):
+                narrowed_tuple = cast(tuple[BaseElement, ...], value)
+                yield from _walk_elements(narrowed_tuple)

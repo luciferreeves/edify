@@ -43,8 +43,8 @@ class BuilderProtocol(Protocol):
 
     def subexpression(
         self,
-        pattern: BuilderProtocol,
-        *,
+        expression: BuilderProtocol,
+        namespace: str = ...,
         ignore_flags: bool = ...,
         ignore_start_and_end: bool = ...,
     ) -> Self: ...

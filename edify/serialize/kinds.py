@@ -7,6 +7,7 @@ part of the wire format — only the corresponding ``kind`` (``"exactly"``).
 
 from __future__ import annotations
 
+from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import (
     BackReferenceElement,
     CaptureElement,
@@ -67,7 +68,7 @@ from edify.elements.types.quantifiers import (
 )
 from edify.elements.types.root import RootElement
 
-_CLASS_BY_KIND = {
+_CLASS_BY_KIND: dict[str, type[BaseElement]] = {
     "root": RootElement,
     "start": StartOfInputElement,
     "end": EndOfInputElement,
@@ -122,11 +123,11 @@ _CLASS_BY_KIND = {
 _KIND_BY_CLASS = {cls: kind for kind, cls in _CLASS_BY_KIND.items()}
 
 
-def kind_for(element_class: type) -> str:
+def kind_for(element_class: type[BaseElement]) -> str:
     """Return the public ``kind`` string registered for ``element_class``."""
     return _KIND_BY_CLASS[element_class]
 
 
-def class_for(kind: str) -> type:
+def class_for(kind: str) -> type[BaseElement]:
     """Return the element class registered under ``kind``."""
     return _CLASS_BY_KIND[kind]
