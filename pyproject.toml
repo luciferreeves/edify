@@ -57,6 +57,9 @@ docs = [
     "sphinx>=7.4.7",
     "sphinx-rtd-theme",
 ]
+bench = [
+    "pytest-benchmark>=4.0",
+]
 
 [tool.hatch.version]
 source = "vcs"
