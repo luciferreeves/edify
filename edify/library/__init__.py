@@ -12,6 +12,8 @@ from edify.library.address import (
     domain,
     hostname,
     ip,
+    ipv4,
+    ipv6,
     path,
     port,
     ptr,
@@ -21,6 +23,7 @@ from edify.library.address import (
     tld,
     uri,
     url,
+    zip_code,
 )
 from edify.library.api import (
     atom,
@@ -61,6 +64,7 @@ from edify.library.color import color, filter, gradient, palette, swatch
 from edify.library.contact import (
     address,
     email,
+    email_rfc_5322,
     fax,
     handle,
     pager,
@@ -199,6 +203,7 @@ from edify.library.temporal import (
     duration,
     epoch,
     interval,
+    iso_date,
     offset,
     time,
     timestamp,
@@ -294,6 +299,7 @@ __all__ = [
     "ebnf",
     "ein",
     "email",
+    "email_rfc_5322",
     "emoji",
     "encoding",
     "epoch",
@@ -332,8 +338,11 @@ __all__ = [
     "integer",
     "interval",
     "ip",
+    "ipv4",
+    "ipv6",
     "isbn",
     "isin",
+    "iso_date",
     "issn",
     "itin",
     "json",
@@ -457,4 +466,5 @@ __all__ = [
     "xml",
     "yaml",
     "year",
+    "zip_code",
 ]

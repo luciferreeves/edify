@@ -33,9 +33,19 @@ ssn = (
     .digit()
     .end_of_input()
 )
-"""Callable :class:`Pattern` that validates the US ``AAA-GG-SSSS`` SSN shape
-with the documented blocked ranges (``000``, ``666``, ``9xx`` area; ``00``
-group; ``0000`` serial).
+"""Callable :class:`Pattern` for the US ``AAA-GG-SSSS`` Social Security Number shape.
+
+Guarantees:
+    * Three-digit area, two-digit group, four-digit serial, hyphen-separated.
+    * Documented blocked ranges rejected: ``000`` / ``666`` / ``9xx`` area, ``00``
+      group, ``0000`` serial.
+    * Anchored at both ends.
+
+Does not guarantee:
+    * Assignment or issuance history — a shape that clears the blocked ranges may
+      still be unassigned.
+    * Non-US national identifiers (SIN, NIN, DNI, etc.) — those need dedicated
+      validators.
 """
 
 del _blocked_area

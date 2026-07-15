@@ -191,6 +191,33 @@ _rfc_domain = any_of(_basic_domain, _ip_literal)
 _rfc = Pattern().subexpression(_rfc_local).char("@").subexpression(_rfc_domain)
 
 email = Pattern().start_of_input().subexpression(any_of(_basic, _rfc)).end_of_input()
-"""Callable :class:`Pattern` that accepts either the common permissive email
-shape or the full RFC 5322 mailbox shape.
+"""Callable :class:`Pattern` for either the common permissive or the strict RFC 5322 email shape.
+
+Guarantees:
+    * Accepts the everyday ``local@domain`` shape used across the web (letters, digits,
+      dot, hyphen, underscore, plus common special characters in the local part).
+    * Accepts the RFC 5322 mailbox shape — quoted local parts, dot-atoms, and
+      domain-literal addresses (``user@[192.0.2.1]``).
+    * Anchored at both ends, so the whole string must match.
+
+Does not guarantee:
+    * Deliverability, DNS resolution, or MX-record presence — this is a shape check.
+    * Full RFC 5322 group / display-name syntax (``Name <user@example.com>``).
+    * Internationalised domain names beyond ASCII / punycode.
+"""
+
+email_rfc_5322 = Pattern().start_of_input().subexpression(_rfc).end_of_input()
+"""Callable :class:`Pattern` for the strict RFC 5322 mailbox shape only.
+
+Rejects everyday but non-compliant addresses that :data:`email` accepts.
+
+Guarantees:
+    * Accepts every dot-atom and quoted-string local part permitted by RFC 5322.
+    * Accepts domain literals (``user@[192.0.2.1]``) and IPv6 literals
+      (``user@[IPv6:::1]``).
+    * Anchored at both ends.
+
+Does not guarantee:
+    * Deliverability, DNS resolution, or MX-record presence — this is a shape check.
+    * Full RFC 5322 group / display-name syntax.
 """

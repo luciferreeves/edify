@@ -4,6 +4,7 @@ from edify.library.temporal.datetime import datetime
 from edify.library.temporal.duration import duration
 from edify.library.temporal.epoch import epoch
 from edify.library.temporal.interval import interval
+from edify.library.temporal.iso_date import iso_date
 from edify.library.temporal.offset import offset
 from edify.library.temporal.time import time
 from edify.library.temporal.timestamp import timestamp
@@ -17,6 +18,7 @@ __all__ = [
     "duration",
     "epoch",
     "interval",
+    "iso_date",
     "offset",
     "time",
     "timestamp",

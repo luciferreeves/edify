@@ -72,9 +72,11 @@ def _discover_blocks():
             yield rst_path, block_start, block_source, relative_stem
 
 
-def _snapshot_bodies_for_block(namespace: dict) -> str:
+def _snapshot_bodies_for_block(namespace: dict, pre_exec_names: frozenset[str]) -> str:
     interesting_pairs = []
     for identifier, value in namespace.items():
+        if identifier in pre_exec_names:
+            continue
         if identifier.startswith("_") or identifier in {"edify", "Pattern", "Regex"}:
             continue
         if isinstance(value, Regex):
@@ -124,8 +126,9 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     if _ON_PYPY and (stem_string, block_start) in _BLOCKS_SKIPPED_ON_PYPY:
         pytest.skip("doc block hits PyPy's re.DEBUG upstream disassembler bug")
     namespace = _prepared_exec_namespace()
+    pre_exec_names = frozenset(namespace)
     exec(compile(block_source, str(rst_path), "exec"), namespace)
-    rendered = _snapshot_bodies_for_block(namespace)
+    rendered = _snapshot_bodies_for_block(namespace, pre_exec_names)
     snapshot_path = _SNAPSHOT_ROOT / stem_string / f"{block_start:04d}.regex"
     assert_snapshot(rendered, snapshot_path)
 

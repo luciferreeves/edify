@@ -67,6 +67,18 @@ url = (
     .end()
     .end_of_input()
 )
-"""Callable :class:`Pattern` for the URL shape: optional ``http[s]://``,
-optional ``www.``, host with dot-separated labels, TLD, and optional path.
+"""Callable :class:`Pattern` for a permissive HTTP/HTTPS URL shape.
+
+Guarantees:
+    * Optional ``http[s]://`` scheme prefix.
+    * Optional ``www.`` host prefix.
+    * A dot-separated authority with a 1-6 character TLD, followed by an optional path.
+    * Anchored at both ends.
+
+Does not guarantee:
+    * URI reachability, TLS certificate validity, or DNS resolution.
+    * Non-HTTP schemes (``ftp:``, ``mailto:``, ``file:``) — those require dedicated
+      validators.
+    * Full RFC 3986 URI grammar — the pattern is deliberately permissive for the
+      common web-URL shape.
 """

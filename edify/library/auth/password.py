@@ -75,7 +75,24 @@ class _PasswordPattern(Pattern):
 
 
 password = _PasswordPattern()
-"""Callable :class:`Pattern` (subclass) that enforces configurable
-password-strength thresholds. Call as ``password(value)`` for the defaults,
-or ``password(value, min_length=12, min_special=2)`` to tighten specific thresholds.
+"""Callable :class:`Pattern` (subclass) that enforces configurable password-strength thresholds.
+
+Call as ``password(value)`` for the defaults or ``password(value, min_length=12, min_special=2)``
+to tighten specific thresholds.
+
+Default policy:
+    * Length between 8 and 64 characters inclusive.
+    * At least one uppercase letter, one lowercase letter, one decimal digit, and
+      one special character from the default set (``!@#$%^&*()_+-=[]{}|;':",./<>?``).
+
+Guarantees:
+    * Every threshold is checked exactly as configured — no silent lower/upper bound.
+    * The special-character set is overridable per call via ``special_chars=``.
+
+Does not guarantee:
+    * Passphrase strength beyond the counted-class thresholds — e.g. does not
+      reject dictionary words, common patterns, keyboard walks, or breached-password
+      corpora.
+    * Non-ASCII character-class handling — the class regex targets ASCII letters
+      and digits.
 """
