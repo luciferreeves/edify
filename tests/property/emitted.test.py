@@ -20,7 +20,8 @@ def test_concatenated_string_calls_emit_the_re_escape_concatenation(literal_segm
     for literal in literal_segments:
         builder = builder.string(literal)
     emitted = builder.to_regex_string()
-    reference = "".join(re.escape(literal) for literal in literal_segments)
+    escaped_segments = [re.escape(literal) for literal in literal_segments]
+    reference = "".join(escaped_segments)
     assert emitted == reference
 
 

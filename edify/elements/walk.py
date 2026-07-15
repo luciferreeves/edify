@@ -32,11 +32,11 @@ def walk_elements(roots: Iterable[BaseElement]) -> Iterator[BaseElement]:
 def _walk_single(element: BaseElement) -> Iterator[BaseElement]:
     yield element
     for spec in fields(element):
-        value: object = getattr(element, spec.name)
-        if isinstance(value, BaseElement):
-            yield from _walk_single(value)
+        raw_value = getattr(element, spec.name)
+        typed_value = cast("BaseElement | tuple[BaseElement, ...] | str | int", raw_value)
+        if isinstance(typed_value, BaseElement):
+            yield from _walk_single(typed_value)
             continue
-        if isinstance(value, tuple):
-            narrowed_tuple = cast(tuple[BaseElement, ...], value)
-            for child in narrowed_tuple:
+        if isinstance(typed_value, tuple):
+            for child in typed_value:
                 yield from _walk_single(child)

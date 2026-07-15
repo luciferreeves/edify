@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from edify.errors.formatting import compose_annotated_message
 from edify.errors.syntax import EdifySyntaxError
-from edify.serialize.types import JSONValue
 
 
 class MissingSchemaKeyError(EdifySyntaxError):
@@ -38,7 +37,9 @@ class IncompatibleSchemaVersionError(EdifySyntaxError):
         supported_version: The version this build emits and accepts.
     """
 
-    def __init__(self, seen_version: JSONValue, supported_version: int) -> None:
+    def __init__(
+        self, seen_version: str | int | float | bool | None, supported_version: int
+    ) -> None:
         message = compose_annotated_message(
             summary=(
                 f"canonical dict declares schema version {seen_version!r}, but this build "
@@ -53,6 +54,30 @@ class IncompatibleSchemaVersionError(EdifySyntaxError):
             help_line=("help: check the ``edify`` key in the input matches the emitting build."),
         )
         super().__init__(message)
+
+
+class NonObjectJSONPayloadError(EdifySyntaxError):
+    """Raised by :meth:`Pattern.from_json` when the parsed JSON is not a top-level object.
+
+    Args:
+        actual_type_name: The Python type name of the value ``json.loads`` produced.
+    """
+
+    def __init__(self, actual_type_name: str) -> None:
+        message = compose_annotated_message(
+            summary=(f"canonical JSON payload must be an object; got {actual_type_name}"),
+            trigger_hint="Pattern.from_json called here",
+            note=(
+                "the canonical serialization format wraps every payload in a top-level "
+                "JSON object; scalars, arrays, and other kinds are not accepted."
+            ),
+            help_line=(
+                "help: wrap the payload in an object with the canonical schema keys, or "
+                "use Pattern.from_dict with the object directly."
+            ),
+        )
+        super().__init__(message)
+        self.actual_type_name = actual_type_name
 
 
 class UnknownElementKindError(EdifySyntaxError):

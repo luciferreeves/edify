@@ -5,7 +5,7 @@ Runs three checks, one per snapshot root:
 * ``tests/snapshots/library/<name>.regex`` — must correspond to a
   :class:`edify.Pattern` exported from :mod:`edify.library`.
 * ``tests/snapshots/fixtures/<name>.regex`` — must correspond to a fixture
-  registered in ``tests/fixtures/edge_cases.test.py``.
+  registered in ``tests/fixtures/fixtures.test.py``.
 * ``tests/snapshots/docs/<file>/<block>.regex`` — must correspond to a
   ``.. code-block:: python`` block at that line in that RST.
 
@@ -44,7 +44,7 @@ def test_every_fixture_snapshot_has_a_registered_fixture():
     orphaned_snapshots = snapshot_stems - fixture_names
     assert orphaned_snapshots == set(), (
         f"fixture snapshot files without a registered fixture in "
-        f"tests/fixtures/edge_cases.test.py: {sorted(orphaned_snapshots)}"
+        f"tests/fixtures/fixtures.test.py: {sorted(orphaned_snapshots)}"
     )
 
 
@@ -70,7 +70,7 @@ def _library_pattern_names() -> set[str]:
 
 
 def _registered_fixture_names() -> set[str]:
-    fixture_source = (_REPO_ROOT / "tests" / "fixtures" / "edge_cases.test.py").read_text()
+    fixture_source = (_REPO_ROOT / "tests" / "fixtures" / "fixtures.test.py").read_text()
     return _fixture_names_from_source(fixture_source)
 
 

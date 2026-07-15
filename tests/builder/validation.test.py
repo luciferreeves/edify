@@ -14,6 +14,7 @@ from edify.errors.anchors import (
 )
 from edify.errors.input import (
     MustBeAStringError,
+    MustBeInstanceError,
     MustBeIntegerGreaterThanZeroError,
     MustBeLessThanError,
     MustBeOneCharacterError,
@@ -22,6 +23,7 @@ from edify.errors.input import (
     MustHaveASmallerValueError,
 )
 from edify.errors.naming import NamedGroupDoesNotExistError
+from edify.errors.structure import CannotCallSubexpressionError
 
 
 def test_start_of_input_twice_raises():
@@ -140,23 +142,17 @@ def test_named_back_reference_undeclared_raises():
 
 
 def test_to_regex_string_with_open_frame_raises():
-    from edify.errors.structure import CannotCallSubexpressionError
-
     unfinished = RegexBuilder().capture().digit()
     with pytest.raises(CannotCallSubexpressionError):
         unfinished.to_regex_string()
 
 
 def test_to_regex_with_open_frame_raises():
-    from edify.errors.structure import CannotCallSubexpressionError
-
     unfinished = RegexBuilder().capture().digit()
     with pytest.raises(CannotCallSubexpressionError):
         unfinished.to_regex()
 
 
 def test_subexpression_non_builder_raises():
-    from edify.errors.input import MustBeInstanceError
-
     with pytest.raises(MustBeInstanceError):
         RegexBuilder().subexpression("not a builder")

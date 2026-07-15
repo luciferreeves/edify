@@ -1,5 +1,3 @@
-"""Re-exports every functional factory grouped by category."""
-
 from __future__ import annotations
 
 from edify.pattern.factories.assertions import (

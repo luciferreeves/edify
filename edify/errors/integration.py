@@ -1,31 +1,24 @@
-"""Exception raised when an integration module needs a framework the user has not installed."""
+"""Exceptions raised by :mod:`edify.integrations` helpers."""
 
 from __future__ import annotations
 
-from edify.errors.formatting import compose_annotated_message
-from edify.errors.syntax import EdifySyntaxError
 
+class PatternDidNotMatchError(ValueError):
+    """Raised inside integration validators when a value fails to match the wrapped pattern.
 
-class MissingIntegrationDependencyError(EdifySyntaxError):
-    """Raised when an ``edify.integrations.<framework>`` helper runs without the framework.
+    Inherits :class:`ValueError` so framework validation layers (pydantic, django, etc.)
+    convert it into their own ``ValidationError`` shape without an extra try/except.
 
     Args:
-        framework: The framework name as it appears in the extras marker
-            (``"pydantic"``, ``"fastapi"``, ``"django"``).
+        source: The regex string the value was tested against.
+        value: The rejected input.
     """
 
-    def __init__(self, framework: str) -> None:
-        message = compose_annotated_message(
-            summary=(
-                f"the edify.integrations.{framework} module requires the {framework!r} "
-                "package, which is not installed"
-            ),
-            trigger_hint=f"edify.integrations.{framework} helper called here",
-            note=(
-                f"the {framework!r} integration ships as an opt-in extra so pip install "
-                "edify stays dependency-free."
-            ),
-            help_line=(f"help: install the extra with `pip install edify[{framework}]` and retry."),
+    def __init__(self, source: str, value: str) -> None:
+        message = (
+            f"input {value!r} does not match the pattern with source {source!r}; "
+            "adjust the value to match the pattern or select a pattern that accepts it."
         )
         super().__init__(message)
-        self.framework = framework
+        self.source = source
+        self.value = value

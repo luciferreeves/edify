@@ -1,5 +1,7 @@
 """Tests for lookbehind width behavior across the ``re`` and ``regex`` engines."""
 
+import re
+
 import pytest
 
 from edify import RegexBuilder
@@ -42,14 +44,10 @@ def test_fixed_width_lookbehind_still_works_under_re():
 def test_variable_width_lookbehind_error_chains_the_underlying_pattern_error():
     with pytest.raises(VariableWidthLookbehindNotSupportedError) as excinfo:
         _variable_width_lookbehind_builder().to_regex(engine="re")
-    import re
-
     assert isinstance(excinfo.value.__cause__, re.error)
 
 
 def test_re_engine_still_surfaces_other_pattern_errors_unchanged(monkeypatch):
-    import re
-
     def raise_other_error(_pattern, flags=0):
         raise re.error("some other syntax error")
 

@@ -1,6 +1,6 @@
 import importlib.metadata
 
-from edify.builder.builder import RegexBuilder
+from edify.builder.fluent import RegexBuilder
 from edify.errors.base import EdifyError
 from edify.errors.syntax import EdifySyntaxError
 from edify.pattern.anchors import END, START

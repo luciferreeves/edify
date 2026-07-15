@@ -19,6 +19,7 @@ from edify.builder.mixins.quantifiers import QuantifiersMixin
 from edify.builder.mixins.subexpression import SubexpressionMixin
 from edify.builder.mixins.terminals import TerminalsMixin
 from edify.builder.mixins.testing import TestingMixin
+from edify.errors.serialize import NonObjectJSONPayloadError
 from edify.serialize.dump import state_to_dict
 from edify.serialize.load import dict_to_state
 from edify.serialize.types import JSONValue
@@ -76,7 +77,5 @@ class Pattern(
         """Return a Pattern reconstructed from a canonical JSON string."""
         parsed_document: JSONValue = json.loads(blob)
         if not isinstance(parsed_document, dict):
-            raise TypeError(
-                f"canonical JSON payload must be an object; got {type(parsed_document).__name__}"
-            )
+            raise NonObjectJSONPayloadError(type(parsed_document).__name__)
         return cls.from_dict(parsed_document)

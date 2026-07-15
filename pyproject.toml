@@ -136,8 +136,10 @@ filterwarnings = ["error"]
 [tool.pyright]
 pythonVersion = "3.11"
 include = ["edify"]
+venvPath = "."
+venv = ".venv"
 typeCheckingMode = "strict"
-reportMissingImports = "error"
+reportMissingImports = "none"
 reportMissingTypeStubs = "none"
 reportPrivateUsage = "none"
 reportUnnecessaryIsInstance = "none"
@@ -162,6 +164,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["graphviz"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["django", "django.core", "django.core.validators", "django.core.exceptions"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

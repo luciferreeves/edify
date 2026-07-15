@@ -69,7 +69,8 @@ class _PasswordPattern(Pattern):
         upper_ok = len(_UPPERCASE_RE.findall(value)) >= effective_min_upper
         lower_ok = len(_LOWERCASE_RE.findall(value)) >= effective_min_lower
         digit_ok = len(_DIGIT_RE.findall(value)) >= effective_min_digit
-        special_count = sum(1 for character in value if character in effective_special)
+        special_flags = [1 for character in value if character in effective_special]
+        special_count = sum(special_flags)
         special_ok = special_count >= effective_min_special
         return length_ok and upper_ok and lower_ok and digit_ok and special_ok
 

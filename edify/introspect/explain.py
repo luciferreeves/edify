@@ -513,14 +513,16 @@ def _example_for(element: BaseElement, alternative_index: int) -> str:
     if isinstance(
         element, CaptureElement | NamedCaptureElement | GroupElement | SubexpressionElement
     ):
-        return "".join(_example_for(child, alternative_index) for child in element.children)
+        rendered_children = [_example_for(child, alternative_index) for child in element.children]
+        return "".join(rendered_children)
     if isinstance(element, AnyOfElement):
         if not element.children:
             return ""
         chosen = element.children[alternative_index % len(element.children)]
         return _example_for(chosen, alternative_index)
     if isinstance(element, AssertAheadElement | AssertBehindElement):
-        return "".join(_example_for(child, alternative_index) for child in element.children)
+        rendered_children = [_example_for(child, alternative_index) for child in element.children]
+        return "".join(rendered_children)
     if isinstance(element, AssertNotAheadElement | AssertNotBehindElement):
         return ""
     if isinstance(element, BackReferenceElement | NamedBackReferenceElement):

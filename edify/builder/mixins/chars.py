@@ -93,7 +93,7 @@ class CharsMixin(BuilderProtocol):
         return self._with_state(new_state)
 
 
-def _ensure_is_string(label: str, value: object) -> None:
+def _ensure_is_string(label: str, value: str) -> None:
     """Raise :class:`MustBeAStringError` when ``value`` is not a string."""
     if isinstance(value, str):
         return
@@ -108,7 +108,7 @@ def _ensure_non_empty(label: str, value: str) -> None:
     raise MustBeOneCharacterError(label)
 
 
-def _ensure_single_character(label: str, value: object) -> None:
+def _ensure_single_character(label: str, value: str) -> None:
     """Raise :class:`MustBeSingleCharacterError` when ``value`` is not a length-1 string."""
     if isinstance(value, str) and len(value) == 1:
         return

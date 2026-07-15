@@ -70,7 +70,8 @@ def test_match_repr_contains_span_and_text():
 def test_finditer_yields_wrapped_matches():
     pattern = _username_pattern().to_regex()
     hits = list(pattern.finditer("hi @heidi and @ivan"))
-    assert all(isinstance(item, Match) for item in hits)
+    types_are_match = [isinstance(item, Match) for item in hits]
+    assert all(types_are_match)
     assert [item.captures.username for item in hits] == ["heidi", "ivan"]
 
 
@@ -115,3 +116,86 @@ def test_fullmatch_returns_wrapped_match_when_full_input_matches():
 def test_fullmatch_returns_none_when_input_is_only_partial():
     pattern = _username_pattern().to_regex()
     assert pattern.fullmatch("hi @leo") is None
+
+
+def test_match_forwarded_group_accepts_named_and_positional_selectors():
+    result = _username_pattern().search("hi @meg")
+    assert result is not None
+    assert result.group() == "@meg"
+    assert result.group(0) == "@meg"
+    assert result.group(1) == "meg"
+
+
+def test_match_forwarded_groups_returns_the_positional_group_tuple():
+    result = _username_pattern().search("hi @nora")
+    assert result is not None
+    assert result.groups() == ("nora",)
+
+
+def test_match_forwarded_groups_uses_default_for_unmatched_groups():
+    optional_capture = (
+        RegexBuilder()
+        .start_of_input()
+        .capture()
+        .string("hi")
+        .end()
+        .optional()
+        .capture()
+        .string("bye")
+        .end()
+        .end_of_input()
+    )
+    result = optional_capture.match("hi")
+    assert result is not None
+    assert result.groups(default="missing") == ("hi", "missing")
+
+
+def test_match_forwarded_groupdict_defaults_to_none_for_absent_named_groups():
+    result = _username_pattern().search("hi @olive")
+    assert result is not None
+    assert result.groupdict() == {"username": "olive"}
+
+
+def test_match_forwarded_groupdict_accepts_a_default_string():
+    optional_named = (
+        RegexBuilder()
+        .start_of_input()
+        .string("hi")
+        .optional()
+        .named_capture("nick")
+        .one_or_more()
+        .letter()
+        .end()
+        .end_of_input()
+    )
+    result = optional_named.match("hi")
+    assert result is not None
+    assert result.groupdict(default="none") == {"nick": "none"}
+
+
+def test_match_forwarded_start_end_span_and_expand_return_the_expected_values():
+    result = _username_pattern().search("hi @pete")
+    assert result is not None
+    assert result.start() == 3
+    assert result.end() == 8
+    assert result.span() == (3, 8)
+    assert result.expand(r"\g<username>") == "pete"
+
+
+def test_match_forwarded_re_pos_endpos_string_lastindex_lastgroup_reflect_the_compiled_pattern():
+    pattern = _username_pattern().to_regex()
+    result = pattern.search("hi @quinn there")
+    assert result is not None
+    assert result.re is pattern.compiled
+    assert result.string == "hi @quinn there"
+    assert result.pos == 0
+    assert result.endpos > 0
+    assert result.lastindex == 1
+    assert result.lastgroup == "username"
+
+
+def test_match_fallback_getattr_raises_attribute_error_on_unknown_name():
+    result = _username_pattern().search("hi @rita")
+    assert result is not None
+    with pytest.raises(AttributeError, match="no attribute"):
+        _ = result.nonexistent

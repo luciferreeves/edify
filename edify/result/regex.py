@@ -5,7 +5,6 @@ from __future__ import annotations
 import re
 import sys
 from collections.abc import Callable, Iterator, Mapping
-from typing import Any, cast
 
 from edify.builder.types.engine import Engine
 from edify.elements.types.base import BaseElement
@@ -35,12 +34,12 @@ class Regex:
     def __init__(
         self,
         source: str,
-        compiled: Any,
+        compiled: re.Pattern[str],
         elements: tuple[BaseElement, ...] = (),
         engine: Engine = "re",
     ) -> None:
         self._source: str = source
-        self._compiled: re.Pattern[str] = cast(re.Pattern[str], compiled)
+        self._compiled: re.Pattern[str] = compiled
         self._elements: tuple[BaseElement, ...] = elements
         self._engine: Engine = engine
 

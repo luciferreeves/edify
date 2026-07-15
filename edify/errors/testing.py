@@ -9,7 +9,8 @@ class PatternDidNotMatchInputsError(AssertionError):
     """Raised by :meth:`assert_matches` when one or more expected inputs did not match."""
 
     def __init__(self, pattern_source: str, missing_matches: tuple[str, ...]) -> None:
-        listed = ", ".join(repr(item) for item in missing_matches)
+        rendered_items = [repr(item) for item in missing_matches]
+        listed = ", ".join(rendered_items)
         summary = (
             f"pattern {pattern_source!r} did not match {len(missing_matches)} expected "
             f"input(s): {listed}"
@@ -34,7 +35,8 @@ class PatternMatchedRejectedInputsError(AssertionError):
     """Raised by :meth:`assert_rejects` when one or more inputs matched unexpectedly."""
 
     def __init__(self, pattern_source: str, unexpected_matches: tuple[str, ...]) -> None:
-        listed = ", ".join(repr(item) for item in unexpected_matches)
+        rendered_items = [repr(item) for item in unexpected_matches]
+        listed = ", ".join(rendered_items)
         summary = (
             f"pattern {pattern_source!r} matched {len(unexpected_matches)} input(s) that "
             f"were expected to be rejected: {listed}"

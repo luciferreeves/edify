@@ -62,7 +62,7 @@ class CapturesMixin(BuilderProtocol):
         return self._with_state(new_state)
 
 
-def _validate_new_named_group(name: object, existing_names: tuple[str, ...]) -> None:
+def _validate_new_named_group(name: str, existing_names: tuple[str, ...]) -> None:
     """Raise the appropriate naming error if ``name`` cannot be declared as a new named group."""
     if not isinstance(name, str):
         actual_type_name = type(name).__name__
