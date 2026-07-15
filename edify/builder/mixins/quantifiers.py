@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Self
+from typing import Self, TypeVar
 
 from edify.builder.types.frame import PendingQuantifier
 from edify.builder.types.protocol import BuilderProtocol
@@ -19,13 +19,15 @@ from edify.elements.types.quantifiers import (
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
 )
-from edify.errors.context import capture_caller_context
+from edify.errors.context import CallerContext, capture_caller_context
 from edify.errors.input import (
     MustBeIntegerGreaterThanZeroError,
     MustBeLessThanError,
     MustBePositiveIntegerError,
 )
 from edify.errors.quantifier import StackedQuantifierError
+
+_TBuilder = TypeVar("_TBuilder", bound=BuilderProtocol)
 
 
 class QuantifiersMixin(BuilderProtocol):
@@ -99,11 +101,11 @@ class QuantifiersMixin(BuilderProtocol):
 
 
 def _set_pending(
-    builder: BuilderProtocol,
+    builder: _TBuilder,
     pending_quantifier: PendingQuantifier,
-    call_site,
+    call_site: CallerContext | None,
     quantifier_name: str,
-):
+) -> _TBuilder:
     """Replace the top frame with one carrying the given pending quantifier."""
     if builder._state.top_frame.quantifier is not None:
         raise StackedQuantifierError()
