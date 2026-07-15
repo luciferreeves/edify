@@ -16,6 +16,7 @@ from edify.builder.mixins.operators import OperatorsMixin
 from edify.builder.mixins.quantifiers import QuantifiersMixin
 from edify.builder.mixins.subexpression import SubexpressionMixin
 from edify.builder.mixins.terminals import TerminalsMixin
+from edify.builder.mixins.testing import TestingMixin
 
 
 class RegexBuilder(
@@ -33,5 +34,6 @@ class RegexBuilder(
     QuantifiersMixin,
     SubexpressionMixin,
     TerminalsMixin,
+    TestingMixin,
 ):
     """A fluent, immutable, strongly-typed regex builder."""

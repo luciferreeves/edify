@@ -18,6 +18,7 @@ from edify.builder.mixins.operators import OperatorsMixin
 from edify.builder.mixins.quantifiers import QuantifiersMixin
 from edify.builder.mixins.subexpression import SubexpressionMixin
 from edify.builder.mixins.terminals import TerminalsMixin
+from edify.builder.mixins.testing import TestingMixin
 from edify.serialize.dump import state_to_dict
 from edify.serialize.load import dict_to_state
 from edify.serialize.types import JSONValue
@@ -38,6 +39,7 @@ class Pattern(
     QuantifiersMixin,
     SubexpressionMixin,
     TerminalsMixin,
+    TestingMixin,
 ):
     """A named, reusable regex fragment.
 
