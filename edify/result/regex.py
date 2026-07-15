@@ -1,17 +1,19 @@
-"""The :class:`Regex` composition wrapper over :class:`re.Pattern`."""
+"""The :class:`Regex` composition wrapper over the compiled backend pattern."""
 
 from __future__ import annotations
 
 import re
 import sys
 from collections.abc import Callable, Iterator, Mapping
+from typing import Any, cast
 
+from edify.builder.types.engine import Engine
 from edify.elements.types.base import BaseElement
 from edify.introspect.explain import explain_elements
 from edify.introspect.verbose import verbose_elements
 from edify.introspect.visualize import visualize_elements
 
-_RePatternMethodReturn = (
+_MethodReturn = (
     re.Match[str]
     | list[str]
     | list[tuple[str, ...]]
@@ -22,21 +24,23 @@ _RePatternMethodReturn = (
     | None
 )
 
-_RePatternAttribute = int | str | Mapping[str, int] | Callable[..., _RePatternMethodReturn]
+_PatternAttribute = int | str | Mapping[str, int] | Callable[..., _MethodReturn]
 
 
 class Regex:
-    """A compiled edify pattern; wraps :class:`re.Pattern` by composition."""
+    """A compiled edify pattern; wraps the selected engine's ``Pattern`` by composition."""
 
     def __init__(
         self,
         source: str,
-        compiled: re.Pattern[str],
+        compiled: Any,
         elements: tuple[BaseElement, ...] = (),
+        engine: Engine = "re",
     ) -> None:
-        self._source = source
-        self._compiled = compiled
-        self._elements = elements
+        self._source: str = source
+        self._compiled: re.Pattern[str] = cast(re.Pattern[str], compiled)
+        self._elements: tuple[BaseElement, ...] = elements
+        self._engine: Engine = engine
 
     @property
     def source(self) -> str:
@@ -45,7 +49,7 @@ class Regex:
 
     @property
     def compiled(self) -> re.Pattern[str]:
-        """The underlying :class:`re.Pattern` for direct interop with :mod:`re`."""
+        """The underlying compiled ``Pattern`` for direct interop with the engine module."""
         return self._compiled
 
     @property
@@ -53,30 +57,35 @@ class Regex:
         """The AST elements produced by the builder, in emission order."""
         return self._elements
 
+    @property
+    def engine(self) -> Engine:
+        """The engine identifier this pattern was compiled with."""
+        return self._engine
+
     def match(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
-        """Delegate to :meth:`re.Pattern.match`."""
+        """Delegate to the compiled pattern's ``match`` method."""
         return self._compiled.match(string, pos, endpos)
 
     def search(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
-        """Delegate to :meth:`re.Pattern.search`."""
+        """Delegate to the compiled pattern's ``search`` method."""
         return self._compiled.search(string, pos, endpos)
 
     def fullmatch(
         self, string: str, pos: int = 0, endpos: int = sys.maxsize
     ) -> re.Match[str] | None:
-        """Delegate to :meth:`re.Pattern.fullmatch`."""
+        """Delegate to the compiled pattern's ``fullmatch`` method."""
         return self._compiled.fullmatch(string, pos, endpos)
 
     def findall(
         self, string: str, pos: int = 0, endpos: int = sys.maxsize
     ) -> list[str] | list[tuple[str, ...]]:
-        """Delegate to :meth:`re.Pattern.findall`."""
+        """Delegate to the compiled pattern's ``findall`` method."""
         return self._compiled.findall(string, pos, endpos)
 
     def finditer(
         self, string: str, pos: int = 0, endpos: int = sys.maxsize
     ) -> Iterator[re.Match[str]]:
-        """Delegate to :meth:`re.Pattern.finditer`."""
+        """Delegate to the compiled pattern's ``finditer`` method."""
         return self._compiled.finditer(string, pos, endpos)
 
     def sub(
@@ -85,7 +94,7 @@ class Regex:
         string: str,
         count: int = 0,
     ) -> str:
-        """Delegate to :meth:`re.Pattern.sub`."""
+        """Delegate to the compiled pattern's ``sub`` method."""
         return self._compiled.sub(replacement, string, count=count)
 
     def subn(
@@ -94,11 +103,11 @@ class Regex:
         string: str,
         count: int = 0,
     ) -> tuple[str, int]:
-        """Delegate to :meth:`re.Pattern.subn`."""
+        """Delegate to the compiled pattern's ``subn`` method."""
         return self._compiled.subn(replacement, string, count=count)
 
     def split(self, string: str, maxsplit: int = 0) -> list[str | None]:
-        """Delegate to :meth:`re.Pattern.split`."""
+        """Delegate to the compiled pattern's ``split`` method."""
         return self._compiled.split(string, maxsplit=maxsplit)
 
     def explain(self) -> str:
@@ -133,9 +142,9 @@ class Regex:
         """
         return visualize_elements(self._elements, format=format, engine=engine)
 
-    def __getattr__(self, name: str) -> _RePatternAttribute:
-        """Return the underlying :class:`re.Pattern` attribute named ``name``."""
-        attribute: _RePatternAttribute = getattr(self._compiled, name)
+    def __getattr__(self, name: str) -> _PatternAttribute:
+        """Return the underlying compiled pattern's attribute named ``name``."""
+        attribute: _PatternAttribute = getattr(self._compiled, name)
         return attribute
 
     def __repr__(self) -> str:
@@ -143,11 +152,15 @@ class Regex:
         return f"<Regex {self._source!r}>"
 
     def __eq__(self, other: object) -> bool:
-        """Return True when ``other`` is a Regex whose source and flags match."""
+        """Return True when ``other`` is a Regex whose source, engine, and flags match."""
         if not isinstance(other, Regex):
             return NotImplemented
-        return self._source == other._source and self._compiled.flags == other._compiled.flags
+        return (
+            self._source == other._source
+            and self._engine == other._engine
+            and self._compiled.flags == other._compiled.flags
+        )
 
     def __hash__(self) -> int:
-        """Return a hash derived from the source and compiled flags."""
-        return hash((self._source, self._compiled.flags))
+        """Return a hash derived from the source, engine, and compiled flags."""
+        return hash((self._source, self._engine, self._compiled.flags))

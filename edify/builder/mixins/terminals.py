@@ -4,19 +4,18 @@ Both methods require the builder to be fully specified: every opened frame
 must have been closed with ``.end()`` so only the root frame remains. The
 string terminal returns exactly the pattern you'd hand to ``re.compile``;
 the compiled terminal performs that compilation with the current flag set
-and returns the emitted string wrapped in an :class:`edify.result.Regex`.
+via the selected engine backend, returning the emitted string wrapped in
+an :class:`edify.result.Regex`.
 """
 
 from __future__ import annotations
 
-import re
-
 from edify.builder.types.engine import Engine
 from edify.builder.types.flags import Flags
 from edify.builder.types.protocol import BuilderProtocol
+from edify.compile.backend import compile_pattern
 from edify.compile.dispatch import render_element
 from edify.elements.types.root import RootElement
-from edify.errors.engine import EngineNotWiredError
 from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
 from edify.result import Regex
@@ -58,21 +57,22 @@ class TerminalsMixin(BuilderProtocol):
         """Return the pattern + flags compiled and wrapped in :class:`edify.result.Regex`.
 
         The wrapper exposes the pattern string as ``.source`` and the underlying
-        :class:`re.Pattern` as ``.compiled``, plus the eight :mod:`re` query
-        methods as direct delegates.
+        compiled pattern as ``.compiled``, plus the eight :mod:`re` query methods
+        as direct delegates against the selected engine backend.
 
         Keyword arguments are OR-merged into the flag snapshot the builder
         already carries — passing ``ignore_case=True`` here is equivalent to
         having called ``.ignore_case()`` in the chain. Flags never turn off,
         only on.
 
-        The ``engine`` kwarg selects the compilation backend. Only ``"re"`` is
-        wired today; ``"regex"`` is reserved for the opt-in third-party engine
-        and raises :class:`NotImplementedError` until that dispatch lands.
+        The ``engine`` kwarg selects the compilation backend. ``"re"`` (default)
+        uses the stdlib :mod:`re` module. ``"regex"`` uses the third-party
+        ``regex`` module, which unlocks constructs the stdlib does not accept
+        (variable-width lookbehind, per-call timeouts). ``"regex"`` requires
+        ``pip install edify[regex]``; a clean :class:`MissingRegexBackendError`
+        surfaces when the extra is not installed.
         """
         pattern_string = self.to_regex_string()
-        if engine != "re":
-            raise EngineNotWiredError(engine)
         kwarg_flags = Flags(
             ascii_only=ascii_only,
             debug=debug,
@@ -82,12 +82,12 @@ class TerminalsMixin(BuilderProtocol):
             verbose=verbose,
         )
         effective_flags = self._state.flags.with_merged(kwarg_flags)
-        flag_bitmask = _build_flag_bitmask(effective_flags)
-        compiled_pattern = re.compile(pattern_string, flags=flag_bitmask)
+        compiled_pattern = compile_pattern(pattern_string, engine, effective_flags)
         return Regex(
             source=pattern_string,
             compiled=compiled_pattern,
             elements=tuple(self._state.top_frame.children),
+            engine=engine,
         )
 
 
@@ -104,21 +104,3 @@ def _ensure_no_dangling_quantifier(builder: BuilderProtocol) -> None:
     for frame in builder._state.stack:
         if frame.quantifier is not None:
             raise DanglingQuantifierError()
-
-
-def _build_flag_bitmask(flags: Flags) -> int:
-    """Combine the True-valued fields of ``flags`` into a single :mod:`re` bitmask."""
-    bitmask = 0
-    if flags.ascii_only:
-        bitmask = bitmask | re.A
-    if flags.debug:
-        bitmask = bitmask | re.DEBUG
-    if flags.ignore_case:
-        bitmask = bitmask | re.I
-    if flags.multiline:
-        bitmask = bitmask | re.M
-    if flags.dotall:
-        bitmask = bitmask | re.S
-    if flags.verbose:
-        bitmask = bitmask | re.X
-    return bitmask
