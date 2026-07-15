@@ -22,12 +22,9 @@ _UNCLOSED_FRAME_MARKER = "<unclosed>"
 class BuilderCore(BuilderProtocol):
     """Holds the immutable :class:`BuilderState` and clones it on chain steps."""
 
-    _state: BuilderState
-    _cached_regex: Regex | None
-
     def __init__(self) -> None:
-        self._state = BuilderState()
-        self._cached_regex = None
+        self._state: BuilderState = BuilderState()
+        self._cached_regex: Regex | None = None
 
     def _with_state(self, new_state: BuilderState) -> Self:
         """Return a fresh instance of the same concrete type carrying ``new_state``."""
@@ -39,12 +36,7 @@ class BuilderCore(BuilderProtocol):
 
     def _lazy_regex(self) -> Regex:
         """Return the memoised :class:`Regex` for this builder, compiling once on first call."""
-        cached = self._cached_regex
-        if cached is None:
-            to_regex = self.to_regex
-            cached = to_regex()
-            self._cached_regex = cached
-        return cached
+        return self.to_regex()
 
     def fork(self) -> Self:
         """Return a fresh builder with the same immutable state."""

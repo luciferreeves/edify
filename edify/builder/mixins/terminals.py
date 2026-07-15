@@ -28,6 +28,8 @@ _RAW_SPACE = " "
 class TerminalsMixin(BuilderProtocol):
     """Provides the two pattern-emitting terminal methods on the builder."""
 
+    _cached_regex: Regex | None
+
     def to_regex_string(self) -> str:
         """Return the bare regex string the builder describes.
 
@@ -71,8 +73,11 @@ class TerminalsMixin(BuilderProtocol):
         (variable-width lookbehind, per-call timeouts). ``"regex"`` requires
         ``pip install edify[regex]``; a clean :class:`MissingRegexBackendError`
         surfaces when the extra is not installed.
+
+        Default (no-kwargs) calls hit a per-instance lazy cache: the second and
+        subsequent no-kwargs calls return the same :class:`Regex` the first call
+        produced. Passing any kwarg bypasses the cache and always compiles fresh.
         """
-        pattern_string = self.to_regex_string()
         kwarg_flags = Flags(
             ascii_only=ascii_only,
             debug=debug,
@@ -81,14 +86,21 @@ class TerminalsMixin(BuilderProtocol):
             dotall=dotall,
             verbose=verbose,
         )
+        can_cache = engine == "re" and kwarg_flags == Flags()
+        if can_cache and self._cached_regex is not None:
+            return self._cached_regex
+        pattern_string = self.to_regex_string()
         effective_flags = self._state.flags.with_merged(kwarg_flags)
         compiled_pattern = compile_pattern(pattern_string, engine, effective_flags)
-        return Regex(
+        wrapped = Regex(
             source=pattern_string,
             compiled=compiled_pattern,
             elements=tuple(self._state.top_frame.children),
             engine=engine,
         )
+        if can_cache:
+            self._cached_regex = wrapped
+        return wrapped
 
 
 def _ensure_fully_specified(builder: BuilderProtocol) -> None:
