@@ -60,7 +60,7 @@ def assert_snapshot(actual: str, snapshot_path: Path) -> None:
         return
     if not snapshot_path.exists():
         raise SnapshotMissingError(snapshot_path)
-    expected = snapshot_path.read_text()
+    expected = _read_snapshot(snapshot_path)
     if actual == expected:
         return
     raise SnapshotMismatchError(snapshot_path, actual, expected)
@@ -72,7 +72,11 @@ def _update_mode_enabled() -> bool:
 
 def _write_snapshot(snapshot_path: Path, actual: str) -> None:
     snapshot_path.parent.mkdir(parents=True, exist_ok=True)
-    snapshot_path.write_text(actual)
+    snapshot_path.write_bytes(actual.encode("utf-8"))
+
+
+def _read_snapshot(snapshot_path: Path) -> str:
+    return snapshot_path.read_bytes().decode("utf-8")
 
 
 def _render_diff(snapshot_path: Path, expected: str, actual: str) -> str:
