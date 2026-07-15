@@ -145,6 +145,10 @@ ignore_missing_imports = true
 module = ["graphviz"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = ["re._parser", "re._constants"]
+ignore_missing_imports = true
+
 [tool.coverage.run]
 branch = false
 source = ["edify"]

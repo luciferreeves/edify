@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import edify.builder.reverse as reverse_module
 from edify.builder.core import BuilderCore
 from edify.builder.mixins.anchors import AnchorsMixin
 from edify.builder.mixins.assertions import AssertionsMixin
@@ -37,3 +38,16 @@ class RegexBuilder(
     TestingMixin,
 ):
     """A fluent, immutable, strongly-typed regex builder."""
+
+    @classmethod
+    def from_regex(cls, pattern_text: str) -> RegexBuilder:
+        """Return a builder chain whose emitted pattern is equivalent to ``pattern_text``.
+
+        Args:
+            pattern_text: Raw regex source, exactly what would be handed to :func:`re.compile`.
+
+        Raises:
+            edify.builder.reverse.UnsupportedReverseParseError: when the source uses a
+                construct the reverse parser cannot translate yet.
+        """
+        return reverse_module.build_from_regex(pattern_text)
