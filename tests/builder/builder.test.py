@@ -404,14 +404,14 @@ def test_end_of_input():
 
 def test_any_of_chars():
     expr = RegexBuilder().any_of_chars("aeiou.-")
-    regex_equality("[aeiou\\.\\-]", expr)
-    regex_compilation("[aeiou\\.\\-]", expr)
+    regex_equality("[aeiou.-]", expr)
+    regex_compilation("[aeiou.-]", expr)
 
 
 def test_anything_but_chars():
     expr = RegexBuilder().anything_but_chars("aeiou.-")
-    regex_equality("[^aeiou\\.\\-]", expr)
-    regex_compilation("[^aeiou\\.\\-]", expr)
+    regex_equality("[^aeiou.-]", expr)
+    regex_compilation("[^aeiou.-]", expr)
 
 
 def test_anything_but_string():

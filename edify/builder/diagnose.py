@@ -15,6 +15,7 @@ from edify.elements.types.groups import (
 )
 from edify.errors.context import CallerContext
 from edify.errors.formatting import FixInsertion, Problem
+from edify.errors.structure import OpenFrameInfo
 
 _END_INSERTION_TEXT = ".end()"
 _DANGLING_INSERTION_TEXT = ".digit()"
@@ -24,6 +25,41 @@ _UNKNOWN_CALL_SITE = CallerContext(
     colno=1,
     end_colno=1,
 )
+
+
+def describe_open_frames(state: BuilderState) -> tuple[OpenFrameInfo, ...]:
+    """Return the innermost-first list of frames still open on ``state``.
+
+    The root frame is excluded; only user-opened frames appear.
+    """
+    stack_without_root = state.stack[1:]
+    infos = [
+        OpenFrameInfo(
+            kind=_frame_kind(frame),
+            opened_at=frame.call_site,
+        )
+        for frame in stack_without_root
+    ]
+    infos.reverse()
+    return tuple(infos)
+
+
+def _frame_kind(frame: StackFrame) -> str:
+    type_node = frame.type_node
+    if isinstance(type_node, NamedCaptureElement):
+        return f'named_capture("{type_node.name}")'
+    return _STATIC_FRAME_KIND_NAMES[type(type_node)]
+
+
+_STATIC_FRAME_KIND_NAMES: dict[type, str] = {
+    AnyOfElement: "any_of",
+    GroupElement: "group",
+    AssertAheadElement: "assert_ahead",
+    AssertNotAheadElement: "assert_not_ahead",
+    AssertBehindElement: "assert_behind",
+    AssertNotBehindElement: "assert_not_behind",
+    CaptureElement: "capture",
+}
 
 
 def diagnose_unfinished(state: BuilderState, subject: str) -> Problem | None:

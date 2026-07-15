@@ -10,11 +10,13 @@ an :class:`edify.result.Regex`.
 
 from __future__ import annotations
 
+from edify.builder.diagnose import describe_open_frames
 from edify.builder.types.engine import Engine
 from edify.builder.types.flags import Flags
 from edify.builder.types.protocol import BuilderProtocol
 from edify.compile.backend import compile_pattern
 from edify.compile.dispatch import render_element
+from edify.compile.redos import warn_on_redos_constructs
 from edify.elements.types.root import RootElement
 from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
@@ -90,12 +92,14 @@ class TerminalsMixin(BuilderProtocol):
         if can_cache and self._cached_regex is not None:
             return self._cached_regex
         pattern_string = self.to_regex_string()
+        top_frame_children = tuple(self._state.top_frame.children)
+        warn_on_redos_constructs(top_frame_children)
         effective_flags = self._state.flags.with_merged(kwarg_flags)
         compiled_pattern = compile_pattern(pattern_string, engine, effective_flags)
         wrapped = Regex(
             source=pattern_string,
             compiled=compiled_pattern,
-            elements=tuple(self._state.top_frame.children),
+            elements=top_frame_children,
             engine=engine,
         )
         if can_cache:
@@ -107,12 +111,15 @@ def _ensure_fully_specified(builder: BuilderProtocol) -> None:
     """Raise :class:`CannotCallSubexpressionError` when frames beyond the root remain open."""
     if len(builder._state.stack) == 1:
         return
-    top_frame_type_name = type(builder._state.top_frame.type_node).__name__
-    raise CannotCallSubexpressionError(top_frame_type_name)
+    open_frames = describe_open_frames(builder._state)
+    raise CannotCallSubexpressionError(open_frames)
 
 
 def _ensure_no_dangling_quantifier(builder: BuilderProtocol) -> None:
     """Raise :class:`DanglingQuantifierError` when any frame carries an unconsumed quantifier."""
     for frame in builder._state.stack:
         if frame.quantifier is not None:
-            raise DanglingQuantifierError()
+            raise DanglingQuantifierError(
+                pending_quantifier_name=frame.quantifier_name,
+                pending_quantifier_call_site=frame.quantifier_call_site,
+            )

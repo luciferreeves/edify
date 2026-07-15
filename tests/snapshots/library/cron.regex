@@ -1,0 +1,1 @@
+^(?:@(?:(?:annually|yearly|monthly|weekly|daily|hourly|reboot))|(?:[\*\?0-9/,\-]+\s+){4,5}[\*\?0-9/,\-]+)$

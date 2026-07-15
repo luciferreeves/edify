@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from typing import Self
 
+from edify.builder.diagnose import describe_open_frames
 from edify.builder.merge import MergeContext, merge_element
 from edify.builder.types.protocol import BuilderProtocol
 from edify.elements.types.base import BaseElement
@@ -91,8 +92,8 @@ def _ensure_fully_specified(expression: BuilderProtocol) -> None:
     """Raise when ``expression`` still has nested frames open beyond the root."""
     if len(expression._state.stack) == 1:
         return
-    top_frame_type_name = type(expression._state.top_frame.type_node).__name__
-    raise CannotCallSubexpressionError(top_frame_type_name)
+    open_frames = describe_open_frames(expression._state)
+    raise CannotCallSubexpressionError(open_frames)
 
 
 def _merge_expression_children(
