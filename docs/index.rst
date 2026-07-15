@@ -8,6 +8,7 @@ Contents
    readme
    built-in/index
    regex-builder/index
+   integrations/index
    contributing
    authors
    changelog

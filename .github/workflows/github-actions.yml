@@ -131,6 +131,81 @@ jobs:
           assert via_regex.search("foofoobar") is not None
           PYCHECK
 
+  install-with-integration-extra:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: 'install: edify[pydantic]'
+            extra: 'pydantic'
+            probe: |
+              import edify
+              from edify.integrations.pydantic import pattern_validator
+              from edify.library import email
+              validate = pattern_validator(email)
+              assert validate("a@b.com") == "a@b.com"
+              try:
+                  validate("bad")
+              except ValueError:
+                  pass
+              else:
+                  raise SystemExit("expected ValueError on non-matching input")
+          - name: 'install: edify[fastapi]'
+            extra: 'fastapi'
+            probe: |
+              import edify
+              from edify.integrations.fastapi import pattern_query, pattern_path
+              from edify.library import uuid
+              from fastapi.params import Query, Path
+              assert isinstance(pattern_query(uuid), Query)
+              assert isinstance(pattern_path(uuid), Path)
+          - name: 'install: edify[django]'
+            extra: 'django'
+            probe: |
+              import edify
+              from edify.integrations.django import pattern_validator
+              from edify.library import uuid
+              from django.core.exceptions import ValidationError
+              from django.core.validators import RegexValidator
+              validator = pattern_validator(uuid)
+              assert isinstance(validator, RegexValidator)
+              validator("01234567-89ab-1cde-8f01-23456789abcd")
+              try:
+                  validator("not-a-uuid")
+              except ValidationError:
+                  pass
+              else:
+                  raise SystemExit("expected ValidationError on non-matching input")
+          - name: 'install: edify[all]'
+            extra: 'all'
+            probe: |
+              import edify
+              import pydantic
+              import fastapi
+              import django
+              from edify.integrations import pydantic as edify_pydantic
+              from edify.integrations import fastapi as edify_fastapi
+              from edify.integrations import django as edify_django
+              from edify.library import email
+              assert edify_pydantic.pattern_validator(email)("a@b.com") == "a@b.com"
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+        with:
+          python-version: '3.11'
+      - name: install edify[${{ matrix.extra }}]
+        run: |
+          uv venv .venv-${{ matrix.extra }}
+          uv pip install --python .venv-${{ matrix.extra }}/bin/python '.[${{ matrix.extra }}]'
+      - name: probe integration surface
+        env:
+          PROBE_SCRIPT: ${{ matrix.probe }}
+        run: |
+          .venv-${{ matrix.extra }}/bin/python -c "$PROBE_SCRIPT"
+
   bench:
     name: 'bench (advisory)'
     runs-on: ubuntu-latest
