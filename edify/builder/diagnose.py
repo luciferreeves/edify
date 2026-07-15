@@ -23,7 +23,6 @@ _UNKNOWN_CALL_SITE = CallerContext(
     lineno=0,
     colno=1,
     end_colno=1,
-    source_line="",
 )
 
 
