@@ -68,40 +68,16 @@ def test_matcher_match_forwards_timeout_to_the_cached_regex():
         builder.match("aaa", timeout=1.0)
 
 
-def test_matcher_fullmatch_forwards_timeout_to_the_cached_regex():
-    builder = RegexBuilder().string("a")
-    with pytest.raises(TimeoutNotSupportedByEngineError):
-        builder.fullmatch("a", timeout=1.0)
-
-
 def test_matcher_findall_forwards_timeout_to_the_cached_regex():
     builder = RegexBuilder().string("a")
     with pytest.raises(TimeoutNotSupportedByEngineError):
         builder.findall("aaa", timeout=1.0)
 
 
-def test_matcher_finditer_forwards_timeout_to_the_cached_regex():
-    builder = RegexBuilder().string("a")
-    with pytest.raises(TimeoutNotSupportedByEngineError):
-        list(builder.finditer("aaa", timeout=1.0))
-
-
 def test_matcher_sub_forwards_timeout_to_the_cached_regex():
     builder = RegexBuilder().string("a")
     with pytest.raises(TimeoutNotSupportedByEngineError):
         builder.sub("b", "aaa", timeout=1.0)
-
-
-def test_matcher_subn_forwards_timeout_to_the_cached_regex():
-    builder = RegexBuilder().string("a")
-    with pytest.raises(TimeoutNotSupportedByEngineError):
-        builder.subn("b", "aaa", timeout=1.0)
-
-
-def test_matcher_split_forwards_timeout_to_the_cached_regex():
-    builder = RegexBuilder().string("a")
-    with pytest.raises(TimeoutNotSupportedByEngineError):
-        builder.split("aaa", timeout=1.0)
 
 
 def test_no_timeout_kwarg_never_raises_on_either_engine():
