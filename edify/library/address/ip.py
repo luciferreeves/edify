@@ -183,5 +183,38 @@ _ipv6 = any_of(
     _b_hybrid(),
 )
 
+ipv4 = Pattern().start_of_input().subexpression(_ipv4).end_of_input()
+"""Callable :class:`Pattern` for an IPv4 dotted-quad.
+
+Guarantees:
+    * Each octet is a decimal in the range ``0`` to ``255``.
+    * No leading zeros on multi-digit octets.
+    * Exactly four octets separated by ``.``.
+
+Does not guarantee:
+    * Reachability, allocation, or reserved-range semantics — this is a shape check.
+    * IPv6 forms — use :data:`ipv6` or :data:`ip` for those.
+"""
+
+ipv6 = Pattern().start_of_input().subexpression(_ipv6).end_of_input()
+"""Callable :class:`Pattern` for any IPv6 form.
+
+Guarantees:
+    * Full 8-group form, all documented ``::``-compressed forms, link-local ``%zone`` suffixes,
+      IPv4-mapped ``::ffff:1.2.3.4`` shape, and the hybrid IPv4-suffix form.
+    * Case-insensitive hex digits.
+
+Does not guarantee:
+    * Reachability or reserved-range semantics — this is a shape check.
+    * IPv4 dotted-quad forms — use :data:`ipv4` or :data:`ip` for those.
+"""
+
 ip = Pattern().start_of_input().subexpression(any_of(_ipv4, _ipv6)).end_of_input()
-"""Callable :class:`Pattern` for IPv4 dotted-quad or any IPv6 form."""
+"""Callable :class:`Pattern` matching an IPv4 dotted-quad **or** any IPv6 form.
+
+Guarantees:
+    * Everything :data:`ipv4` and :data:`ipv6` guarantee individually.
+
+Does not guarantee:
+    * Reachability, allocation, or reserved-range semantics.
+"""

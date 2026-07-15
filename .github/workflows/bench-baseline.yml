@@ -1,0 +1,37 @@
+name: 'bench baseline regenerate'
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type YES to confirm regenerating tests/bench/baseline.json on the runner and committing it back'
+        required: true
+        default: 'no'
+jobs:
+  regenerate:
+    name: 'bench: regenerate runner baseline'
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'YES'
+    permissions:
+      contents: write
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+        with:
+          python-version: '3.11'
+      - name: install dependencies (includes bench group)
+        run: uv sync --frozen --all-groups
+      - name: generate baseline.json on the runner
+        run: |
+          uv run pytest tests/bench/ --benchmark-only --benchmark-json=tests/bench/baseline.json
+      - name: commit the runner-generated baseline back to the branch
+        run: |
+          git config user.name 'edify-ci[bot]'
+          git config user.email 'edify-ci@users.noreply.github.com'
+          git add tests/bench/baseline.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'chore(bench): regenerate runner-generated baseline'
+          git push

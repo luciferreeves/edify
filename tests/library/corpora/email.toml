@@ -1,0 +1,25 @@
+accepts = [
+    "alice@example.com",
+    "bob.smith@example.co.uk",
+    "user+tag@sub.example.org",
+    "user_name@example.io",
+    "user-name@example.io",
+    "u@e.co",
+    "123@example.com",
+    "user.name+plus.tag@example.com",
+    "user@[192.0.2.1]",
+]
+
+rejects = [
+    "",
+    " ",
+    "plainaddress",
+    "@no-local.example.com",
+    "no-at-sign.example.com",
+    "spaces in local@example.com",
+    "user@",
+    "user@.com",
+    "user@example",
+    "user@@example.com",
+    "user@example..com",
+]

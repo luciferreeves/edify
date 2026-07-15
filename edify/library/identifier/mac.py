@@ -25,6 +25,17 @@ mac = (
     .end()
     .end_of_input()
 )
-"""Callable :class:`Pattern` that validates the IEEE 802 MAC-address form:
-six ``:``- or ``-``-separated hex octets (either case).
+"""Callable :class:`Pattern` for the IEEE 802 MAC-address shape.
+
+Guarantees:
+    * Six 2-hex-digit octets separated by ``:`` or ``-``.
+    * Either case is accepted.
+    * Separator is uniform: mixed ``:`` and ``-`` in the same address is rejected.
+    * Anchored at both ends.
+
+Does not guarantee:
+    * OUI or IANA-assignment validity — every syntactically-valid octet passes.
+    * Dot-separated Cisco-style ``0000.5e00.53af``, bare 12-hex-digit ``00005e0053af``,
+      or EUI-64 8-octet ``00:00:5e:ff:fe:00:53:af`` — those forms require dedicated
+      validators.
 """

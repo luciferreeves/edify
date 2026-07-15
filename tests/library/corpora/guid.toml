@@ -1,0 +1,16 @@
+accepts = [
+    "01234567-89ab-cdef-0123-456789abcdef",
+    "{01234567-89AB-CDEF-0123-456789ABCDEF}",
+    "AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE",
+    "12345678-90ab-cdef-1234-567890abcdef",
+    "{aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee}",
+]
+
+rejects = [
+    "",
+    "not-a-guid",
+    "012345678-9ab-cdef-0123-456789abcdef",
+    "01234567-89ab-cdef-0123-456789abcde",
+    "01234567-89ab-cdef-0123-456789abcdefg",
+    "01234567-89abcdef-0123-456789abcdef",
+]

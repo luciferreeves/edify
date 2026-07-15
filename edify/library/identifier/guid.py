@@ -47,6 +47,16 @@ guid = (
     .char("}")
     .end_of_input()
 )
-"""Callable :class:`Pattern` that validates the Microsoft-flavour GUID shape:
-the 8-4-4-4-12 hex form (either case) optionally wrapped in braces.
+"""Callable :class:`Pattern` for the Microsoft-flavour GUID 8-4-4-4-12 hex shape.
+
+Guarantees:
+    * 32 hex digits in 8-4-4-4-12 layout with hyphen separators.
+    * Either case is accepted; the braces are optional and independent.
+    * Anchored at both ends.
+
+Does not guarantee:
+    * Balanced-brace enforcement — a leading ``{`` without a trailing ``}`` and vice
+      versa both pass. Use :data:`edify.library.uuid` for the version- and variant-locked
+      RFC 4122 form, or validate braces separately if you require them matched.
+    * Version or variant digit values — every hex digit passes.
 """

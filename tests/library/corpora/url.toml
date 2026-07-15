@@ -1,0 +1,23 @@
+accepts = [
+    "http://example.com",
+    "https://example.com",
+    "https://www.example.com",
+    "https://sub.example.com/path/to/resource",
+    "https://example.com/path?query=value&other=1",
+    "https://example.com:8080/path",
+    "http://example.co.uk",
+    "https://example.com/path#fragment",
+    "http://192.0.2.1",
+    "https://example.com/~user/",
+]
+
+rejects = [
+    "",
+    "not a url",
+    "example",
+    "://missing-scheme",
+    "http://",
+    "javascript:alert(1)",
+    " http://example.com",
+    "http://example .com",
+]
