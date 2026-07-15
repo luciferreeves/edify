@@ -21,6 +21,25 @@ class MissingRegexBackendError(EdifySyntaxError):
         super().__init__(message)
 
 
+class TimeoutNotSupportedByEngineError(EdifySyntaxError):
+    """Raised when ``timeout=`` is passed to a match call on an ``engine='re'`` pattern."""
+
+    def __init__(self) -> None:
+        message = compose_annotated_message(
+            summary="the timeout= kwarg is only supported under engine='regex'",
+            trigger_hint="match/search/... called with timeout= here",
+            note=(
+                "the stdlib re module has no per-call timeout facility; only the "
+                "third-party regex engine exposes one."
+            ),
+            help_line=(
+                "help: re-compile the pattern with .to_regex(engine='regex') to use timeout=, "
+                "or drop the kwarg."
+            ),
+        )
+        super().__init__(message)
+
+
 class VariableWidthLookbehindNotSupportedError(EdifySyntaxError):
     """Raised when ``engine='re'`` compiles a lookbehind whose body is variable-width."""
 

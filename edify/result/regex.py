@@ -9,6 +9,7 @@ from typing import Any, cast
 
 from edify.builder.types.engine import Engine
 from edify.elements.types.base import BaseElement
+from edify.errors.backend import TimeoutNotSupportedByEngineError
 from edify.introspect.explain import explain_elements
 from edify.introspect.verbose import verbose_elements
 from edify.introspect.visualize import visualize_elements
@@ -62,53 +63,102 @@ class Regex:
         """The engine identifier this pattern was compiled with."""
         return self._engine
 
-    def match(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
+    def match(
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
+    ) -> re.Match[str] | None:
         """Delegate to the compiled pattern's ``match`` method."""
-        return self._compiled.match(string, pos, endpos)
+        return self._compiled.match(string, pos, endpos, **_timeout_kwargs(self._engine, timeout))
 
-    def search(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
+    def search(
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
+    ) -> re.Match[str] | None:
         """Delegate to the compiled pattern's ``search`` method."""
-        return self._compiled.search(string, pos, endpos)
+        return self._compiled.search(string, pos, endpos, **_timeout_kwargs(self._engine, timeout))
 
     def fullmatch(
-        self, string: str, pos: int = 0, endpos: int = sys.maxsize
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
     ) -> re.Match[str] | None:
         """Delegate to the compiled pattern's ``fullmatch`` method."""
-        return self._compiled.fullmatch(string, pos, endpos)
+        return self._compiled.fullmatch(
+            string, pos, endpos, **_timeout_kwargs(self._engine, timeout)
+        )
 
     def findall(
-        self, string: str, pos: int = 0, endpos: int = sys.maxsize
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
     ) -> list[str] | list[tuple[str, ...]]:
         """Delegate to the compiled pattern's ``findall`` method."""
-        return self._compiled.findall(string, pos, endpos)
+        return self._compiled.findall(string, pos, endpos, **_timeout_kwargs(self._engine, timeout))
 
     def finditer(
-        self, string: str, pos: int = 0, endpos: int = sys.maxsize
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
     ) -> Iterator[re.Match[str]]:
         """Delegate to the compiled pattern's ``finditer`` method."""
-        return self._compiled.finditer(string, pos, endpos)
+        return self._compiled.finditer(
+            string, pos, endpos, **_timeout_kwargs(self._engine, timeout)
+        )
 
     def sub(
         self,
         replacement: str | Callable[[re.Match[str]], str],
         string: str,
         count: int = 0,
+        *,
+        timeout: float | None = None,
     ) -> str:
         """Delegate to the compiled pattern's ``sub`` method."""
-        return self._compiled.sub(replacement, string, count=count)
+        return self._compiled.sub(
+            replacement, string, count=count, **_timeout_kwargs(self._engine, timeout)
+        )
 
     def subn(
         self,
         replacement: str | Callable[[re.Match[str]], str],
         string: str,
         count: int = 0,
+        *,
+        timeout: float | None = None,
     ) -> tuple[str, int]:
         """Delegate to the compiled pattern's ``subn`` method."""
-        return self._compiled.subn(replacement, string, count=count)
+        return self._compiled.subn(
+            replacement, string, count=count, **_timeout_kwargs(self._engine, timeout)
+        )
 
-    def split(self, string: str, maxsplit: int = 0) -> list[str | None]:
+    def split(
+        self,
+        string: str,
+        maxsplit: int = 0,
+        *,
+        timeout: float | None = None,
+    ) -> list[str | None]:
         """Delegate to the compiled pattern's ``split`` method."""
-        return self._compiled.split(string, maxsplit=maxsplit)
+        return self._compiled.split(
+            string, maxsplit=maxsplit, **_timeout_kwargs(self._engine, timeout)
+        )
 
     def explain(self) -> str:
         """Return a human-readable narrative describing what the pattern matches."""
@@ -164,3 +214,11 @@ class Regex:
     def __hash__(self) -> int:
         """Return a hash derived from the source, engine, and compiled flags."""
         return hash((self._source, self._engine, self._compiled.flags))
+
+
+def _timeout_kwargs(engine: Engine, timeout: float | None) -> Mapping[str, float]:
+    if timeout is None:
+        return {}
+    if engine == "re":
+        raise TimeoutNotSupportedByEngineError()
+    return {"timeout": timeout}

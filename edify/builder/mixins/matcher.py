@@ -8,7 +8,8 @@ regex exactly once.
 The signatures mirror :class:`re.Pattern` exactly so IDE autocomplete and
 type inference stay unchanged. :meth:`test` is the one non-:mod:`re` method:
 a boolean shortcut that returns ``True`` when the pattern matches anywhere
-in the input, ``False`` otherwise.
+in the input, ``False`` otherwise. Every match method also accepts a per-call
+``timeout=`` kwarg that only applies under ``engine="regex"``.
 """
 
 from __future__ import annotations
@@ -27,50 +28,89 @@ class MatcherMixin(BuilderProtocol):
         """Return ``True`` when the pattern matches anywhere in ``string``, else ``False``."""
         return self._lazy_regex().search(string, pos, endpos) is not None
 
-    def match(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
+    def match(
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
+    ) -> re.Match[str] | None:
         """Delegate to :meth:`re.Pattern.match`."""
-        return self._lazy_regex().match(string, pos, endpos)
+        return self._lazy_regex().match(string, pos, endpos, timeout=timeout)
 
-    def search(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> re.Match[str] | None:
+    def search(
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
+    ) -> re.Match[str] | None:
         """Delegate to :meth:`re.Pattern.search`."""
-        return self._lazy_regex().search(string, pos, endpos)
+        return self._lazy_regex().search(string, pos, endpos, timeout=timeout)
 
     def fullmatch(
-        self, string: str, pos: int = 0, endpos: int = sys.maxsize
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
     ) -> re.Match[str] | None:
         """Delegate to :meth:`re.Pattern.fullmatch`."""
-        return self._lazy_regex().fullmatch(string, pos, endpos)
+        return self._lazy_regex().fullmatch(string, pos, endpos, timeout=timeout)
 
     def findall(
-        self, string: str, pos: int = 0, endpos: int = sys.maxsize
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
     ) -> list[str] | list[tuple[str, ...]]:
         """Delegate to :meth:`re.Pattern.findall`."""
-        return self._lazy_regex().findall(string, pos, endpos)
+        return self._lazy_regex().findall(string, pos, endpos, timeout=timeout)
 
     def finditer(
-        self, string: str, pos: int = 0, endpos: int = sys.maxsize
+        self,
+        string: str,
+        pos: int = 0,
+        endpos: int = sys.maxsize,
+        *,
+        timeout: float | None = None,
     ) -> Iterator[re.Match[str]]:
         """Delegate to :meth:`re.Pattern.finditer`."""
-        return self._lazy_regex().finditer(string, pos, endpos)
+        return self._lazy_regex().finditer(string, pos, endpos, timeout=timeout)
 
     def sub(
         self,
         replacement: str | Callable[[re.Match[str]], str],
         string: str,
         count: int = 0,
+        *,
+        timeout: float | None = None,
     ) -> str:
         """Delegate to :meth:`re.Pattern.sub`."""
-        return self._lazy_regex().sub(replacement, string, count=count)
+        return self._lazy_regex().sub(replacement, string, count=count, timeout=timeout)
 
     def subn(
         self,
         replacement: str | Callable[[re.Match[str]], str],
         string: str,
         count: int = 0,
+        *,
+        timeout: float | None = None,
     ) -> tuple[str, int]:
         """Delegate to :meth:`re.Pattern.subn`."""
-        return self._lazy_regex().subn(replacement, string, count=count)
+        return self._lazy_regex().subn(replacement, string, count=count, timeout=timeout)
 
-    def split(self, string: str, maxsplit: int = 0) -> list[str | None]:
+    def split(
+        self,
+        string: str,
+        maxsplit: int = 0,
+        *,
+        timeout: float | None = None,
+    ) -> list[str | None]:
         """Delegate to :meth:`re.Pattern.split`."""
-        return self._lazy_regex().split(string, maxsplit=maxsplit)
+        return self._lazy_regex().split(string, maxsplit=maxsplit, timeout=timeout)
