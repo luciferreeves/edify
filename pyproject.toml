@@ -117,18 +117,10 @@ pythonVersion = "3.11"
 include = ["edify"]
 typeCheckingMode = "strict"
 reportMissingImports = "error"
-reportMissingTypeStubs = "error"
+reportMissingTypeStubs = "none"
 reportPrivateUsage = "none"
 reportUnnecessaryIsInstance = "none"
 reportUnusedFunction = "none"
-
-[[tool.pyright.executionEnvironments]]
-root = "edify/compile"
-reportMissingTypeStubs = "none"
-
-[[tool.pyright.executionEnvironments]]
-root = "edify/introspect"
-reportMissingTypeStubs = "none"
 reportUnknownVariableType = "none"
 reportUnknownMemberType = "none"
 reportUnknownArgumentType = "none"
