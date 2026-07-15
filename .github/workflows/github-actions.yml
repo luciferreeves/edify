@@ -1,5 +1,13 @@
 name: build
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      regenerate_bench_baseline:
+        description: 'Regenerate the runner-generated bench baseline and commit it back to the branch'
+        required: false
+        default: 'false'
 jobs:
   test:
     name: ${{ matrix.name }}
@@ -130,3 +138,54 @@ jobs:
           via_regex = variable_lookbehind_builder.to_regex(engine="regex")
           assert via_regex.search("foofoobar") is not None
           PYCHECK
+
+  bench:
+    name: 'bench (advisory)'
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.regenerate_bench_baseline != 'true'
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+        with:
+          python-version: '3.11'
+      - name: install dependencies (includes bench group)
+        run: uv sync --frozen --all-groups
+      - name: run benchmarks against committed baseline (advisory only)
+        run: |
+          if [ -f tests/bench/baseline.json ]; then
+              uv run pytest tests/bench/ --benchmark-compare=tests/bench/baseline.json --benchmark-compare-fail=mean:10% || true
+          else
+              uv run pytest tests/bench/ --benchmark-only || true
+          fi
+
+  bench-baseline-regenerate:
+    name: 'bench: regenerate runner baseline'
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.regenerate_bench_baseline == 'true'
+    permissions:
+      contents: write
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+        with:
+          python-version: '3.11'
+      - name: install dependencies (includes bench group)
+        run: uv sync --frozen --all-groups
+      - name: generate baseline.json on the runner
+        run: |
+          uv run pytest tests/bench/ --benchmark-only --benchmark-json=tests/bench/baseline.json
+      - name: commit the runner-generated baseline back to the branch
+        run: |
+          git config user.name 'edify-ci[bot]'
+          git config user.email 'edify-ci@users.noreply.github.com'
+          git add tests/bench/baseline.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'chore(bench): regenerate runner-generated baseline'
+          git push

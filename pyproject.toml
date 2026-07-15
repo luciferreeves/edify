@@ -57,6 +57,9 @@ docs = [
     "sphinx>=7.4.7",
     "sphinx-rtd-theme",
 ]
+bench = [
+    "pytest-benchmark>=4.0",
+]
 
 [tool.hatch.version]
 source = "vcs"
@@ -111,6 +114,9 @@ addopts = [
     "--strict-markers",
     "--tb=short",
     "--import-mode=importlib",
+    "--cov=edify",
+    "--cov-fail-under=100",
+    "--ignore=tests/bench",
 ]
 filterwarnings = ["error"]
 
@@ -158,3 +164,8 @@ parallel = true
 show_missing = true
 precision = 2
 fail_under = 100
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "@overload",
+    "raise NotImplementedError",
+]
