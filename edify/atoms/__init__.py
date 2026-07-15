@@ -1,10 +1,3 @@
-"""Composable :class:`Pattern` atoms.
-
-Each atom is an unanchored fragment meant to be spliced into a builder via
-:meth:`edify.RegexBuilder.use` / :meth:`edify.Pattern.use`. Import any atom
-directly from ``edify.atoms``.
-"""
-
 from edify.atoms.alnum import alnum
 from edify.atoms.ascii import ascii
 from edify.atoms.base32 import base32
