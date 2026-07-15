@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Self
 
 from edify.builder.types.protocol import BuilderProtocol
-from edify.compile.escape import escape_special
+from edify.compile.escape import escape_for_char_class, escape_special
 from edify.elements.types.chars import (
     AnyOfCharsElement,
     AnythingButCharsElement,
@@ -60,7 +60,7 @@ class CharsMixin(BuilderProtocol):
 
     def any_of_chars(self, characters: str) -> Self:
         """Return a new builder with an inline ``[characters]`` class appended."""
-        escaped_characters = escape_special(characters)
+        escaped_characters = escape_for_char_class(characters)
         element = AnyOfCharsElement(value=escaped_characters)
         new_state = self._state.with_element_added_to_top(element)
         return self._with_state(new_state)
@@ -78,7 +78,7 @@ class CharsMixin(BuilderProtocol):
         """Return a new builder with an inline ``[^characters]`` negation appended."""
         _ensure_is_string("Value", characters)
         _ensure_non_empty("Value", characters)
-        escaped_characters = escape_special(characters)
+        escaped_characters = escape_for_char_class(characters)
         element = AnythingButCharsElement(value=escaped_characters)
         new_state = self._state.with_element_added_to_top(element)
         return self._with_state(new_state)
