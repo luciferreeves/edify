@@ -16,7 +16,7 @@ from typing import cast
 
 from edify.builder.types.engine import Engine
 from edify.builder.types.flags import Flags
-from edify.errors.backend import MissingRegexBackendError
+from edify.errors.backend import MissingRegexBackendError, VariableWidthLookbehindNotSupportedError
 
 
 def load_regex_module() -> ModuleType:
@@ -37,13 +37,24 @@ def compile_pattern(pattern: str, engine: Engine, flags: Flags) -> re.Pattern[st
     The return type is declared as :class:`re.Pattern` so downstream call sites
     stay strongly typed. Under ``engine="regex"`` the value is a ``regex.Pattern``
     that mirrors :class:`re.Pattern`'s method surface.
+
+    Raises:
+        VariableWidthLookbehindNotSupportedError: when ``engine='re'`` and the
+            pattern uses a variable-width lookbehind body that stdlib re rejects.
+        MissingRegexBackendError: when ``engine='regex'`` and the ``regex`` module
+            is not installed.
     """
     if engine == "regex":
         regex_module = load_regex_module()
         return cast(
             re.Pattern[str], regex_module.compile(pattern, _regex_flag_bitmask(regex_module, flags))
         )
-    return re.compile(pattern, flags=_re_flag_bitmask(flags))
+    try:
+        return re.compile(pattern, flags=_re_flag_bitmask(flags))
+    except re.error as reason:
+        if "look-behind" in str(reason):
+            raise VariableWidthLookbehindNotSupportedError() from reason
+        raise
 
 
 def _re_flag_bitmask(flags: Flags) -> int:

@@ -1,4 +1,4 @@
-"""Exception raised when a selected engine's backend module is not installed."""
+"""Exceptions raised at engine-dispatch time."""
 
 from __future__ import annotations
 
@@ -17,5 +17,28 @@ class MissingRegexBackendError(EdifySyntaxError):
                 "the 'regex' engine is an opt-in extra so pip install edify stays dependency-free."
             ),
             help_line="help: install the extra with `pip install edify[regex]` and retry.",
+        )
+        super().__init__(message)
+
+
+class VariableWidthLookbehindNotSupportedError(EdifySyntaxError):
+    """Raised when ``engine='re'`` compiles a lookbehind whose body is variable-width."""
+
+    def __init__(self) -> None:
+        message = compose_annotated_message(
+            summary=(
+                "assert_behind / assert_not_behind has a variable-width body, "
+                "which the stdlib 're' engine does not accept"
+            ),
+            trigger_hint=".to_regex(engine='re') called here",
+            note=(
+                "stdlib re requires every lookbehind branch to be fixed-width, so a "
+                "quantifier like +/*/?/{m,n} or a same-frame alternation with differing "
+                "branch widths inside a lookbehind will fail to compile."
+            ),
+            help_line=(
+                "help: switch to the third-party engine with .to_regex(engine='regex'), "
+                "which supports variable-width lookbehind."
+            ),
         )
         super().__init__(message)
