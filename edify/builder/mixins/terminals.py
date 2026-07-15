@@ -16,6 +16,7 @@ from edify.builder.types.flags import Flags
 from edify.builder.types.protocol import BuilderProtocol
 from edify.compile.backend import compile_pattern
 from edify.compile.dispatch import render_element
+from edify.compile.redos import warn_on_redos_constructs
 from edify.elements.types.root import RootElement
 from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
@@ -91,12 +92,14 @@ class TerminalsMixin(BuilderProtocol):
         if can_cache and self._cached_regex is not None:
             return self._cached_regex
         pattern_string = self.to_regex_string()
+        top_frame_children = tuple(self._state.top_frame.children)
+        warn_on_redos_constructs(top_frame_children)
         effective_flags = self._state.flags.with_merged(kwarg_flags)
         compiled_pattern = compile_pattern(pattern_string, engine, effective_flags)
         wrapped = Regex(
             source=pattern_string,
             compiled=compiled_pattern,
-            elements=tuple(self._state.top_frame.children),
+            elements=top_frame_children,
             engine=engine,
         )
         if can_cache:

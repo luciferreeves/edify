@@ -121,3 +121,10 @@ def test_edge_case_fixture_emits_the_snapshotted_regex(fixture_name, builder_fac
     emitted = builder.to_regex_string()
     snapshot_path = _SNAPSHOT_ROOT / f"{fixture_name}.regex"
     assert_snapshot(emitted, snapshot_path)
+
+
+def test_nested_unbounded_quantifier_fixture_raises_the_redos_warning():
+    from edify.compile.redos import ReDoSWarning
+
+    with pytest.warns(ReDoSWarning):
+        _nested_unbounded_quantifier_redos().to_regex()
