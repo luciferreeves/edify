@@ -46,18 +46,12 @@ class Pattern(
     """
 
     def __call__(self, value: str) -> bool:
-        """Return True when ``value`` matches this pattern from its first character.
+        """Return True when ``value`` matches this pattern anywhere in it.
 
-        Args:
-            value: The string to test against the pattern.
-
-        Returns:
-            True when the pattern matches ``value`` from its start; False otherwise.
+        Shortcut for :meth:`test` so a Pattern doubles as a validator callable
+        (``email(value) -> bool``) without an intermediate ``.test`` step.
         """
-        if not isinstance(value, str):
-            return False
-        compiled = self.to_regex()
-        return compiled.match(value) is not None
+        return self.test(value)
 
     def to_dict(self) -> dict[str, JSONValue]:
         """Return the canonical dict representation of this pattern."""
