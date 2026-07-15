@@ -22,10 +22,10 @@ def test_pattern_search_finds_a_substring_hit():
     assert hit.group() == "world"
 
 
-def test_pattern_fullmatch_requires_the_entire_string():
+def test_pattern_fullmatch_via_to_regex_requires_the_entire_string():
     zip_code = START + exactly(5, DIGIT) + END
-    assert zip_code.fullmatch("10001") is not None
-    assert zip_code.fullmatch("10001x") is None
+    assert zip_code.to_regex().fullmatch("10001") is not None
+    assert zip_code.to_regex().fullmatch("10001x") is None
 
 
 def test_pattern_findall_returns_every_hit():
@@ -33,9 +33,9 @@ def test_pattern_findall_returns_every_hit():
     assert lower.findall("hi there") == ["hi", "there"]
 
 
-def test_pattern_finditer_yields_match_objects():
+def test_pattern_finditer_via_to_regex_yields_match_objects():
     lower = one_or_more(range_of("a", "z"))
-    hits = list(lower.finditer("foo bar"))
+    hits = list(lower.to_regex().finditer("foo bar"))
     assert [match.group() for match in hits] == ["foo", "bar"]
 
 
@@ -44,16 +44,16 @@ def test_pattern_sub_replaces_hits():
     assert lower.sub("[X]", "hi and hello!") == "[X] [X] [X]!"
 
 
-def test_pattern_subn_returns_count_of_replacements():
+def test_pattern_subn_via_to_regex_returns_count_of_replacements():
     lower = one_or_more(range_of("a", "z"))
-    result, count = lower.subn("[X]", "hi hi hi")
+    result, count = lower.to_regex().subn("[X]", "hi hi hi")
     assert result == "[X] [X] [X]"
     assert count == 3
 
 
-def test_pattern_split_splits_on_matches():
+def test_pattern_split_via_to_regex_splits_on_matches():
     lower = one_or_more(range_of("a", "z"))
-    assert lower.split("one two three") == ["", " ", " ", ""]
+    assert lower.to_regex().split("one two three") == ["", " ", " ", ""]
 
 
 def test_regex_builder_match_delegates_to_re_pattern_match():

@@ -8,6 +8,33 @@ RegexBuilder is a class that helps you build regular expressions. It is based on
 - If you make a mistake, you'll know how to fix it. Edify will guide you towards a fix if your expression is invalid.
 - ``subexpressions`` can be used to create meaningful, reusable components.
 
+Immutability contract
+---------------------
+
+Every chain method on ``RegexBuilder`` returns a **new** builder; the receiver is never mutated. Two consequences follow, and both are guaranteed by contract:
+
+1. **Branching is safe.** A base builder can be extended along multiple independent paths without any of them observing another's state:
+
+   .. code-block:: python
+
+       from edify import RegexBuilder
+
+       base = RegexBuilder().start_of_input().exactly(3).digit()
+       zip5 = base.exactly(2).digit().end_of_input()
+       zip3 = base.end_of_input()
+
+       assert zip5.to_regex_string() == "^\\d{3}\\d{2}$"
+       assert zip3.to_regex_string() == "^\\d{3}$"
+       assert base.to_regex_string() == "^\\d{3}"
+
+   ``zip5`` and ``zip3`` are independent chains rooted in the same ``base``; extending one has no effect on the other or on ``base`` itself.
+
+2. **Reusable base patterns are safe to share.** A base pattern held in a module-level constant, imported across files, or captured in a closure cannot be corrupted by any caller. The same object can be extended, forked, or handed to ``subexpression`` any number of times.
+
+The same guarantee holds for :class:`edify.Pattern` — it is a ``RegexBuilder`` under the hood and inherits the contract.
+
+The lazy compile cache preserves the guarantee: repeated no-kwargs ``.to_regex()`` calls on the same builder instance return the same :class:`Regex` object (``builder.to_regex() is builder.to_regex()``), but a chain step or ``fork()`` produces a fresh builder with its own empty cache.
+
 .any_char()
 -----------
 

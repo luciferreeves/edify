@@ -1,5 +1,6 @@
 """Tests for the message formatter helpers in :mod:`edify.errors.formatting`."""
 
+import linecache
 from unittest import mock
 
 from edify.errors.context import CallerContext
@@ -17,13 +18,19 @@ from edify.errors.formatting import (
 )
 
 
+def _inject_source(filename: str, lineno: int, source_line: str) -> None:
+    lines = [""] * (lineno - 1) + [source_line + "\n"]
+    linecache.cache[filename] = (len(source_line) + 1, None, lines, filename)
+
+
 def _context(source_line: str = "    x = do_the_thing(1, 2, 3)", colno: int = 9) -> CallerContext:
+    filename = f"/tmp/user_code_{colno}_{hash(source_line) & 0xFFFF}.py"
+    _inject_source(filename, 42, source_line)
     return CallerContext(
-        filename="/tmp/user_code.py",
+        filename=filename,
         lineno=42,
         colno=colno,
         end_colno=colno + 15,
-        source_line=source_line,
     )
 
 
@@ -45,17 +52,18 @@ def test_format_pointer_block_draws_caret_at_caller_column():
     context = _context()
     block = format_pointer_block(context, "here")
     lines = block.splitlines()
-    assert lines[0] == "  --> /tmp/user_code.py:42:9"
+    assert lines[0].startswith("  -->")
+    assert lines[0].endswith(":42:9")
     assert "^^^^^^^^^^^^^^^ here" in block
 
 
 def test_format_pointer_block_has_at_least_one_caret_when_span_is_empty():
+    _inject_source("/tmp/x.py", 1, "abcde")
     context = CallerContext(
         filename="/tmp/x.py",
         lineno=1,
         colno=5,
         end_colno=5,
-        source_line="abcde",
     )
     block = format_pointer_block(context, "point")
     assert "^ point" in block

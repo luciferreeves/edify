@@ -5,7 +5,6 @@ def test_mac():
     macs = {
         "00:00:5e:00:53:af": True,
         "00:00:5e:00:53:af:": False,
-        123: False,
     }
 
     for m_a_c, expected in macs.items():

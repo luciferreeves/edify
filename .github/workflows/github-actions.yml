@@ -58,3 +58,75 @@ jobs:
         run: uv sync --frozen --all-groups
       - name: ${{ matrix.name }}
         run: ${{ matrix.command }}
+
+  install-without-regex-extra:
+    name: 'install: edify (no [regex] extra)'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+        with:
+          python-version: '3.11'
+      - name: install edify without any extra
+        run: |
+          uv venv .venv-bare
+          uv pip install --python .venv-bare/bin/python .
+      - name: import succeeds and re engine works; regex engine raises the friendly error
+        run: |
+          .venv-bare/bin/python <<'PYCHECK'
+          import edify
+          from edify.errors.backend import MissingRegexBackendError
+
+          compiled_re = edify.RegexBuilder().digit().to_regex(engine="re")
+          assert compiled_re.source == "\\d", compiled_re.source
+          assert compiled_re.engine == "re"
+
+          try:
+              edify.RegexBuilder().digit().to_regex(engine="regex")
+          except MissingRegexBackendError as reason:
+              text = str(reason)
+              assert "pip install edify[regex]" in text, text
+          else:
+              raise SystemExit("expected MissingRegexBackendError under bare install")
+          PYCHECK
+
+  install-with-regex-extra:
+    name: 'install: edify[regex]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39
+        with:
+          python-version: '3.11'
+      - name: install edify[regex]
+        run: |
+          uv venv .venv-extra
+          uv pip install --python .venv-extra/bin/python '.[regex]'
+      - name: both engines compile; variable-width lookbehind works only under regex
+        run: |
+          .venv-extra/bin/python <<'PYCHECK'
+          import edify
+          from edify.errors.backend import VariableWidthLookbehindNotSupportedError
+
+          for engine_choice in ("re", "regex"):
+              compiled = edify.RegexBuilder().digit().to_regex(engine=engine_choice)
+              assert compiled.source == "\\d", (engine_choice, compiled.source)
+              assert compiled.engine == engine_choice
+
+          variable_lookbehind_builder = (
+              edify.RegexBuilder()
+                  .assert_behind().between(1, 3).string("foo").end()
+                  .string("bar")
+          )
+          try:
+              variable_lookbehind_builder.to_regex(engine="re")
+          except VariableWidthLookbehindNotSupportedError:
+              pass
+          else:
+              raise SystemExit("expected VariableWidthLookbehindNotSupportedError under engine='re'")
+
+          via_regex = variable_lookbehind_builder.to_regex(engine="regex")
+          assert via_regex.search("foofoobar") is not None
+          PYCHECK

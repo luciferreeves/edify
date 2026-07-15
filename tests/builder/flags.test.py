@@ -70,3 +70,48 @@ def test_multiple_kwargs_combine():
     assert compiled.compiled.flags & re.I == re.I
     assert compiled.compiled.flags & re.M == re.M
     assert compiled.compiled.flags & re.S == re.S
+
+
+def _regex_module():
+    import regex
+
+    return regex
+
+
+def test_regex_engine_ignore_case_kwarg_enables_the_flag():
+    regex = _regex_module()
+    compiled = RegexBuilder().string("hi").to_regex(engine="regex", ignore_case=True)
+    assert compiled.compiled.flags & regex.I == regex.I
+
+
+def test_regex_engine_multiline_kwarg_enables_the_flag():
+    regex = _regex_module()
+    compiled = RegexBuilder().string("hi").to_regex(engine="regex", multiline=True)
+    assert compiled.compiled.flags & regex.M == regex.M
+
+
+def test_regex_engine_dotall_kwarg_enables_the_flag():
+    regex = _regex_module()
+    compiled = RegexBuilder().string("hi").to_regex(engine="regex", dotall=True)
+    assert compiled.compiled.flags & regex.S == regex.S
+
+
+def test_regex_engine_ascii_only_kwarg_enables_the_flag():
+    regex = _regex_module()
+    compiled = RegexBuilder().string("hi").to_regex(engine="regex", ascii_only=True)
+    assert compiled.compiled.flags & regex.A == regex.A
+
+
+def test_regex_engine_verbose_kwarg_enables_the_flag():
+    regex = _regex_module()
+    compiled = RegexBuilder().string("hi").to_regex(engine="regex", verbose=True)
+    assert compiled.compiled.flags & regex.X == regex.X
+
+
+@pytest.mark.skipif(
+    _ON_PYPY,
+    reason="PyPy's regex.DEBUG opcode disassembler shares the same upstream disassembler bug",
+)
+def test_regex_engine_debug_kwarg_compiles_without_error():
+    compiled = RegexBuilder().string("hi").to_regex(engine="regex", debug=True)
+    assert compiled.source == "hi"
