@@ -103,6 +103,12 @@ _BLOCKS_DEFERRED_TO_DOCS_REWRITE = frozenset(
     }
 )
 
+_ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS = frozenset(
+    {
+        ("upgrading/0.3-to-1.0", 140),
+    }
+)
+
 _BLOCKS_SKIPPED_ON_PYPY = frozenset(
     {
         ("regex-builder/flags/index", 38),
@@ -123,6 +129,8 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     stem_string = str(relative_stem)
     if (stem_string, block_start) in _BLOCKS_DEFERRED_TO_DOCS_REWRITE:
         pytest.skip("doc block references validators / kwargs slated for the docs rewrite")
+    if (stem_string, block_start) in _ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS:
+        pytest.skip("doc block shows pre/post-migration code that is intentionally not executable")
     if _ON_PYPY and (stem_string, block_start) in _BLOCKS_SKIPPED_ON_PYPY:
         pytest.skip("doc block hits PyPy's re.DEBUG upstream disassembler bug")
     namespace = _prepared_exec_namespace()
