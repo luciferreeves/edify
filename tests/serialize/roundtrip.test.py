@@ -1,6 +1,7 @@
 """Round-trip tests for Pattern.to_dict/from_dict and to_json/from_json."""
 
 from edify import END, START, Pattern
+from edify.serialize import JSONValue
 
 
 def _roundtrip_dict(pattern: Pattern) -> Pattern:
@@ -28,8 +29,8 @@ def test_anchored_pattern_roundtrips():
     original = Pattern().start_of_input().one_or_more().digit().end_of_input()
     restored = _roundtrip_json(original)
     assert restored == original
-    assert restored._state.has_defined_start
-    assert restored._state.has_defined_end
+    assert restored.state.has_defined_start
+    assert restored.state.has_defined_end
 
 
 def test_char_class_pattern_roundtrips():
@@ -55,15 +56,15 @@ def test_anything_but_string_roundtrips():
 def test_capture_group_roundtrips():
     original = Pattern().capture().digit().end()
     assert _roundtrip_dict(original) == original
-    assert _roundtrip_dict(original)._state.total_capture_groups == 1
+    assert _roundtrip_dict(original).state.total_capture_groups == 1
 
 
 def test_named_capture_roundtrips_with_names_and_count():
     original = Pattern().named_capture("year").exactly(4).digit().end()
     restored = _roundtrip_dict(original)
     assert restored == original
-    assert restored._state.named_groups == ("year",)
-    assert restored._state.total_capture_groups == 1
+    assert restored.state.named_groups == ("year",)
+    assert restored.state.total_capture_groups == 1
 
 
 def test_backreference_roundtrips():
@@ -189,8 +190,8 @@ def test_flags_survive_roundtrip():
     original = Pattern().ignore_case().multi_line().digit()
     restored = _roundtrip_dict(original)
     assert restored == original
-    assert restored._state.flags.ignore_case
-    assert restored._state.flags.multiline
+    assert restored.state.flags.ignore_case
+    assert restored.state.flags.multiline
 
 
 def test_string_element_roundtrips():
@@ -230,7 +231,7 @@ def test_flags_key_omitted_when_no_flags_set():
 
 
 def test_unknown_element_field_is_ignored_for_forward_compatibility():
-    document = {
+    document: dict[str, JSONValue] = {
         "edify": 0,
         "pattern": {
             "kind": "root",

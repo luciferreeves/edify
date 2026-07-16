@@ -2,6 +2,7 @@
 
 import re
 import sys
+from typing import cast
 
 import pytest
 import regex as regex_module
@@ -112,13 +113,15 @@ def test_regex_engine_debug_kwarg_compiles_without_error():
     assert compiled.source == "hi"
 
 
-def test_regex_engine_debug_flag_is_forwarded_to_regex_module_bitmask(monkeypatch):
+def test_regex_engine_debug_flag_is_forwarded_to_regex_module_bitmask(
+    monkeypatch: pytest.MonkeyPatch,
+):
     captured_flags: list[int] = []
     original_compile = regex_module.compile
 
-    def capturing_compile(pattern, flags=0):
+    def capturing_compile(pattern: str, flags: int = 0) -> re.Pattern[str]:
         captured_flags.append(flags)
-        return original_compile(pattern)
+        return cast("re.Pattern[str]", original_compile(pattern))
 
     monkeypatch.setattr(regex_module, "compile", capturing_compile)
     RegexBuilder().string("hi").to_regex(engine="regex", debug=True)

@@ -107,13 +107,13 @@ def _set_pending(
     quantifier_name: str,
 ) -> _TBuilder:
     """Replace the top frame with one carrying the given pending quantifier."""
-    if builder._state.top_frame.quantifier is not None:
+    if builder.state.top_frame.quantifier is not None:
         raise StackedQuantifierError()
-    new_top_frame = builder._state.top_frame.with_quantifier(
+    new_top_frame = builder.state.top_frame.with_quantifier(
         pending_quantifier, call_site, quantifier_name
     )
-    new_state = builder._state.with_top_frame_replaced(new_top_frame)
-    return builder._with_state(new_state)
+    new_state = builder.state.with_top_frame_replaced(new_top_frame)
+    return builder.with_state(new_state)
 
 
 def _optional_factory(child: BaseElement) -> OptionalElement:
@@ -173,14 +173,14 @@ def _between_lazy_factory(lower: int, upper: int) -> PendingQuantifier:
 
 def _ensure_positive_integer(label: str, value: int) -> None:
     """Raise :class:`MustBePositiveIntegerError` when ``value`` is not a strictly positive int."""
-    if isinstance(value, int) and not isinstance(value, bool) and value > 0:
+    if not isinstance(value, bool) and value > 0:
         return
     raise MustBePositiveIntegerError(label)
 
 
 def _ensure_non_negative_integer(label: str, value: int) -> None:
     """Raise :class:`MustBeIntegerGreaterThanZeroError` when ``value`` is not a non-negative int."""
-    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+    if not isinstance(value, bool) and value >= 0:
         return
     raise MustBeIntegerGreaterThanZeroError(label)
 

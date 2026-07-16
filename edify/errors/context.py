@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import inspect
 import linecache
 import os
-import sys
 from dataclasses import dataclass
 from functools import cache
 from types import CodeType, FrameType
@@ -41,7 +41,8 @@ def capture_caller_context() -> CallerContext | None:
     Returns ``None`` when every frame on the stack lives inside the ``edify/``
     package tree.
     """
-    current_frame: FrameType | None = sys._getframe(1)
+    this_frame = inspect.currentframe()
+    current_frame: FrameType | None = this_frame.f_back if this_frame is not None else None
     while current_frame is not None:
         filename = current_frame.f_code.co_filename
         if not _is_inside_edify(filename):

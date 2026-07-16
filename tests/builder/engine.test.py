@@ -32,7 +32,7 @@ def test_engine_regex_and_engine_re_are_not_equal_for_the_same_source():
     assert left != right
 
 
-def test_engine_regex_raises_clean_import_error_without_the_extra(monkeypatch):
+def test_engine_regex_raises_clean_import_error_without_the_extra(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setitem(sys.modules, "regex", None)
     with pytest.raises(MissingRegexBackendError, match="engine='regex'") as excinfo:
         RegexBuilder().digit().to_regex(engine="regex")
@@ -41,7 +41,9 @@ def test_engine_regex_raises_clean_import_error_without_the_extra(monkeypatch):
     assert "= note:" in text
 
 
-def test_missing_regex_backend_error_chains_from_underlying_import_error(monkeypatch):
+def test_missing_regex_backend_error_chains_from_underlying_import_error(
+    monkeypatch: pytest.MonkeyPatch,
+):
     monkeypatch.setitem(sys.modules, "regex", None)
     with pytest.raises(MissingRegexBackendError) as excinfo:
         RegexBuilder().digit().to_regex(engine="regex")

@@ -42,7 +42,7 @@ from edify import (
         (ALPHANUMERIC, "[a-zA-Z0-9]"),
     ],
 )
-def test_character_class_constant_compiles_to_expected_regex(constant, expected):
+def test_character_class_constant_compiles_to_expected_regex(constant: Pattern, expected: str):
     assert constant.to_regex_string() == expected
 
 
@@ -66,7 +66,7 @@ def test_character_class_constant_compiles_to_expected_regex(constant, expected)
         ALPHANUMERIC,
     ],
 )
-def test_character_class_constant_is_a_pattern(constant):
+def test_character_class_constant_is_a_pattern(constant: object):
     assert isinstance(constant, Pattern)
 
 
@@ -82,7 +82,7 @@ def test_character_class_constant_is_a_pattern(constant):
     ],
 )
 def test_convenience_char_class_constant_matches_expected_characters(
-    constant, hit_input, miss_input
+    constant: Pattern, hit_input: str, miss_input: str
 ):
     assert constant.test(hit_input) is True
     assert constant.test(miss_input) is False

@@ -11,8 +11,14 @@ Registers three Hypothesis profiles chosen at collection time via the
 from __future__ import annotations
 
 import os
+import sys
+from pathlib import Path
 
 from hypothesis import HealthCheck, Verbosity, settings
+
+_REPO_ROOT = Path(__file__).parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
 
 _PROFILE_ENVIRONMENT_VARIABLE = "EDIFY_HYPOTHESIS_PROFILE"
 

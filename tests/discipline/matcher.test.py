@@ -10,14 +10,14 @@ _FORBIDDEN_RE_PATTERN_ATTRS = frozenset({"groups", "groupindex", "pattern", "fla
 
 
 @pytest.mark.parametrize("factory", [RegexBuilder, Pattern])
-def test_builder_exposes_every_allowed_match_verb(factory):
+def test_builder_exposes_every_allowed_match_verb(factory: type[RegexBuilder | Pattern]):
     builder = factory()
     for verb in _ALLOWED_MATCH_VERBS:
         assert callable(getattr(builder, verb)), f"missing verb: {verb}"
 
 
 @pytest.mark.parametrize("factory", [RegexBuilder, Pattern])
-def test_builder_does_not_expose_any_forbidden_match_verb(factory):
+def test_builder_does_not_expose_any_forbidden_match_verb(factory: type[RegexBuilder | Pattern]):
     builder = factory()
     for verb in _FORBIDDEN_MATCH_VERBS:
         assert not hasattr(builder, verb), (
@@ -27,7 +27,9 @@ def test_builder_does_not_expose_any_forbidden_match_verb(factory):
 
 
 @pytest.mark.parametrize("factory", [RegexBuilder, Pattern])
-def test_builder_does_not_expose_re_pattern_metadata_attributes(factory):
+def test_builder_does_not_expose_re_pattern_metadata_attributes(
+    factory: type[RegexBuilder | Pattern],
+):
     builder = factory()
     for attribute in _FORBIDDEN_RE_PATTERN_ATTRS:
         assert not hasattr(builder, attribute), (

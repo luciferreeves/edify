@@ -8,6 +8,7 @@ a reason are banned outright — same discipline as the type-ignore rule.
 import io
 import re
 import tokenize
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -19,12 +20,12 @@ _TESTS_ROOT = _REPO_ROOT / "tests"
 _PRAGMA_LINE_PATTERN = re.compile(r"#\s*pragma:\s*no cover\b(.*)$")
 
 
-def _every_python_file():
+def _every_python_file() -> Iterator[Path]:
     for source_root in (_EDIFY_ROOT, _TESTS_ROOT):
         yield from source_root.rglob("*.py")
 
 
-def _pragma_comments(python_file):
+def _pragma_comments(python_file: Path) -> Iterator[tuple[int, str, str]]:
     source_text = python_file.read_text()
     for token in tokenize.tokenize(io.BytesIO(source_text.encode("utf-8")).readline):
         if token.type != tokenize.COMMENT:
@@ -35,8 +36,8 @@ def _pragma_comments(python_file):
         yield token.start[0], token.string, matched.group(1)
 
 
-@pytest.mark.parametrize("python_file", sorted(_every_python_file()), ids=lambda path: str(path))
-def test_no_bare_pragma_no_cover_without_inline_reason(python_file):
+@pytest.mark.parametrize("python_file", sorted(_every_python_file()), ids=str)
+def test_no_bare_pragma_no_cover_without_inline_reason(python_file: Path):
     for line_number, comment_text, reason_suffix in _pragma_comments(python_file):
         stripped_reason = reason_suffix.strip()
         if stripped_reason == "" or stripped_reason[0] not in "—:-":

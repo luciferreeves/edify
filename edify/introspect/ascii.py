@@ -124,13 +124,13 @@ def _element_diagram(element: BaseElement) -> Diagram:
 
 def _inline_label(element: BaseElement) -> str | None:
     """Return a short plain-English label for a leaf or character element, or ``None``."""
-    leaf = _leaf_label(element)
+    leaf = leaf_label(element)
     if leaf is not None:
         return leaf
-    return _char_label(element)
+    return char_label(element)
 
 
-def _leaf_label(element: BaseElement) -> str | None:
+def leaf_label(element: BaseElement) -> str | None:
     """Return the plain-English label for a leaf element, or ``None``."""
     if isinstance(element, StartOfInputElement):
         return "text starts here"
@@ -175,7 +175,7 @@ def _leaf_label(element: BaseElement) -> str | None:
     return None
 
 
-def _char_label(element: BaseElement) -> str | None:
+def char_label(element: BaseElement) -> str | None:
     """Return the plain-English label for a character-shaped element, or ``None``."""
     if isinstance(element, CharElement):
         return f'"{_display_string(element.value)}"'
@@ -257,8 +257,6 @@ def _pluralize(label: str) -> str:
     """Return an English plural of ``label`` (respecting literal-string quotes)."""
     if label.startswith('"') and label.endswith('"'):
         return label
-    if label.endswith(("s", "x", "z", "ch", "sh")):
-        return label + "es"
     if len(label) >= 2 and label.endswith("y") and label[-2] not in "aeiou":
         return label[:-1] + "ies"
     return label + "s"
@@ -356,8 +354,6 @@ def _clip_trunk_below(rows: list[str], last_entry: int) -> list[str]:
 
 def _pad_right(diagram: Diagram, target_width: int) -> Diagram:
     """Return ``diagram`` right-padded with spaces so every row reaches ``target_width``."""
-    if diagram.width >= target_width:
-        return diagram
     extra = target_width - diagram.width
     padded_rows_list = [row + " " * extra for row in diagram.rows]
     new_rows = tuple(padded_rows_list)
@@ -377,14 +373,8 @@ def _looks_like_single_box(diagram: Diagram) -> bool:
     """Return ``True`` when ``diagram`` is a plain three-row ``+---+ | X | +---+`` box."""
     if len(diagram.rows) != 3 or diagram.entry_row != 1:
         return False
-    top, middle, bottom = diagram.rows
-    if top != bottom:
-        return False
-    if not (top.startswith("+") and top.endswith("+")):
-        return False
-    if not (middle.startswith("|") and middle.endswith("|")):
-        return False
-    return set(top[1:-1]) == {"-"}
+    top, _middle, bottom = diagram.rows
+    return top == bottom and set(top[1:-1]) == {"-"}
 
 
 def _widen_box(diagram: Diagram, target_width: int) -> Diagram:

@@ -49,4 +49,4 @@ def nonrange(start_character: str, end_character: str) -> Pattern:
 
 def _first_child_pattern(built: Pattern) -> Pattern:
     """Isolate the element the mixin just appended into its own fresh :class:`Pattern`."""
-    return pattern_containing(built._state.top_frame.children[-1])
+    return pattern_containing(built.state.top_frame.children[-1])

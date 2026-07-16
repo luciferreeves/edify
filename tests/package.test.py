@@ -3,10 +3,12 @@
 import importlib
 import importlib.metadata
 
+import pytest
+
 import edify
 
 
-def test_version_falls_back_when_package_metadata_missing(monkeypatch):
+def test_version_falls_back_when_package_metadata_missing(monkeypatch: pytest.MonkeyPatch):
     def raise_not_found(distribution_name: str) -> str:
         raise importlib.metadata.PackageNotFoundError(distribution_name)
 

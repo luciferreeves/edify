@@ -11,22 +11,22 @@ from __future__ import annotations
 
 import re
 from importlib import import_module
-from types import ModuleType
 from typing import cast
 
 from edify.builder.types.engine import Engine
 from edify.builder.types.flags import Flags
+from edify.compile.types import RegexModule
 from edify.errors.backend import MissingRegexBackendError, VariableWidthLookbehindNotSupportedError
 
 
-def load_regex_module() -> ModuleType:
+def load_regex_module() -> RegexModule:
     """Return the third-party ``regex`` module, importing it on first call.
 
     Raises:
         MissingRegexBackendError: when the ``regex`` extra is not installed.
     """
     try:
-        return import_module("regex")
+        return cast(RegexModule, import_module("regex"))
     except ImportError as reason:
         raise MissingRegexBackendError() from reason
 
@@ -46,9 +46,7 @@ def compile_pattern(pattern: str, engine: Engine, flags: Flags) -> re.Pattern[st
     """
     if engine == "regex":
         regex_module = load_regex_module()
-        return cast(
-            re.Pattern[str], regex_module.compile(pattern, _regex_flag_bitmask(regex_module, flags))
-        )
+        return regex_module.compile(pattern, _regex_flag_bitmask(regex_module, flags))
     try:
         return re.compile(pattern, flags=_re_flag_bitmask(flags))
     except re.error as reason:
@@ -74,18 +72,22 @@ def _re_flag_bitmask(flags: Flags) -> int:
     return bitmask
 
 
-def _regex_flag_bitmask(regex_module: ModuleType, flags: Flags) -> int:
+def _regex_flag(regex_module: RegexModule, name: str) -> int:
+    return cast(int, getattr(regex_module, name))
+
+
+def _regex_flag_bitmask(regex_module: RegexModule, flags: Flags) -> int:
     bitmask = 0
     if flags.ascii_only:
-        bitmask = bitmask | regex_module.A
+        bitmask = bitmask | _regex_flag(regex_module, "A")
     if flags.debug:
-        bitmask = bitmask | regex_module.DEBUG
+        bitmask = bitmask | _regex_flag(regex_module, "DEBUG")
     if flags.ignore_case:
-        bitmask = bitmask | regex_module.I
+        bitmask = bitmask | _regex_flag(regex_module, "I")
     if flags.multiline:
-        bitmask = bitmask | regex_module.M
+        bitmask = bitmask | _regex_flag(regex_module, "M")
     if flags.dotall:
-        bitmask = bitmask | regex_module.S
+        bitmask = bitmask | _regex_flag(regex_module, "S")
     if flags.verbose:
-        bitmask = bitmask | regex_module.X
+        bitmask = bitmask | _regex_flag(regex_module, "X")
     return bitmask

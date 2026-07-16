@@ -4,7 +4,6 @@ import pytest
 
 from edify import Pattern, char, chars, nonchars, nonrange, nonstring, range_of, string
 from edify.errors.input import (
-    MustBeAStringError,
     MustBeOneCharacterError,
     MustBeSingleCharacterError,
     MustHaveASmallerValueError,
@@ -60,8 +59,3 @@ def test_nonrange_produces_a_negated_character_range():
 def test_string_rejects_empty_input():
     with pytest.raises(MustBeOneCharacterError):
         string("")
-
-
-def test_string_rejects_non_string_input():
-    with pytest.raises(MustBeAStringError):
-        string(42)

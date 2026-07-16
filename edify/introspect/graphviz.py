@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from importlib import import_module
+from typing import cast
+
 from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import (
     BackReferenceElement,
@@ -32,22 +35,24 @@ from edify.elements.types.quantifiers import (
 )
 from edify.elements.types.union import QuantifierElement
 from edify.errors.introspect import MissingGraphvizDependencyError
-from edify.introspect.ascii import _char_label, _leaf_label
-from edify.introspect.types import Emission
+from edify.introspect.ascii import char_label, leaf_label
+from edify.introspect.types import Emission, GraphvizSourceFactory
 
-try:
-    import graphviz as _graphviz_module
-except ImportError:
-    _graphviz_module = None
+
+def _load_graphviz_source_factory() -> GraphvizSourceFactory:
+    try:
+        graphviz_module = import_module("graphviz")
+    except ImportError as reason:
+        raise MissingGraphvizDependencyError() from reason
+    return cast(GraphvizSourceFactory, graphviz_module.Source)
 
 
 def render_graphviz_svg(elements: tuple[BaseElement, ...]) -> str:
     """Return an SVG rendering of ``elements`` produced by Graphviz."""
-    if _graphviz_module is None:
-        raise MissingGraphvizDependencyError()
+    source_factory = _load_graphviz_source_factory()
     dot_source = render_dot(elements)
-    source = _graphviz_module.Source(dot_source, format="svg")
-    piped_bytes: bytes = source.pipe(format="svg")
+    source = source_factory(dot_source, format="svg")
+    piped_bytes = source.pipe(format="svg")
     return piped_bytes.decode("utf-8")
 
 
@@ -208,10 +213,10 @@ def _emit_quantifier_cluster(element: BaseElement, counter: _Counter) -> Emissio
 
 def _inline_label(element: BaseElement) -> str | None:
     """Return a single-line label for a leaf / char / simple-quantifier element, else ``None``."""
-    leaf = _leaf_label(element)
+    leaf = leaf_label(element)
     if leaf is not None:
         return leaf
-    char = _char_label(element)
+    char = char_label(element)
     if char is not None:
         return char
     return _simple_quantifier_label(element)
@@ -224,7 +229,7 @@ def _simple_quantifier_label(element: BaseElement) -> str | None:
         return None
     assert isinstance(element, QuantifierElement)
     child = element.child
-    child_label = _leaf_label(child) or _char_label(child)
+    child_label = leaf_label(child) or char_label(child)
     if child_label is None:
         return None
     return f"{child_label}\\n({quantifier_phrase})"

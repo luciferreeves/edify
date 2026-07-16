@@ -3,46 +3,28 @@
 from __future__ import annotations
 
 import re
-import re._constants as sre_constants
-import re._parser as sre_parser
-from typing import TypeAlias, cast
+from typing import cast
 
 import edify.builder.fluent as builder_module
-
-_SreArgument: TypeAlias = (
-    int
-    | tuple[int, int]
-    | tuple[int, int, "_SrePattern"]
-    | tuple[int | None, int, int, "_SrePattern"]
-    | tuple[None, list["_SrePattern"]]
-    | tuple[int, "_SrePattern"]
-    | list["_SreNode"]
-    | None
-)
-"""Union of every argument shape :mod:`re._parser` emits on the second slot of a node."""
-
-_SreNode: TypeAlias = tuple[int, _SreArgument]
-"""One ``(opcode, argument)`` node produced by :func:`re._parser.parse`."""
-
-_SrePattern: TypeAlias = list[_SreNode]
-"""Sequence of :data:`_SreNode` items."""
+import edify.builder.sre as sre
+from edify.builder.sre import SreArgument, SrePattern
 
 _ANCHOR_METHOD_BY_CONSTANT: dict[int, str] = {
-    sre_constants.AT_BEGINNING: "start_of_input",
-    sre_constants.AT_BEGINNING_STRING: "start_of_input",
-    sre_constants.AT_END: "end_of_input",
-    sre_constants.AT_END_STRING: "end_of_input",
-    sre_constants.AT_BOUNDARY: "word_boundary",
-    sre_constants.AT_NON_BOUNDARY: "non_word_boundary",
+    sre.AT_BEGINNING: "start_of_input",
+    sre.AT_BEGINNING_STRING: "start_of_input",
+    sre.AT_END: "end_of_input",
+    sre.AT_END_STRING: "end_of_input",
+    sre.AT_BOUNDARY: "word_boundary",
+    sre.AT_NON_BOUNDARY: "non_word_boundary",
 }
 
 _CATEGORY_METHOD_BY_CONSTANT: dict[int, str] = {
-    sre_constants.CATEGORY_DIGIT: "digit",
-    sre_constants.CATEGORY_NOT_DIGIT: "non_digit",
-    sre_constants.CATEGORY_WORD: "word",
-    sre_constants.CATEGORY_NOT_WORD: "non_word",
-    sre_constants.CATEGORY_SPACE: "whitespace_char",
-    sre_constants.CATEGORY_NOT_SPACE: "non_whitespace_char",
+    sre.CATEGORY_DIGIT: "digit",
+    sre.CATEGORY_NOT_DIGIT: "non_digit",
+    sre.CATEGORY_WORD: "word",
+    sre.CATEGORY_NOT_WORD: "non_word",
+    sre.CATEGORY_SPACE: "whitespace_char",
+    sre.CATEGORY_NOT_SPACE: "non_whitespace_char",
 }
 
 
@@ -59,8 +41,7 @@ class UnsupportedReverseParseError(ValueError):
 
 def build_from_regex(pattern_text: str) -> builder_module.RegexBuilder:
     """Return a :class:`RegexBuilder` whose emitted pattern is equivalent to ``pattern_text``."""
-    parsed_tree = sre_parser.parse(pattern_text)
-    node_list = cast(_SrePattern, list(parsed_tree))
+    node_list = sre.parse(pattern_text)
     name_by_number = _name_by_group_number(pattern_text)
     empty_builder = builder_module.RegexBuilder()
     return _translate_sequence(empty_builder, node_list, name_by_number)
@@ -73,14 +54,14 @@ def _name_by_group_number(pattern_text: str) -> dict[int, str]:
 
 def _translate_sequence(
     builder: builder_module.RegexBuilder,
-    nodes: _SrePattern,
+    nodes: SrePattern,
     names: dict[int, str],
 ) -> builder_module.RegexBuilder:
     current = builder
     literal_run: list[str] = []
     for node in nodes:
         opcode, argument = node
-        if opcode == sre_constants.LITERAL:
+        if opcode == sre.LITERAL:
             literal_run.append(chr(cast(int, argument)))
             continue
         if literal_run:
@@ -104,36 +85,36 @@ def _emit_string(
 def _translate_node(
     builder: builder_module.RegexBuilder,
     opcode: int,
-    argument: _SreArgument,
+    argument: SreArgument,
     names: dict[int, str],
 ) -> builder_module.RegexBuilder:
-    if opcode == sre_constants.ANY:
+    if opcode == sre.ANY:
         return builder.any_char()
-    if opcode == sre_constants.AT:
+    if opcode == sre.AT:
         return _translate_anchor(builder, cast(int, argument))
-    if opcode == sre_constants.IN:
-        return _translate_character_class(builder, cast(_SrePattern, argument))
-    if opcode == sre_constants.MAX_REPEAT:
+    if opcode == sre.IN:
+        return _translate_character_class(builder, cast(SrePattern, argument))
+    if opcode == sre.MAX_REPEAT:
         return _translate_repeat(
-            builder, cast("tuple[int, int, _SrePattern]", argument), names, lazy=False
+            builder, cast("tuple[int, int, SrePattern]", argument), names, lazy=False
         )
-    if opcode == sre_constants.MIN_REPEAT:
+    if opcode == sre.MIN_REPEAT:
         return _translate_repeat(
-            builder, cast("tuple[int, int, _SrePattern]", argument), names, lazy=True
+            builder, cast("tuple[int, int, SrePattern]", argument), names, lazy=True
         )
-    if opcode == sre_constants.SUBPATTERN:
+    if opcode == sre.SUBPATTERN:
         return _translate_subpattern(
-            builder, cast("tuple[int | None, int, int, _SrePattern]", argument), names
+            builder, cast("tuple[int | None, int, int, SrePattern]", argument), names
         )
-    if opcode == sre_constants.BRANCH:
-        return _translate_branch(builder, cast("tuple[None, list[_SrePattern]]", argument))
-    if opcode == sre_constants.ASSERT:
+    if opcode == sre.BRANCH:
+        return _translate_branch(builder, cast("tuple[None, list[SrePattern]]", argument))
+    if opcode == sre.ASSERT:
         return _translate_lookaround(
-            builder, cast("tuple[int, _SrePattern]", argument), names, negative=False
+            builder, cast("tuple[int, SrePattern]", argument), names, negative=False
         )
-    if opcode == sre_constants.ASSERT_NOT:
+    if opcode == sre.ASSERT_NOT:
         return _translate_lookaround(
-            builder, cast("tuple[int, _SrePattern]", argument), names, negative=True
+            builder, cast("tuple[int, SrePattern]", argument), names, negative=True
         )
     raise UnsupportedReverseParseError(str(opcode))
 
@@ -147,14 +128,14 @@ def _translate_anchor(
 
 
 def _translate_character_class(
-    builder: builder_module.RegexBuilder, members: _SrePattern
+    builder: builder_module.RegexBuilder, members: SrePattern
 ) -> builder_module.RegexBuilder:
     if len(members) == 1:
         return _translate_single_class_member(builder, members[0])
     literal_chars: list[str] = []
     for member in members:
         opcode, argument = member
-        if opcode == sre_constants.LITERAL:
+        if opcode == sre.LITERAL:
             literal_chars.append(chr(cast(int, argument)))
             continue
         raise UnsupportedReverseParseError(f"character-class member {member!r}")
@@ -163,10 +144,10 @@ def _translate_character_class(
 
 
 def _translate_single_class_member(
-    builder: builder_module.RegexBuilder, member: tuple[int, _SreArgument]
+    builder: builder_module.RegexBuilder, member: tuple[int, SreArgument]
 ) -> builder_module.RegexBuilder:
     opcode, argument = member
-    if opcode == sre_constants.RANGE:
+    if opcode == sre.RANGE:
         start_codepoint, end_codepoint = cast("tuple[int, int]", argument)
         return builder.range(chr(start_codepoint), chr(end_codepoint))
     method_name = _CATEGORY_METHOD_BY_CONSTANT[cast(int, argument)]
@@ -176,7 +157,7 @@ def _translate_single_class_member(
 
 def _translate_repeat(
     builder: builder_module.RegexBuilder,
-    argument: tuple[int, int, _SrePattern],
+    argument: tuple[int, int, SrePattern],
     names: dict[int, str],
     lazy: bool,
 ) -> builder_module.RegexBuilder:
@@ -191,13 +172,13 @@ def _apply_quantifier(
 ) -> builder_module.RegexBuilder:
     if min_count == 0 and max_count == 1:
         return builder.optional()
-    if min_count == 0 and max_count == sre_constants.MAXREPEAT:
+    if min_count == 0 and max_count == sre.MAXREPEAT:
         return builder.zero_or_more_lazy() if lazy else builder.zero_or_more()
-    if min_count == 1 and max_count == sre_constants.MAXREPEAT:
+    if min_count == 1 and max_count == sre.MAXREPEAT:
         return builder.one_or_more_lazy() if lazy else builder.one_or_more()
     if min_count == max_count:
         return builder.exactly(min_count)
-    if max_count == sre_constants.MAXREPEAT:
+    if max_count == sre.MAXREPEAT:
         return builder.at_least(min_count)
     if lazy:
         return builder.between_lazy(min_count, max_count)
@@ -206,7 +187,7 @@ def _apply_quantifier(
 
 def _translate_subpattern(
     builder: builder_module.RegexBuilder,
-    argument: tuple[int | None, int, int, _SrePattern],
+    argument: tuple[int | None, int, int, SrePattern],
     names: dict[int, str],
 ) -> builder_module.RegexBuilder:
     group_number, _in_flags, _out_flags, body = argument
@@ -220,7 +201,7 @@ def _translate_subpattern(
 
 
 def _translate_branch(
-    builder: builder_module.RegexBuilder, argument: tuple[None, list[_SrePattern]]
+    builder: builder_module.RegexBuilder, argument: tuple[None, list[SrePattern]]
 ) -> builder_module.RegexBuilder:
     _leading, branches = argument
     literal_branches: list[str] = []
@@ -233,11 +214,11 @@ def _translate_branch(
     return builder.any_of(*literal_branches)
 
 
-def _branch_as_literal_string(nodes: _SrePattern) -> str | None:
+def _branch_as_literal_string(nodes: SrePattern) -> str | None:
     characters: list[str] = []
     for node in nodes:
         opcode, argument = node
-        if opcode != sre_constants.LITERAL:
+        if opcode != sre.LITERAL:
             return None
         characters.append(chr(cast(int, argument)))
     return "".join(characters)
@@ -245,7 +226,7 @@ def _branch_as_literal_string(nodes: _SrePattern) -> str | None:
 
 def _translate_lookaround(
     builder: builder_module.RegexBuilder,
-    argument: tuple[int, _SrePattern],
+    argument: tuple[int, SrePattern],
     names: dict[int, str],
     negative: bool,
 ) -> builder_module.RegexBuilder:

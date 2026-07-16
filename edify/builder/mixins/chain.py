@@ -29,11 +29,11 @@ class ChainMixin(BuilderProtocol):
 
     def end(self) -> Self:
         """Return a new builder with the top frame closed and merged into its parent."""
-        _ensure_non_root_frame_open(self._state.stack)
-        state_with_popped, popped_frame = self._state.with_top_frame_popped()
+        _ensure_non_root_frame_open(self.state.stack)
+        state_with_popped, popped_frame = self.state.with_top_frame_popped()
         closed_element = _close_frame(popped_frame)
         new_state = state_with_popped.with_element_added_to_top(closed_element)
-        return self._with_state(new_state)
+        return self.with_state(new_state)
 
 
 def _ensure_non_root_frame_open(stack: tuple[StackFrame, ...]) -> None:

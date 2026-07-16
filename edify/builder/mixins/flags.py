@@ -17,36 +17,36 @@ class FlagsMixin(BuilderProtocol):
 
     def ascii_only(self) -> Self:
         """Return a new builder with the ``re.A`` flag enabled."""
-        new_flags = self._state.flags.with_ascii_only()
-        new_state = self._state.with_flags(new_flags)
-        return self._with_state(new_state)
+        new_flags = self.state.flags.with_ascii_only()
+        new_state = self.state.with_flags(new_flags)
+        return self.with_state(new_state)
 
     def debug(self) -> Self:
         """Return a new builder with the ``re.DEBUG`` flag enabled."""
-        new_flags = self._state.flags.with_debug()
-        new_state = self._state.with_flags(new_flags)
-        return self._with_state(new_state)
+        new_flags = self.state.flags.with_debug()
+        new_state = self.state.with_flags(new_flags)
+        return self.with_state(new_state)
 
     def ignore_case(self) -> Self:
         """Return a new builder with the ``re.I`` flag enabled."""
-        new_flags = self._state.flags.with_ignore_case()
-        new_state = self._state.with_flags(new_flags)
-        return self._with_state(new_state)
+        new_flags = self.state.flags.with_ignore_case()
+        new_state = self.state.with_flags(new_flags)
+        return self.with_state(new_state)
 
     def multi_line(self) -> Self:
         """Return a new builder with the ``re.M`` flag enabled."""
-        new_flags = self._state.flags.with_multiline()
-        new_state = self._state.with_flags(new_flags)
-        return self._with_state(new_state)
+        new_flags = self.state.flags.with_multiline()
+        new_state = self.state.with_flags(new_flags)
+        return self.with_state(new_state)
 
     def dot_all(self) -> Self:
         """Return a new builder with the ``re.S`` flag enabled."""
-        new_flags = self._state.flags.with_dotall()
-        new_state = self._state.with_flags(new_flags)
-        return self._with_state(new_state)
+        new_flags = self.state.flags.with_dotall()
+        new_state = self.state.with_flags(new_flags)
+        return self.with_state(new_state)
 
     def verbose(self) -> Self:
         """Return a new builder with the ``re.X`` flag enabled."""
-        new_flags = self._state.flags.with_verbose()
-        new_state = self._state.with_flags(new_flags)
-        return self._with_state(new_state)
+        new_flags = self.state.flags.with_verbose()
+        new_state = self.state.with_flags(new_flags)
+        return self.with_state(new_state)

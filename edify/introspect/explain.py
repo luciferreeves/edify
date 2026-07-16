@@ -126,27 +126,6 @@ def _build_lines(elements: tuple[BaseElement, ...]) -> list[str]:
     return lines
 
 
-def _wrap_step(step_number: int, description: str) -> str:
-    """Return the description prefixed with the step number and indented continuation."""
-    prefix = f"  {step_number}. "
-    continuation_prefix = " " * len(prefix)
-    words = description.split()
-    if not words:
-        return prefix.rstrip()
-    lines: list[str] = []
-    current_line = prefix + words[0]
-    max_width = 76
-    for word in words[1:]:
-        candidate = current_line + " " + word
-        if len(candidate) > max_width:
-            lines.append(current_line)
-            current_line = continuation_prefix + word
-        else:
-            current_line = candidate
-    lines.append(current_line)
-    return "\n".join(lines)
-
-
 def _describe_step(
     element: BaseElement,
     *,

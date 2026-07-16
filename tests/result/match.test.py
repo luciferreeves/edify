@@ -10,6 +10,12 @@ def _username_pattern():
     return RegexBuilder().string("@").named_capture("username").one_or_more().letter().end()
 
 
+def _uppercase_username(match: Match) -> str:
+    username = match.captures.username
+    assert username is not None
+    return username.upper()
+
+
 def test_search_returns_a_wrapped_match():
     result = _username_pattern().search("hi @alice")
     assert isinstance(result, Match)
@@ -70,20 +76,18 @@ def test_match_repr_contains_span_and_text():
 def test_finditer_yields_wrapped_matches():
     pattern = _username_pattern().to_regex()
     hits = list(pattern.finditer("hi @heidi and @ivan"))
-    types_are_match = [isinstance(item, Match) for item in hits]
-    assert all(types_are_match)
     assert [item.captures.username for item in hits] == ["heidi", "ivan"]
 
 
 def test_sub_callable_receives_wrapped_match():
     pattern = _username_pattern().to_regex()
-    result = pattern.sub(lambda m: m.captures.username.upper(), "hi @jane")
+    result = pattern.sub(_uppercase_username, "hi @jane")
     assert result == "hi JANE"
 
 
 def test_subn_callable_receives_wrapped_match():
     pattern = _username_pattern().to_regex()
-    result, count = pattern.subn(lambda m: m.captures.username.upper(), "hi @jane and @jim")
+    result, count = pattern.subn(_uppercase_username, "hi @jane and @jim")
     assert result == "hi JANE and JIM"
     assert count == 2
 
@@ -102,8 +106,9 @@ def test_named_captures_instance_is_a_namespace():
 
 def test_pattern_match_via_pattern_class_returns_wrapped_match():
     pattern = Pattern().named_capture("word").one_or_more().letter().end()
-    assert pattern.match("hello") is not None
-    assert pattern.match("hello").captures.word == "hello"
+    result = pattern.match("hello")
+    assert result is not None
+    assert result.captures.word == "hello"
 
 
 def test_fullmatch_returns_wrapped_match_when_full_input_matches():

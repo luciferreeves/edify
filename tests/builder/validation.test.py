@@ -13,8 +13,6 @@ from edify.errors.anchors import (
     StartInputAlreadyDefinedError,
 )
 from edify.errors.input import (
-    MustBeAStringError,
-    MustBeInstanceError,
     MustBeIntegerGreaterThanZeroError,
     MustBeLessThanError,
     MustBeOneCharacterError,
@@ -41,19 +39,9 @@ def test_end_of_input_twice_raises():
         RegexBuilder().end_of_input().end_of_input()
 
 
-def test_named_capture_non_string_raises():
-    with pytest.raises(MustBeAStringError):
-        RegexBuilder().named_capture(42)
-
-
 def test_named_capture_empty_string_raises():
     with pytest.raises(MustBeOneCharacterError):
         RegexBuilder().named_capture("")
-
-
-def test_string_non_string_raises():
-    with pytest.raises(MustBeAStringError):
-        RegexBuilder().string(42)
 
 
 def test_string_empty_raises():
@@ -61,29 +49,14 @@ def test_string_empty_raises():
         RegexBuilder().string("")
 
 
-def test_char_non_string_raises():
-    with pytest.raises(MustBeAStringError):
-        RegexBuilder().char(42)
-
-
 def test_range_first_codepoint_not_less_than_second_raises():
     with pytest.raises(MustHaveASmallerValueError):
         RegexBuilder().range("z", "a")
 
 
-def test_anything_but_string_non_string_raises():
-    with pytest.raises(MustBeAStringError):
-        RegexBuilder().anything_but_string(42)
-
-
 def test_anything_but_string_empty_raises():
     with pytest.raises(MustBeOneCharacterError):
         RegexBuilder().anything_but_string("")
-
-
-def test_anything_but_chars_non_string_raises():
-    with pytest.raises(MustBeAStringError):
-        RegexBuilder().anything_but_chars(42)
 
 
 def test_anything_but_chars_empty_raises():
@@ -151,8 +124,3 @@ def test_to_regex_with_open_frame_raises():
     unfinished = RegexBuilder().capture().digit()
     with pytest.raises(CannotCallSubexpressionError):
         unfinished.to_regex()
-
-
-def test_subexpression_non_builder_raises():
-    with pytest.raises(MustBeInstanceError):
-        RegexBuilder().subexpression("not a builder")

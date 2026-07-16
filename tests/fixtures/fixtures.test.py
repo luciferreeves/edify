@@ -7,6 +7,7 @@ combined lookaround, item-4 named backreferences, and constructs that
 :mod:`edify` flags for ReDoS.
 """
 
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -117,7 +118,9 @@ _FIXTURES = [
 @pytest.mark.parametrize(
     ("fixture_name", "builder_factory"), _FIXTURES, ids=[name for name, _ in _FIXTURES]
 )
-def test_edge_case_fixture_emits_the_snapshotted_regex(fixture_name, builder_factory):
+def test_edge_case_fixture_emits_the_snapshotted_regex(
+    fixture_name: str, builder_factory: Callable[[], RegexBuilder]
+):
     builder = builder_factory()
     emitted = builder.to_regex_string()
     snapshot_path = _SNAPSHOT_ROOT / f"{fixture_name}.regex"

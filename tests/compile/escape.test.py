@@ -91,7 +91,7 @@ def test_char_terminal_still_uses_full_escape_outside_the_class():
 
 
 @pytest.mark.parametrize("candidate", _MIXED_CORPUS)
-def test_normalized_and_over_escaped_char_classes_match_the_same_inputs(candidate):
+def test_normalized_and_over_escaped_char_classes_match_the_same_inputs(candidate: str):
     normalized_pattern = (
         RegexBuilder().any_of_chars(_METACHARS_UNRELATED_TO_CLASS).to_regex_string()
     )
@@ -102,7 +102,7 @@ def test_normalized_and_over_escaped_char_classes_match_the_same_inputs(candidat
 
 
 @pytest.mark.parametrize("candidate", _MIXED_CORPUS)
-def test_normalized_and_over_escaped_negated_classes_match_the_same_inputs(candidate):
+def test_normalized_and_over_escaped_negated_classes_match_the_same_inputs(candidate: str):
     normalized_pattern = RegexBuilder().anything_but_chars("aeiou.-").to_regex_string()
     over_escaped_pattern = "[^aeiou\\.\\-]"
     normalized_hits = re.findall(normalized_pattern, candidate)

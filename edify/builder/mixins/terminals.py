@@ -30,7 +30,7 @@ _RAW_SPACE = " "
 class TerminalsMixin(BuilderProtocol):
     """Provides the two pattern-emitting terminal methods on the builder."""
 
-    _cached_regex: Regex | None
+    cached_regex: Regex | None
 
     def to_regex_string(self) -> str:
         """Return the bare regex string the builder describes.
@@ -40,7 +40,7 @@ class TerminalsMixin(BuilderProtocol):
         """
         _ensure_fully_specified(self)
         _ensure_no_dangling_quantifier(self)
-        root_element = RootElement(children=self._state.top_frame.children)
+        root_element = RootElement(children=self.state.top_frame.children)
         rendered_pattern = render_element(root_element)
         unescaped_pattern = rendered_pattern.replace(_ESCAPED_SPACE, _RAW_SPACE)
         if unescaped_pattern == "":
@@ -89,12 +89,12 @@ class TerminalsMixin(BuilderProtocol):
             verbose=verbose,
         )
         can_cache = engine == "re" and kwarg_flags == Flags()
-        if can_cache and self._cached_regex is not None:
-            return self._cached_regex
+        if can_cache and self.cached_regex is not None:
+            return self.cached_regex
         pattern_string = self.to_regex_string()
-        top_frame_children = tuple(self._state.top_frame.children)
+        top_frame_children = tuple(self.state.top_frame.children)
         warn_on_redos_constructs(top_frame_children)
-        effective_flags = self._state.flags.with_merged(kwarg_flags)
+        effective_flags = self.state.flags.with_merged(kwarg_flags)
         compiled_pattern = compile_pattern(pattern_string, engine, effective_flags)
         wrapped = Regex(
             source=pattern_string,
@@ -103,21 +103,21 @@ class TerminalsMixin(BuilderProtocol):
             engine=engine,
         )
         if can_cache:
-            self._cached_regex = wrapped
+            self.cached_regex = wrapped
         return wrapped
 
 
 def _ensure_fully_specified(builder: BuilderProtocol) -> None:
     """Raise :class:`CannotCallSubexpressionError` when frames beyond the root remain open."""
-    if len(builder._state.stack) == 1:
+    if len(builder.state.stack) == 1:
         return
-    open_frames = describe_open_frames(builder._state)
+    open_frames = describe_open_frames(builder.state)
     raise CannotCallSubexpressionError(open_frames)
 
 
 def _ensure_no_dangling_quantifier(builder: BuilderProtocol) -> None:
     """Raise :class:`DanglingQuantifierError` when any frame carries an unconsumed quantifier."""
-    for frame in builder._state.stack:
+    for frame in builder.state.stack:
         if frame.quantifier is not None:
             raise DanglingQuantifierError(
                 pending_quantifier_name=frame.quantifier_name,

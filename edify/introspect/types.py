@@ -1,8 +1,21 @@
-"""Shared dataclasses used by the introspection renderers."""
+"""Shared dataclasses and Protocols used by the introspection renderers."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Protocol
+
+
+class GraphvizSource(Protocol):
+    """The subset of ``graphviz.Source`` the SVG renderer uses."""
+
+    def pipe(self, format: str = ...) -> bytes: ...
+
+
+class GraphvizSourceFactory(Protocol):
+    """The ``graphviz.Source`` constructor the SVG renderer calls."""
+
+    def __call__(self, source: str, format: str = ...) -> GraphvizSource: ...
 
 
 @dataclass(frozen=True)

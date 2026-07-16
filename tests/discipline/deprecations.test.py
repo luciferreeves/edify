@@ -32,7 +32,9 @@ _DEPRECATED_STUBS: list[tuple[str, str, tuple[object, ...]]] = []
     _DEPRECATED_STUBS,
     ids=[f"{path}.{name}" for path, name, _ in _DEPRECATED_STUBS],
 )
-def test_deprecated_stub_fires_one_well_formed_warning(import_path, symbol_name, call_args):
+def test_deprecated_stub_fires_one_well_formed_warning(
+    import_path: str, symbol_name: str, call_args: tuple[object, ...]
+) -> None:
     module = importlib.import_module(import_path)
     stub = getattr(module, symbol_name)
     with warnings.catch_warnings(record=True) as caught:

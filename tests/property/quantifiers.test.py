@@ -24,7 +24,7 @@ _QUANTIFIER_SUFFIX_PATTERN = re.compile(r"[+*?]|\{[0-9,]+\}")
 
 
 @given(strategy.lists(_QUANTIFIER_METHOD_STRATEGY, min_size=1, max_size=8))
-def test_every_bare_quantifier_call_produces_one_output_quantifier(quantifier_calls):
+def test_every_bare_quantifier_call_produces_one_output_quantifier(quantifier_calls: list[str]):
     builder = RegexBuilder()
     for quantifier_method in quantifier_calls:
         quantifier_bound = getattr(builder, quantifier_method)()
@@ -47,7 +47,7 @@ def test_every_bare_quantifier_call_produces_one_output_quantifier(quantifier_ca
         max_size=5,
     )
 )
-def test_between_calls_produce_a_brace_quantifier_per_call(min_max_pairs):
+def test_between_calls_produce_a_brace_quantifier_per_call(min_max_pairs: list[tuple[int, int]]):
     builder = RegexBuilder()
     expected_quantifiers = 0
     for lower_bound, extra in min_max_pairs:

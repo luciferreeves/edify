@@ -6,13 +6,6 @@ from edify import Pattern, RegexBuilder
 from edify.errors.comparison import CannotCompareUnfinishedBuilderError
 
 
-def _first_pointer_hint(text: str) -> str | None:
-    for line in text.splitlines():
-        if "->" in line and ".py:" in line:
-            return line
-    return None
-
-
 def test_two_finished_builders_compare_equal_without_diagnostic():
     left = RegexBuilder().digit()
     right = RegexBuilder().digit()
