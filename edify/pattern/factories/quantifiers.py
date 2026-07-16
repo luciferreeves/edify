@@ -98,14 +98,14 @@ def between_lazy(lower: int, upper: int, operand: BuilderProtocol) -> Pattern:
 
 def _ensure_positive_integer(label: str, value: int) -> None:
     """Raise :class:`MustBePositiveIntegerError` when ``value`` is not a strictly positive int."""
-    if isinstance(value, int) and not isinstance(value, bool) and value > 0:
+    if not isinstance(value, bool) and value > 0:
         return
     raise MustBePositiveIntegerError(label)
 
 
 def _ensure_non_negative_integer(label: str, value: int) -> None:
     """Raise :class:`MustBeIntegerGreaterThanZeroError` when ``value`` is not a non-negative int."""
-    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+    if not isinstance(value, bool) and value >= 0:
         return
     raise MustBeIntegerGreaterThanZeroError(label)
 

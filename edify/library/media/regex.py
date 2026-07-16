@@ -9,8 +9,6 @@ from edify.pattern.composition import Pattern
 
 class _RegexPattern(Pattern):
     def __call__(self, value: str) -> bool:
-        if not isinstance(value, str):
-            return False
         try:
             re.compile(value)
         except re.error:

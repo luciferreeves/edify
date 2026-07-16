@@ -1,12 +1,14 @@
 """Cross-cutting invariants that must hold for every registered library Pattern."""
 
+from collections.abc import Iterator
+
 import pytest
 
 import edify.library as library_module
 from edify import Pattern
 
 
-def _registered_patterns():
+def _registered_patterns() -> Iterator[tuple[str, Pattern]]:
     for name in sorted(dir(library_module)):
         if name.startswith("_"):
             continue
@@ -15,11 +17,15 @@ def _registered_patterns():
             yield name, value
 
 
-REGISTERED_PATTERNS = list(_registered_patterns())
+REGISTERED_PATTERNS: list[tuple[str, Pattern]] = list(_registered_patterns())
 
 
-@pytest.mark.parametrize(("name", "pattern"), REGISTERED_PATTERNS, ids=lambda item: item)
-def test_to_regex_string_matches_the_compiled_pattern_source(name, pattern):
+@pytest.mark.parametrize(
+    ("name", "pattern"),
+    REGISTERED_PATTERNS,
+    ids=[registered_name for registered_name, _ in REGISTERED_PATTERNS],
+)
+def test_to_regex_string_matches_the_compiled_pattern_source(name: str, pattern: Pattern):
     emitted_source = pattern.to_regex_string()
     compiled_source = pattern.to_regex().source
     assert emitted_source == compiled_source, (

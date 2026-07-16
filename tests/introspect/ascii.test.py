@@ -1,6 +1,7 @@
 """Tests for the ASCII railroad-diagram renderer in :mod:`edify.introspect.ascii`."""
 
 from edify import RegexBuilder
+from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import (
     BackReferenceElement,
     CaptureElement,
@@ -59,17 +60,10 @@ from edify.elements.types.quantifiers import (
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
 )
-from edify.introspect.ascii import (
-    _looks_like_single_box,
-    _pad_right,
-    _pluralize,
-    _widen,
-    render_ascii,
-)
-from edify.introspect.types import Diagram
+from edify.introspect.ascii import render_ascii
 
 
-def _render(*elements) -> str:
+def _render(*elements: BaseElement) -> str:
     return render_ascii(tuple(elements))
 
 
@@ -411,40 +405,14 @@ def test_singular_stays_singular_for_literal_labels():
     assert '3 "ab"' in output
 
 
-def test_pluralize_default_adds_s():
-    assert _pluralize("digit") == "digits"
+def test_repeated_label_default_adds_s():
+    output = _render(ExactlyElement(times=2, child=DigitElement()))
+    assert "2 digits" in output
 
 
-def test_pluralize_adds_es_after_ch_ending():
-    assert _pluralize("match") == "matches"
-
-
-def test_pluralize_adds_es_after_sh_ending():
-    assert _pluralize("fish") == "fishes"
-
-
-def test_pluralize_adds_es_after_x_ending():
-    assert _pluralize("box") == "boxes"
-
-
-def test_pluralize_adds_es_after_s_ending():
-    assert _pluralize("miss") == "misses"
-
-
-def test_pluralize_adds_es_after_z_ending():
-    assert _pluralize("buzz") == "buzzes"
-
-
-def test_pluralize_converts_y_to_ies_after_consonant():
-    assert _pluralize("cherry") == "cherries"
-
-
-def test_pluralize_adds_s_after_y_when_preceded_by_vowel():
-    assert _pluralize("boy") == "boys"
-
-
-def test_pluralize_leaves_quoted_literal_string_untouched():
-    assert _pluralize('"cat"') == '"cat"'
+def test_repeated_label_converts_y_to_ies_after_consonant():
+    output = _render(ExactlyElement(times=2, child=WordBoundaryElement()))
+    assert "2 word boundaries" in output
 
 
 def test_optional_of_capture_falls_back_to_group_label():
@@ -460,7 +428,7 @@ def test_quantifier_around_alternation_falls_back_to_group_label():
 
 
 def test_unknown_element_type_renders_placeholder_label():
-    class MysteryElement(DigitElement.__mro__[1]):
+    class MysteryElement(BaseElement):
         pass
 
     output = _render(MysteryElement())
@@ -496,36 +464,9 @@ def test_single_branch_alternation_looks_like_single_branch():
     assert "+--->" in output
 
 
-def test_looks_like_single_box_rejects_multi_row_diagram():
-    multi = Diagram(rows=("+---+", "|abc|", "+---+", "extra"), entry_row=1, width=5)
-    assert _looks_like_single_box(multi) is False
-
-
-def test_looks_like_single_box_rejects_asymmetric_borders():
-    asymmetric = Diagram(rows=("+---+", "| a |", "+xxx+"), entry_row=1, width=5)
-    assert _looks_like_single_box(asymmetric) is False
-
-
-def test_looks_like_single_box_rejects_non_box_borders():
-    non_box = Diagram(rows=("     ", "| a |", "     "), entry_row=1, width=5)
-    assert _looks_like_single_box(non_box) is False
-
-
-def test_looks_like_single_box_rejects_middle_without_pipes():
-    bad_middle = Diagram(rows=("+---+", "  a  ", "+---+"), entry_row=1, width=5)
-    assert _looks_like_single_box(bad_middle) is False
-
-
-def test_looks_like_single_box_rejects_border_with_non_dash_interior():
-    striped = Diagram(rows=("+-x-+", "| a |", "+-x-+"), entry_row=1, width=5)
-    assert _looks_like_single_box(striped) is False
-
-
-def test_pad_right_returns_diagram_untouched_when_already_wide_enough():
-    original = Diagram(rows=("abcde",), entry_row=0, width=5)
-    assert _pad_right(original, 3) is original
-
-
-def test_widen_returns_diagram_untouched_when_already_wide_enough():
-    original = Diagram(rows=("abcde",), entry_row=0, width=5)
-    assert _widen(original, 3) is original
+def test_narrow_single_box_branch_is_widened_to_match_the_widest_alternative():
+    output = _render(
+        AnyOfElement(children=(StringElement(value="x"), StringElement(value="verylongword")))
+    )
+    assert '"x"' in output
+    assert '"verylongword"' in output

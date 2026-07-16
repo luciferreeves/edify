@@ -64,11 +64,11 @@ def any_of(*operands: BuilderProtocol) -> Pattern:
 
 def _operand_children(operand: BuilderProtocol) -> tuple[BaseElement, ...]:
     """Return ``operand``'s root-frame children as an immutable tuple."""
-    return tuple(operand._state.top_frame.children)
+    return tuple(operand.state.top_frame.children)
 
 
 def _ensure_positive_integer(label: str, value: int) -> None:
     """Raise :class:`MustBePositiveIntegerError` when ``value`` is not a strictly positive int."""
-    if isinstance(value, int) and not isinstance(value, bool) and value > 0:
+    if not isinstance(value, bool) and value > 0:
         return
     raise MustBePositiveIntegerError(label)

@@ -45,4 +45,4 @@ def assert_not_behind(operand: BuilderProtocol) -> Pattern:
 
 def _operand_children(operand: BuilderProtocol) -> tuple[BaseElement, ...]:
     """Return ``operand``'s root-frame children as an immutable tuple."""
-    return tuple(operand._state.top_frame.children)
+    return tuple(operand.state.top_frame.children)

@@ -25,7 +25,7 @@ from edify.pattern.composition import Pattern
 
 def target_element(operand: BuilderProtocol) -> BaseElement:
     """Return the element to wrap: the sole child when there is one, else a bundle."""
-    children = operand._state.top_frame.children
+    children = operand.state.top_frame.children
     if len(children) == 1:
         return children[0]
     return SubexpressionElement(children=children)
@@ -34,5 +34,5 @@ def target_element(operand: BuilderProtocol) -> BaseElement:
 def pattern_containing(element: BaseElement) -> Pattern:
     """Return a fresh :class:`Pattern` whose root frame holds ``element``."""
     fresh_pattern = Pattern()
-    new_state = fresh_pattern._state.with_element_added_to_top(element)
-    return fresh_pattern._with_state(new_state)
+    new_state = fresh_pattern.state.with_element_added_to_top(element)
+    return fresh_pattern.with_state(new_state)

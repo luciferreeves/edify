@@ -22,7 +22,7 @@ class TestingMixin(BuilderProtocol):
 
     def assert_matches(self, inputs: Iterable[str]) -> Self:
         """Assert every string in ``inputs`` matches this pattern; return ``self``."""
-        compiled = self._lazy_regex()
+        compiled = self.lazy_regex()
         input_tuple = tuple(inputs)
         rejected_items = [item for item in input_tuple if compiled.search(item) is None]
         missing = tuple(rejected_items)
@@ -32,7 +32,7 @@ class TestingMixin(BuilderProtocol):
 
     def assert_rejects(self, inputs: Iterable[str]) -> Self:
         """Assert every string in ``inputs`` is rejected by this pattern; return ``self``."""
-        compiled = self._lazy_regex()
+        compiled = self.lazy_regex()
         input_tuple = tuple(inputs)
         matched_items = [item for item in input_tuple if compiled.search(item) is not None]
         matched = tuple(matched_items)

@@ -1,7 +1,7 @@
 """The :class:`BuilderProtocol` — the contract every mixin assumes about ``self``.
 
-Each mixin defines methods that read ``self._state`` and return a new builder
-via ``self._with_state(new_state)``. Typing ``self`` against this protocol
+Each mixin defines methods that read ``self.state`` and return a new builder
+via ``self.with_state(new_state)``. Typing ``self`` against this protocol
 gives both type checkers a complete picture of the cross-mixin attribute
 surface even when individual mixin files are inspected in isolation.
 
@@ -24,14 +24,14 @@ from edify.result.regex import Regex
 class BuilderProtocol(Protocol):
     """The shared shape that every builder mixin assumes about ``self``."""
 
-    _state: BuilderState
-    _cached_regex: Regex | None
+    state: BuilderState
+    cached_regex: Regex | None
 
     def __init__(self) -> None: ...
 
-    def _with_state(self, new_state: BuilderState, /) -> Self: ...
+    def with_state(self, new_state: BuilderState, /) -> Self: ...
 
-    def _lazy_regex(self) -> Regex: ...
+    def lazy_regex(self) -> Regex: ...
 
     def to_regex_string(self) -> str: ...
 

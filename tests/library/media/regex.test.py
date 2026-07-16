@@ -7,7 +7,3 @@ def test_valid_regex():
 
 def test_invalid_regex():
     assert not regex(r"(?P<name>")
-
-
-def test_non_string():
-    assert not regex(42)

@@ -41,7 +41,7 @@ from edify.builder.reverse import UnsupportedReverseParseError
         ("(?<!x)y", "(?<!x)y"),
     ],
 )
-def test_from_regex_translates_common_constructs_faithfully(source, expected):
+def test_from_regex_translates_common_constructs_faithfully(source: str, expected: str):
     builder = RegexBuilder.from_regex(source)
     assert builder.to_regex_string() == expected
 
@@ -58,7 +58,7 @@ def test_from_regex_translates_common_constructs_faithfully(source, expected):
         r"(?=x)\w+",
     ],
 )
-def test_round_trip_compiled_regex_matches_the_same_inputs(source):
+def test_round_trip_compiled_regex_matches_the_same_inputs(source: str):
     original = re.compile(source)
     reversed_builder = RegexBuilder.from_regex(source)
     reversed_compiled = reversed_builder.to_regex()

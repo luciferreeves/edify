@@ -1,6 +1,7 @@
 """Tests for the per-instance lazy compile cache — semantics and cold/warm ratio."""
 
 import time
+from collections.abc import Callable
 
 from edify import Pattern, RegexBuilder
 
@@ -21,7 +22,7 @@ def _hex_number_builder():
     )
 
 
-def _measure_call_wall_clock(action, iterations):
+def _measure_call_wall_clock(action: Callable[[], object], iterations: int) -> float:
     start = time.perf_counter()
     for _ in range(iterations):
         action()

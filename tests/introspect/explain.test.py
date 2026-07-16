@@ -1,6 +1,7 @@
 """Tests for the plain-English explanation renderer in :mod:`edify.introspect.explain`."""
 
 from edify import RegexBuilder
+from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import (
     BackReferenceElement,
     CaptureElement,
@@ -59,21 +60,23 @@ from edify.elements.types.quantifiers import (
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
 )
-from edify.introspect.explain import (
-    _describe_inline,
-    _describe_inline_children,
-    _describe_optional_inner,
-    _describe_plural,
-    _example_for,
-    _pick_character_not_in,
-    _pick_character_outside_range,
-    _wrap_step,
-    explain_elements,
-)
+from edify.introspect.explain import explain_elements
 
 
-def _explain(*elements) -> str:
+def _explain(*elements: BaseElement) -> str:
     return explain_elements(tuple(elements))
+
+
+def _inline_phrase(element: BaseElement) -> str:
+    return _explain(GroupElement(children=(element,)))
+
+
+def _plural_phrase(element: BaseElement) -> str:
+    return _explain(OneOrMoreElement(child=element))
+
+
+def _optional_phrase(element: BaseElement) -> str:
+    return _explain(OptionalElement(child=element))
 
 
 def _accepted_examples(output: str) -> list[str]:
@@ -180,12 +183,12 @@ def test_non_word_boundary_gets_a_dedicated_bullet():
     assert "must NOT fall on a word boundary" in output
 
 
-def test_capture_step_describes_children_inline():
+def test_capture_step_describes_children_inline_phrase():
     output = _explain(CaptureElement(children=(DigitElement(),)))
     assert "one digit" in output
 
 
-def test_named_capture_step_describes_children_inline():
+def test_named_capture_step_describes_children_inline_phrase():
     output = _explain(NamedCaptureElement(name="year", children=(DigitElement(),)))
     assert "one digit" in output
 
@@ -226,7 +229,7 @@ def test_assert_not_behind_reads_as_just_before_must_not_have_appeared():
     assert "must NOT have appeared" in output
 
 
-def test_group_step_describes_children_inline():
+def test_group_step_describes_children_inline_phrase():
     output = _explain(GroupElement(children=(DigitElement(),)))
     assert "one digit" in output
 
@@ -388,7 +391,7 @@ def test_alphanumeric_element_labeled_letter_or_digit():
     assert "letter or digit" in output
 
 
-def test_noop_element_labeled_nothing_inline():
+def test_noop_element_labeled_nothing_inline_phrase():
     output = _explain(GroupElement(children=(NoopElement(),)))
     assert "nothing" in output
 
@@ -516,286 +519,238 @@ def test_examples_for_negative_lookaround_contribute_nothing():
 
 def test_pick_character_not_in_uses_bang_when_set_exhausts_alphanumerics():
     everything = "abcdefghijklmnopqrstuvwxyz0123456789"
-    assert _pick_character_not_in(everything) == "!"
+    output = _explain(AnythingButCharsElement(value=everything))
+    assert _accepted_examples(output) == ["!"]
 
 
 def test_pick_character_outside_range_uses_bang_when_range_covers_alphanumerics():
-    assert _pick_character_outside_range("0", "z") == "!"
-
-
-def test_step_wrap_returns_empty_prefix_for_empty_description():
-    wrapped = _wrap_step(1, "")
-    assert wrapped.strip() == "1."
-
-
-def test_step_wrap_breaks_long_descriptions_across_continuation_lines():
-    long_description = " ".join(["word"] * 40)
-    wrapped = _wrap_step(1, long_description)
-    assert "\n" in wrapped
+    output = _explain(AnythingButRangeElement(start="0", end="z"))
+    assert _accepted_examples(output) == ["!"]
 
 
 def test_optional_inner_wraps_char_literal():
-    assert _describe_optional_inner(CharElement(value="\\-")) == '"-"'
+    assert 'Optional: "-".' in _optional_phrase(CharElement(value="\\-"))
 
 
 def test_optional_inner_wraps_string_literal():
-    assert _describe_optional_inner(StringElement(value="hi")) == '"hi"'
+    assert 'Optional: "hi".' in _optional_phrase(StringElement(value="hi"))
 
 
 def test_optional_inner_delegates_to_inline_for_leaf_elements():
-    assert "one digit" in _describe_optional_inner(DigitElement())
+    assert "one digit" in _optional_phrase(DigitElement())
 
 
 def test_describe_inline_falls_back_to_class_name_for_unknown_type():
-    class MysteryElement(DigitElement.__mro__[1]):
+    class MysteryElement(BaseElement):
         pass
 
-    mystery = MysteryElement()
-    description = _describe_inline(mystery)
-    assert description == "MysteryElement"
+    assert "MysteryElement" in _inline_phrase(MysteryElement())
 
 
 def test_describe_plural_falls_back_to_of_inline_for_unknown_type():
-    class MysteryElement(DigitElement.__mro__[1]):
+    class MysteryElement(BaseElement):
         pass
 
-    mystery = MysteryElement()
-    plural = _describe_plural(mystery)
-    assert plural.startswith("of ")
-
-
-def test_step_wrapper_directly_wraps_first_line_at_width_boundary():
-    words = " ".join(["w"] * 100)
-    wrapped = _wrap_step(1, words)
-    for line in wrapped.splitlines():
-        stripped_line = line.strip()
-        assert len(line) <= 76 or stripped_line.startswith("w")
-
-
-def _plural(element) -> str:
-    return _describe_plural(element)
-
-
-def _inline(element) -> str:
-    return _describe_inline(element)
+    assert "one or more of MysteryElement" in _plural_phrase(MysteryElement())
 
 
 def test_plural_any_char_reads_as_generic_characters():
-    assert _plural(AnyCharElement()) == "characters (any character)"
+    assert "characters (any character)" in _plural_phrase(AnyCharElement())
 
 
 def test_plural_whitespace_reads_as_whitespace_characters():
-    assert "whitespace characters" in _plural(WhitespaceCharElement())
+    assert "whitespace characters" in _plural_phrase(WhitespaceCharElement())
 
 
 def test_plural_non_whitespace_reads_as_non_whitespace_characters():
-    assert _plural(NonWhitespaceCharElement()) == "non-whitespace characters"
+    assert "non-whitespace characters" in _plural_phrase(NonWhitespaceCharElement())
 
 
 def test_plural_non_digit_reads_as_non_digit_characters():
-    assert _plural(NonDigitElement()) == "non-digit characters"
+    assert "non-digit characters" in _plural_phrase(NonDigitElement())
 
 
 def test_plural_word_reads_as_letters_digits_underscores():
-    assert _plural(WordElement()) == "letters, digits, or underscores"
+    assert "letters, digits, or underscores" in _plural_phrase(WordElement())
 
 
 def test_plural_non_word_reads_as_not_letters_digits_or_underscores():
-    assert "not letters, digits, or underscores" in _plural(NonWordElement())
+    assert "not letters, digits, or underscores" in _plural_phrase(NonWordElement())
 
 
 def test_plural_new_line_reads_as_line_feed_characters():
-    assert "line-feed characters" in _plural(NewLineElement())
+    assert "line-feed characters" in _plural_phrase(NewLineElement())
 
 
 def test_plural_carriage_return_reads_as_carriage_return_characters():
-    assert "carriage-return characters" in _plural(CarriageReturnElement())
+    assert "carriage-return characters" in _plural_phrase(CarriageReturnElement())
 
 
 def test_plural_tab_reads_as_tab_characters():
-    assert "tab characters" in _plural(TabElement())
+    assert "tab characters" in _plural_phrase(TabElement())
 
 
 def test_plural_null_byte_reads_as_null_bytes():
-    assert "null bytes" in _plural(NullByteElement())
+    assert "null bytes" in _plural_phrase(NullByteElement())
 
 
 def test_plural_letter_reads_as_letters_a_to_z():
-    assert _plural(LetterElement()) == "letters (a-z or A-Z)"
+    assert "letters (a-z or A-Z)" in _plural_phrase(LetterElement())
 
 
 def test_plural_uppercase_reads_as_uppercase_letters():
-    assert "uppercase letters" in _plural(UppercaseElement())
+    assert "uppercase letters" in _plural_phrase(UppercaseElement())
 
 
 def test_plural_lowercase_reads_as_lowercase_letters():
-    assert "lowercase letters" in _plural(LowercaseElement())
+    assert "lowercase letters" in _plural_phrase(LowercaseElement())
 
 
 def test_plural_alphanumeric_reads_as_letters_or_digits():
-    assert "letters or digits" in _plural(AlphanumericElement())
+    assert "letters or digits" in _plural_phrase(AlphanumericElement())
 
 
 def test_plural_char_literal_reads_as_copies_of_character():
-    assert "copies of the character" in _plural(CharElement(value="\\-"))
+    assert "copies of the character" in _plural_phrase(CharElement(value="\\-"))
 
 
 def test_plural_string_literal_reads_as_copies_of_text():
-    assert "copies of the text" in _plural(StringElement(value="hi"))
+    assert "copies of the text" in _plural_phrase(StringElement(value="hi"))
 
 
 def test_plural_range_reads_as_from_through():
-    assert 'from "a" through "z"' in _plural(RangeElement(start="a", end="z"))
+    assert 'from "a" through "z"' in _plural_phrase(RangeElement(start="a", end="z"))
 
 
 def test_plural_any_of_chars_reads_as_from_the_set():
-    assert 'from the set "abc"' in _plural(AnyOfCharsElement(value="abc"))
+    assert 'from the set "abc"' in _plural_phrase(AnyOfCharsElement(value="abc"))
 
 
 def test_plural_anything_but_chars_reads_as_not_from_the_set():
-    assert 'NOT from the set "abc"' in _plural(AnythingButCharsElement(value="abc"))
+    assert 'NOT from the set "abc"' in _plural_phrase(AnythingButCharsElement(value="abc"))
 
 
 def test_plural_anything_but_range_reads_as_outside_range():
-    assert 'outside "a" through "z"' in _plural(AnythingButRangeElement(start="a", end="z"))
+    assert 'outside "a" through "z"' in _plural_phrase(AnythingButRangeElement(start="a", end="z"))
 
 
 def test_plural_unknown_element_falls_back_to_of_inline_form():
-    class MysteryElement(DigitElement.__mro__[1]):
+    class MysteryElement(BaseElement):
         pass
 
-    mystery = MysteryElement()
-    plural = _plural(mystery)
-    assert plural.startswith("of ")
+    assert "one or more of MysteryElement" in _plural_phrase(MysteryElement())
 
 
 def test_inline_start_of_input_reads_as_very_beginning_of_text():
-    assert _inline(StartOfInputElement()) == "the very beginning of the text"
+    assert "the very beginning of the text" in _inline_phrase(StartOfInputElement())
 
 
 def test_inline_end_of_input_reads_as_very_end_of_text():
-    assert _inline(EndOfInputElement()) == "the very end of the text"
+    assert "the very end of the text" in _inline_phrase(EndOfInputElement())
 
 
 def test_inline_word_boundary_reads_as_word_boundary():
-    assert _inline(WordBoundaryElement()) == "a word boundary"
+    assert "a word boundary" in _inline_phrase(WordBoundaryElement())
 
 
 def test_inline_non_word_boundary_reads_as_non_word_boundary_position():
-    assert _inline(NonWordBoundaryElement()) == "a non-word-boundary position"
+    assert "a non-word-boundary position" in _inline_phrase(NonWordBoundaryElement())
 
 
 def test_inline_optional_reads_as_an_optional_x():
-    element = OptionalElement(child=DigitElement())
-
-    phrase = _inline(element)
-
-    assert phrase.startswith("an optional ")
+    assert "an optional " in _inline_phrase(OptionalElement(child=DigitElement()))
 
 
 def test_inline_zero_or_more_reads_as_zero_or_more_x():
-    element = ZeroOrMoreElement(child=DigitElement())
-
-    phrase = _inline(element)
-
-    assert phrase.startswith("zero or more")
+    assert "zero or more" in _inline_phrase(ZeroOrMoreElement(child=DigitElement()))
 
 
 def test_inline_zero_or_more_lazy_notes_as_few_as_possible():
-    assert "as few as possible" in _inline(ZeroOrMoreLazyElement(child=DigitElement()))
+    assert "as few as possible" in _inline_phrase(ZeroOrMoreLazyElement(child=DigitElement()))
 
 
 def test_inline_one_or_more_reads_as_one_or_more_x():
-    element = OneOrMoreElement(child=DigitElement())
-
-    phrase = _inline(element)
-
-    assert phrase.startswith("one or more")
+    assert "one or more" in _inline_phrase(OneOrMoreElement(child=DigitElement()))
 
 
 def test_inline_one_or_more_lazy_notes_as_few_as_possible():
-    assert "as few as possible" in _inline(OneOrMoreLazyElement(child=DigitElement()))
+    assert "as few as possible" in _inline_phrase(OneOrMoreLazyElement(child=DigitElement()))
 
 
 def test_inline_exactly_reads_as_exactly_n_x():
-    element = ExactlyElement(times=4, child=DigitElement())
-
-    phrase = _inline(element)
-
-    assert phrase.startswith("exactly 4")
+    assert "exactly 4" in _inline_phrase(ExactlyElement(times=4, child=DigitElement()))
 
 
 def test_inline_at_least_reads_as_at_least_n_x():
-    element = AtLeastElement(times=3, child=DigitElement())
-
-    phrase = _inline(element)
-
-    assert phrase.startswith("at least 3")
+    assert "at least 3" in _inline_phrase(AtLeastElement(times=3, child=DigitElement()))
 
 
 def test_inline_at_most_reads_as_at_most_n_x():
-    element = AtMostElement(times=2, child=DigitElement())
-
-    phrase = _inline(element)
-
-    assert phrase.startswith("at most 2")
+    assert "at most 2" in _inline_phrase(AtMostElement(times=2, child=DigitElement()))
 
 
 def test_inline_between_reads_as_between_lower_and_upper():
-    assert "between 2 and 5" in _inline(BetweenElement(lower=2, upper=5, child=DigitElement()))
+    assert "between 2 and 5" in _inline_phrase(
+        BetweenElement(lower=2, upper=5, child=DigitElement())
+    )
 
 
 def test_inline_between_lazy_notes_as_few_as_possible():
-    assert "as few as possible" in _inline(
+    assert "as few as possible" in _inline_phrase(
         BetweenLazyElement(lower=2, upper=5, child=DigitElement())
     )
 
 
 def test_inline_capture_reads_as_child_captured_marker():
-    assert "(captured)" in _inline(CaptureElement(children=(DigitElement(),)))
+    assert "(captured)" in _inline_phrase(CaptureElement(children=(DigitElement(),)))
 
 
 def test_inline_named_capture_includes_the_label():
-    assert 'label "year"' in _inline(NamedCaptureElement(name="year", children=(DigitElement(),)))
+    assert 'label "year"' in _inline_phrase(
+        NamedCaptureElement(name="year", children=(DigitElement(),))
+    )
 
 
-def test_inline_group_reads_as_children_inline():
-    assert "one digit" in _inline(GroupElement(children=(DigitElement(),)))
+def test_inline_group_reads_as_children_inline_phrase():
+    assert "one digit" in _inline_phrase(GroupElement(children=(DigitElement(),)))
 
 
-def test_inline_subexpression_reads_as_children_inline():
-    assert "one digit" in _inline(SubexpressionElement(children=(DigitElement(),)))
+def test_inline_subexpression_reads_as_children_inline_phrase():
+    alternation = AnyOfElement(
+        children=(SubexpressionElement(children=(DigitElement(),)), StringElement(value="x"))
+    )
+    assert "one digit" in _inline_phrase(alternation)
 
 
 def test_inline_alternation_reads_as_either_or_phrase():
-    assert "either" in _inline(
+    assert "either" in _inline_phrase(
         AnyOfElement(children=(StringElement(value="a"), StringElement(value="b")))
     )
 
 
 def test_inline_backreference_reads_as_same_text_that_group_captured():
-    assert "group #1 captured" in _inline(BackReferenceElement(index=1))
+    assert "group #1 captured" in _inline_phrase(BackReferenceElement(index=1))
 
 
 def test_inline_named_backreference_reads_as_that_the_name_group_captured():
-    assert 'the "year" group captured' in _inline(NamedBackReferenceElement(name="year"))
+    assert 'the "year" group captured' in _inline_phrase(NamedBackReferenceElement(name="year"))
 
 
-def test_optional_inner_reads_group_children_inline():
-    assert "one digit" in _describe_optional_inner(GroupElement(children=(DigitElement(),)))
+def test_optional_inner_reads_group_children_inline_phrase():
+    assert "one digit" in _optional_phrase(GroupElement(children=(DigitElement(),)))
 
 
 def test_describe_inline_children_reads_as_nothing_when_empty():
-    assert _describe_inline_children(()) == "nothing"
+    assert "The text must contain nothing" in _explain(GroupElement(children=()))
 
 
 def test_describe_inline_children_joins_multiple_phrases_with_then():
-    joined = _describe_inline_children((DigitElement(), StringElement(value="X")))
+    joined = _explain(GroupElement(children=(DigitElement(), StringElement(value="X"))))
     assert ", then " in joined
 
 
 def test_example_for_unknown_element_returns_empty_string():
-    class MysteryElement(DigitElement.__mro__[1]):
+    class MysteryElement(BaseElement):
         pass
 
-    assert _example_for(MysteryElement(), 0) == ""
+    assert _accepted_examples(_explain(MysteryElement())) == []

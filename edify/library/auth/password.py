@@ -56,8 +56,6 @@ class _PasswordPattern(Pattern):
         special_chars: str | None = None,
     ) -> bool:
         """Return True when ``value`` meets every configured threshold."""
-        if not isinstance(value, str):
-            return False
         effective_min_length = self.min_length if min_length is None else min_length
         effective_max_length = self.max_length if max_length is None else max_length
         effective_min_upper = self.min_upper if min_upper is None else min_upper

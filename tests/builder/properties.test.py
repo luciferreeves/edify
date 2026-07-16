@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from hypothesis import given
 from hypothesis import strategies as st
 
-from edify import Pattern, RegexBuilder
+from edify import RegexBuilder
 
 
 @dataclass(frozen=True)
@@ -29,28 +29,31 @@ class LeafNode:
 class GroupNode:
     """A non-capturing group wrapping ``children``."""
 
-    children: tuple[object, ...]
+    children: tuple[_Node, ...]
 
 
 @dataclass(frozen=True)
 class CaptureNode:
     """An unnamed capture group wrapping ``children``."""
 
-    children: tuple[object, ...]
+    children: tuple[_Node, ...]
 
 
 @dataclass(frozen=True)
 class NamedCaptureNode:
     """A named-capture group wrapping ``children``; the name is assigned deterministically."""
 
-    children: tuple[object, ...]
+    children: tuple[_Node, ...]
 
 
 @dataclass(frozen=True)
 class SubexpressionNode:
     """A subexpression built as a separate ``Pattern`` and merged into the parent."""
 
-    children: tuple[object, ...]
+    children: tuple[_Node, ...]
+
+
+_Node = LeafNode | GroupNode | CaptureNode | NamedCaptureNode | SubexpressionNode
 
 
 _QUANTIFIER_STRATEGIES: list[st.SearchStrategy[tuple[str, tuple[int, ...], str]]] = [
@@ -121,10 +124,10 @@ _node_strategy = st.recursive(_leaf_node_strategy, _extend, max_leaves=6)
 
 
 def _apply_sequence(
-    builder,
-    nodes: list[object],
+    builder: RegexBuilder,
+    nodes: list[_Node],
     name_counter: int,
-) -> tuple[object, str, int]:
+) -> tuple[RegexBuilder, str, int]:
     """Apply ``nodes`` to ``builder`` in order; return the updated triple."""
     fragments: list[str] = []
     for node in nodes:
@@ -134,7 +137,9 @@ def _apply_sequence(
     return builder, combined_regex, name_counter
 
 
-def _apply_node(builder, node, name_counter: int) -> tuple[object, str, int]:
+def _apply_node(
+    builder: RegexBuilder, node: _Node, name_counter: int
+) -> tuple[RegexBuilder, str, int]:
     """Dispatch on ``node`` type, applying it to ``builder`` and returning the fragment."""
     if isinstance(node, LeafNode):
         return _apply_leaf(builder, node, name_counter)
@@ -147,7 +152,9 @@ def _apply_node(builder, node, name_counter: int) -> tuple[object, str, int]:
     return _apply_subexpression(builder, node, name_counter)
 
 
-def _apply_leaf(builder, node: LeafNode, name_counter: int) -> tuple[object, str, int]:
+def _apply_leaf(
+    builder: RegexBuilder, node: LeafNode, name_counter: int
+) -> tuple[RegexBuilder, str, int]:
     """Apply a single leaf element, optionally preceded by a quantifier."""
     if node.quantifier is None:
         builder_after_element = getattr(builder, node.element_name)(*node.element_args)
@@ -159,7 +166,9 @@ def _apply_leaf(builder, node: LeafNode, name_counter: int) -> tuple[object, str
     return builder_after_element, fragment, name_counter
 
 
-def _apply_group(builder, node: GroupNode, name_counter: int) -> tuple[object, str, int]:
+def _apply_group(
+    builder: RegexBuilder, node: GroupNode, name_counter: int
+) -> tuple[RegexBuilder, str, int]:
     """Apply a non-capturing group around ``node.children``."""
     builder_opened = builder.group()
     builder_inner, inner_regex, name_counter = _apply_sequence(
@@ -169,7 +178,9 @@ def _apply_group(builder, node: GroupNode, name_counter: int) -> tuple[object, s
     return builder_closed, f"(?:{inner_regex})", name_counter
 
 
-def _apply_capture(builder, node: CaptureNode, name_counter: int) -> tuple[object, str, int]:
+def _apply_capture(
+    builder: RegexBuilder, node: CaptureNode, name_counter: int
+) -> tuple[RegexBuilder, str, int]:
     """Apply an unnamed capture group around ``node.children``."""
     builder_opened = builder.capture()
     builder_inner, inner_regex, name_counter = _apply_sequence(
@@ -180,10 +191,10 @@ def _apply_capture(builder, node: CaptureNode, name_counter: int) -> tuple[objec
 
 
 def _apply_named_capture(
-    builder,
+    builder: RegexBuilder,
     node: NamedCaptureNode,
     name_counter: int,
-) -> tuple[object, str, int]:
+) -> tuple[RegexBuilder, str, int]:
     """Apply a named-capture group with a deterministically-assigned name."""
     assigned_name = f"n{name_counter}"
     next_counter = name_counter + 1
@@ -196,35 +207,41 @@ def _apply_named_capture(
 
 
 def _apply_subexpression(
-    builder,
+    builder: RegexBuilder,
     node: SubexpressionNode,
     name_counter: int,
-) -> tuple[object, str, int]:
-    """Apply a subexpression built as an independent ``Pattern`` and merged in."""
-    sub_pattern = Pattern()
-    sub_pattern_finished, sub_regex, next_counter = _apply_sequence(
-        sub_pattern, list(node.children), name_counter
+) -> tuple[RegexBuilder, str, int]:
+    """Apply a subexpression built as an independent builder and merged in."""
+    sub_builder = RegexBuilder()
+    sub_finished, sub_regex, next_counter = _apply_sequence(
+        sub_builder, list(node.children), name_counter
     )
-    builder_after_merge = builder.subexpression(sub_pattern_finished)
+    builder_after_merge = builder.subexpression(sub_finished)
     return builder_after_merge, sub_regex, next_counter
 
 
 @given(st.lists(_leaf_node_strategy, min_size=1, max_size=8))
-def test_bare_element_chain_emits_the_concatenation_of_element_fragments(nodes):
+def test_bare_element_chain_emits_the_concatenation_of_element_fragments(
+    nodes: list[LeafNode],
+) -> None:
     builder = RegexBuilder()
     builder_after, expected_regex, _ = _apply_sequence(builder, list(nodes), 0)
     assert builder_after.to_regex_string() == expected_regex
 
 
 @given(st.lists(_leaf_node_strategy, min_size=1, max_size=8))
-def test_every_quantifier_chain_call_produces_exactly_one_output_quantifier(nodes):
+def test_every_quantifier_chain_call_produces_exactly_one_output_quantifier(
+    nodes: list[LeafNode],
+) -> None:
     builder = RegexBuilder()
     builder_after, expected_regex, _ = _apply_sequence(builder, list(nodes), 0)
     assert builder_after.to_regex_string() == expected_regex
 
 
 @given(st.lists(_node_strategy, min_size=1, max_size=6))
-def test_composition_over_groups_captures_and_subexpressions_is_faithful(nodes):
+def test_composition_over_groups_captures_and_subexpressions_is_faithful(
+    nodes: list[_Node],
+) -> None:
     builder = RegexBuilder()
     builder_after, expected_regex, _ = _apply_sequence(builder, list(nodes), 0)
     assert builder_after.to_regex_string() == expected_regex

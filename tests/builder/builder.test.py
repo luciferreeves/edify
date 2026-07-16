@@ -5,7 +5,7 @@ import pytest
 from edify import RegexBuilder
 from edify.errors.anchors import StartInputAlreadyDefinedError
 from edify.errors.captures import InvalidTotalCaptureGroupsIndexError
-from edify.errors.input import MustBeInstanceError, MustBeSingleCharacterError
+from edify.errors.input import MustBeSingleCharacterError
 from edify.errors.naming import (
     CannotCreateDuplicateNamedGroupError,
     NamedGroupDoesNotExistError,
@@ -39,13 +39,13 @@ first_layer_se = (
 )
 
 
-def regex_equality(regex, rb_expression):
+def regex_equality(regex: str, rb_expression: RegexBuilder) -> None:
     regex_str = str(regex)
     rb_expression_str = rb_expression.to_regex_string()
     assert regex_str == str(rb_expression_str)
 
 
-def regex_compilation(regex, rb_expression, f=0):
+def regex_compilation(regex: str, rb_expression: RegexBuilder, f: int = 0) -> None:
     rb_expression_c = rb_expression.to_regex()
     assert re.compile(regex, flags=f) == rb_expression_c.compiled
 
@@ -456,11 +456,6 @@ def test_range():
     expr = RegexBuilder().range("a", "z")
     regex_equality("[a-z]", expr)
     regex_compilation("[a-z]", expr)
-
-
-def test_must_be_instance_error():
-    with pytest.raises(MustBeInstanceError):
-        RegexBuilder().subexpression("nope")
 
 
 def test_simple_se():

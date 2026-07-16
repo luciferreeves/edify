@@ -3,10 +3,13 @@
 import builtins
 import importlib
 import sys
+from collections.abc import Mapping, Sequence
+from types import ModuleType
 
 import pytest
 
 from edify import RegexBuilder
+from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import (
     BackReferenceElement,
     CaptureElement,
@@ -47,14 +50,12 @@ from edify.elements.types.quantifiers import (
 from edify.errors.introspect import MissingGraphvizDependencyError
 from edify.introspect import graphviz as graphviz_module
 from edify.introspect.graphviz import (
-    _Counter,
-    _escape_dot,
     render_dot,
     render_graphviz_svg,
 )
 
 
-def _dot(*elements) -> str:
+def _dot(*elements: BaseElement) -> str:
     return render_dot(tuple(elements))
 
 
@@ -260,30 +261,37 @@ def test_quantifier_wrapping_complex_child_uses_cluster_not_inline_label():
 
 
 def test_unknown_element_type_produces_question_mark_label():
-    class MysteryElement(DigitElement.__mro__[1]):
+    class MysteryElement(BaseElement):
         pass
 
     output = _dot(MysteryElement())
     assert "?MysteryElement" in output
 
 
-def test_counter_advances_and_produces_unique_ids():
-    counter = _Counter()
-    first = counter.next("n")
-    second = counter.next("n")
-    third = counter.next("fork")
-    assert first == "n_1"
-    assert second == "n_2"
-    assert third == "fork_3"
+def test_node_identifiers_are_unique_and_sequential_across_prefixes():
+    output = _dot(
+        DigitElement(),
+        AnyOfElement(children=(StringElement(value="a"), StringElement(value="b"))),
+    )
+    assert "n_1" in output
+    assert "fork_2" in output
+    assert "merge_3" in output
+    assert "n_4" in output
+    assert "n_5" in output
 
 
-def test_escape_dot_escapes_backslashes_and_quotes():
-    assert _escape_dot('a"b') == 'a\\"b'
-    assert _escape_dot("a\\b") == "a\\\\b"
+def test_dot_label_escapes_embedded_quotes():
+    assert 'a\\"b' in _dot(StringElement(value='a"b'))
 
 
-def test_escape_dot_preserves_newline_escape_for_two_line_labels():
-    assert _escape_dot("digit\\n(one or more)") == "digit\\n(one or more)"
+def test_dot_label_doubles_embedded_backslashes():
+    assert "\\\\" in _dot(CharElement(value="\\"))
+
+
+def test_two_line_quantifier_label_preserves_the_newline_escape():
+    output = _dot(OneOrMoreElement(child=DigitElement()))
+    assert "digit\\n(one or more)" in output
+    assert "digit\\\\n" not in output
 
 
 def test_render_dot_end_to_end_via_builder():
@@ -301,14 +309,22 @@ def test_render_graphviz_svg_returns_svg_string_when_graphviz_available():
     assert "</svg>" in output
 
 
-def test_module_level_import_falls_back_to_none_when_graphviz_missing(monkeypatch):
+def test_module_level_import_falls_back_to_none_when_graphviz_missing(
+    monkeypatch: pytest.MonkeyPatch,
+):
     saved_module = sys.modules.pop("graphviz", None)
     real_import = builtins.__import__
 
-    def blocking_import(name, *args, **kwargs):
+    def blocking_import(
+        name: str,
+        module_globals: Mapping[str, object] | None = None,
+        module_locals: Mapping[str, object] | None = None,
+        fromlist: Sequence[str] = (),
+        level: int = 0,
+    ) -> ModuleType:
         if name == "graphviz":
             raise ImportError("graphviz missing")
-        return real_import(name, *args, **kwargs)
+        return real_import(name, module_globals, module_locals, fromlist, level)
 
     monkeypatch.setattr(builtins, "__import__", blocking_import)
     monkeypatch.setitem(sys.modules, "graphviz", None)

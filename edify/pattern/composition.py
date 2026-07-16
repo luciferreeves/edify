@@ -58,7 +58,7 @@ class Pattern(
 
     def to_dict(self) -> dict[str, JSONValue]:
         """Return the canonical dict representation of this pattern."""
-        return state_to_dict(self._state)
+        return state_to_dict(self.state)
 
     def to_json(self) -> str:
         """Return the canonical JSON string for this pattern."""
@@ -70,7 +70,7 @@ class Pattern(
         """Return a Pattern reconstructed from a canonical dict."""
         reconstructed_state = dict_to_state(document)
         empty_pattern = cls()
-        return empty_pattern._with_state(reconstructed_state)
+        return empty_pattern.with_state(reconstructed_state)
 
     @classmethod
     def from_json(cls, blob: str) -> Pattern:

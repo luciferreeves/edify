@@ -4,7 +4,6 @@ import pytest
 
 from edify import Pattern, RegexBuilder
 from edify.errors.input import (
-    MustBeAStringError,
     MustBeAtLeastOneLiteralError,
     MustBeOneCharacterError,
 )
@@ -65,8 +64,3 @@ def test_one_of_zero_args_raises_must_be_at_least_one_literal():
 def test_any_of_varargs_rejects_empty_string_literal():
     with pytest.raises(MustBeOneCharacterError):
         RegexBuilder().any_of("cat", "")
-
-
-def test_one_of_rejects_non_string_literal():
-    with pytest.raises(MustBeAStringError):
-        RegexBuilder().one_of("cat", 42)

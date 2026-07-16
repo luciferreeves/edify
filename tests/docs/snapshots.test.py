@@ -10,6 +10,7 @@ truthful.
 
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -28,7 +29,7 @@ _SNAPSHOT_ROOT = _REPO_ROOT / "tests" / "snapshots" / "docs"
 _CODE_BLOCK_HEADER = ".. code-block:: python"
 
 
-def _collect_python_code_blocks(rst_path: Path):
+def _collect_python_code_blocks(rst_path: Path) -> Iterator[tuple[int, str]]:
     lines = rst_path.read_text().splitlines()
     line_index = 0
     while line_index < len(lines):
@@ -42,7 +43,7 @@ def _collect_python_code_blocks(rst_path: Path):
         line_index = block_start + len(block_lines)
 
 
-def _consume_indented_block(lines, start_index):
+def _consume_indented_block(lines: list[str], start_index: int) -> tuple[int, list[str]]:
     block_lines: list[str] = []
     line_index = start_index
     while line_index < len(lines) and lines[line_index].strip() == "":
@@ -65,15 +66,15 @@ def _consume_indented_block(lines, start_index):
     return line_index - len(block_lines), block_lines
 
 
-def _discover_blocks():
+def _discover_blocks() -> Iterator[tuple[Path, int, str, Path]]:
     for rst_path in sorted(_DOCS_ROOT.rglob("*.rst")):
         for block_start, block_source in _collect_python_code_blocks(rst_path):
             relative_stem = rst_path.relative_to(_DOCS_ROOT).with_suffix("")
             yield rst_path, block_start, block_source, relative_stem
 
 
-def _snapshot_bodies_for_block(namespace, pre_exec_names: frozenset[str]) -> str:
-    interesting_pairs = []
+def _snapshot_bodies_for_block(namespace: dict[str, object], pre_exec_names: frozenset[str]) -> str:
+    interesting_pairs: list[tuple[str, str, str]] = []
     for identifier, value in namespace.items():
         if identifier in pre_exec_names:
             continue
@@ -88,7 +89,7 @@ def _snapshot_bodies_for_block(namespace, pre_exec_names: frozenset[str]) -> str
     return "\n".join(rendered_lines) + ("\n" if rendered_lines else "")
 
 
-DISCOVERED_BLOCKS = list(_discover_blocks())
+DISCOVERED_BLOCKS: list[tuple[Path, int, str, Path]] = list(_discover_blocks())
 
 _BLOCKS_DEFERRED_TO_DOCS_REWRITE = frozenset(
     {
@@ -100,6 +101,12 @@ _BLOCKS_DEFERRED_TO_DOCS_REWRITE = frozenset(
         ("built-in/index", 184),
         ("built-in/index", 936),
         ("regex-builder/builder/index", 396),
+    }
+)
+
+_ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS = frozenset(
+    {
+        ("upgrading/0.3-to-1.0", 140),
     }
 )
 
@@ -118,11 +125,13 @@ _BLOCKS_SKIPPED_ON_PYPY = frozenset(
     ],
 )
 def test_doc_code_block_produces_the_snapshotted_regex(
-    rst_path, block_start, block_source, relative_stem
-):
+    rst_path: Path, block_start: int, block_source: str, relative_stem: Path
+) -> None:
     stem_string = str(relative_stem)
     if (stem_string, block_start) in _BLOCKS_DEFERRED_TO_DOCS_REWRITE:
         pytest.skip("doc block references validators / kwargs slated for the docs rewrite")
+    if (stem_string, block_start) in _ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS:
+        pytest.skip("doc block shows pre/post-migration code that is intentionally not executable")
     if _ON_PYPY and (stem_string, block_start) in _BLOCKS_SKIPPED_ON_PYPY:
         pytest.skip("doc block hits PyPy's re.DEBUG upstream disassembler bug")
     namespace = _prepared_exec_namespace()
@@ -133,8 +142,8 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     assert_snapshot(rendered, snapshot_path)
 
 
-def _prepared_exec_namespace():
-    namespace = {"edify": edify, "Pattern": Pattern, "Regex": Regex, "re": re}
+def _prepared_exec_namespace() -> dict[str, object]:
+    namespace: dict[str, object] = {"edify": edify, "Pattern": Pattern, "Regex": Regex, "re": re}
     for edify_export in dir(edify):
         if edify_export.startswith("_"):
             continue

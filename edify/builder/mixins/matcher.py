@@ -1,6 +1,6 @@
 """The :class:`MatcherMixin` — the closed set of five match verbs on any fluent surface.
 
-Compiles ``self`` on first use via :meth:`edify.builder.core.BuilderCore._lazy_regex`
+Compiles ``self`` on first use via :meth:`edify.builder.core.BuilderCore.lazy_regex`
 and reuses the cached :class:`edify.result.regex.Regex` on every subsequent call,
 so ``pattern.test("a")`` followed by ``pattern.match("b")`` compiles the underlying
 regex exactly once.
@@ -26,7 +26,7 @@ class MatcherMixin(BuilderProtocol):
 
     def test(self, string: str, pos: int = 0, endpos: int = sys.maxsize) -> bool:
         """Return ``True`` when the pattern matches anywhere in ``string``, else ``False``."""
-        return self._lazy_regex().search(string, pos, endpos) is not None
+        return self.lazy_regex().search(string, pos, endpos) is not None
 
     def match(
         self,
@@ -37,7 +37,7 @@ class MatcherMixin(BuilderProtocol):
         timeout: float | None = None,
     ) -> Match | None:
         """Delegate to :meth:`re.Pattern.match`, returning an edify :class:`Match`."""
-        return self._lazy_regex().match(string, pos, endpos, timeout=timeout)
+        return self.lazy_regex().match(string, pos, endpos, timeout=timeout)
 
     def search(
         self,
@@ -48,7 +48,7 @@ class MatcherMixin(BuilderProtocol):
         timeout: float | None = None,
     ) -> Match | None:
         """Delegate to :meth:`re.Pattern.search`, returning an edify :class:`Match`."""
-        return self._lazy_regex().search(string, pos, endpos, timeout=timeout)
+        return self.lazy_regex().search(string, pos, endpos, timeout=timeout)
 
     def findall(
         self,
@@ -59,7 +59,7 @@ class MatcherMixin(BuilderProtocol):
         timeout: float | None = None,
     ) -> list[str] | list[tuple[str, ...]]:
         """Delegate to :meth:`re.Pattern.findall`."""
-        return self._lazy_regex().findall(string, pos, endpos, timeout=timeout)
+        return self.lazy_regex().findall(string, pos, endpos, timeout=timeout)
 
     def sub(
         self,
@@ -70,4 +70,4 @@ class MatcherMixin(BuilderProtocol):
         timeout: float | None = None,
     ) -> str:
         """Delegate to :meth:`re.Pattern.sub`; callables receive an edify :class:`Match`."""
-        return self._lazy_regex().sub(replacement, string, count=count, timeout=timeout)
+        return self.lazy_regex().sub(replacement, string, count=count, timeout=timeout)

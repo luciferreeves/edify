@@ -3,17 +3,18 @@
 from __future__ import annotations
 
 import pytest
+from pytest_benchmark.fixture import BenchmarkFixture
 
 from tests.bench.cases import BUILDER_FACTORIES
 
 
 @pytest.mark.parametrize("case_name", list(BUILDER_FACTORIES))
-def test_compile_bench(case_name, benchmark):
+def test_compile_bench(case_name: str, benchmark: BenchmarkFixture):
     factory = BUILDER_FACTORIES[case_name]
     benchmark(lambda: factory().to_regex())
 
 
 @pytest.mark.parametrize("case_name", list(BUILDER_FACTORIES))
-def test_to_regex_string_bench(case_name, benchmark):
+def test_to_regex_string_bench(case_name: str, benchmark: BenchmarkFixture):
     factory = BUILDER_FACTORIES[case_name]
     benchmark(lambda: factory().to_regex_string())

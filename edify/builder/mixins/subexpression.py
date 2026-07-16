@@ -21,7 +21,6 @@ from edify.builder.merge import MergeContext, merge_element
 from edify.builder.types.protocol import BuilderProtocol
 from edify.elements.types.base import BaseElement
 from edify.elements.types.groups import SubexpressionElement
-from edify.errors.input import MustBeInstanceError
 from edify.errors.structure import CannotCallSubexpressionError
 
 
@@ -65,34 +64,25 @@ class SubexpressionMixin(BuilderProtocol):
                 no-ops; when False, they merge into the parent (and raise if
                 the parent already declared the same anchor).
         """
-        _ensure_is_builder(expression)
         _ensure_fully_specified(expression)
         merged_root_children, captures_added = _merge_expression_children(
             expression, self, namespace, ignore_start_and_end
         )
         subexpression_element = SubexpressionElement(children=merged_root_children)
-        state_with_element = self._state.with_element_added_to_top(subexpression_element)
+        state_with_element = self.state.with_element_added_to_top(subexpression_element)
         state_with_counts = state_with_element.with_capture_groups_added(captures_added)
         if ignore_flags:
-            return self._with_state(state_with_counts)
-        merged_flags = self._state.flags.with_merged(expression._state.flags)
+            return self.with_state(state_with_counts)
+        merged_flags = self.state.flags.with_merged(expression.state.flags)
         state_with_flags = state_with_counts.with_flags(merged_flags)
-        return self._with_state(state_with_flags)
-
-
-def _ensure_is_builder(expression: BuilderProtocol) -> None:
-    """Raise :class:`MustBeInstanceError` when ``expression`` is not a builder."""
-    if isinstance(expression, BuilderProtocol):
-        return
-    actual_type_name = type(expression).__name__
-    raise MustBeInstanceError("Expression", actual_type_name, "RegexBuilder")
+        return self.with_state(state_with_flags)
 
 
 def _ensure_fully_specified(expression: BuilderProtocol) -> None:
     """Raise when ``expression`` still has nested frames open beyond the root."""
-    if len(expression._state.stack) == 1:
+    if len(expression.state.stack) == 1:
         return
-    open_frames = describe_open_frames(expression._state)
+    open_frames = describe_open_frames(expression.state)
     raise CannotCallSubexpressionError(open_frames)
 
 
@@ -104,13 +94,13 @@ def _merge_expression_children(
 ) -> tuple[tuple[BaseElement, ...], int]:
     """Run every root child of ``expression`` through the merge transform."""
     context = MergeContext(
-        capture_index_offset=parent._state.total_capture_groups,
+        capture_index_offset=parent.state.total_capture_groups,
         namespace=namespace,
         ignore_start_and_end=ignore_start_and_end,
-        parent_has_start=parent._state.has_defined_start,
-        parent_has_end=parent._state.has_defined_end,
+        parent_has_start=parent.state.has_defined_start,
+        parent_has_end=parent.state.has_defined_end,
     )
-    expression_root_children = expression._state.top_frame.children
+    expression_root_children = expression.state.top_frame.children
     merged_list: list[BaseElement] = []
     total_added = 0
     for child in expression_root_children:

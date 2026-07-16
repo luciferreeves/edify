@@ -47,8 +47,8 @@ def test_variable_width_lookbehind_error_chains_the_underlying_pattern_error():
     assert isinstance(excinfo.value.__cause__, re.error)
 
 
-def test_re_engine_still_surfaces_other_pattern_errors_unchanged(monkeypatch):
-    def raise_other_error(_pattern, flags=0):
+def test_re_engine_still_surfaces_other_pattern_errors_unchanged(monkeypatch: pytest.MonkeyPatch):
+    def raise_other_error(_pattern: str, flags: int = 0) -> re.Pattern[str]:
         raise re.error("some other syntax error")
 
     monkeypatch.setattr(re, "compile", raise_other_error)

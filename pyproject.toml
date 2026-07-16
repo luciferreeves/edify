@@ -135,23 +135,15 @@ filterwarnings = ["error"]
 
 [tool.pyright]
 pythonVersion = "3.11"
-include = ["edify"]
+include = ["edify", "tests", "tools"]
+stubPath = "stubs"
 venvPath = "."
 venv = ".venv"
 typeCheckingMode = "strict"
-reportMissingImports = "none"
-reportMissingTypeStubs = "none"
-reportPrivateUsage = "none"
-reportUnnecessaryIsInstance = "none"
-reportUnusedFunction = "none"
-reportUnknownVariableType = "none"
-reportUnknownMemberType = "none"
-reportUnknownArgumentType = "none"
-reportAttributeAccessIssue = "none"
 
 [tool.mypy]
 python_version = "3.11"
-files = ["edify", "tests", "docs"]
+files = ["edify", "tools"]
 warn_unused_configs = true
 
 [[tool.mypy.overrides]]

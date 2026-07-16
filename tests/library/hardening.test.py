@@ -9,6 +9,7 @@ the parametrization discovers it at collection time.
 from __future__ import annotations
 
 import tomllib
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -19,20 +20,22 @@ from edify import Pattern
 _CORPUS_ROOT = Path(__file__).parent / "corpora"
 
 
-def _corpus_cases():
+def _corpus_cases() -> Iterator[tuple[str, Pattern, str, str]]:
     for corpus_path in sorted(_CORPUS_ROOT.glob("*.toml")):
         validator_name = corpus_path.stem
         validator = getattr(library_module, validator_name)
         if not isinstance(validator, Pattern):
             continue
         parsed = tomllib.loads(corpus_path.read_text())
-        for accept_input in parsed.get("accepts", []):
+        accepts: list[str] = parsed.get("accepts", [])
+        rejects: list[str] = parsed.get("rejects", [])
+        for accept_input in accepts:
             yield validator_name, validator, "accept", accept_input
-        for reject_input in parsed.get("rejects", []):
+        for reject_input in rejects:
             yield validator_name, validator, "reject", reject_input
 
 
-_CASES = list(_corpus_cases())
+_CASES: list[tuple[str, Pattern, str, str]] = list(_corpus_cases())
 
 
 @pytest.mark.parametrize(
@@ -44,7 +47,7 @@ _CASES = list(_corpus_cases())
     ],
 )
 def test_library_validator_matches_the_committed_corpus(
-    validator_name, validator, expected_verdict, input_string
+    validator_name: str, validator: Pattern, expected_verdict: str, input_string: str
 ):
     observed = validator(input_string)
     if expected_verdict == "accept":

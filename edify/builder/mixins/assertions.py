@@ -25,23 +25,23 @@ class AssertionsMixin(BuilderProtocol):
     def assert_ahead(self) -> Self:
         """Return a new builder with a positive-lookahead ``(?=...)`` frame opened."""
         new_frame = StackFrame(type_node=AssertAheadElement())
-        new_state = self._state.with_frame_pushed(new_frame)
-        return self._with_state(new_state)
+        new_state = self.state.with_frame_pushed(new_frame)
+        return self.with_state(new_state)
 
     def assert_not_ahead(self) -> Self:
         """Return a new builder with a negative-lookahead ``(?!...)`` frame opened."""
         new_frame = StackFrame(type_node=AssertNotAheadElement())
-        new_state = self._state.with_frame_pushed(new_frame)
-        return self._with_state(new_state)
+        new_state = self.state.with_frame_pushed(new_frame)
+        return self.with_state(new_state)
 
     def assert_behind(self) -> Self:
         """Return a new builder with a positive-lookbehind ``(?<=...)`` frame opened."""
         new_frame = StackFrame(type_node=AssertBehindElement())
-        new_state = self._state.with_frame_pushed(new_frame)
-        return self._with_state(new_state)
+        new_state = self.state.with_frame_pushed(new_frame)
+        return self.with_state(new_state)
 
     def assert_not_behind(self) -> Self:
         """Return a new builder with a negative-lookbehind ``(?<!...)`` frame opened."""
         new_frame = StackFrame(type_node=AssertNotBehindElement())
-        new_state = self._state.with_frame_pushed(new_frame)
-        return self._with_state(new_state)
+        new_state = self.state.with_frame_pushed(new_frame)
+        return self.with_state(new_state)

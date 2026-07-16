@@ -23,18 +23,18 @@ class AnchorsMixin(BuilderProtocol):
 
     def start_of_input(self) -> Self:
         """Return a new builder with a leading ``^`` anchor appended."""
-        if self._state.has_defined_start:
+        if self.state.has_defined_start:
             raise StartInputAlreadyDefinedError()
-        if self._state.has_defined_end:
+        if self.state.has_defined_end:
             raise CannotDefineStartAfterEndError()
-        state_with_flag = self._state.with_start_defined()
+        state_with_flag = self.state.with_start_defined()
         new_state = state_with_flag.with_element_added_to_top(StartOfInputElement())
-        return self._with_state(new_state)
+        return self.with_state(new_state)
 
     def end_of_input(self) -> Self:
         """Return a new builder with a trailing ``$`` anchor appended."""
-        if self._state.has_defined_end:
+        if self.state.has_defined_end:
             raise EndInputAlreadyDefinedError()
-        state_with_flag = self._state.with_end_defined()
+        state_with_flag = self.state.with_end_defined()
         new_state = state_with_flag.with_element_added_to_top(EndOfInputElement())
-        return self._with_state(new_state)
+        return self.with_state(new_state)

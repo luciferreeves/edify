@@ -5,7 +5,7 @@ from importlib.metadata import metadata
 
 def test_installed_edify_metadata_declares_mit_license_expression():
     edify_metadata = metadata("edify")
-    license_expression = edify_metadata.get("License-Expression")
+    license_expression = edify_metadata["License-Expression"]
     assert license_expression == "MIT"
 
 

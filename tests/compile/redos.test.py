@@ -41,28 +41,34 @@ def test_warning_message_names_both_quantifiers():
     assert "engine='regex'" in message_text
 
 
-def test_bounded_quantifier_does_not_trigger_the_warning(recwarn):
+def test_bounded_quantifier_does_not_trigger_the_warning(recwarn: pytest.WarningsRecorder):
     builder = RegexBuilder().exactly(3).group().exactly(2).digit().end()
     builder.to_regex()
     is_redos_flags = [isinstance(warning.message, ReDoSWarning) for warning in recwarn]
     assert not any(is_redos_flags)
 
 
-def test_grouped_quantifier_over_a_composite_group_does_not_trigger(recwarn):
+def test_grouped_quantifier_over_a_composite_group_does_not_trigger(
+    recwarn: pytest.WarningsRecorder,
+):
     builder = RegexBuilder().one_or_more().group().digit().letter().end()
     builder.to_regex()
     is_redos_flags = [isinstance(warning.message, ReDoSWarning) for warning in recwarn]
     assert not any(is_redos_flags)
 
 
-def test_grouped_quantifier_over_a_single_non_quantifier_child_does_not_trigger(recwarn):
+def test_grouped_quantifier_over_a_single_non_quantifier_child_does_not_trigger(
+    recwarn: pytest.WarningsRecorder,
+):
     builder = RegexBuilder().one_or_more().group().digit().end()
     builder.to_regex()
     is_redos_flags = [isinstance(warning.message, ReDoSWarning) for warning in recwarn]
     assert not any(is_redos_flags)
 
 
-def test_sequential_unbounded_quantifiers_do_not_trigger_the_warning(recwarn):
+def test_sequential_unbounded_quantifiers_do_not_trigger_the_warning(
+    recwarn: pytest.WarningsRecorder,
+):
     builder = RegexBuilder().one_or_more().digit().one_or_more().letter()
     builder.to_regex()
     is_redos_flags = [isinstance(warning.message, ReDoSWarning) for warning in recwarn]

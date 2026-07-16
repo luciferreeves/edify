@@ -2,7 +2,10 @@
 
 import re
 
+import pytest
+
 from edify import RegexBuilder
+from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import (
     BackReferenceElement,
     CaptureElement,
@@ -65,12 +68,12 @@ from edify.introspect import verbose as verbose_module
 from edify.introspect.verbose import verbose_elements
 
 
-def _verbose(*elements) -> str:
+def _verbose(*elements: BaseElement) -> str:
     return verbose_elements(tuple(elements))
 
 
 def _strip_pattern(output: str) -> str:
-    fragments = []
+    fragments: list[str] = []
     for line in output.splitlines():
         without_comment = line.split("#", 1)[0]
         code = without_comment.strip()
@@ -388,11 +391,17 @@ def test_assert_not_behind_reads_as_negative_lookbehind():
     assert "(?<!" in output
 
 
-def test_unrecognized_element_falls_back_to_render_element_with_marker(monkeypatch):
-    class MysteryElement(DigitElement.__mro__[1]):
+def _render_mystery(element: BaseElement) -> str:
+    return "?mystery"
+
+
+def test_unrecognized_element_falls_back_to_render_element_with_marker(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    class MysteryElement(BaseElement):
         pass
 
-    monkeypatch.setattr(verbose_module, "render_element", lambda element: "?mystery")
+    monkeypatch.setattr(verbose_module, "render_element", _render_mystery)
     mystery = MysteryElement()
     output = _verbose(mystery)
     assert "unrecognized (MysteryElement)" in output

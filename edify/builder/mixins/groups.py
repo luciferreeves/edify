@@ -21,7 +21,6 @@ from edify.elements.types.base import BaseElement
 from edify.elements.types.chars import CharElement, StringElement
 from edify.elements.types.groups import AnyOfElement, GroupElement
 from edify.errors.input import (
-    MustBeAStringError,
     MustBeAtLeastOneLiteralError,
     MustBeOneCharacterError,
 )
@@ -61,8 +60,8 @@ class GroupsMixin(BuilderProtocol):
 def _open_frame(builder: _TBuilder, type_node: BaseElement) -> _TBuilder:
     """Push a new frame anchored at ``type_node`` and return the updated builder."""
     new_frame = StackFrame(type_node=type_node)
-    new_state = builder._state.with_frame_pushed(new_frame)
-    return builder._with_state(new_state)
+    new_state = builder.state.with_frame_pushed(new_frame)
+    return builder.with_state(new_state)
 
 
 def _add_literal_alternation(builder: _TBuilder, literals: tuple[str, ...]) -> _TBuilder:
@@ -70,26 +69,17 @@ def _add_literal_alternation(builder: _TBuilder, literals: tuple[str, ...]) -> _
     child_elements = [_literal_to_element(literal) for literal in literals]
     children = tuple(child_elements)
     element = AnyOfElement(children=children)
-    new_state = builder._state.with_element_added_to_top(element)
-    return builder._with_state(new_state)
+    new_state = builder.state.with_element_added_to_top(element)
+    return builder.with_state(new_state)
 
 
 def _literal_to_element(literal: str) -> CharElement | StringElement:
     """Validate and escape ``literal``, returning the char- or string-shaped element."""
-    _ensure_is_string("Literal", literal)
     _ensure_non_empty("Literal", literal)
     escaped = escape_special(literal)
     if len(literal) == 1:
         return CharElement(value=escaped)
     return StringElement(value=escaped)
-
-
-def _ensure_is_string(label: str, value: str) -> None:
-    """Raise :class:`MustBeAStringError` when ``value`` is not a string."""
-    if isinstance(value, str):
-        return
-    actual_type_name = type(value).__name__
-    raise MustBeAStringError(label, actual_type_name)
 
 
 def _ensure_non_empty(label: str, value: str) -> None:
