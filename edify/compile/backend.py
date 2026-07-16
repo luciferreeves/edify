@@ -79,7 +79,7 @@ def _regex_flag_bitmask(regex_module: ModuleType, flags: Flags) -> int:
     if flags.ascii_only:
         bitmask = bitmask | regex_module.A
     if flags.debug:
-        bitmask = bitmask | regex_module.DEBUG  # pragma: no cover - regex DEBUG crashes PyPy
+        bitmask = bitmask | regex_module.DEBUG
     if flags.ignore_case:
         bitmask = bitmask | regex_module.I
     if flags.multiline:

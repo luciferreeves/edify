@@ -36,7 +36,8 @@ def test_edify_package_tree_contains_measurable_python_source():
     assert python_files, (
         "no Python files found under edify/ — the coverage source directory is empty."
     )
-    total_source_bytes = sum(python_file.stat().st_size for python_file in python_files)
+    file_sizes = [python_file.stat().st_size for python_file in python_files]
+    total_source_bytes = sum(file_sizes)
     assert total_source_bytes > 0, (
         "every file under edify/ is empty — coverage would measure nothing across the tree."
     )

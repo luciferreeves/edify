@@ -11,7 +11,7 @@ from edify.library.address.subnet import subnet
 from edify.library.address.tld import tld
 from edify.library.address.uri import uri
 from edify.library.address.url import url
-from edify.library.address.zip_code import zip_code
+from edify.library.address.zip import zip_code
 
 __all__ = [
     "cidr",

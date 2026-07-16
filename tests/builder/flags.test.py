@@ -4,6 +4,7 @@ import re
 import sys
 
 import pytest
+import regex as regex_module
 
 from edify import Pattern, RegexBuilder
 
@@ -72,38 +73,32 @@ def test_multiple_kwargs_combine():
     assert compiled.compiled.flags & re.S == re.S
 
 
-def _regex_module():
-    import regex
-
-    return regex
-
-
 def test_regex_engine_ignore_case_kwarg_enables_the_flag():
-    regex = _regex_module()
+    regex = regex_module
     compiled = RegexBuilder().string("hi").to_regex(engine="regex", ignore_case=True)
     assert compiled.compiled.flags & regex.I == regex.I
 
 
 def test_regex_engine_multiline_kwarg_enables_the_flag():
-    regex = _regex_module()
+    regex = regex_module
     compiled = RegexBuilder().string("hi").to_regex(engine="regex", multiline=True)
     assert compiled.compiled.flags & regex.M == regex.M
 
 
 def test_regex_engine_dotall_kwarg_enables_the_flag():
-    regex = _regex_module()
+    regex = regex_module
     compiled = RegexBuilder().string("hi").to_regex(engine="regex", dotall=True)
     assert compiled.compiled.flags & regex.S == regex.S
 
 
 def test_regex_engine_ascii_only_kwarg_enables_the_flag():
-    regex = _regex_module()
+    regex = regex_module
     compiled = RegexBuilder().string("hi").to_regex(engine="regex", ascii_only=True)
     assert compiled.compiled.flags & regex.A == regex.A
 
 
 def test_regex_engine_verbose_kwarg_enables_the_flag():
-    regex = _regex_module()
+    regex = regex_module
     compiled = RegexBuilder().string("hi").to_regex(engine="regex", verbose=True)
     assert compiled.compiled.flags & regex.X == regex.X
 
@@ -115,3 +110,17 @@ def test_regex_engine_verbose_kwarg_enables_the_flag():
 def test_regex_engine_debug_kwarg_compiles_without_error():
     compiled = RegexBuilder().string("hi").to_regex(engine="regex", debug=True)
     assert compiled.source == "hi"
+
+
+def test_regex_engine_debug_flag_is_forwarded_to_regex_module_bitmask(monkeypatch):
+    captured_flags: list[int] = []
+    original_compile = regex_module.compile
+
+    def capturing_compile(pattern, flags=0):
+        captured_flags.append(flags)
+        return original_compile(pattern)
+
+    monkeypatch.setattr(regex_module, "compile", capturing_compile)
+    RegexBuilder().string("hi").to_regex(engine="regex", debug=True)
+    assert captured_flags
+    assert captured_flags[0] & regex_module.DEBUG == regex_module.DEBUG

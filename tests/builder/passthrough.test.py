@@ -1,6 +1,9 @@
 """Tests for the pass-through branches when subexpression anchors merge without conflict."""
 
+import pytest
+
 from edify import RegexBuilder
+from edify.errors.structure import CannotCallSubexpressionError
 
 
 def test_start_of_input_merges_into_parent_without_existing_start():
@@ -18,10 +21,6 @@ def test_end_of_input_merges_into_parent_without_existing_end():
 
 
 def test_subexpression_called_with_unfinished_expression_raises():
-    import pytest
-
-    from edify.errors.structure import CannotCallSubexpressionError
-
     unfinished_sub = RegexBuilder().capture().digit()
     parent = RegexBuilder()
     with pytest.raises(CannotCallSubexpressionError):

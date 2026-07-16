@@ -24,7 +24,8 @@ class TestingMixin(BuilderProtocol):
         """Assert every string in ``inputs`` matches this pattern; return ``self``."""
         compiled = self._lazy_regex()
         input_tuple = tuple(inputs)
-        missing = tuple(item for item in input_tuple if compiled.search(item) is None)
+        rejected_items = [item for item in input_tuple if compiled.search(item) is None]
+        missing = tuple(rejected_items)
         if missing:
             raise PatternDidNotMatchInputsError(compiled.source, missing)
         return self
@@ -33,7 +34,8 @@ class TestingMixin(BuilderProtocol):
         """Assert every string in ``inputs`` is rejected by this pattern; return ``self``."""
         compiled = self._lazy_regex()
         input_tuple = tuple(inputs)
-        matched = tuple(item for item in input_tuple if compiled.search(item) is not None)
+        matched_items = [item for item in input_tuple if compiled.search(item) is not None]
+        matched = tuple(matched_items)
         if matched:
             raise PatternMatchedRejectedInputsError(compiled.source, matched)
         return self

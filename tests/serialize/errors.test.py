@@ -8,6 +8,7 @@ from edify import Pattern
 from edify.errors.serialize import (
     IncompatibleSchemaVersionError,
     MissingSchemaKeyError,
+    NonObjectJSONPayloadError,
     UnknownElementKindError,
 )
 
@@ -51,9 +52,15 @@ def test_bad_json_string_raises_decode_error():
         Pattern.from_json("{not-valid-json}")
 
 
-def test_non_object_json_payload_raises_type_error():
-    with pytest.raises(TypeError, match="canonical JSON payload must be an object"):
+def test_non_object_json_payload_raises_non_object_json_payload_error():
+    with pytest.raises(NonObjectJSONPayloadError, match="canonical JSON payload must be an object"):
         Pattern.from_json("[1, 2, 3]")
+
+
+def test_incompatible_schema_version_with_composite_value_stringifies_it():
+    document = {"edify": [1, 2, 3], "pattern": {"kind": "root", "children": []}}
+    with pytest.raises(IncompatibleSchemaVersionError):
+        Pattern.from_dict(document)
 
 
 def test_pattern_key_not_a_root_element_produces_empty_pattern():

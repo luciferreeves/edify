@@ -72,7 +72,7 @@ def _discover_blocks():
             yield rst_path, block_start, block_source, relative_stem
 
 
-def _snapshot_bodies_for_block(namespace: dict, pre_exec_names: frozenset[str]) -> str:
+def _snapshot_bodies_for_block(namespace, pre_exec_names: frozenset[str]) -> str:
     interesting_pairs = []
     for identifier, value in namespace.items():
         if identifier in pre_exec_names:
@@ -133,8 +133,8 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     assert_snapshot(rendered, snapshot_path)
 
 
-def _prepared_exec_namespace() -> dict[str, object]:
-    namespace: dict[str, object] = {"edify": edify, "Pattern": Pattern, "Regex": Regex, "re": re}
+def _prepared_exec_namespace():
+    namespace = {"edify": edify, "Pattern": Pattern, "Regex": Regex, "re": re}
     for edify_export in dir(edify):
         if edify_export.startswith("_"):
             continue

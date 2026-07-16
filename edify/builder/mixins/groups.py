@@ -67,7 +67,8 @@ def _open_frame(builder: _TBuilder, type_node: BaseElement) -> _TBuilder:
 
 def _add_literal_alternation(builder: _TBuilder, literals: tuple[str, ...]) -> _TBuilder:
     """Append a single :class:`AnyOfElement` built from ``literals`` to the top frame."""
-    children = tuple(_literal_to_element(literal) for literal in literals)
+    child_elements = [_literal_to_element(literal) for literal in literals]
+    children = tuple(child_elements)
     element = AnyOfElement(children=children)
     new_state = builder._state.with_element_added_to_top(element)
     return builder._with_state(new_state)
@@ -83,7 +84,7 @@ def _literal_to_element(literal: str) -> CharElement | StringElement:
     return StringElement(value=escaped)
 
 
-def _ensure_is_string(label: str, value: object) -> None:
+def _ensure_is_string(label: str, value: str) -> None:
     """Raise :class:`MustBeAStringError` when ``value`` is not a string."""
     if isinstance(value, str):
         return

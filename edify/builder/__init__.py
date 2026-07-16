@@ -1,3 +1,3 @@
-from edify.builder.builder import RegexBuilder
+from edify.builder.fluent import RegexBuilder
 
 __all__ = ["RegexBuilder"]

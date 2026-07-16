@@ -1,10 +1,3 @@
-"""Flat re-export of every validator :class:`Pattern` in :mod:`edify.library`.
-
-Users can import any pattern directly (``from edify.library import uuid``);
-category submodules (``edify.library.identifier.uuid``) remain the canonical
-location for the individual patterns.
-"""
-
 from __future__ import annotations
 
 from edify.library.address import (

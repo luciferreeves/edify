@@ -3,6 +3,7 @@
 import pytest
 
 from edify import RegexBuilder
+from edify.errors.quantifier import DanglingQuantifierError
 from edify.errors.structure import CannotCallSubexpressionError
 
 
@@ -53,8 +54,6 @@ def test_subexpression_lists_open_frames_from_the_argument_not_the_receiver():
 
 
 def test_dangling_quantifier_reports_the_specific_pending_quantifier_name():
-    from edify.errors.quantifier import DanglingQuantifierError
-
     with pytest.raises(DanglingQuantifierError) as excinfo:
         RegexBuilder().exactly(3).to_regex_string()
     text = str(excinfo.value)
@@ -62,8 +61,6 @@ def test_dangling_quantifier_reports_the_specific_pending_quantifier_name():
 
 
 def test_dangling_quantifier_falls_back_to_generic_summary_when_name_unknown():
-    from edify.errors.quantifier import DanglingQuantifierError
-
     error = DanglingQuantifierError()
     text = str(error)
     assert "dangling quantifier" in text

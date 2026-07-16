@@ -43,11 +43,15 @@ def _serialize_field_value(value: _ElementFieldValue) -> JSONValue:
     if isinstance(value, BaseElement):
         return element_to_dict(value)
     if isinstance(value, tuple):
-        return [element_to_dict(child) for child in value]
+        serialized_children: list[JSONValue] = [element_to_dict(child) for child in value]
+        return serialized_children
     if isinstance(value, str):
         return value
     return value
 
 
 def _flags_to_dict(flags: Flags) -> dict[str, JSONValue]:
-    return {spec.name: True for spec in fields(flags) if getattr(flags, spec.name)}
+    active_flags: dict[str, JSONValue] = {
+        spec.name: True for spec in fields(flags) if getattr(flags, spec.name)
+    }
+    return active_flags

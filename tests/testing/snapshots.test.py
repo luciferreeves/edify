@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from edify import testing
 from edify.testing import SnapshotMismatchError, SnapshotMissingError, assert_snapshot
 
 _UPDATE_ENVIRONMENT_VARIABLE = "EDIFY_UPDATE_SNAPSHOTS"
@@ -83,8 +84,6 @@ def test_snapshot_mismatch_error_is_an_assertion_error_subclass():
 
 
 def test_snapshot_helper_is_reachable_via_edify_testing_namespace(tmp_path):
-    from edify import testing
-
     snapshot_path: Path = tmp_path / "namespace.snapshot"
     snapshot_path.write_text("ok\n")
     testing.assert_snapshot("ok\n", snapshot_path)

@@ -32,7 +32,7 @@ def dict_to_element(tree: dict[str, JSONValue]) -> BaseElement:
     except KeyError as reason:
         raise UnknownElementKindError(kind_value) from reason
     known_field_names = {spec.name for spec in fields(element_class)}
-    constructor_kwargs: dict[str, object] = {}
+    constructor_kwargs: dict[str, BaseElement | tuple[BaseElement, ...] | JSONValue] = {}
     for name, raw_value in tree.items():
         if name == "kind":
             continue
@@ -53,8 +53,10 @@ def dict_to_state(document: dict[str, JSONValue]) -> BuilderState:
     reconstructed_flags = _flags_from_document(document)
     named_groups = _collect_named_groups(root_children)
     total_captures = _count_capture_groups(root_children)
-    has_start = any(isinstance(child, StartOfInputElement) for child in root_children)
-    has_end = any(isinstance(child, EndOfInputElement) for child in root_children)
+    start_indicators = [isinstance(child, StartOfInputElement) for child in root_children]
+    end_indicators = [isinstance(child, EndOfInputElement) for child in root_children]
+    has_start = any(start_indicators)
+    has_end = any(end_indicators)
     root_frame = StackFrame(type_node=RootElement(), children=root_children)
     return BuilderState(
         has_defined_start=has_start,
@@ -66,9 +68,12 @@ def dict_to_state(document: dict[str, JSONValue]) -> BuilderState:
     )
 
 
-def _deserialize_field_value(value: JSONValue) -> object:
+def _deserialize_field_value(
+    value: JSONValue,
+) -> BaseElement | tuple[BaseElement, ...] | JSONValue:
     if isinstance(value, list):
-        return tuple(dict_to_element(item) for item in value if isinstance(item, dict))
+        element_items = [dict_to_element(item) for item in value if isinstance(item, dict)]
+        return tuple(element_items)
     if isinstance(value, dict) and "kind" in value:
         return dict_to_element(value)
     return value
@@ -84,15 +89,19 @@ def _require_schema_version(document: dict[str, JSONValue]) -> None:
     if "edify" not in document:
         raise MissingSchemaKeyError("edify")
     seen_version = document["edify"]
-    if seen_version != SCHEMA_VERSION:
+    if seen_version == SCHEMA_VERSION:
+        return
+    if isinstance(seen_version, str | int | float | bool | type(None)):
         raise IncompatibleSchemaVersionError(seen_version, SCHEMA_VERSION)
+    raise IncompatibleSchemaVersionError(repr(seen_version), SCHEMA_VERSION)
 
 
 def _flags_from_document(document: dict[str, JSONValue]) -> Flags:
     raw_flag_map = document.get("flags")
     if not isinstance(raw_flag_map, dict):
         return Flags()
-    known_flag_names = {spec.name for spec in fields(Flags)}
+    flag_specs = fields(Flags)
+    known_flag_names = {spec.name for spec in flag_specs}
     kwargs = {
         name: True for name, value in raw_flag_map.items() if name in known_flag_names and value
     }
@@ -101,9 +110,15 @@ def _flags_from_document(document: dict[str, JSONValue]) -> Flags:
 
 def _collect_named_groups(children: tuple[BaseElement, ...]) -> tuple[str, ...]:
     walked = walk_elements(children)
-    return tuple(element.name for element in walked if isinstance(element, NamedCaptureElement))
+    named_group_names = [
+        element.name for element in walked if isinstance(element, NamedCaptureElement)
+    ]
+    return tuple(named_group_names)
 
 
 def _count_capture_groups(children: tuple[BaseElement, ...]) -> int:
     walked = walk_elements(children)
-    return sum(1 for element in walked if isinstance(element, CaptureElement | NamedCaptureElement))
+    capture_flags = [
+        1 for element in walked if isinstance(element, CaptureElement | NamedCaptureElement)
+    ]
+    return sum(capture_flags)

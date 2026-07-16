@@ -80,7 +80,7 @@ class SubexpressionMixin(BuilderProtocol):
         return self._with_state(state_with_flags)
 
 
-def _ensure_is_builder(expression: object) -> None:
+def _ensure_is_builder(expression: BuilderProtocol) -> None:
     """Raise :class:`MustBeInstanceError` when ``expression`` is not a builder."""
     if isinstance(expression, BuilderProtocol):
         return

@@ -57,7 +57,8 @@ def any_of(*operands: BuilderProtocol) -> Pattern:
     """Return an alternation ``(?:a|b|c)`` across the supplied operands."""
     if len(operands) < 2:
         raise MustBeAtLeastTwoOperandsError("any_of")
-    children = tuple(target_element(operand) for operand in operands)
+    child_elements = [target_element(operand) for operand in operands]
+    children = tuple(child_elements)
     return pattern_containing(AnyOfElement(children=children))
 
 

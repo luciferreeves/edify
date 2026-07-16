@@ -25,7 +25,8 @@ class UnsupportedVisualizationFormatError(EdifySyntaxError):
         trigger_block = ""
         if caller_context is not None:
             trigger_block = format_pointer_block(caller_context, "unknown format here")
-        supported = ", ".join(f"'{fmt}'" for fmt in _SUPPORTED_FORMATS)
+        quoted_formats = [f"'{fmt}'" for fmt in _SUPPORTED_FORMATS]
+        supported = ", ".join(quoted_formats)
         note_line = format_note_line(
             f"Regex.visualize accepts one of {supported}; received {received_format!r}."
         )
@@ -52,7 +53,8 @@ class UnsupportedVisualizationEngineError(EdifySyntaxError):
         if caller_context is not None:
             trigger_block = format_pointer_block(caller_context, "engine does not match format")
         supported = _SUPPORTED_ENGINES_BY_FORMAT.get(received_format, ())
-        supported_list = ", ".join(f"'{engine}'" for engine in supported) or "(none)"
+        quoted_engines = [f"'{engine}'" for engine in supported]
+        supported_list = ", ".join(quoted_engines) or "(none)"
         note_line = format_note_line(
             f"format={received_format!r} pairs with engine in {supported_list}; "
             f"received engine={received_engine!r}."

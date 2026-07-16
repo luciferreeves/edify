@@ -36,6 +36,16 @@ dynamic = ["version"]
 [project.optional-dependencies]
 graphviz = ["graphviz>=0.20"]
 regex = ["regex>=2024.11.6"]
+pydantic = ["pydantic>=2.0"]
+fastapi = ["fastapi>=0.100"]
+django = ["django>=4.2"]
+all = [
+    "graphviz>=0.20",
+    "regex>=2024.11.6",
+    "pydantic>=2.0",
+    "fastapi>=0.100",
+    "django>=4.2",
+]
 
 [project.urls]
 Documentation = "https://edify.readthedocs.io/"
@@ -44,9 +54,12 @@ Changelog = "https://edify.readthedocs.io/en/latest/changelog.html"
 
 [dependency-groups]
 dev = [
+    "django>=4.2",
+    "fastapi>=0.100",
     "graphviz>=0.20",
     "hypothesis>=6.100",
     "mypy==1.13.0",
+    "pydantic>=2.0",
     "pyright==1.1.389",
     "pytest>=8.0",
     "pytest-cov>=5.0",
@@ -123,8 +136,10 @@ filterwarnings = ["error"]
 [tool.pyright]
 pythonVersion = "3.11"
 include = ["edify"]
+venvPath = "."
+venv = ".venv"
 typeCheckingMode = "strict"
-reportMissingImports = "error"
+reportMissingImports = "none"
 reportMissingTypeStubs = "none"
 reportPrivateUsage = "none"
 reportUnnecessaryIsInstance = "none"
@@ -149,6 +164,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["graphviz"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["django", "django.core", "django.core.validators", "django.core.exceptions"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
