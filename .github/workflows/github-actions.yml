@@ -82,6 +82,10 @@ jobs:
               echo "PR marked [no-migration]; skipping the fragment requirement."
               exit 0
           fi
+          if ! git cat-file -e "$BASE_SHA:.public-surface" 2>/dev/null; then
+              echo ".public-surface is introduced on this branch; no prior surface to migrate from."
+              exit 0
+          fi
           if git diff --quiet "$BASE_SHA" "$HEAD_SHA" -- .public-surface; then
               echo "Public surface unchanged; no fragment required."
               exit 0
