@@ -57,6 +57,12 @@ def test_non_object_json_payload_raises_non_object_json_payload_error():
         Pattern.from_json("[1, 2, 3]")
 
 
+def test_incompatible_schema_version_with_composite_value_stringifies_it():
+    document = {"edify": [1, 2, 3], "pattern": {"kind": "root", "children": []}}
+    with pytest.raises(IncompatibleSchemaVersionError):
+        Pattern.from_dict(document)
+
+
 def test_pattern_key_not_a_root_element_produces_empty_pattern():
     document = {"edify": 0, "pattern": {"kind": "digit"}}
     restored = Pattern.from_dict(document)
