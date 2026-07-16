@@ -9,6 +9,8 @@ Contents
    built-in/index
    regex-builder/index
    integrations/index
+   upgrading/index
+   deprecation-policy
    contributing
    authors
    changelog
