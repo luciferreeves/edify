@@ -1,0 +1,36 @@
+name: public-surface migration gate
+on: pull_request
+jobs:
+  surface-migration-gate:
+    name: 'public-surface migration gate'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+      - name: require a changes/ fragment when the public surface moves
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if echo "$PR_TITLE" | grep -q '\[no-migration\]'; then
+              echo "PR marked [no-migration]; skipping the fragment requirement."
+              exit 0
+          fi
+          if ! git cat-file -e "$BASE_SHA:.public-surface" 2>/dev/null; then
+              echo ".public-surface is introduced on this branch; no prior surface to migrate from."
+              exit 0
+          fi
+          if git diff --quiet "$BASE_SHA" "$HEAD_SHA" -- .public-surface; then
+              echo "Public surface unchanged; no fragment required."
+              exit 0
+          fi
+          added_fragments=$(git diff --name-only --diff-filter=A "$BASE_SHA" "$HEAD_SHA" -- 'changes/*.rst' | grep -v 'changes/README.rst' || true)
+          if [ -z "$added_fragments" ]; then
+              echo "::error::.public-surface changed but no changes/ fragment was added. Add a fragment describing the migration, or mark the PR title with [no-migration]."
+              exit 1
+          fi
+          echo "Public surface changed and a changes/ fragment accompanies it:"
+          echo "$added_fragments"
