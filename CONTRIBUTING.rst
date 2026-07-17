@@ -2,90 +2,86 @@
 Contributing
 ============
 
-Contributions are welcome, and they are greatly appreciated! Every
-little bit helps, and credit will always be given.
+Thanks for helping improve Edify. This guide gets you from a fresh clone to a
+green pull request.
 
-Bug reports
+Setup
+=====
+
+Edify uses `uv <https://docs.astral.sh/uv/>`_ for everything. Install it, then
+sync the full development environment:
+
+.. code-block:: bash
+
+    git clone https://github.com/luciferreeves/edify
+    cd edify
+    uv sync --all-groups
+
+That creates ``.venv`` with the library, its optional extras, and every
+development tool. Prefix commands with ``uv run`` to use it.
+
+The gate
+========
+
+Every change must pass the same checks CI runs. Run them locally before you push:
+
+.. code-block:: bash
+
+    uv run ruff check .            # lint
+    uv run ruff format --check .   # formatting
+    uv run mypy edify tools        # type-check the library and tooling
+    uv run pyright                 # strict type-check (library, tests, tools)
+    uv run pytest                  # tests — 100% coverage is required
+
+All of these must be clean. Coverage is enforced at 100%: a line that isn't
+exercised by a test through the public API fails the build.
+
+House style
 ===========
 
-When `reporting a bug <https://github.com/luciferreeves/edify/issues>`_ please include:
+- **No suppressions.** No ``# noqa``, ``# type: ignore``, or ``# pragma`` — if a
+  check complains, restructure the code so it doesn't.
+- **Single-purpose files with single-word names.** ``edify/builder/anchors.py``,
+  not ``edify/builder/anchor_helpers.py``.
+- **Tests mirror the source tree** under ``tests/`` and are named ``*.test.py``
+  (for example ``tests/builder/anchors.test.py``).
+- **Tests exercise the public API.** Reach behavior through the documented
+  surface, never by importing private helpers — that's what keeps coverage
+  honest.
 
-    * Your operating system name and version.
-    * Any details about your local setup that might be helpful in troubleshooting.
-    * Detailed steps to reproduce the bug.
+Public surface and changelog
+============================
 
-Documentation improvements
-==========================
+The exported API is captured in ``tools/surface/.public``. If your change adds,
+removes, or alters a public name, regenerate the snapshot and record the change:
 
-Edify could always use more documentation, whether as part of the
-official Edify docs, in docstrings, or even on the web in blog posts,
-articles, and such.
+.. code-block:: bash
 
-Feature requests and feedback
-=============================
+    uv run python tools/surface/surface.py --write
 
-The best way to send feedback is to file an issue at https://github.com/luciferreeves/edify/issues.
+For a **breaking** change, also add a fragment under ``changes/`` describing the
+migration (see ``changes/README.rst`` for the format). A CI gate fails any pull
+request whose public surface moves without one.
 
-If you are proposing a feature:
+Docs
+====
 
-* Explain in detail how it would work.
-* Keep the scope as narrow as possible, to make it easier to implement.
-* Remember that this is a volunteer-driven project, and that code contributions are welcome :)
+The documentation is a custom Sphinx site in ``docs/``. Build the playground
+wheel and serve the site with live reload:
 
-Development
-===========
+.. code-block:: bash
 
-To set up `edify` for local development:
+    uv run python tools/docs/build.py
+    uv run --with sphinx-autobuild sphinx-autobuild docs docs/_build/html
 
-1. Fork `edify <https://github.com/luciferreeves/edify>`_
-   (look for the "Fork" button).
-2. Clone your fork locally::
+Commits and pull requests
+=========================
 
-    git clone git@github.com:YOURGITHUBNAME/edify.git
+- **Commits** use a single-line, imperative, `conventional-commit
+  <https://www.conventionalcommits.org>`_ subject — ``feat(builder): ...``,
+  ``fix(compile): ...``, ``docs: ...``. Keep rationale for the pull-request
+  description, not the commit body.
+- **Pull requests** describe *what changed and why*. Reference the issues they
+  close with ``Closes #123`` so they land together.
 
-3. Create a branch for local development::
-
-    git checkout -b name-of-your-bugfix-or-feature
-
-   Now you can make your changes locally.
-
-4. When you're done making changes run all the checks and docs builder with `tox <https://tox.wiki/en/latest/installation.html>`_ one command::
-
-    tox
-
-    (Optional) If you're using a UNIX Like OS you can run the tests by running the following shell script::
-
-    ./tests.local.sh
-
-5. Commit your changes and push your branch to GitHub::
-
-    git add .
-    git commit -m "Your detailed description of your changes."
-    git push origin name-of-your-bugfix-or-feature
-
-6. Submit a pull request through the GitHub website.
-
-Pull Request Guidelines
------------------------
-
-If you need some code review or feedback while you're developing the code just make the pull request.
-
-For merging, you should:
-
-1. Include passing tests (run ``tox``).
-2. Update documentation when there's new API, functionality etc.
-3. Add a note to ``CHANGELOG.rst`` about the changes.
-4. Add yourself to ``AUTHORS.rst``.
-
-
-
-Tips
-----
-
-To run a subset of tests::
-
-    tox -e envname -- pytest -k test_myfeature
-
-To run all the test environments in *parallel*::
-
-    tox -p auto
+That's it — open the pull request and the checks will tell you if anything's off.
