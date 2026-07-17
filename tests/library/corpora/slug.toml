@@ -1,0 +1,17 @@
+accepts = [
+    "hello-world",
+    "my-post-123",
+    "a",
+    "abc",
+    "x-y-z",
+]
+
+rejects = [
+    "",
+    " ",
+    "Hello-World",
+    "hello_world",
+    "-abc",
+    "abc-",
+    "a--b",
+]

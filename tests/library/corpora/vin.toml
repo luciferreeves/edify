@@ -1,0 +1,11 @@
+accepts = [
+    "1HGBH41JXMN109186",
+    "5YJSA1E26HF000001",
+]
+
+rejects = [
+    "",
+    "1HGBH41JXMN10918",
+    "ABC",
+    "1HGBH41JXMN109186Q",
+]
