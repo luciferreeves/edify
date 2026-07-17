@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+{% block extrahead %}<link rel="stylesheet" href="{{ pathto('_static/css/home.css', 1) }}">{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="wrap hero-inner">
+    <h1 class="hero-title">Build regex you can<br>actually <span class="accent">read</span>.</h1>
+    <p class="hero-sub">A fluent, immutable regex builder for Python. Describe the pattern in
+      plain English &mdash; get a compiled regex your teammates can actually
+      <strong>review</strong>. Batteries included.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="{{ pathto('guide/index') }}">Get started</a>
+      <a class="btn btn-ghost" href="{{ pathto('playground') }}">Open playground &#9656;</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-label">Try it &middot; no install</div>
+    <h2 class="section-h">A live playground, right here</h2>
+    <p class="section-sub">Edit the chain, watch the regex and the matches update instantly &mdash;
+      real edify running in your browser.</p>
+    <div class="edify-playground home-playground" data-source="Pattern().start_of_input().exactly(4).digit().end_of_input()">
+      <div class="pg-static">
+        <div class="pg-col">
+          <div class="pg-pane">
+            <div class="pg-pane-head">Builder</div>
+            <pre class="pg-code"><span class="c-cls">Pattern</span>()
+  .<span class="c-fn">start_of_input</span>()
+  .<span class="c-fn">exactly</span>(<span class="c-num">4</span>).<span class="c-fn">digit</span>()
+  .<span class="c-fn">end_of_input</span>()</pre>
+          </div>
+          <div class="pg-pane">
+            <div class="pg-pane-head">Emitted regex</div>
+            <pre class="pg-code"><span class="c-rx">^\d{4}$</span></pre>
+          </div>
+        </div>
+        <div class="pg-pane pg-test">
+          <div class="pg-pane-head">Test strings</div>
+          <pre class="pg-code"><span class="m-ok">2024</span>
+<span class="m-ok">9021</span>
+<span class="m-no">abcd</span>
+<span class="m-no">12</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-label">Reviewable by design</div>
+    <h2 class="section-h">The line nobody wants in a review &rarr; one anybody can read</h2>
+    <div class="before-after">
+      <div class="ba-card">
+        <div class="ba-tag">what you'd write</div>
+        <pre class="pg-code"><span class="m-no">^(?:0x)?([A-Fa-f0-9]{4})$</span></pre>
+      </div>
+      <div class="ba-arrow">&rarr;</div>
+      <div class="ba-card">
+        <div class="ba-tag">what you'd read</div>
+        <pre class="pg-code"><span class="c-fn">optional</span>().<span class="c-fn">string</span>(<span class="c-str">"0x"</span>)
+<span class="c-fn">capture</span>().<span class="c-fn">exactly</span>(<span class="c-num">4</span>).<span class="c-fn">hex_digit</span>()</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-last">
+  <div class="wrap">
+    <div class="section-label">Batteries included</div>
+    <h2 class="section-h">Everything around the builder</h2>
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-ic">&#123;&#125;</div>
+        <h3>Reads like English</h3>
+        <p>Quantifiers before the token, like a sentence. Every step returns a fresh builder &mdash; nothing mutates.</p>
+        <code class="pillar-chip">exactly(4).digit()</code>
+      </div>
+      <div class="pillar">
+        <div class="pillar-ic">&#10003;</div>
+        <h3>228 validators, ready to call</h3>
+        <p>email, URL, semver, IBAN, phone, postal &mdash; and 200+ more. Import one, call it, get a bool.</p>
+        <code class="pillar-chip">email("a@b.com") &rarr; True</code>
+      </div>
+      <div class="pillar">
+        <div class="pillar-ic">&#9673;</div>
+        <h3>See what you built</h3>
+        <p>Render any pattern as an ASCII or graph diagram, a plain-English explanation, or portable JSON.</p>
+        <code class="pillar-chip"># START &#9472;&#9656; \d{4} &#9656; END</code>
+      </div>
+      <div class="pillar">
+        <div class="pillar-ic">&#8644;</div>
+        <h3>Fits your stack</h3>
+        <p>First-class pydantic, FastAPI, and Django support, shipped as opt-in extras.</p>
+        <code class="pillar-chip">pip install edify[pydantic]</code>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
