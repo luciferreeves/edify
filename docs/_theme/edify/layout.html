@@ -56,8 +56,9 @@
     </div>
   </footer>
 
-  <script>window.EDIFY_WHEEL = "{{ edify_wheel_filename }}";</script>
+  <script>window.EDIFY_WHEEL_URL = "{{ pathto('_static/' ~ edify_wheel_filename, 1) }}";</script>
   <script src="{{ pathto('_static/js/theme-toggle.js', 1) }}"></script>
+  <script src="{{ pathto('_static/js/edify-api.js', 1) }}"></script>
   <script type="module" src="{{ pathto('_static/js/playground.js', 1) }}"></script>
 </body>
 </html>
