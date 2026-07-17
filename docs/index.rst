@@ -14,6 +14,7 @@ Build regex you can actually read.
    :caption: Reference
 
    library/index
+   playground
    api/index
 
 .. toctree::
