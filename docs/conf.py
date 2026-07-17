@@ -9,17 +9,13 @@ copyright = "2022-2026, Bobby"
 release = version = "1.0.0"
 
 extensions = [
-    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "edify_playground",
 ]
 
-myst_enable_extensions = ["colon_fence", "deflist", "attrs_inline", "attrs_block"]
-myst_heading_anchors = 3
-
-source_suffix = {".md": "markdown", ".rst": "restructuredtext"}
+source_suffix = {".rst": "restructuredtext"}
 root_doc = "index"
 
 html_theme = "edify"
