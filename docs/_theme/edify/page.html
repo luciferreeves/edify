@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="wrap docs-layout">
+  <aside class="sidenav" aria-label="Documentation navigation">
+    <div class="sidenav-inner">
+      {{ toctree(maxdepth=2, includehidden=True, collapse=False) }}
+    </div>
+  </aside>
+  <main id="main" class="content" role="main">
+    {{ body }}
+  </main>
+</div>
+{% endblock %}

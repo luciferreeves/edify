@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if title %}{{ title|striptags|e }} · {% endif %}{{ project }}</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("edify-theme");
+        if (t !== "light" && t !== "dark") {
+          t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="{{ pathto('_static/css/base.css', 1) }}">
+  <link rel="stylesheet" href="{{ pathto('_static/css/content.css', 1) }}">
+  <link rel="stylesheet" href="{{ pathto('_static/css/playground.css', 1) }}">
+  <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}">
+  {%- block extrahead %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topnav">
+    <div class="wrap topnav-inner">
+      <a class="brand" href="{{ pathto(root_doc) }}"><span class="brand-mark">&#9670;</span> EDIFY</a>
+      <nav class="navlinks">
+        <a href="{{ pathto('guide/index') }}">Guide</a>
+        <a href="{{ pathto('library/index') }}">Library</a>
+        <a href="{{ pathto('playground') }}">Playground</a>
+        <a href="{{ pathto('api/index') }}">API</a>
+      </nav>
+      <span class="grow"></span>
+      <button class="icon-btn theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle light / dark">
+        <span class="theme-glyph"></span>
+      </button>
+      <a class="ghlink" href="https://github.com/luciferreeves/edify" rel="noopener">GitHub</a>
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <span class="footer-brand"><span class="brand-mark">&#9670;</span> Edify &middot; MIT licensed</span>
+      <nav class="footer-links">
+        <a href="{{ pathto('upgrading/index') }}">Upgrading</a>
+        <a href="{{ pathto('deprecation-policy') }}">Deprecation policy</a>
+        <a href="{{ pathto('changelog') }}">Changelog</a>
+        <a href="{{ pathto('contributing') }}">Contributing</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>window.EDIFY_WHEEL = "{{ edify_wheel_filename }}";</script>
+  <script src="{{ pathto('_static/js/theme-toggle.js', 1) }}"></script>
+  <script type="module" src="{{ pathto('_static/js/playground.js', 1) }}"></script>
+</body>
+</html>
