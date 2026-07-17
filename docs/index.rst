@@ -2,3 +2,25 @@ Edify
 =====
 
 Build regex you can actually read.
+
+.. toctree::
+   :hidden:
+   :caption: Guide
+
+   guide/index
+
+.. toctree::
+   :hidden:
+   :caption: Reference
+
+   library/index
+   api/index
+
+.. toctree::
+   :hidden:
+   :caption: Meta
+
+   upgrading/index
+   deprecation-policy
+   changelog
+   contributing

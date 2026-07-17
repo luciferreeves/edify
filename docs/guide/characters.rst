@@ -1,0 +1,119 @@
+Characters
+==========
+
+These are the tokens that actually match text. Everything else in the builder —
+quantifiers, groups, anchors — arranges characters; this page is the alphabet.
+
+Built-in classes
+----------------
+
+The common character classes read as plain nouns:
+
+.. code-block:: python
+
+   from edify import RegexBuilder as R
+
+   R().digit().to_regex_string()                # '\\d'   any digit 0-9
+   R().non_digit().to_regex_string()            # '\\D'   anything but a digit
+   R().word().to_regex_string()                 # '\\w'   letter, digit, or underscore
+   R().non_word().to_regex_string()             # '\\W'   anything but a word character
+   R().whitespace_char().to_regex_string()      # '\\s'   space, tab, newline, ...
+   R().non_whitespace_char().to_regex_string()  # '\\S'   anything but whitespace
+   R().any_char().to_regex_string()             # '.'     any character (except newline)
+
+And the letter classes spell out their ranges for you:
+
+.. code-block:: python
+
+   R().letter().to_regex_string()        # '[a-zA-Z]'
+   R().uppercase().to_regex_string()     # '[A-Z]'
+   R().lowercase().to_regex_string()     # '[a-z]'
+   R().alphanumeric().to_regex_string()  # '[a-zA-Z0-9]'
+
+Whitespace and control literals
+-------------------------------
+
+Named tokens for the characters you can't type comfortably:
+
+.. code-block:: python
+
+   R().tab().to_regex_string()              # '\\t'
+   R().new_line().to_regex_string()         # '\\n'
+   R().carriage_return().to_regex_string()  # '\\r'
+   R().null_byte().to_regex_string()        # '\\0'
+
+Literal text
+------------
+
+:meth:`~edify.RegexBuilder.char` matches one literal character and
+:meth:`~edify.RegexBuilder.string` matches a run of them. Both escape regex
+metacharacters for you, so you never have to think about backslashes:
+
+.. code-block:: python
+
+   R().char(".").to_regex_string()      # '\\.'    a literal dot, not "any char"
+   R().string("c.t").to_regex_string()  # 'c\\.t'  the dot is escaped for you
+
+That automatic escaping is the point: you write the text you mean, and edify
+emits the regex that matches exactly that text.
+
+Ranges and sets
+---------------
+
+:meth:`~edify.RegexBuilder.range` matches any single character between two
+endpoints, and :meth:`~edify.RegexBuilder.any_of_chars` matches any one
+character from a set you list:
+
+.. code-block:: python
+
+   R().range("a", "z").to_regex_string()          # '[a-z]'
+   R().any_of_chars("aeiou").to_regex_string()    # '[aeiou]'
+
+Each has a negated twin that matches any character *not* in the set — and
+:meth:`~edify.RegexBuilder.anything_but_string` matches any run of characters
+that isn't the given literal:
+
+.. code-block:: python
+
+   R().anything_but_chars("aeiou").to_regex_string()      # '[^aeiou]'
+   R().anything_but_range("a", "z").to_regex_string()     # '[^a-z]'
+   R().anything_but_string("cat").to_regex_string()       # '(?:[^c][^a][^t])'
+
+Inside a character set, edify escapes only what actually needs escaping for that
+position — so ``any_of_chars("#?!@$%^&*-")`` emits the minimal correct class,
+not a thicket of backslashes.
+
+Combining classes
+-----------------
+
+To match a character from *several* ranges or sets at once, open an
+:meth:`~edify.RegexBuilder.any_of` class, add each range or character, and close
+it with :meth:`~edify.RegexBuilder.end`. It folds them into one class:
+
+.. code-block:: python
+
+   R().any_of().range("0", "9").range("a", "f").range("A", "F").end().to_regex_string()
+   # '[0-9a-fA-F]'
+
+(Note the difference from ``any_of_chars``: that method takes *literal*
+characters — a dash inside it is a literal dash — while ``any_of().range(...)``
+builds true ranges.)
+
+Putting it together
+-------------------
+
+A hex color is a ``#`` followed by exactly six hex digits:
+
+.. code-block:: python
+
+   hex_color = (
+       R().start_of_input()
+       .char("#")
+       .exactly(6).any_of().range("0", "9").range("a", "f").range("A", "F").end()
+       .end_of_input()
+   )
+
+   hex_color.to_regex_string()   # '^\\#[0-9a-fA-F]{6}$'
+
+Next up: :doc:`quantifiers`, which control *how many* of any of these tokens to
+match.
