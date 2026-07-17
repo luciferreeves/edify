@@ -1,13 +1,44 @@
 
 Changelog
 =========
-Unreleased
-----------
+1.0.0 (2026-07-17)
+------------------
 
-* **Changed:** Relicensed from Apache-2.0 to the `MIT License <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_. No API change. See the :ref:`license-mit` note in the 0.3 → 1.0 upgrade guide for the patent-grant and pinned-tags details.
-* **Breaking:** Dropped support for Python 3.8. Edify now requires Python 3.9 or newer (:pr:`64`). Python 3.8 reached EOL on 2024-10-07; dependencies are now actively dropping it (e.g. ``virtualenv`` 21.5+ requires ``>=3.9``).
-* **Tooling and CI:** Dropped macOS and Windows runners from the CI matrix; Linux-only from here on. Edify is a pure-Python wheel with no platform-specific code, so the multi-OS jobs were buying ~zero signal and produced false negatives. Branch-protection required contexts went from 31 → 13 in lockstep (and now 12 with the Python 3.8 drop) (:pr:`60`).
-* **Dependencies:** Bumped the minimum ``virtualenv`` floor for the CI bootstrap to ``>=21.4.2`` (:pr:`56`, :pr:`58`).
+The first stable release. Edify grows from a builder into a full toolkit: a
+library of ready-to-call validators, introspection, serialization, framework
+integrations, and a closed match API — with the builder itself hardened and its
+rough edges filed off. The changes worth knowing before you upgrade are below;
+the :doc:`0.3 → 1.0 guide <upgrading/0.3-to-1.0>` walks each one with
+before/after code.
+
+Added
+~~~~~
+
+* A library of 228 ready-to-call validators — email, URL, semver, IBAN, phone, postal, and hundreds more — each a callable :class:`~edify.Pattern` organised into topical categories. See :ref:`validators-callable`.
+* Five closed match verbs on every builder — ``test``, ``match``, ``search``, ``findall``, and ``sub`` — returning edify result wrappers. See :ref:`closed-match-verbs`.
+* :meth:`~edify.RegexBuilder.to_regex` accepts inline flags and an ``engine`` argument, compiling against an alternate backend when one is installed. See :ref:`engine-kwarg`.
+* Builders compare by emitted pattern: two chains that describe the same regex are equal. See :ref:`builder-equality`.
+* Introspection: render any pattern as a plain-English explanation, an ASCII or graph diagram, or an annotated ``re.VERBOSE`` form.
+* Serialization: round-trip a pattern through a dict or JSON.
+* Framework integrations shipped as opt-in extras — ``edify[pydantic]``, ``edify[fastapi]``, and ``edify[django]``.
+
+Breaking
+~~~~~~~~
+
+* Python 3.11 or newer is required (:pr:`64`). See :ref:`python-floor`.
+* Relicensed from Apache-2.0 to the `MIT License <https://github.com/luciferreeves/edify/blob/main/LICENSE>`_. No API change. See :ref:`license-mit`.
+* Invalid patterns raise an annotated error at the call site instead of emitting a subtly wrong regex. See :ref:`silent-failure-raises`.
+* Terminal methods return a :class:`~edify.result.Regex` wrapper rather than a bare :class:`re.Pattern`. See :ref:`regex-wrapper-return`.
+* :meth:`~edify.RegexBuilder.to_regex_string` returns the emitted source exactly as written into the pattern. See :ref:`to-regex-string-output`.
+* Named back-references resolve by name and named groups read off ``.captures``. See :ref:`named-backref-return`.
+* Character-class escaping is minimal and correct: only the metacharacters that need escaping inside a class are escaped. See :ref:`char-class-escape`.
+* The validator library is organised into categories, and a handful of import paths moved with it. See :ref:`library-reorg` and :ref:`moved-import-paths`.
+
+Tooling and CI
+~~~~~~~~~~~~~~
+
+* Dropped the macOS and Windows runners from the CI matrix; Linux-only from here on. Edify is a pure-Python wheel with no platform-specific code, so the multi-OS jobs were buying ~zero signal and produced false negatives (:pr:`60`).
+* Bumped the minimum ``virtualenv`` floor for the CI bootstrap to ``>=21.4.2`` (:pr:`56`, :pr:`58`).
 
 0.3.0 (2026-04-29)
 ------------------

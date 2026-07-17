@@ -27,7 +27,7 @@ root_doc = "index"
 html_theme = "edify"
 html_theme_path = ["_theme"]
 html_static_path = ["_static"]
-html_permalinks_icon = "#"
+html_permalinks = False
 html_title = "Edify"
 
 napoleon_use_ivar = True

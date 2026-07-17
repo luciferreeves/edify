@@ -22,9 +22,10 @@ const editorTheme = EditorView.theme({
   ".cm-activeLine": { backgroundColor: "var(--accent-weak)" },
   ".cm-activeLineGutter": { backgroundColor: "transparent", color: "var(--fg)" },
   ".cm-lineNumbers .cm-gutterElement": { padding: "0 10px 0 10px" },
-  "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection": {
-    backgroundColor: "var(--accent-weak)",
+  "&.cm-focused .cm-selectionBackground, .cm-selectionBackground": {
+    backgroundColor: "var(--select)",
   },
+  ".cm-content ::selection": { backgroundColor: "var(--select)" },
   ".cm-matchingBracket, .cm-nonmatchingBracket": {
     backgroundColor: "var(--accent-weak)", outline: "none",
   },
