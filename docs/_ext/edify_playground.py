@@ -1,14 +1,40 @@
 """Playground Sphinx extension.
 
-Registers the homepage template override now; the ``edify-playground`` directive,
-the autocomplete-catalog hook, and the generated Library reference land in later phases.
+Provides the homepage template override and the ``edify-playground`` directive,
+which renders a mount point the browser widget hydrates into a live editor. The
+autocomplete catalog and generated Library reference land in later phases.
 """
 
 from __future__ import annotations
 
+import base64
+import html
 from typing import Any
 
+from docutils import nodes
+from docutils.parsers.rst import Directive
 from sphinx.application import Sphinx
+
+
+class EdifyPlayground(Directive):
+    """``.. edify-playground::`` — a live builder/regex/test widget.
+
+    The directive body is the starting chain. It renders as a mount point; the
+    playground JS hydrates it into the interactive editor, falling back to the
+    rendered source when scripting is unavailable.
+    """
+
+    has_content = True
+
+    def run(self) -> list[nodes.Node]:
+        source = "\n".join(self.content).strip()
+        encoded = base64.b64encode(source.encode("utf-8")).decode("ascii")
+        markup = (
+            f'<div class="edify-playground" data-source="{encoded}">'
+            f'<pre class="pg-code pg-fallback">{html.escape(source)}</pre>'
+            f"</div>"
+        )
+        return [nodes.raw("", markup, format="html")]
 
 
 def _use_home_template(
@@ -24,5 +50,6 @@ def _use_home_template(
 
 
 def setup(app: Sphinx) -> dict[str, object]:
+    app.add_directive("edify-playground", EdifyPlayground)
     app.connect("html-page-context", _use_home_template)
     return {"parallel_read_safe": True, "parallel_write_safe": True}

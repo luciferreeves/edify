@@ -12,8 +12,14 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinx.ext.extlinks",
     "edify_playground",
 ]
+
+extlinks = {
+    "issue": ("https://github.com/luciferreeves/edify/issues/%s", "#%s"),
+    "pr": ("https://github.com/luciferreeves/edify/pull/%s", "PR #%s"),
+}
 
 source_suffix = {".rst": "restructuredtext"}
 root_doc = "index"
