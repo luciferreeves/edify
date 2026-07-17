@@ -1,52 +1,41 @@
-import os
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent / "_ext"))
+
+project = "Edify"
+author = "Bobby"
+copyright = "2022-2026, Bobby"
+release = version = "1.0.0"
 
 extensions = [
+    "myst_parser",
     "sphinx.ext.autodoc",
-    "sphinx.ext.autosummary",
-    "sphinx.ext.coverage",
-    "sphinx.ext.doctest",
-    "sphinx.ext.extlinks",
-    "sphinx.ext.ifconfig",
     "sphinx.ext.napoleon",
-    "sphinx.ext.todo",
     "sphinx.ext.viewcode",
+    "edify_playground",
 ]
-source_suffix = ".rst"
-master_doc = "index"
-project = "Edify"
-year = "2022-2026"
-author = "Bobby"
-copyright = f"{year}, {author}"
-version = release = "0.3.0"
 
-pygments_style = "trac"
-templates_path = ["."]
-extlinks = {
-    "issue": ("https://github.com/luciferreeves/edify/issues/%s", "#%s"),
-    "pr": ("https://github.com/luciferreeves/edify/pull/%s", "PR #%s"),
-}
-# The "commits since latest release" shield in README.rst targets a
-# `compare/vX.Y.Z...main` URL, which 404s during the window between
-# bumping the version and tagging the release. Skip it in linkcheck
-# rather than letting docs CI fail every time we bump.
-linkcheck_ignore = [
-    r"https://github\.com/luciferreeves/edify/compare/v\d+\.\d+\.\d+\.\.\.main",
-    r"https://github\.com/luciferreeves/edify/(pull|issues)/\d+",
-]
-# on_rtd is whether we are on readthedocs.org
-on_rtd = os.environ.get("READTHEDOCS", None) == "True"
+myst_enable_extensions = ["colon_fence", "deflist", "attrs_inline", "attrs_block"]
+myst_heading_anchors = 3
 
-if not on_rtd:  # only set the theme if we're building docs locally
-    html_theme = "sphinx_rtd_theme"
+source_suffix = {".md": "markdown", ".rst": "restructuredtext"}
+root_doc = "index"
 
-html_use_smartypants = True
-html_last_updated_fmt = "%b %d, %Y"
-html_split_index = False
-html_sidebars = {
-    "**": ["searchbox.html", "globaltoc.html", "sourcelink.html"],
-}
-html_short_title = f"{project}-{version}"
+html_theme = "edify"
+html_theme_path = ["_theme"]
+html_static_path = ["_static"]
+html_permalinks_icon = "#"
+html_title = "Edify"
 
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
+
+
+def _wheel_filename() -> str:
+    wheels = sorted((Path(__file__).parent / "_static").glob("edify-*.whl"))
+    return wheels[-1].name if wheels else ""
+
+
+html_context = {"edify_wheel_filename": _wheel_filename()}
