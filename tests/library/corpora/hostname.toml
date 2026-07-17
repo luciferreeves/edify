@@ -1,0 +1,15 @@
+accepts = [
+    "example.com",
+    "sub.example.co.uk",
+    "localhost",
+    "a.b.c",
+    "xn--d1acufc.example",
+]
+
+rejects = [
+    "",
+    "-bad.com",
+    ".com",
+    "a..b",
+    "exa mple.com",
+]
