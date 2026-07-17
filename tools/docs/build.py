@@ -5,7 +5,7 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
-_STATIC = Path(__file__).resolve().parent.parent / "docs" / "_static"
+_STATIC = Path(__file__).resolve().parent.parent.parent / "docs" / "_static"
 
 
 def build_wheel_into_static() -> Path:

@@ -23,7 +23,7 @@ jobs:
             os: 'ubuntu-latest'
           - name: 'public-surface'
             python: '3.11'
-            command: 'uv run python tools/surface.py --check'
+            command: 'uv run python tools/surface/surface.py --check'
             os: 'ubuntu-latest'
           - name: 'docs'
             python: '3.11'

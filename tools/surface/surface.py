@@ -3,7 +3,7 @@
 Walks ``edify`` and its documented public submodules, and emits one line per
 public symbol: its dotted path plus, for callables, a normalized signature. The
 output is deterministic (sorted) so a diff against the committed
-``.public-surface`` file shows exactly what a PR added, removed, or changed.
+``tools/surface/.public`` file shows exactly what a PR added, removed, or changed.
 """
 
 from __future__ import annotations
@@ -14,8 +14,7 @@ import pkgutil
 import sys
 from pathlib import Path
 
-_REPO_ROOT = Path(__file__).resolve().parent.parent
-_SURFACE_PATH = _REPO_ROOT / ".public-surface"
+_SURFACE_PATH = Path(__file__).resolve().parent / ".public"
 _ROOT_PACKAGE = "edify"
 
 
@@ -86,8 +85,8 @@ def main(argv: list[str]) -> int:
         committed = _SURFACE_PATH.read_text(encoding="utf-8")
         if committed != surface:
             sys.stderr.write(
-                "public surface drift: run `python tools/surface.py --write` and commit "
-                ".public-surface, adding a changes/ fragment for the change.\n"
+                "public surface drift: run `python tools/surface/surface.py --write` and commit "
+                "tools/surface/.public, adding a changes/ fragment for the change.\n"
             )
             return 1
         return 0

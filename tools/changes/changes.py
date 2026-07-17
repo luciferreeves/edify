@@ -12,7 +12,7 @@ import configparser
 import sys
 from pathlib import Path
 
-_REPO_ROOT = Path(__file__).resolve().parent.parent
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 _CHANGES_DIR = _REPO_ROOT / "changes"
 
 

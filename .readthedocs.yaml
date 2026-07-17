@@ -8,6 +8,6 @@ build:
       - pip install uv
       - uv sync --group docs
     pre_build:
-      - uv run python tools/build_docs_wheel.py
+      - uv run python tools/docs/build.py
 sphinx:
   configuration: docs/conf.py
