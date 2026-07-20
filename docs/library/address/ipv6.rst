@@ -6,7 +6,10 @@ joined by colons — ``2001:0db8:0000:0000:0000:ff00:0042:8329``. Almost nobody
 writes the full form, because the notation (RFC 4291, with the canonical
 short-form rules of RFC 5952) allows a stack of shorthands. ``ipv6`` accepts every
 one of them: dropped leading zeros, ``::`` zero-compression, the embedded-IPv4
-tail, and the scoped ``%zone`` suffix.
+tail, and the scoped ``%zone`` suffix. It validates the *textual form* — it says
+nothing about whether an address is reachable or allocated, and it accepts
+case-insensitive hex rather than requiring the canonical lowercase form, so
+``::``, ``::1``, and ``2001:DB8::1`` all match.
 
 Under the hood, the base unit is a **hex group** — one to four hex digits, written as
 :meth:`~edify.RegexBuilder.between`\ ``(1, 4)`` of a
@@ -163,11 +166,6 @@ interface it is scoped to, named (``eth0``) or numbered (``1``). Without it, a
    from edify.library import ipv6
    ipv6
 
-.. note::
-
-   ``ipv6`` validates the **textual form** only — it does not check whether an
-   address is reachable, allocated, or in a reserved range (``::`` and ``::1``
-   both match), and it accepts case-insensitive hex rather than requiring the RFC
-   5952 canonical form. The embedded-IPv4 tail reuses the octet range check of
-   :doc:`ipv4`; for either family use :doc:`ip`, and for an address plus a
-   ``/prefix`` use :doc:`cidr`.
+The embedded-IPv4 tail above reuses the octet range check of :doc:`ipv4`. To
+accept either address family with one validator use :doc:`ip`, and for an IPv6
+network block — an address plus a ``/prefix`` — use :doc:`cidr`.

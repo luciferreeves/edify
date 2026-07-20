@@ -84,9 +84,8 @@ classic SSRF-style bug:
    from edify.library import ipv4
    ipv4
 
-.. note::
-
-   ``ipv4`` checks the **textual form** only — it does not care whether an address
-   is routable, private, or reserved (``127.0.0.1`` and ``0.0.0.0`` both match).
-   For an address plus a mask length use :doc:`cidr`, for a ``host:port`` pair
-   :doc:`socket`, and for either IP family :doc:`ip`; each reuses this octet.
+``ipv4`` checks the textual form only — it does not care whether an address is
+routable, private, or reserved (``127.0.0.1`` and ``0.0.0.0`` both match). The
+octet fragment it is built from is reused across the family: for an address plus a
+mask length use :doc:`cidr`, for a ``host:port`` pair :doc:`socket`, and for either
+IP family :doc:`ip`.
