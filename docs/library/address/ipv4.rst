@@ -1,20 +1,22 @@
 ipv4
 ====
 
-``ipv4`` matches an IPv4 address in dotted-decimal form — four octets joined by
-dots, each a number from 0 to 255, like ``192.168.0.1``.
+An IPv4 address is 32 bits, written as four decimal octets joined by dots —
+``192.168.0.1``. Each octet is 0 to 255, and ``ipv4`` enforces that range exactly:
+it is a shape check on the dotted-quad, not a lookup of what the address means.
 
-Edify composes it from a single reusable **octet** fragment repeated four times.
-The octet is where the range check lives: an :func:`~edify.any_of` over five
-branches — ``25`` + ``0``–``5`` for 250–255, ``2`` + ``0``–``4`` + a
-:meth:`~edify.RegexBuilder.digit` for 200–249, ``1`` + two digits for 100–199,
-``1``–``9`` + a digit for 10–99, and a lone digit for 0–9 — which together cover
-0–255 *exactly*, so ``256`` has no branch to match. ``ipv4`` joins four of those
-:doc:`octets <../../guide/composing>` with dots (via
-:meth:`~edify.RegexBuilder.exactly`\ ``(3)`` of a
-:meth:`~edify.RegexBuilder.group`) between
-:meth:`~edify.RegexBuilder.start_of_input` and
-:meth:`~edify.RegexBuilder.end_of_input`. Written out, that construction is:
+.. code-block:: python
+
+   from edify.library import ipv4
+
+   ipv4("192.168.0.1")   # True
+
+How edify builds it
+-------------------
+
+The range check lives in a single reusable :doc:`octet <../../guide/composing>`
+fragment — an :func:`~edify.any_of` over five branches that between them cover
+0–255 with no overlap and no gap, which is why ``256`` has no branch to match:
 
 .. code-block:: python
 
@@ -27,13 +29,21 @@ branches — ``25`` + ``0``–``5`` for 250–255, ``2`` + ``0``–``4`` + a
        Pattern().any_of().range("1", "9").end().digit(),            # 10–99
        Pattern().digit(),                                           # 0–9
    )
+
+``ipv4`` joins four of those octets with dots — :meth:`~edify.RegexBuilder.exactly`\
+``(3)`` of a ``.``-plus-octet :meth:`~edify.RegexBuilder.group` after the first —
+between :meth:`~edify.RegexBuilder.start_of_input` and
+:meth:`~edify.RegexBuilder.end_of_input`:
+
+.. code-block:: python
+
    ipv4 = (
        Pattern().start_of_input()
        .use(octet).exactly(3).group().char(".").use(octet).end()
        .end_of_input()
    )
 
-and the regex it emits:
+which emits:
 
 .. code-block:: text
 
@@ -44,7 +54,7 @@ Four octets, each 0 to 255
 
 Exactly four dot-separated octets — no more, no fewer — and each runs the full
 0–255 range, the all-zero network and the all-ones broadcast included. One past
-the top, ``256``, is out; so is the wrong octet count or an IPv6 address:
+the top, ``256``, is out; so is the wrong octet count, or an IPv6 address:
 
 .. code-block:: python
 
@@ -53,6 +63,7 @@ the top, ``256``, is out; so is the wrong octet count or an IPv6 address:
    ipv4("255.255.255.255")     # True  — limited broadcast
    ipv4("256.0.0.1")           # False — 256 is past the top of the range
    ipv4("1.2.3")               # False — only three octets
+   ipv4("1.2.3.4.5")           # False — five octets
    ipv4("2001:db8::1")         # False — that's IPv6; use ipv6
 
 .. edify-playground::
@@ -65,8 +76,9 @@ No leading zeros
 ----------------
 
 An octet is a bare number: a lone ``0`` is fine, but zero-padded octets like
-``01`` are rejected — that is how some tools smuggle in octal, and treating
-``010`` as decimal 10 would be a security bug:
+``01`` are rejected. That matters for correctness *and* security — many parsers
+read a leading-zero octet as octal, so treating ``010`` as decimal 10 would be a
+classic SSRF-style bug:
 
 .. code-block:: python
 
@@ -80,7 +92,19 @@ An octet is a bare number: a lone ``0`` is fine, but zero-padded octets like
    from edify.library import ipv4
    ipv4
 
-``ipv4`` checks the textual form only — it does not care whether an address is
-routable, private, or reserved (``127.0.0.1`` and ``0.0.0.0`` both match). The
-same octet fragment is reused by :doc:`ip`, :doc:`cidr`, and the IPv4 host of
-:doc:`socket`; for IPv6 see :doc:`ipv6`, and for either family :doc:`ip`.
+Notes
+-----
+
+- ``ipv4`` checks the **textual form** only. It does not care whether an address
+  is routable, private, or reserved — ``127.0.0.1``, ``0.0.0.0``, and
+  ``255.255.255.255`` all match.
+- It matches an address on its own; for an address *and* a mask length use
+  :doc:`cidr`, and for a ``host:port`` pair use :doc:`socket`.
+
+See also
+--------
+
+- :doc:`ipv6` — the IPv6 forms.
+- :doc:`ip` — accepts either family.
+- :doc:`cidr` — a dotted-quad plus a ``/0``–``/32`` prefix; reuses this octet.
+- :doc:`socket` — a ``host:port`` address; the IPv4 host reuses this octet.
