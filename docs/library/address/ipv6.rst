@@ -91,13 +91,15 @@ digits are case-insensitive. A group longer than four digits is invalid:
 
 .. code-block:: python
 
-   ipv6("2001:0db8:0000:0000:0000:ff00:0042:8329")   # True — written out in full
-   ipv6("2001:db8:0:0:0:ff00:42:8329")               # True — leading zeros dropped
-   ipv6("2001:DB8:0:0:0:FF00:42:8329")               # True — uppercase hex
+   ipv6("2001:0db8:0000:0000:0000:ff00:0042:8329")   # True  — written out in full
+   ipv6("2001:db8:0:0:0:ff00:42:8329")               # True  — leading zeros dropped
+   ipv6("2001:DB8:0:0:0:FF00:42:8329")               # True  — uppercase hex
    ipv6("12345::")                                   # False — a group can't exceed four digits
+   ipv6("gg::")                                      # False — 'g' is not a hex digit
+   ipv6("1.2.3.4")                                   # False — that's IPv4; use ipv4
 
 .. edify-playground::
-   :tests: 2001:0db8:0000:0000:0000:ff00:0042:8329|2001:db8:0:0:0:ff00:42:8329|2001:DB8:0:0:0:FF00:42:8329|12345::
+   :tests: 2001:db8:0:0:0:ff00:42:8329|2001:DB8:0:0:0:FF00:42:8329|12345::|gg::|1.2.3.4
 
    from edify.library import ipv6
    ipv6
@@ -157,31 +159,12 @@ interface it is scoped to, named (``eth0``) or numbered (``1``). Without it, a
 
 .. code-block:: python
 
-   ipv6("fe80::1%eth0")   # True — named zone
-   ipv6("fe80::1%1")      # True — numeric zone
+   ipv6("fe80::1%eth0")   # True  — named zone
+   ipv6("fe80::1%1")      # True  — numeric zone
+   ipv6("fe80::1%")       # False — the zone identifier can't be empty
 
 .. edify-playground::
-   :tests: fe80::1%eth0|fe80::1%1|fe80::abcd%wlan0
-
-   from edify.library import ipv6
-   ipv6
-
-What does not match
--------------------
-
-Non-hex digits, an IPv4 address, a group over four digits, two ``::``, and
-trailing junk all fail:
-
-.. code-block:: python
-
-   ipv6("gg::")           # False — 'g' is not a hex digit
-   ipv6("1.2.3.4")        # False — that's IPv4; use ipv4
-   ipv6("12345::")        # False — a group may not exceed four digits
-   ipv6("1::2::3")        # False — only one :: is allowed
-   ipv6("2001:db8::z")    # False — trailing non-hex character
-
-.. edify-playground::
-   :tests: 2001:db8::1|gg::|1.2.3.4|12345::|2001:db8::z
+   :tests: fe80::1%eth0|fe80::1%1|fe80::abcd%wlan0|fe80::1%
 
    from edify.library import ipv6
    ipv6
