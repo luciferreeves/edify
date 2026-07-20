@@ -131,6 +131,89 @@ The full set mirrors the methods above: ``DIGIT``, ``NON_DIGIT``, ``WORD``,
 ``UPPERCASE``, ``ALPHANUMERIC``, ``ANY_CHAR``, ``TAB``, ``NEW_LINE``,
 ``CARRIAGE_RETURN``, and ``NULL_BYTE``. See :doc:`composing` for combining them.
 
+Quick reference
+---------------
+
+Every single-character token, its importable constant, and what it emits:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 34 30 36
+
+   * - Method
+     - Constant
+     - Emits
+   * - ``digit()``
+     - ``DIGIT``
+     - ``\d`` — a digit 0–9
+   * - ``non_digit()``
+     - ``NON_DIGIT``
+     - ``\D`` — any non-digit
+   * - ``word()``
+     - ``WORD``
+     - ``\w`` — letter, digit, or underscore
+   * - ``non_word()``
+     - ``NON_WORD``
+     - ``\W`` — any non-word character
+   * - ``whitespace_char()``
+     - ``WHITESPACE``
+     - ``\s`` — space, tab, newline, …
+   * - ``non_whitespace_char()``
+     - ``NON_WHITESPACE``
+     - ``\S`` — any non-whitespace
+   * - ``any_char()``
+     - ``ANY_CHAR``
+     - ``.`` — any character but newline
+   * - ``letter()``
+     - ``LETTER``
+     - ``[a-zA-Z]``
+   * - ``lowercase()``
+     - ``LOWERCASE``
+     - ``[a-z]``
+   * - ``uppercase()``
+     - ``UPPERCASE``
+     - ``[A-Z]``
+   * - ``alphanumeric()``
+     - ``ALPHANUMERIC``
+     - ``[a-zA-Z0-9]``
+   * - ``tab()``
+     - ``TAB``
+     - ``\t``
+   * - ``new_line()``
+     - ``NEW_LINE``
+     - ``\n``
+   * - ``carriage_return()``
+     - ``CARRIAGE_RETURN``
+     - ``\r``
+   * - ``null_byte()``
+     - ``NULL_BYTE``
+     - ``\0``
+
+And the text/set builders:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 42 58
+
+   * - Method
+     - Emits / meaning
+   * - ``char(c)``
+     - one literal character, escaped as needed
+   * - ``string(s)``
+     - a literal run of characters, escaped as needed
+   * - ``range(a, z)``
+     - ``[a-z]`` — one character in a range
+   * - ``any_of_chars(s)``
+     - ``[…]`` — one of the listed literal characters
+   * - ``anything_but_chars(s)``
+     - ``[^…]`` — any character not listed
+   * - ``anything_but_range(a, z)``
+     - ``[^a-z]`` — any character outside the range
+   * - ``anything_but_string(s)``
+     - a per-character negation of the literal
+   * - ``any_of().…​.end()``
+     - one class folding several ranges/sets together
+
 Putting it together
 -------------------
 

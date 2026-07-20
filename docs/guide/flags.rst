@@ -78,6 +78,38 @@ as variable-width lookbehind:
 If a pattern needs a feature the selected engine lacks, edify raises a clear,
 actionable error instead of a cryptic one — the subject of :doc:`errors`.
 
+Quick reference
+---------------
+
+Each flag as a chain method, its :meth:`~edify.RegexBuilder.to_regex` keyword
+(note the names differ), and what it does:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 26 26 48
+
+   * - Method
+     - Compile keyword
+     - Effect
+   * - ``ignore_case()``
+     - ``ignore_case=True``
+     - match letters regardless of case
+   * - ``multi_line()``
+     - ``multiline=True``
+     - ``^`` / ``$`` match at every line boundary
+   * - ``dot_all()``
+     - ``dotall=True``
+     - ``any_char`` also matches newlines
+   * - ``ascii_only()``
+     - ``ascii_only=True``
+     - restrict ``\w`` ``\d`` ``\s`` to ASCII
+   * - ``verbose()``
+     - ``verbose=True``
+     - allow insignificant whitespace and comments
+   * - ``debug()``
+     - ``debug=True``
+     - emit the engine's parse debug output
+
 Try it
 ------
 

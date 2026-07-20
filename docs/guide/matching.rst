@@ -81,4 +81,54 @@ Everything else you'd expect from a match object — ``group(n)``, ``groupdict()
 ``start()``, ``end()``, ``span()`` — is there too. See :doc:`captures` for the
 capture side of the story.
 
+Quick reference
+---------------
+
+Which verbs live where, and what each returns:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 14 16 48
+
+   * - Verb
+     - Builder
+     - Regex
+     - Returns
+   * - ``test(s)``
+     - yes
+     - —
+     - ``bool`` — matches anywhere?
+   * - ``match(s)``
+     - yes
+     - yes
+     - a :class:`~edify.result.Match` at the start, or ``None``
+   * - ``search(s)``
+     - yes
+     - yes
+     - the first :class:`~edify.result.Match` anywhere, or ``None``
+   * - ``fullmatch(s)``
+     - —
+     - yes
+     - a :class:`~edify.result.Match` if the whole string matches, or ``None``
+   * - ``findall(s)``
+     - yes
+     - yes
+     - a ``list`` of every match
+   * - ``finditer(s)``
+     - —
+     - yes
+     - an iterator of :class:`~edify.result.Match`
+   * - ``sub(repl, s)``
+     - yes
+     - yes
+     - ``str`` with matches replaced
+   * - ``subn(repl, s)``
+     - —
+     - yes
+     - ``(str, count)``
+   * - ``split(s)``
+     - —
+     - yes
+     - a ``list`` split on the pattern
+
 Next: :doc:`errors`, on the diagnostics edify gives you when a pattern is wrong.

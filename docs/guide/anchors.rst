@@ -119,6 +119,34 @@ By default ``^`` and ``$`` anchor to the ends of the *whole string*. Turn on the
 Without ``multi_line`` that same pattern would only find ``'one'``. Flags are
 covered in full on :doc:`flags`.
 
+Quick reference
+---------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 32 30 12 26
+
+   * - Method
+     - Constant
+     - Emits
+     - Matches at
+   * - ``start_of_input()``
+     - ``START``
+     - ``^``
+     - start of string (or line, with ``multi_line``)
+   * - ``end_of_input()``
+     - ``END``
+     - ``$``
+     - end of string (or line, with ``multi_line``)
+   * - ``word_boundary()``
+     - ``WORD_BOUNDARY``
+     - ``\b``
+     - a word/non-word seam
+   * - ``non_word_boundary()``
+     - ``NON_WORD_BOUNDARY``
+     - ``\B``
+     - any position that isn't a seam
+
 Try it
 ------
 

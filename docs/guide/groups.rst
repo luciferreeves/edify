@@ -97,6 +97,29 @@ named pieces — the subject of :doc:`composing`:
    )
    csv_field.to_regex_string()   # '\\w+(?:,\\w+)*'
 
+Quick reference
+---------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 34 30 36
+
+   * - Method
+     - Factory
+     - Emits
+   * - ``group()``
+     - ``group(p)``
+     - ``(?:…)`` — non-capturing group
+   * - ``capture()``
+     - ``capture(p)``
+     - ``(…)`` — capturing group (see :doc:`captures`)
+   * - ``any_of(*branches)``
+     - ``any_of(*patterns)``
+     - ``(?:a|b|c)`` — alternation
+   * - ``one_of(*literals)``
+     - —
+     - ``(?:a|b|c)`` — alternation of string literals
+
 Try it
 ------
 

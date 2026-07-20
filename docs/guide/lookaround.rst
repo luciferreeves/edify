@@ -101,6 +101,34 @@ The four factories — ``assert_ahead``, ``assert_not_ahead``, ``assert_behind``
    clear error pointing you at the fix — see :doc:`errors`. You can also select
    the alternate engine on :meth:`~edify.RegexBuilder.to_regex` (see :doc:`flags`).
 
+Quick reference
+---------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 28 28 16 28
+
+   * - Method
+     - Factory
+     - Emits
+     - Holds when
+   * - ``assert_ahead()``
+     - ``assert_ahead(p)``
+     - ``(?=…)``
+     - the text ahead matches
+   * - ``assert_not_ahead()``
+     - ``assert_not_ahead(p)``
+     - ``(?!…)``
+     - the text ahead does not match
+   * - ``assert_behind()``
+     - ``assert_behind(p)``
+     - ``(?<=…)``
+     - the text behind matches
+   * - ``assert_not_behind()``
+     - ``assert_not_behind(p)``
+     - ``(?<!…)``
+     - the text behind does not match
+
 Try it
 ------
 

@@ -104,6 +104,50 @@ emitting a nonsensical regex:
 Both raise immediately at the call site with a fix — the diagnostics are covered
 on :doc:`errors`.
 
+Quick reference
+---------------
+
+Every quantifier, its factory function, and what it emits (``p`` is the token or
+pattern it governs):
+
+.. list-table::
+   :header-rows: 1
+   :widths: 34 34 32
+
+   * - Method
+     - Factory
+     - Emits
+   * - ``exactly(n)``
+     - ``exactly(n, p)``
+     - ``{n}``
+   * - ``at_least(n)``
+     - ``at_least(n, p)``
+     - ``{n,}``
+   * - ``at_most(n)``
+     - ``at_most(n, p)``
+     - ``{0,n}``
+   * - ``between(a, b)``
+     - ``between(a, b, p)``
+     - ``{a,b}``
+   * - ``optional()``
+     - ``optional(p)``
+     - ``?``
+   * - ``zero_or_more()``
+     - ``zero_or_more(p)``
+     - ``*``
+   * - ``one_or_more()``
+     - ``one_or_more(p)``
+     - ``+``
+   * - ``between_lazy(a, b)``
+     - ``between_lazy(a, b, p)``
+     - ``{a,b}?``
+   * - ``zero_or_more_lazy()``
+     - ``zero_or_more_lazy(p)``
+     - ``*?``
+   * - ``one_or_more_lazy()``
+     - ``one_or_more_lazy(p)``
+     - ``+?``
+
 Try it
 ------
 

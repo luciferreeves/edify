@@ -99,6 +99,32 @@ quoted string whose closing quote matches its opening one:
 The closing quote *must* be the same character as the opening one, because the
 backreference demands it — a ``'`` opener will not match a ``"`` closer.
 
+Quick reference
+---------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 24 36
+
+   * - Method
+     - Emits
+     - Purpose
+   * - ``capture()``
+     - ``(…)``
+     - a numbered capturing group
+   * - ``named_capture(name)``
+     - ``(?P<name>…)``
+     - a named capturing group
+   * - ``back_reference(n)``
+     - ``\n``
+     - rematch what capture ``n`` matched
+   * - ``named_back_reference(name)``
+     - ``(?P=name)``
+     - rematch what the named capture matched
+
+Read numbered captures back with ``hit.group(n)`` and named ones with
+``hit.captures.name`` or ``hit.groupdict()``.
+
 Try it
 ------
 
