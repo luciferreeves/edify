@@ -1,24 +1,40 @@
 url
 ===
 
-:doc:`Library <../index>` › :doc:`Address <index>` › **url**
-
 ``url`` matches a permissive HTTP/HTTPS web-URL shape. Everything except the
 dotted host and its short TLD is optional, so it accepts the many ways people
-write a link — with or without a scheme, with or without ``www.``, bare host or
-host-plus-path.
+write a link — with or without a scheme, with or without ``www.``.
+
+Under the hood edify chains an :meth:`~edify.RegexBuilder.optional`
+``http[s]://`` scheme, an optional ``www.`` prefix, a run of host characters, a
+dot, a 1–6 character TLD, and an optional path/query/fragment tail — anchored with
+:meth:`~edify.RegexBuilder.start_of_input` / :meth:`~edify.RegexBuilder.end_of_input`:
 
 .. code-block:: python
 
-   from edify.library import url
+   from edify import Pattern
 
-   url("https://example.com")   # True
+   url = (
+       Pattern().start_of_input()
+       .optional().group().string("http").optional().char("s").string("://").end()
+       .optional().group().string("www.").end()
+       .between(1, 256).use(host_chars).char(".").between(1, 6).use(tld_chars)
+       .word_boundary().zero_or_more().use(path_chars)
+       .end_of_input()
+   )
+
+which emits:
+
+.. code-block:: text
+
+   ^(?:https?://)?(?:www\.)?[\-a-zA-Z0-9@:%\._\+\~\#=]{1,256}\.[a-zA-Z0-9\(\)]{1,6}\b[\-a-zA-Z0-9\(\)@:%_\+\.\~\#\?\&/=]*$
 
 The scheme is optional
 ----------------------
 
 An ``http://`` or ``https://`` prefix is accepted but not required, and a bare
-``www.`` host works too:
+``www.`` host works too. The one required part is a dotted host ending in a short
+TLD, so a bare word fails:
 
 .. code-block:: python
 
@@ -26,24 +42,20 @@ An ``http://`` or ``https://`` prefix is accepted but not required, and a bare
    url("http://example.com")    # True
    url("example.com")           # True — no scheme
    url("www.example.com")       # True — www prefix, no scheme
+   url("notaurl")               # False — no dotted host + TLD
 
-The host and its TLD
---------------------
+.. edify-playground::
+   :tests: https://example.com|http://example.com|example.com|www.example.com|notaurl
 
-The host is a dot-separated authority ending in a **1–6 character** TLD; that
-trailing dotted TLD is the one non-optional part:
-
-.. code-block:: python
-
-   url("example.com")     # True
-   url("a.io")            # True — two-letter TLD
-   url("notaurl")         # False — no dotted host + TLD
+   from edify.library import url
+   url
 
 Paths, queries, and fragments
 -----------------------------
 
 Anything after the host — a path, a ``?`` query, a ``#`` fragment, or an explicit
-port — is matched as an optional tail:
+port — is matched as an optional tail, while a ``//``-style non-HTTP scheme is
+rejected because ``/`` is not a host character:
 
 .. code-block:: python
 
@@ -51,30 +63,20 @@ port — is matched as an optional tail:
    url("https://a.io/s?q=1&r=2")    # True — query string
    url("https://a.io/p#top")        # True — fragment
    url("https://a.io:8443/x")       # True — explicit port
-
-What it rejects
----------------
-
-.. code-block:: python
-
-   url("ftp://x.com")   # False — the // scheme separator isn't a host character
-   url("notaurl")       # False — no dotted host + TLD
-   url("just text")     # False — no host
-
-.. note::
-
-   ``url`` keys on a **dotted host ending in a short TLD**, and its host character
-   set includes ``:``. So while ``//``-style schemes like ``ftp://`` are rejected,
-   a colon-prefixed string that still ends in a dotted TLD — ``mailto:a@b.com`` —
-   *does* match, because it fits the host shape. If you need strict scheme
-   handling, validate the scheme yourself or use :doc:`uri`. ``url`` guarantees
-   the shape only, not reachability, TLS validity, or DNS resolution.
-
-Try it
-------
+   url("ftp://x.com")               # False — the // scheme separator isn't a host char
 
 .. edify-playground::
-   :tests: https://example.com|www.example.com|a.io/x?q=1|https://a.io:8443/p#top|ftp://x.com|notaurl
+   :tests: https://a.io/x/y|https://a.io/s?q=1&r=2|https://a.io/p#top|https://a.io:8443/x|ftp://x.com
 
    from edify.library import url
    url
+
+Notes
+-----
+
+- ``url`` keys on a dotted host ending in a short TLD, and its host characters
+  include ``:`` — so a colon-prefixed string that still ends in a dotted TLD, like
+  ``mailto:a@b.com``, *does* match. If you need strict scheme handling use
+  :doc:`uri` or check the scheme yourself.
+- It guarantees the shape only — not reachability, TLS validity, or DNS
+  resolution.

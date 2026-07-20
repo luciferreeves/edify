@@ -1,43 +1,54 @@
 domain
 ======
 
-:doc:`Library <../index>` › :doc:`Address <index>` › **domain**
+``domain`` matches a DNS domain name — one or more dot-separated labels ending in
+a letters-only top-level domain, like ``example.com``.
 
-``domain`` matches a DNS domain name — one or more dot-separated labels followed
-by a letters-only top-level domain.
+Under the hood edify repeats a **label** — an :meth:`~edify.RegexBuilder.alphanumeric`
+start, up to 61 interior letters/digits/hyphens, an alphanumeric end — with
+:meth:`~edify.RegexBuilder.one_or_more`, each followed by a dot, and finishes with
+a :doc:`tld` of 2–63 :meth:`~edify.RegexBuilder.letter`\ s, anchored with
+:meth:`~edify.RegexBuilder.start_of_input` / :meth:`~edify.RegexBuilder.end_of_input`:
 
 .. code-block:: python
 
-   from edify.library import domain
+   from edify import Pattern
 
-   domain("example.com")   # True
+   domain = (
+       Pattern().start_of_input()
+       .one_or_more().group().use(label).char(".").end()
+       .between(2, 63).letter()
+       .end_of_input()
+   )
 
-Labels
-------
+which emits:
 
-A domain is a series of labels joined by dots. Each label is 1–63 characters of
-letters, digits, and hyphens, and there is no limit on how many you stack:
+.. code-block:: text
+
+   ^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$
+
+Labels and the TLD
+------------------
+
+One or more labels joined by dots, ending in a letters-only TLD. A bare label with
+no TLD is not a domain, and the TLD may not be numeric:
 
 .. code-block:: python
 
    domain("example.com")        # True — one label + TLD
    domain("a.b.example.io")     # True — several labels deep
    domain("xn--nxasmq6b.com")   # True — a Punycode (IDNA) label
+   domain("example")            # False — no TLD
+   domain("example.123")        # False — a TLD is letters only
 
-The TLD
--------
+.. edify-playground::
+   :tests: example.com|a.b.example.io|xn--nxasmq6b.com|example|example.123
 
-The final component must be a **letters-only TLD of 2–63 characters** (this is
-the :doc:`tld` shape). A bare label with no TLD is not a domain:
+   from edify.library import domain
+   domain
 
-.. code-block:: python
-
-   domain("example.com")   # True
-   domain("example")       # False — no TLD
-   domain("example.123")   # False — a TLD is letters only
-
-Hyphens are interior only
--------------------------
+Interior hyphens only
+---------------------
 
 A label may contain hyphens, but may not begin or end with one:
 
@@ -47,23 +58,15 @@ A label may contain hyphens, but may not begin or end with one:
    domain("-x.com")        # False — label starts with a hyphen
    domain("x-.com")        # False — label ends with a hyphen
 
-What it rejects
----------------
-
-.. code-block:: python
-
-   domain(".com")       # False — empty leading label
-   domain("a b.com")    # False — no spaces
-   domain("localhost")  # False — no TLD (use hostname for bare labels)
-
-For a name that may be a single bare label such as ``localhost``, use
-:doc:`hostname`; for one label on its own, :doc:`subdomain`.
-
-Try it
-------
-
 .. edify-playground::
-   :tests: example.com|a.b.example.io|my-site.org|example|-x.com|localhost
+   :tests: my-site.org|sub-domain.example.com|-x.com|x-.com
 
    from edify.library import domain
    domain
+
+Notes
+-----
+
+- For a name that may be a single bare label such as ``localhost``, use
+  :doc:`hostname`; for one label on its own, :doc:`subdomain`; for the trailing
+  component alone, :doc:`tld`.

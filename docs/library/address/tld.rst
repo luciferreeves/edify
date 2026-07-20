@@ -1,40 +1,47 @@
 tld
 ===
 
-:doc:`Library <../index>` › :doc:`Address <index>` › **tld**
+``tld`` matches a top-level domain — 2 to 63 letters, like ``com``, ``io``, or
+``museum``. It is the trailing component :doc:`domain` requires.
 
-``tld`` matches a top-level domain — 2 to 63 letters. It is the trailing
-component :doc:`domain` requires.
+Under the hood it is simply :meth:`~edify.RegexBuilder.between`\ ``(2, 63)`` of a
+:meth:`~edify.RegexBuilder.letter` class, anchored with
+:meth:`~edify.RegexBuilder.start_of_input` / :meth:`~edify.RegexBuilder.end_of_input`:
 
 .. code-block:: python
 
-   from edify.library import tld
+   from edify import Pattern
 
-   tld("com")   # True
+   tld = Pattern().start_of_input().between(2, 63).letter().end_of_input()
+
+which emits:
+
+.. code-block:: text
+
+   ^[a-zA-Z]{2,63}$
 
 Two to sixty-three letters
 --------------------------
 
-From the shortest country codes to the long branded and legacy TLDs:
+From the shortest country codes to the long branded and legacy TLDs. Case does
+not matter, mirroring DNS case-insensitivity; a single letter is too short, and
+digits, hyphens, or a leading dot all fail:
 
 .. code-block:: python
 
    tld("io")       # True — two-letter minimum
    tld("com")      # True
-   tld("dev")      # True
    tld("museum")   # True — a long gTLD
+   tld("COM")      # True — case-insensitive
    tld("c")        # False — a single letter is too short
+   tld("c0m")      # False — letters only, no digits
+   tld(".com")     # False — the leading dot is not part of the TLD
 
-Case does not matter
---------------------
+.. edify-playground::
+   :tests: io|com|museum|COM|c|c0m|.com
 
-Upper, lower, and mixed case all match, mirroring DNS case-insensitivity:
-
-.. code-block:: python
-
-   tld("com")   # True
-   tld("COM")   # True
-   tld("Dev")   # True
+   from edify.library import tld
+   tld
 
 Shape, not registry
 -------------------
@@ -46,18 +53,13 @@ unregistered string of letters still passes:
 
    tld("zzz")   # True — well-formed, though not a real TLD
 
-What it rejects
----------------
+.. edify-playground::
+   :tests: dev|app|zzz|co-op
 
-.. code-block:: python
+   from edify.library import tld
+   tld
 
-   tld("c0m")    # False — letters only, no digits
-   tld("co-op")  # False — no hyphens
-   tld(".com")   # False — the leading dot is not part of the TLD
+Notes
+-----
 
-Pattern
--------
-
-.. code-block:: text
-
-   ^[a-zA-Z]{2,63}$
+- ``tld`` is the trailing component of a full :doc:`domain`.

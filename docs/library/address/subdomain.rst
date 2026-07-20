@@ -1,22 +1,38 @@
 subdomain
 =========
 
-:doc:`Library <../index>` › :doc:`Address <index>` › **subdomain**
+``subdomain`` matches a **single** DNS label — the ``api`` in ``api.example.com``
+— not a dotted name.
 
-``subdomain`` matches a **single** DNS label — the ``api`` in
-``api.example.com`` — not a dotted name.
+Under the hood it is an :meth:`~edify.RegexBuilder.alphanumeric` first character,
+:meth:`~edify.RegexBuilder.between`\ ``(0, 61)`` interior letters/digits/hyphens,
+and an alphanumeric last character, anchored with
+:meth:`~edify.RegexBuilder.start_of_input` / :meth:`~edify.RegexBuilder.end_of_input`.
+Because it anchors on a first *and* a last alphanumeric, the minimum length is two:
 
 .. code-block:: python
 
-   from edify.library import subdomain
+   from edify import Pattern
 
-   subdomain("api")   # True
+   subdomain = (
+       Pattern().start_of_input()
+       .alphanumeric()
+       .between(0, 61).any_of().range("a", "z").range("A", "Z").range("0", "9").char("-").end()
+       .alphanumeric()
+       .end_of_input()
+   )
 
-A single label
---------------
+which emits:
 
-Letters and digits, with hyphens allowed only in the interior. The first and last
-characters must be alphanumeric:
+.. code-block:: text
+
+   ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]$
+
+A single label, 2 to 63 characters
+----------------------------------
+
+Letters, digits, and interior hyphens, with an alphanumeric first and last
+character. A single character can't satisfy both ends, and 64 is one too many:
 
 .. code-block:: python
 
@@ -24,35 +40,34 @@ characters must be alphanumeric:
    subdomain("my-sub")     # True — interior hyphen
    subdomain("staging-2")  # True — digits and hyphen
    subdomain("a1")         # True — the two-character minimum
+   subdomain("a")          # False — too short for first + last
+   subdomain("a" * 64)     # False — one over the 63-char maximum
 
-Length is 2 to 63
------------------
+.. edify-playground::
+   :tests: api|my-sub|staging-2|a1|a
 
-Because the pattern anchors on a first *and* a last alphanumeric character, the
-minimum length is **two**; the maximum is **63**:
+   from edify.library import subdomain
+   subdomain
 
-.. code-block:: python
+No hyphens at the ends, no dots
+-------------------------------
 
-   subdomain("a1")          # True  — two characters
-   subdomain("a")           # False — a single character can't satisfy first + last
-   subdomain("a" * 63)      # True  — at the 63-character maximum
-   subdomain("a" * 64)      # False — one over the maximum
-
-What it rejects
----------------
+A leading or trailing hyphen is rejected, and a dot makes it two labels rather
+than one:
 
 .. code-block:: python
 
    subdomain("-bad")   # False — can't start with a hyphen
    subdomain("bad-")   # False — can't end with a hyphen
-   subdomain("a.b")    # False — a dot makes it two labels, not one
-   subdomain("a b")    # False — no spaces
+   subdomain("a.b")    # False — a dot makes it two labels
 
-For a full dotted name use :doc:`domain` or :doc:`hostname`.
+.. edify-playground::
+   :tests: staging|-bad|bad-|a.b
 
-Pattern
--------
+   from edify.library import subdomain
+   subdomain
 
-.. code-block:: text
+Notes
+-----
 
-   ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]$
+- For a full dotted name use :doc:`domain` or :doc:`hostname`.
