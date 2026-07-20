@@ -4,8 +4,6 @@ Edify
 Build regex you can actually read.
 
 .. toctree::
-   :hidden:
-   :caption: Guide
 
    guide/index
 

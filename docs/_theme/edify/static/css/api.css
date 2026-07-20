@@ -1,0 +1,105 @@
+/* ============================================================
+   Edify docs theme — API reference layout
+   A godoc / discord.js-style symbol reference: sticky section
+   nav on the left, symbol cards with monospace signature headers
+   on the right.
+   ============================================================ */
+
+.api-layout {
+  display: grid; grid-template-columns: 220px minmax(0, 1fr);
+  gap: 48px; align-items: start; padding: 34px 0 96px;
+}
+.api-nav { position: sticky; top: 78px; align-self: start;
+  max-height: calc(100vh - 96px); overflow-y: auto; font-size: 14px; }
+.api-nav-title { text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px;
+  color: var(--faint); font-weight: 700; margin-bottom: 12px; }
+.api-nav ul { list-style: none; margin: 0; padding: 0; }
+.api-nav ul ul { padding-left: 12px; }
+.api-nav li { margin: 1px 0; }
+.api-nav a { color: var(--muted); display: block; padding: 4px 0 4px 12px;
+  border-left: 2px solid transparent; line-height: 1.4; }
+.api-nav a:hover { color: var(--fg); text-decoration: none; }
+.api-nav a.current, .api-nav li.current > a {
+  color: var(--fg); font-weight: 600; border-left-color: var(--accent); }
+
+.api-content { max-width: none; min-width: 0; }
+.api-content > h1 { font-size: 2rem; letter-spacing: -0.02em; margin: 0 0 10px; }
+.api-content > section > h2 {
+  font-size: 1.35rem; letter-spacing: -0.01em; margin: 3rem 0 1rem;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+
+/* ---- each documented symbol becomes a card ---- */
+.api-content dl.py {
+  margin: 18px 0; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--surface); overflow: hidden;
+}
+.api-content dl.py > dt.sig {
+  font-family: var(--mono); font-size: 0.86rem; line-height: 1.75;
+  padding: 12px 16px; margin: 0; background: var(--surface-2);
+  border-bottom: 1px solid var(--border); white-space: pre-wrap; word-break: break-word;
+  color: var(--fg); scroll-margin-top: 74px;
+}
+.api-content dl.py > dd { margin: 0; padding: 16px; }
+.api-content dl.py > dd > p:first-child { margin-top: 0; }
+.api-content dl.py > dd > :last-child { margin-bottom: 0; }
+
+/* signature token colors (GitHub palette) */
+.api-content .sig-name { color: var(--syn-function); font-weight: 700; }
+.api-content dl.py > dt.sig .sig-prename { color: var(--faint); font-weight: 400; }
+.api-content .sig-param .n,
+.api-content .sig-param .sig-param { color: var(--syn-variable); }
+.api-content .sig-param .p, .api-content .sig-paren { color: var(--syn-punct); }
+.api-content .sig-return-icon, .api-content .sig-return-typehint,
+.api-content .sig-return-typehint .p { color: var(--syn-punct); }
+.api-content .sig-return-typehint .n,
+.api-content .sig-return-typehint .pre { color: var(--syn-constant); }
+.api-content .default_value, .api-content .default_value .pre { color: var(--syn-constant); }
+.api-content dl.py > dt.sig .k, .api-content dl.py > dt.sig .o { color: var(--syn-keyword); }
+
+/* "class" / "property" / "exception" role labels */
+.api-content .property {
+  display: inline-block; color: var(--accent); font-weight: 700;
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
+  font-family: var(--font); margin-right: 6px;
+}
+
+/* nested members (methods on a class) — lighter, inset */
+.api-content dl.py dl.py { margin: 14px 0 0; background: var(--bg); }
+.api-content dl.py dl.py > dt.sig { background: var(--code-bg); font-size: 0.82rem; }
+
+/* parameter / returns field lists */
+.api-content dl.field-list { margin: 14px 0 0; padding: 0; }
+.api-content dl.field-list > dt {
+  font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--faint); margin: 12px 0 4px;
+}
+.api-content dl.field-list > dd { margin: 0; padding: 0; }
+.api-content dl.field-list ul { margin: 0; padding-left: 18px; }
+.api-content dl.field-list p { margin: 2px 0; }
+
+/* inline code + cross-references inside docstrings */
+.api-content dd code.literal, .api-content dd .xref { font-size: 0.85em; }
+
+/* source links + permalinks: keep them out of the way */
+.api-content .viewcode-link {
+  float: right; font-family: var(--font); font-size: 0.72rem;
+  color: var(--faint); font-weight: 500;
+}
+.api-content .viewcode-link:hover { color: var(--accent); }
+.api-content .headerlink { display: none; }
+
+/* constants table */
+.api-content table.docutils {
+  border-collapse: collapse; margin: 14px 0; font-size: 0.9rem; width: auto;
+}
+.api-content table.docutils th, .api-content table.docutils td {
+  border: 1px solid var(--border); padding: 7px 14px; text-align: left;
+}
+.api-content table.docutils thead th { background: var(--surface-2); font-weight: 700; }
+
+@media (max-width: 860px) {
+  .api-layout { grid-template-columns: 1fr; gap: 20px; }
+  .api-nav { position: static; max-height: none; border-bottom: 1px solid var(--border);
+    padding-bottom: 12px; }
+}

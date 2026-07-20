@@ -148,14 +148,13 @@ A hex color is a ``#`` followed by exactly six hex digits:
    hex_color.to_regex_string()   # '^\\#[0-9a-fA-F]{6}$'
 
 .. edify-playground::
+   :tests: #a3c113|#FF0000|#fff|red
 
-   (
-       RegexBuilder()
-       .start_of_input()
-       .char("#")
-       .exactly(6).any_of().range("0", "9").range("a", "f").range("A", "F").end()
+   RegexBuilder() \
+       .start_of_input() \
+       .char("#") \
+       .exactly(6).any_of().range("0", "9").range("a", "f").range("A", "F").end() \
        .end_of_input()
-   )
 
 Next up: :doc:`quantifiers`, which control *how many* of any of these tokens to
 match.

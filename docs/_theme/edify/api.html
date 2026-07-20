@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block extrahead %}<link rel="stylesheet" href="{{ pathto('_static/css/api.css', 1) }}">{% endblock %}
+{% block content %}
+<div class="wrap api-layout">
+  <aside class="api-nav" aria-label="API navigation">
+    <div class="api-nav-title">API reference</div>
+    {{ toc }}
+  </aside>
+  <main id="main" class="content api-content" role="main">
+    {{ body }}
+  </main>
+</div>
+{% endblock %}

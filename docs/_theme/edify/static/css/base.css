@@ -14,8 +14,16 @@
   --accent: #2563eb;
   --accent-strong: #1d4ed8;
   --accent-weak: rgba(37, 99, 235, 0.10);
-  --select: rgba(37, 99, 235, 0.22);
+  --select: rgba(84, 174, 255, 0.35);
   --accent-fg: #ffffff;
+  /* GitHub light syntax palette */
+  --syn-keyword: #cf222e;
+  --syn-string: #0a3069;
+  --syn-comment: #6e7781;
+  --syn-function: #8250df;
+  --syn-constant: #0550ae;
+  --syn-variable: #953800;
+  --syn-punct: #24292f;
   --nav-bg: rgba(255, 255, 255, 0.82);
   --code-bg: #f4f4f5;
   --ok: #16a34a;
@@ -41,8 +49,16 @@
   --accent: #60a5fa;
   --accent-strong: #93c5fd;
   --accent-weak: rgba(96, 165, 250, 0.13);
-  --select: rgba(96, 165, 250, 0.30);
+  --select: rgba(56, 139, 253, 0.40);
   --accent-fg: #0b0b0c;
+  /* GitHub dark syntax palette */
+  --syn-keyword: #ff7b72;
+  --syn-string: #a5d6ff;
+  --syn-comment: #8b949e;
+  --syn-function: #d2a8ff;
+  --syn-constant: #79c0ff;
+  --syn-variable: #ffa657;
+  --syn-punct: #c9d1d9;
   --nav-bg: rgba(11, 11, 12, 0.82);
   --code-bg: #16161b;
   --ok: #22c55e;
@@ -121,6 +137,11 @@ img { max-width: 100%; }
   color: var(--faint); font-weight: 700; margin: 18px 0 6px; padding-left: 12px; }
 .sidenav ul ul { padding-left: 12px; }
 .content { min-width: 0; max-width: var(--content-maxw); }
+
+/* ---- standalone (no-sidebar) pages: playground, library, meta ---- */
+.doc-wide { padding-top: 34px; padding-bottom: 88px; }
+.content-wide { max-width: 940px; margin: 0 auto; min-width: 0; }
+.content-wide .edify-playground { margin-left: auto; margin-right: auto; }
 
 /* ---- footer ---- */
 .site-footer { border-top: 1px solid var(--border); background: var(--surface); }

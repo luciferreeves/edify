@@ -123,13 +123,12 @@ Try it
 ------
 
 .. edify-playground::
+   :tests: the cat sat|concatenate|a cat|scatter
 
-   (
-       RegexBuilder()
+   RegexBuilder() \
+       .word_boundary() \
+       .string("cat") \
        .word_boundary()
-       .string("cat")
-       .word_boundary()
-   )
 
 Next
 ----

@@ -101,10 +101,9 @@ Try it
 ------
 
 .. edify-playground::
+   :tests: cat|dog|fish|bird
 
-   (
-       RegexBuilder()
+   RegexBuilder() \
        .any_of("cat", "dog", "fish")
-   )
 
 Next: :doc:`captures`, for pulling matched text back out.

@@ -85,12 +85,11 @@ The emitted regex below is just ``cat``, but the ``ignore_case`` flag rides on
 the compiled pattern — so ``CAT`` and ``Cat`` match too:
 
 .. edify-playground::
+   :tests: cat|CAT|Cat|dog
 
-   (
-       RegexBuilder()
-       .ignore_case()
+   RegexBuilder() \
+       .ignore_case() \
        .string("cat")
-   )
 
 That completes the builder. Next, :doc:`composing` shows how to combine and
 reuse the patterns you now know how to write.

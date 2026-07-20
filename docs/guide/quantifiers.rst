@@ -108,12 +108,11 @@ Try it
 ------
 
 .. edify-playground::
+   :tests: <a><b>|<hello>|<>|plain text
 
-   (
-       RegexBuilder()
-       .char("<")
-       .one_or_more_lazy().any_char()
+   RegexBuilder() \
+       .char("<") \
+       .one_or_more_lazy().any_char() \
        .char(">")
-   )
 
 Next: :doc:`groups`, for grouping and alternation.

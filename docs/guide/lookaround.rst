@@ -105,14 +105,13 @@ Try it
 ------
 
 .. edify-playground::
+   :tests: Abcdef12|alllower1|NoDigitsHere|Ab1
 
-   (
-       RegexBuilder()
-       .start_of_input()
-       .assert_ahead().zero_or_more().any_char().digit().end()
-       .assert_ahead().zero_or_more().any_char().uppercase().end()
-       .at_least(8).any_char()
+   RegexBuilder() \
+       .start_of_input() \
+       .assert_ahead().zero_or_more().any_char().digit().end() \
+       .assert_ahead().zero_or_more().any_char().uppercase().end() \
+       .at_least(8).any_char() \
        .end_of_input()
-   )
 
 Next: :doc:`flags`, for case-insensitivity, multiline, and the other global switches.

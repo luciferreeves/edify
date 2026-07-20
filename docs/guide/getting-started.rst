@@ -53,13 +53,12 @@ same thing.
 Edit that chain and watch the regex — and the test results — update live:
 
 .. edify-playground::
+   :tests: 2024|1999|90210|abcd
 
-   (
-       RegexBuilder()
-       .start_of_input()
-       .exactly(4).digit()
+   RegexBuilder() \
+       .start_of_input() \
+       .exactly(4).digit() \
        .end_of_input()
-   )
 
 To actually match something, compile it once and reuse the result. A compiled
 :class:`~edify.Regex` carries the full ``re`` surface:

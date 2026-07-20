@@ -11,6 +11,7 @@ import { runEdify, testLine } from "./pyodide-runtime.js";
 
 const API = window.EDIFY_API || [];
 const KIND = { method: "method", constant: "constant", function: "function" };
+const DEFAULT_TESTS = "2024\n90210\nabcd\n12";
 
 // Structural colors reference the theme's CSS custom properties, so the editor
 // follows the site's light/dark toggle without a second theme definition.
@@ -25,20 +26,21 @@ const editorTheme = EditorView.theme({
   "&.cm-focused .cm-selectionBackground, .cm-selectionBackground": {
     backgroundColor: "var(--select)",
   },
-  ".cm-content ::selection": { backgroundColor: "var(--select)" },
+  ".cm-selectionMatch": { backgroundColor: "var(--select)" },
   ".cm-matchingBracket, .cm-nonmatchingBracket": {
     backgroundColor: "var(--accent-weak)", outline: "none",
   },
 });
 
+// GitHub-style token colors, wired to theme-switching CSS custom properties.
 const editorHighlight = HighlightStyle.define([
-  { tag: t.keyword, color: "var(--accent-strong)" },
-  { tag: [t.function(t.variableName), t.function(t.propertyName), t.propertyName], color: "var(--accent)" },
-  { tag: [t.string, t.special(t.string)], color: "#7c93e8" },
-  { tag: [t.number, t.bool, t.null], color: "#d98a3d" },
-  { tag: t.comment, color: "var(--faint)", fontStyle: "italic" },
-  { tag: [t.operator, t.punctuation, t.separator, t.bracket], color: "var(--muted)" },
-  { tag: t.variableName, color: "var(--fg)" },
+  { tag: t.keyword, color: "var(--syn-keyword)" },
+  { tag: [t.function(t.variableName), t.function(t.propertyName), t.propertyName], color: "var(--syn-function)" },
+  { tag: [t.string, t.special(t.string)], color: "var(--syn-string)" },
+  { tag: [t.number, t.bool, t.null], color: "var(--syn-constant)" },
+  { tag: t.comment, color: "var(--syn-comment)", fontStyle: "italic" },
+  { tag: [t.operator, t.punctuation, t.separator, t.bracket], color: "var(--syn-punct)" },
+  { tag: [t.variableName, t.className], color: "var(--fg)" },
 ]);
 
 function edifyCompletions(context) {
@@ -78,26 +80,28 @@ function debounce(fn, ms) {
   };
 }
 
-function decodeSource(root) {
-  const raw = root.getAttribute("data-source") || "";
+function decodeAttr(root, name, fallback) {
+  const raw = root.getAttribute(name);
+  if (raw == null) return fallback;
   try {
     const decoded = atob(raw);
     if (btoa(decoded) === raw) return decoded;
   } catch (e) {
-    // Not base64 — the attribute is a plain-text chain.
+    // Not base64 — the attribute is plain text.
   }
   return raw;
 }
 
 function mount(root) {
-  const source = decodeSource(root);
+  const source = decodeAttr(root, "data-source", "");
+  const tests = decodeAttr(root, "data-tests", DEFAULT_TESTS);
   root.replaceChildren();
   root.classList.add("pg-live");
 
   const grid = el("div", "pg-grid");
   const left = el("div", "pg-left");
   const builderPane = el("div", "pg-pane pg-builder");
-  builderPane.appendChild(head("Builder", "pg-status", "click to run ▸"));
+  builderPane.appendChild(head("Builder", "pg-status", ""));
   const editorHost = el("div", "pg-editor");
   builderPane.appendChild(editorHost);
 
@@ -112,7 +116,7 @@ function mount(root) {
   testPane.appendChild(head("Test strings", "pg-count"));
   const testArea = el("textarea", "pg-test-input");
   testArea.spellcheck = false;
-  testArea.value = "2024\n90210\nabcd\n12";
+  testArea.value = tests;
   const testResults = el("div", "pg-test-results");
   testPane.appendChild(testArea);
   testPane.appendChild(testResults);
@@ -163,18 +167,18 @@ function mount(root) {
   }
 
   async function run() {
-    status.textContent = "loading Python…";
+    status.textContent = "loading…";
     let result;
     try {
       result = await runEdify(view.state.doc.toString(), (s) => {
-        status.textContent = s === "ready" ? "running ●" : "installing edify…";
+        status.textContent = s === "ready" ? "" : "installing edify…";
       });
     } catch (e) {
       status.textContent = "error";
       regexOut.textContent = String(e);
       return;
     }
-    status.textContent = "running ●";
+    status.textContent = "";
     if (result.error) {
       regexPane.classList.add("has-error");
       regexOut.textContent = result.error;
@@ -202,15 +206,26 @@ function mount(root) {
   const scheduleRun = debounce(run, 400);
   testArea.addEventListener("input", debounce(refreshTests, 300));
 
-  // Lazy: only boot Pyodide when the visitor first interacts with this widget.
+  // Boot the shared runtime as soon as the widget scrolls into view, so every
+  // playground runs on its own without a click. The runtime is memoised, so
+  // multiple widgets on a page share a single Pyodide load.
   let booted = false;
   function boot() {
     if (booted) return;
     booted = true;
     run();
   }
-  editorHost.addEventListener("focusin", boot, { once: true });
-  builderPane.querySelector(".pg-pane-head").addEventListener("click", boot);
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        observer.disconnect();
+        boot();
+      }
+    }, { rootMargin: "200px" });
+    observer.observe(root);
+  } else {
+    boot();
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {

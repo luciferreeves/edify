@@ -126,13 +126,12 @@ Compose a small pattern from named parts and reuse them:
    dotted.to_regex_string()   # '[a-z0-9]+(?:\\.[a-z0-9]+)+'
 
 .. edify-playground::
+   :tests: 192.168.0.1|10.0.0.255|1.2.3|host
 
-   (
-       RegexBuilder()
-       .use(RegexBuilder().one_or_more().any_of().range("a", "z").range("0", "9").end())
-       .one_or_more()
-       .group().char(".").use(RegexBuilder().one_or_more().any_of().range("a", "z").range("0", "9").end()).end()
-   )
+   octet = RegexBuilder().between(1, 3).digit()
+   RegexBuilder() \
+       .use(octet).char(".").use(octet) \
+       .char(".").use(octet).char(".").use(octet)
 
 Next: :doc:`from-regex`, going the other direction — turning an existing regex
 string back into a chain.

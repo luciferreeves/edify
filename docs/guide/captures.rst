@@ -103,12 +103,11 @@ Try it
 ------
 
 .. edify-playground::
+   :tests: 2024-07|1999-12|2024|July
 
-   (
-       RegexBuilder()
-       .named_capture("year").exactly(4).digit().end()
-       .char("-")
+   RegexBuilder() \
+       .named_capture("year").exactly(4).digit().end() \
+       .char("-") \
        .named_capture("month").exactly(2).digit().end()
-   )
 
 Next: :doc:`lookaround`, for asserting what surrounds a match without consuming it.

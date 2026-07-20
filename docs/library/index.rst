@@ -16,12 +16,14 @@ a ``bool``.
 Every validator is also composable — drop it into a chain with
 :meth:`~edify.RegexBuilder.use`, or emit its regex with ``to_regex_string()``.
 
-Try any of them right here — change the import to any name below:
+Try any of them right here — change the import to any name below, and the emitted
+regex plus your test strings update live:
 
 .. edify-playground::
+   :tests: user@example.com|a.b@test.co|not-an-email|@no.com
 
    from edify.library import email
-   email("test@example.com")
+   email
 
 Address
 -------
