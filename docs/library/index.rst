@@ -1,9 +1,8 @@
 Library
 =======
 
-Edify ships **228 ready-made validators** across 22 topical categories, plus 83
-lower-level **atoms**. Each is a callable :class:`~edify.Pattern`: import it, call
-it, get a ``bool``.
+Edify ships **228 ready-made validators** across 22 topical categories. Each is a
+callable :class:`~edify.Pattern`: import it, call it, get a ``bool``.
 
 .. code-block:: python
 
@@ -29,4 +28,3 @@ Categories
 - **API, Auth, Color, Contact, Data, Documents, Finance, Geo, Grammar,
   Identifiers, Media, Medical, Numeric, Product, Publishing, Security, Software,
   Temporal, Text, Transport, Web** — being handcrafted, one validator at a time.
-- **Atoms** — the 83 foundational single-purpose patterns the categories build on.

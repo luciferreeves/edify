@@ -12,6 +12,7 @@ RegexBuilder
 .. autoclass:: edify.RegexBuilder
    :members:
    :undoc-members:
+   :inherited-members:
 
 Pattern
 -------
@@ -19,3 +20,4 @@ Pattern
 .. autoclass:: edify.Pattern
    :members:
    :undoc-members:
+   :inherited-members:

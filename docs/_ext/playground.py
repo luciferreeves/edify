@@ -34,7 +34,7 @@ _CATEGORY_TITLES = {
     "identifier": "Identifiers", "media": "Media", "medical": "Medical",
     "numeric": "Numeric", "product": "Product", "publishing": "Publishing",
     "security": "Security", "software": "Software", "temporal": "Temporal",
-    "text": "Text", "transport": "Transport", "web": "Web", "atoms": "Atoms",
+    "text": "Text", "transport": "Transport", "web": "Web",
 }
 _CATEGORY_ORDER = list(_CATEGORY_TITLES)
 
@@ -62,11 +62,6 @@ def _library_sections() -> list[tuple[str, str, list[str]]]:
         )
         if names:
             by_dir[module.name] = names
-    atoms = importlib.import_module("edify.atoms")
-    by_dir["atoms"] = sorted(
-        name for name in dir(atoms)
-        if not name.startswith("_") and hasattr(getattr(atoms, name), "to_regex_string")
-    )
     _sections_cache = [
         (_CATEGORY_TITLES[key], key, by_dir[key]) for key in _CATEGORY_ORDER if key in by_dir
     ]

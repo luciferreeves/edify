@@ -26,6 +26,12 @@ Exactly four dot-separated octets, no more and no fewer:
    ipv4("1.2.3.4.5")     # False — five octets
    ipv4("1.2.3.4.")      # False — a trailing dot leaves an empty fifth octet
 
+.. edify-playground::
+   :tests: 192.168.0.1|8.8.8.8|1.2.3|1.2.3.4.5
+
+   from edify.library import ipv4
+   ipv4
+
 The boundaries
 --------------
 
@@ -39,6 +45,12 @@ all-zero network and the all-ones broadcast — both match:
    ipv4("255.0.0.255")         # True — mixing the extremes is fine
    ipv4("256.0.0.1")           # False — 256 is one past the top of the range
 
+.. edify-playground::
+   :tests: 0.0.0.0|255.255.255.255|255.0.0.255|256.0.0.1
+
+   from edify.library import ipv4
+   ipv4
+
 No leading zeros
 ----------------
 
@@ -50,6 +62,12 @@ An octet is a bare number: a lone ``0`` is fine, but zero-padded octets like
    ipv4("192.168.0.1")    # True
    ipv4("192.168.01.1")   # False — 01 has a leading zero
 
+.. edify-playground::
+   :tests: 10.0.0.1|192.168.0.1|010.0.0.1|192.168.01.1
+
+   from edify.library import ipv4
+   ipv4
+
 What it rejects
 ---------------
 
@@ -60,10 +78,46 @@ What it rejects
    ipv4("999.1.1.1")     # False — octet out of range
    ipv4("abc")           # False — not numeric
 
+.. edify-playground::
+   :tests: 192.168.0.1|2001:db8::1|999.1.1.1|abc
+
+   from edify.library import ipv4
+   ipv4
+
 ``ipv4`` checks the textual form only — it does not care whether an address is
 routable, private, or reserved (``127.0.0.1`` and ``0.0.0.0`` both match). Use
 :doc:`ipv6` for IPv6, :doc:`ip` for "either family", or :doc:`cidr` for a network
 block.
+
+How it's created
+----------------
+
+The heart of ``ipv4`` is a single **octet** — an :func:`~edify.any_of` over five
+range branches that together cover 0–255 exactly, which is why ``256`` fails
+where ``255`` passes. ``ipv4`` anchors that octet with
+:meth:`~edify.RegexBuilder.start_of_input` / :meth:`~edify.RegexBuilder.end_of_input`
+and repeats it four times, joined by dots via :meth:`~edify.RegexBuilder.exactly`
+and :meth:`~edify.RegexBuilder.group`:
+
+.. code-block:: python
+
+   from edify import Pattern, any_of
+
+   octet = any_of(
+       Pattern().string("25").any_of().range("0", "5").end(),   # 250–255
+       Pattern().char("2").any_of().range("0", "4").end().digit(),  # 200–249
+       Pattern().char("1").digit().digit(),                     # 100–199
+       Pattern().any_of().range("1", "9").end().digit(),        # 10–99
+       Pattern().digit(),                                       # 0–9
+   )
+   ipv4 = (
+       Pattern().start_of_input()
+       .use(octet).exactly(3).group().char(".").use(octet).end()
+       .end_of_input()
+   )
+
+That same octet construction is reused by :doc:`ip`, :doc:`cidr`, and the IPv4
+host of :doc:`socket`.
 
 Pattern
 -------
