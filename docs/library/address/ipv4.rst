@@ -14,7 +14,26 @@ branches — ``25`` + ``0``–``5`` for 250–255, ``2`` + ``0``–``4`` + a
 :meth:`~edify.RegexBuilder.exactly`\ ``(3)`` of a
 :meth:`~edify.RegexBuilder.group`) between
 :meth:`~edify.RegexBuilder.start_of_input` and
-:meth:`~edify.RegexBuilder.end_of_input`. The regex that falls out:
+:meth:`~edify.RegexBuilder.end_of_input`. Written out, that construction is:
+
+.. code-block:: python
+
+   from edify import Pattern, any_of
+
+   octet = any_of(
+       Pattern().string("25").any_of().range("0", "5").end(),       # 250–255
+       Pattern().char("2").any_of().range("0", "4").end().digit(),  # 200–249
+       Pattern().char("1").digit().digit(),                         # 100–199
+       Pattern().any_of().range("1", "9").end().digit(),            # 10–99
+       Pattern().digit(),                                           # 0–9
+   )
+   ipv4 = (
+       Pattern().start_of_input()
+       .use(octet).exactly(3).group().char(".").use(octet).end()
+       .end_of_input()
+   )
+
+and the regex it emits:
 
 .. code-block:: text
 

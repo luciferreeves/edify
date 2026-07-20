@@ -15,7 +15,26 @@ branch for the full eight-group form, one for **each placement of** ``::`` (the
 start, the end, and every interior split), one for the ``fe80::…%zone`` link-local
 form, and one for the embedded-IPv4 tail — the whole alternation anchored between
 :meth:`~edify.RegexBuilder.start_of_input` and
-:meth:`~edify.RegexBuilder.end_of_input`. The regex that falls out:
+:meth:`~edify.RegexBuilder.end_of_input`. Written out, that construction is:
+
+.. code-block:: python
+
+   from edify import Pattern, any_of
+
+   # the base unit: one to four hex digits
+   hex_group = (
+       Pattern().between(1, 4)
+       .any_of().range("0", "9").range("a", "f").range("A", "F").end()
+   )
+
+   # one branch for the full form, one per :: placement, plus link-local and IPv4 tail
+   ipv6 = (
+       Pattern().start_of_input()
+       .subexpression(any_of(full_form, *compressed_forms, link_local, ipv4_mapped))
+       .end_of_input()
+   )
+
+and the regex it emits:
 
 .. code-block:: text
 
