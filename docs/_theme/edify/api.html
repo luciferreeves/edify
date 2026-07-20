@@ -1,10 +1,28 @@
 {% extends "layout.html" %}
 {% block extrahead %}<link rel="stylesheet" href="{{ pathto('_static/css/api.css', 1) }}">{% endblock %}
+{% set api_pages = [
+  ('api/index', 'Overview'),
+  ('api/builder', 'Builder'),
+  ('api/factories', 'Factory functions'),
+  ('api/constants', 'Constants'),
+  ('api/results', 'Results'),
+  ('api/introspection', 'Introspection'),
+  ('api/serialization', 'Serialization'),
+  ('api/testing', 'Testing & errors'),
+] %}
 {% block content %}
 <div class="wrap api-layout">
   <aside class="api-nav" aria-label="API navigation">
     <div class="api-nav-title">API reference</div>
-    {{ toc }}
+    <ul class="api-nav-list">
+      {% for name, label in api_pages %}
+      <li><a href="{{ pathto(name) }}"{% if pagename == name %} class="current"{% endif %}>{{ label }}</a></li>
+      {% endfor %}
+    </ul>
+    {% if toc and pagename != 'api/index' %}
+    <div class="api-nav-title api-nav-onpage">On this page</div>
+    <div class="api-nav-toc">{{ toc }}</div>
+    {% endif %}
   </aside>
   <main id="main" class="content api-content" role="main">
     {{ body }}

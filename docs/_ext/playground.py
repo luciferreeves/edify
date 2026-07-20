@@ -18,8 +18,6 @@ from sphinx.application import Sphinx
 
 _STANDALONE = {
     "playground": "wide.html",
-    "api/index": "api.html",
-    "library/index": "wide.html",
     "upgrading/index": "wide.html",
     "upgrading/0.3-to-1.0": "wide.html",
     "deprecation-policy": "wide.html",
@@ -70,6 +68,8 @@ def _select_template(
         return "home.html"
     if pagename.startswith("library/"):
         return "wide.html"
+    if pagename.startswith("api/"):
+        return "api.html"
     return _STANDALONE.get(pagename)
 
 

@@ -13,6 +13,7 @@
   max-height: calc(100vh - 96px); overflow-y: auto; font-size: 14px; }
 .api-nav-title { text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px;
   color: var(--faint); font-weight: 700; margin-bottom: 12px; }
+.api-nav-onpage { margin-top: 22px; }
 .api-nav ul { list-style: none; margin: 0; padding: 0; }
 .api-nav ul ul { padding-left: 12px; }
 .api-nav li { margin: 1px 0; }
@@ -21,6 +22,11 @@
 .api-nav a:hover { color: var(--fg); text-decoration: none; }
 .api-nav a.current, .api-nav li.current > a {
   color: var(--fg); font-weight: 600; border-left-color: var(--accent); }
+/* fixed page list (primary API nav) */
+.api-nav-list a { font-weight: 500; }
+.api-nav-list a.current { color: var(--accent); border-left-color: var(--accent); }
+/* on-this-page symbol list */
+.api-nav-toc a { font-family: var(--mono); font-size: 0.78rem; }
 
 .api-content { max-width: none; min-width: 0; }
 .api-content > h1 { font-size: 2rem; letter-spacing: -0.02em; margin: 0 0 10px; }
