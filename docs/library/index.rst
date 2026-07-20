@@ -1,9 +1,10 @@
 Library
 =======
 
-Edify ships **228 ready-made validators** — email, URL, semver, IBAN, phone, and
-hundreds more. Each is a callable :class:`~edify.Pattern`: import it, call it, get
-a ``bool``.
+Edify ships **228 ready-made validators** — email, URL, semver, IBAN,
+phone, and hundreds more. Each is a callable :class:`~edify.Pattern`:
+import it, call it, get a ``bool``. Every one has its own page below with a
+live playground, its emitted regex, and a plain-English reading.
 
 .. code-block:: python
 
@@ -13,216 +14,431 @@ a ``bool``.
    semver("1.2.3")                   # True
    iban("GB82WEST12345698765432")    # True
 
-Every validator is also composable — drop it into a chain with
-:meth:`~edify.RegexBuilder.use`, emit its regex with ``to_regex_string()``, or
-explain it with :meth:`~edify.Regex.explain` (see :doc:`../guide/seeing`). They're
-grouped into topical modules, so ``from edify.library.temporal import date`` and
-``from edify.library import date`` reach the same validator.
-
-Try any of them right here — change the import to any name below, and the emitted
-regex plus your test strings update live:
-
-.. edify-playground::
-   :tests: user@example.com|a.b@test.co|not-an-email|@no.com
-
-   from edify.library import email
-   email
+Validators are also composable — drop one into a chain with
+:meth:`~edify.RegexBuilder.use`, or emit its regex with ``to_regex_string()``.
 
 Address
 -------
 
-Network and location addressing — IP addresses, hostnames, URLs, ports, subnets,
-and postal codes.
+Network and location addressing.
 
-16 validators:
+.. toctree::
+   :maxdepth: 1
 
-``cidr`` ``domain`` ``hostname`` ``ip`` ``ipv4`` ``ipv6`` ``path`` ``port`` ``ptr`` ``socket`` ``subdomain`` ``subnet`` ``tld`` ``uri`` ``url`` ``zip_code``
+   cidr
+   domain
+   hostname
+   ip
+   ipv4
+   ipv6
+   path
+   port
+   ptr
+   socket
+   subdomain
+   subnet
+   tld
+   uri
+   url
+   zip_code
 
 API
 ---
 
-API-surface and protocol formats — OAuth, OpenAPI, GraphQL, webhooks, and syndication feeds.
+API-surface and protocol formats.
 
-12 validators:
+.. toctree::
+   :maxdepth: 1
 
-``atom`` ``graphql`` ``hal`` ``jsonapi`` ``oauth`` ``openapi`` ``openid`` ``rss`` ``saml`` ``soap`` ``swagger`` ``webhook``
+   atom
+   graphql
+   hal
+   jsonapi
+   oauth
+   openapi
+   openid
+   rss
+   saml
+   soap
+   swagger
+   webhook
 
 Auth
 ----
 
-Credentials and secrets — tokens, API keys, one-time passwords, and configurable password policies.
+Credentials and secrets.
 
-19 validators:
+.. toctree::
+   :maxdepth: 1
 
-``apikey`` ``bearer`` ``challenge`` ``csrf`` ``hmac`` ``jwt`` ``mfa`` ``mnemonic`` ``otp`` ``passkey`` ``password`` ``pin`` ``refresh`` ``secret`` ``session`` ``signing`` ``sso`` ``token`` ``webauthn``
+   apikey
+   bearer
+   challenge
+   csrf
+   hmac
+   jwt
+   mfa
+   mnemonic
+   otp
+   passkey
+   password
+   pin
+   refresh
+   secret
+   session
+   signing
+   sso
+   token
+   webauthn
 
 Color
 -----
 
-Color values and palettes — hex and RGB colors, gradients, filters, and swatches.
+Color values and palettes.
 
-5 validators:
+.. toctree::
+   :maxdepth: 1
 
-``color`` ``filter`` ``gradient`` ``palette`` ``swatch``
+   color
+   filter
+   gradient
+   palette
+   swatch
 
 Contact
 -------
 
-Ways to reach a person — email addresses, phone and fax numbers, handles, and usernames.
+Ways to reach a person.
 
-8 validators:
+.. toctree::
+   :maxdepth: 1
 
-``address`` ``email`` ``email_rfc_5322`` ``fax`` ``handle`` ``pager`` ``phone`` ``username``
+   address
+   email
+   email_rfc_5322
+   fax
+   handle
+   pager
+   phone
+   username
 
 Data
 ----
 
-Serialization and data-file formats — JSON, YAML, TOML, CSV, XML, and columnar/binary formats.
+Serialization and data-file formats.
 
-14 validators:
+.. toctree::
+   :maxdepth: 1
 
-``avro`` ``csv`` ``hdf5`` ``html`` ``ini`` ``json`` ``msgpack`` ``orc`` ``parquet`` ``protobuf`` ``toml`` ``tsv`` ``xml`` ``yaml``
+   avro
+   csv
+   hdf5
+   html
+   ini
+   json
+   msgpack
+   orc
+   parquet
+   protobuf
+   toml
+   tsv
+   xml
+   yaml
 
 Documents
 ---------
 
-Document and office-file types — PDF, DOCX, EPUB, SVG, and their relatives.
+Document and office-file types.
 
-11 validators:
+.. toctree::
+   :maxdepth: 1
 
-``docx`` ``epub`` ``mobi`` ``odt`` ``pdf`` ``pptx`` ``readme`` ``rtf`` ``svg`` ``tex`` ``xlsx``
+   docx
+   epub
+   mobi
+   odt
+   pdf
+   pptx
+   readme
+   rtf
+   svg
+   tex
+   xlsx
 
 Finance
 -------
 
-Money and banking — card numbers, routing and sort codes, VAT numbers, and crypto wallets.
+Money and banking.
 
-7 validators:
+.. toctree::
+   :maxdepth: 1
 
-``card`` ``crypto`` ``currency`` ``routing`` ``sortcode`` ``vat`` ``wallet``
+   card
+   crypto
+   currency
+   routing
+   sortcode
+   vat
+   wallet
 
 Geo
 ---
 
-Geographic coordinates and grids — latitude/longitude, geohash, MGRS, and plus codes.
+Geographic coordinates and grids.
 
-8 validators:
+.. toctree::
+   :maxdepth: 1
 
-``altitude`` ``bearing`` ``coordinate`` ``geohash`` ``mgrs`` ``place`` ``plus`` ``postal``
+   altitude
+   bearing
+   coordinate
+   geohash
+   mgrs
+   place
+   plus
+   postal
 
 Grammar
 -------
 
-Grammar-notation formats — BNF, EBNF, ABNF, PEG, ANTLR, and pest.
+Grammar-notation formats.
 
-6 validators:
+.. toctree::
+   :maxdepth: 1
 
-``abnf`` ``antlr`` ``bnf`` ``ebnf`` ``peg`` ``pest``
+   abnf
+   antlr
+   bnf
+   ebnf
+   peg
+   pest
 
 Identifiers
 -----------
 
-Standardized identifiers — UUID, IBAN, ISIN, VIN, MAC, SSN, and two dozen more.
+Standardized identifiers.
 
-26 validators:
+.. toctree::
+   :maxdepth: 1
 
-``arn`` ``asin`` ``bic`` ``cusip`` ``did`` ``ein`` ``guid`` ``iata`` ``iban`` ``icao`` ``iccid`` ``imei`` ``imo`` ``isin`` ``itin`` ``lei`` ``mac`` ``meid`` ``mmsi`` ``orcid`` ``sedol`` ``sku`` ``ssn`` ``tin`` ``uuid`` ``vin``
+   arn
+   asin
+   bic
+   cusip
+   did
+   ein
+   guid
+   iata
+   iban
+   icao
+   iccid
+   imei
+   imo
+   isin
+   itin
+   lei
+   mac
+   meid
+   mmsi
+   orcid
+   sedol
+   sku
+   ssn
+   tin
+   uuid
+   vin
 
 Media
 -----
 
-Media and file metadata — MIME types, encodings, extensions, locales, and globs.
+Media and file metadata.
 
-11 validators:
+.. toctree::
+   :maxdepth: 1
 
-``charset`` ``codec`` ``encoding`` ``extension`` ``favicon`` ``filename`` ``glob`` ``locale`` ``mimetype`` ``regex`` ``shebang``
+   charset
+   codec
+   encoding
+   extension
+   favicon
+   filename
+   glob
+   locale
+   mimetype
+   regex
+   shebang
 
 Medical
 -------
 
-Medical data — blood types, DICOM identifiers, and dosages.
+Medical data.
 
-4 validators:
+.. toctree::
+   :maxdepth: 1
 
-``blood`` ``dicom`` ``dosage`` ``medical``
+   blood
+   dicom
+   dosage
+   medical
 
 Numeric
 -------
 
-Numbers in every shape — integers, decimals, fractions, ratios, percentages, and Roman numerals.
+Numbers in every shape.
 
-10 validators:
+.. toctree::
+   :maxdepth: 1
 
-``fraction`` ``hash`` ``integer`` ``natural`` ``number`` ``ordinal`` ``percentage`` ``ratio`` ``roman`` ``scientific``
+   fraction
+   hash
+   integer
+   natural
+   number
+   ordinal
+   percentage
+   ratio
+   roman
+   scientific
 
 Product
 -------
 
-Product and retail codes — barcodes, GTINs, and manufacturer part numbers.
+Product and retail codes.
 
-3 validators:
+.. toctree::
+   :maxdepth: 1
 
-``barcode`` ``gtin`` ``mpn``
+   barcode
+   gtin
+   mpn
 
 Publishing
 ----------
 
-Publication identifiers — ISBN, ISSN, DOI, arXiv, and PubMed IDs.
+Publication identifiers.
 
-6 validators:
+.. toctree::
+   :maxdepth: 1
 
-``arxiv`` ``doi`` ``isbn`` ``issn`` ``pmc`` ``pmid``
+   arxiv
+   doi
+   isbn
+   issn
+   pmc
+   pmid
 
 Security
 --------
 
-Cryptographic material — certificates, signing requests, keys, and PEM/PGP/SSH blocks.
+Cryptographic material.
 
-11 validators:
+.. toctree::
+   :maxdepth: 1
 
-``age`` ``certificate`` ``csr`` ``der`` ``keyring`` ``nonce`` ``pem`` ``pgp`` ``signature`` ``ssh`` ``x509``
+   age
+   certificate
+   csr
+   der
+   keyring
+   nonce
+   pem
+   pgp
+   signature
+   ssh
+   x509
 
 Software
 --------
 
-Software and versioning — semver, Git refs, Docker images, package names, and checksums.
+Software and versioning.
 
-13 validators:
+.. toctree::
+   :maxdepth: 1
 
-``bump`` ``cargo`` ``checksum`` ``component`` ``digest`` ``docker`` ``git`` ``image`` ``makefile`` ``package`` ``ref`` ``semver`` ``version``
+   bump
+   cargo
+   checksum
+   component
+   digest
+   docker
+   git
+   image
+   makefile
+   package
+   ref
+   semver
+   version
 
 Temporal
 --------
 
-Dates, times, and durations — ISO dates, timestamps, cron expressions, and timezones.
+Dates, times, and durations.
 
-12 validators:
+.. toctree::
+   :maxdepth: 1
 
-``cron`` ``date`` ``datetime`` ``duration`` ``epoch`` ``interval`` ``iso_date`` ``offset`` ``time`` ``timestamp`` ``timezone`` ``year``
+   cron
+   date
+   datetime
+   duration
+   epoch
+   interval
+   iso_date
+   offset
+   time
+   timestamp
+   timezone
+   year
 
 Text
 ----
 
-Text shapes and scripts — alphanumeric, slugs, ASCII, Unicode, emoji, and words.
+Text shapes and scripts.
 
-11 validators:
+.. toctree::
+   :maxdepth: 1
 
-``alpha`` ``alphanumeric`` ``ascii`` ``base`` ``emoji`` ``numeric`` ``printable`` ``script`` ``slug`` ``unicode`` ``word``
+   alpha
+   alphanumeric
+   ascii
+   base
+   emoji
+   numeric
+   printable
+   script
+   slug
+   unicode
+   word
 
 Transport
 ---------
 
-Transport identifiers — vehicle plates, flight numbers, and aircraft registrations.
+Transport identifiers.
 
-4 validators:
+.. toctree::
+   :maxdepth: 1
 
-``aircraft`` ``flight`` ``plate`` ``vehicle``
+   aircraft
+   flight
+   plate
+   vehicle
 
 Web
 ---
 
-Web-server and site files — robots.txt, nginx and Apache configs, cookies, and user agents.
+Web-server and site files.
 
-11 validators:
+.. toctree::
+   :maxdepth: 1
 
-``apache`` ``captcha`` ``cookie`` ``csp`` ``htaccess`` ``humans`` ``manifest`` ``nginx`` ``robots`` ``sitemap`` ``useragent``
+   apache
+   captcha
+   cookie
+   csp
+   htaccess
+   humans
+   manifest
+   nginx
+   robots
+   sitemap
+   useragent

@@ -1,0 +1,36 @@
+webauthn
+========
+
+**Auth** · :doc:`Back to the library <index>`
+
+A WebAuthn credential identifier.
+
+.. code-block:: python
+
+   from edify.library import webauthn
+
+
+Edit the string, or the pattern itself:
+
+.. edify-playground::
+
+   from edify.library import webauthn
+   webauthn
+
+Pattern
+-------
+
+The regex this validator emits:
+
+.. code-block:: text
+
+   ^[A-Za-z0-9_-]{43,512}$
+
+How it reads
+------------
+
+.. code-block:: text
+
+   - The text must start with between 43 and 512 of either one character from "A" through "Z", one character from "a" through "z", one character from "0" through "9", or one character from the set "_-".
+
+See the other validators in the :doc:`library <index>`.

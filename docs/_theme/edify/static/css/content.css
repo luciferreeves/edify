@@ -79,3 +79,14 @@
 
 /* lead paragraph under h1 */
 .content > .lead, .content .lead { font-size: 1.12rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.6rem; }
+
+/* sequential prev/next navigation (standalone pages) */
+.page-nav { display: flex; justify-content: space-between; gap: 16px; margin-top: 3rem;
+  padding-top: 20px; border-top: 1px solid var(--border); }
+.page-nav a { display: flex; flex-direction: column; gap: 2px; padding: 12px 16px;
+  border: 1px solid var(--border); border-radius: var(--radius); min-width: 0; max-width: 48%;
+  transition: border-color .15s; }
+.page-nav a:hover { border-color: var(--accent); text-decoration: none; }
+.page-nav-next { text-align: right; margin-left: auto; }
+.page-nav-dir { font-size: 0.72rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; }
+.page-nav-title { color: var(--fg); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

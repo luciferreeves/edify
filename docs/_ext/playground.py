@@ -68,6 +68,8 @@ def _select_template(
 ) -> str | None:
     if pagename == "index":
         return "home.html"
+    if pagename.startswith("library/"):
+        return "wide.html"
     return _STANDALONE.get(pagename)
 
 
