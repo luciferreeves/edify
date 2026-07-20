@@ -1,8 +1,6 @@
 path
 ====
 
-.. edify-validator:: path
-
 ``path`` matches a filesystem path shape in three families — POSIX, Windows
 drive-letter, and UNC. It is deliberately permissive: it matches the *form* of a
 path, not whether it exists.
@@ -22,6 +20,12 @@ segments; the UNC branch a ``\\server\share``:
        .use(any_of(posix_path, windows_path, unc_path))
        .end_of_input()
    )
+
+which emits:
+
+.. code-block:: text
+
+   ^(?:(?:(?:(?:\./)|(?:(?:\.\./)+)|[/]))?(?:[^\x00\r\n/]+/?)+|[a-zA-Z]:\\(?:[^\\/:*?"<>|\r\n]+\\?)+|\\\\[^\\/:*?"<>|\r\n]+\\[^\\/:*?"<>|\r\n]+(?:\\[^\\/:*?"<>|\r\n]*)*)$
 
 POSIX paths
 -----------

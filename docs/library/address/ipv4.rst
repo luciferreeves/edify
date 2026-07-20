@@ -1,8 +1,6 @@
 ipv4
 ====
 
-.. edify-validator:: ipv4
-
 An IPv4 address is 32 bits, written as four decimal octets joined by dots —
 ``192.168.0.1``. Each octet is 0 to 255, and ``ipv4`` enforces that range exactly:
 it is a shape check on the dotted-quad, not a lookup of what the address means.
@@ -36,6 +34,12 @@ between :meth:`~edify.RegexBuilder.start_of_input` and
        .use(octet).exactly(3).group().char(".").use(octet).end()
        .end_of_input()
    )
+
+which emits:
+
+.. code-block:: text
+
+   ^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$
 
 Four octets, each 0 to 255
 --------------------------

@@ -1,8 +1,6 @@
 url
 ===
 
-.. edify-validator:: url
-
 ``url`` matches a permissive HTTP/HTTPS web-URL shape. Everything except the
 dotted host and its short TLD is optional, so it accepts the many ways people
 write a link — with or without a scheme, with or without ``www.``.
@@ -24,6 +22,12 @@ dot, a 1–6 character TLD, and an optional path/query/fragment tail — anchore
        .word_boundary().zero_or_more().use(path_chars)
        .end_of_input()
    )
+
+which emits:
+
+.. code-block:: text
+
+   ^(?:https?://)?(?:www\.)?[\-a-zA-Z0-9@:%\._\+\~\#=]{1,256}\.[a-zA-Z0-9\(\)]{1,6}\b[\-a-zA-Z0-9\(\)@:%_\+\.\~\#\?\&/=]*$
 
 The scheme is optional
 ----------------------

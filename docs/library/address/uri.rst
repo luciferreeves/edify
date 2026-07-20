@@ -1,8 +1,6 @@
 uri
 ===
 
-.. edify-validator:: uri
-
 ``uri`` matches the generic URI shape — a scheme, a colon, and a non-empty
 remainder. Unlike :doc:`url`, it accepts *any* scheme, not just HTTP.
 
@@ -21,6 +19,12 @@ and one or more :meth:`~edify.RegexBuilder.non_whitespace_char` — anchored wit
        .char(":").one_or_more().non_whitespace_char()
        .end_of_input()
    )
+
+which emits:
+
+.. code-block:: text
+
+   ^[a-zA-Z][a-zA-Z0-9\+\.\-]*:\S+$
 
 Any scheme
 ----------

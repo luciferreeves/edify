@@ -1,8 +1,6 @@
 ptr
 ===
 
-.. edify-validator:: ptr
-
 ``ptr`` matches a reverse-DNS PTR record name — the ``in-addr.arpa`` form for
 IPv4 or the ``ip6.arpa`` nibble form for IPv6. These are the names you look up to
 turn an address back into a hostname.
@@ -22,6 +20,12 @@ with an optional trailing dot for the fully-qualified form, anchored with
        .use(any_of(ipv4_in_addr_arpa, ipv6_ip6_arpa))
        .end_of_input()
    )
+
+which emits:
+
+.. code-block:: text
+
+   ^(?:(?:\d{1,3}\.){4}in\-addr\.arpa\.?|(?:[0-9a-fA-F]\.){32}ip6\.arpa\.?)$
 
 IPv4 reverse records
 --------------------

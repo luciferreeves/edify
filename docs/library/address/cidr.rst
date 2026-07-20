@@ -1,8 +1,6 @@
 cidr
 ====
 
-.. edify-validator:: cidr
-
 ``cidr`` matches a network block in CIDR notation — an address, a ``/``, and a
 prefix length — for both IP families, with the prefix bound checked per family.
 
@@ -22,6 +20,12 @@ prefix bounds are enforced digit by digit, and the whole thing is anchored with
        .use(any_of(ipv4_address_slash_prefix, ipv6_groups_slash_prefix))
        .end_of_input()
    )
+
+which emits:
+
+.. code-block:: text
+
+   ^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}/(?:3[0-2]|[12]?\d)|(?:[0-9a-fA-F]{1,4}:){0,7}[0-9a-fA-F]{1,4}/(?:12[0-8]|1[01]\d|[1-9]?\d))$
 
 IPv4 blocks
 -----------

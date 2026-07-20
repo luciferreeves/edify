@@ -1,8 +1,6 @@
 domain
 ======
 
-.. edify-validator:: domain
-
 ``domain`` matches a DNS domain name — one or more dot-separated labels ending in
 a letters-only top-level domain, like ``example.com``.
 
@@ -22,6 +20,12 @@ a :doc:`tld` of 2–63 :meth:`~edify.RegexBuilder.letter`\ s, anchored with
        .between(2, 63).letter()
        .end_of_input()
    )
+
+which emits:
+
+.. code-block:: text
+
+   ^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$
 
 Labels and the TLD
 ------------------
