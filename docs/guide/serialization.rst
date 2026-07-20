@@ -48,7 +48,28 @@ Schema version
 Every document carries an ``"edify"`` schema version (exposed as
 :data:`edify.serialize.SCHEMA_VERSION`). Loading a document written by a newer,
 incompatible schema raises a clear error rather than silently mis-parsing it — so
-stored patterns stay safe to load as the format evolves.
+stored patterns stay safe to load as the format evolves:
+
+.. code-block:: python
+
+   Pattern.from_dict({"edify": 999, "pattern": {"kind": "root", "children": []}})
+   # error: canonical dict declares schema version 999, but this build only understands 0
+
+The lower-level functions
+-------------------------
+
+The ``Pattern`` methods are built on functions in :mod:`edify.serialize` that you
+can call directly when you need finer control — converting a single element or a
+whole builder state:
+
+.. code-block:: python
+
+   from edify.serialize import element_to_dict, dict_to_element, state_to_dict, dict_to_state
+
+- :func:`~edify.serialize.element_to_dict` / :func:`~edify.serialize.dict_to_element`
+  convert one pattern element to and from its dict node.
+- :func:`~edify.serialize.state_to_dict` / :func:`~edify.serialize.dict_to_state`
+  convert a whole builder state — the full document, schema version and all.
 
 Next: :doc:`integrations`, on dropping edify patterns straight into pydantic,
 FastAPI, and Django.

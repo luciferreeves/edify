@@ -37,9 +37,17 @@ Errors catch mistakes early
 ---------------------------
 
 Because the builder validates as you go, you hear about problems the moment they
-happen — not when the regex finally runs. A quantifier with nothing to attach
-to, an ``end()`` with no open group, a lookbehind the chosen engine can't
-compile: each raises immediately, at the call site, with a fix.
+happen — not when the regex finally runs. Each of these raises immediately, at
+the call site, with a fix:
+
+- a quantifier with nothing to attach to (:meth:`~edify.RegexBuilder.one_or_more`
+  as the last call in a chain)
+- an :meth:`~edify.RegexBuilder.end` with no open group to close
+- a nonsensical count — ``exactly(0)``, or ``between(5, 2)`` with the bounds
+  reversed
+- a lookbehind the chosen engine can't compile
+- an assertion that fails — :meth:`~edify.RegexBuilder.assert_matches` names the
+  inputs that were rejected (see :doc:`testing`)
 
 .. code-block:: python
 
@@ -48,12 +56,13 @@ compile: each raises immediately, at the call site, with a fix.
    # error: dangling .one_or_more() with no operand to apply to
    #   ... help: append the element the quantifier should apply to (e.g. .digit()).
 
-Catching them
--------------
+The error hierarchy
+-------------------
 
 All edify errors derive from :class:`~edify.EdifyError`, and the ones that
-signal a malformed pattern derive from :class:`~edify.EdifySyntaxError`, so you
-can catch broadly when you're building patterns from untrusted input:
+signal a malformed pattern derive from :class:`~edify.EdifySyntaxError`. Catch
+whichever level fits — ``EdifySyntaxError`` for "this pattern is wrong,"
+``EdifyError`` for anything edify raises:
 
 .. code-block:: python
 
@@ -66,8 +75,9 @@ can catch broadly when you're building patterns from untrusted input:
            print(f"could not build: {problem}")
            return None
 
-The annotated message you'd print is the same one shown above — useful,
-specific, and pointed straight at the fix.
+That is exactly what you want when you build patterns from untrusted input — a
+bad name or malformed fragment becomes a caught exception carrying the same
+annotated message shown above, not a crash deep in the engine.
 
 Next: :doc:`testing`, on the assertions edify gives you for pinning a pattern's
 behavior down.

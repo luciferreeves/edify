@@ -3,7 +3,8 @@ Anchors
 
 Anchors don't match characters — they match *positions*. They pin the rest of
 your pattern to the edges of the input or to the boundaries between words, so a
-match has to land where you mean it to.
+match has to land where you mean it to. Every anchor is **zero-width**: it
+consumes no characters, it only asserts that the current position qualifies.
 
 Start and end of input
 -----------------------
@@ -34,6 +35,15 @@ Without the anchors the same pattern would happily match the ``2024`` inside
 ``"in 2024 AD"``. Anchoring both ends is the difference between *"contains four
 digits"* and *"is four digits."*
 
+.. tip::
+
+   :meth:`~edify.RegexBuilder.test` and :meth:`~edify.RegexBuilder.search` match
+   *anywhere* in the string, so an unanchored pattern reports a hit on any
+   substring. When you mean *"the whole string is this,"* anchor both ends — or
+   compile and use ``fullmatch``, which requires the whole string on its own.
+   Baking the anchors into the pattern keeps that intent attached to it wherever
+   it travels.
+
 Word boundaries
 ---------------
 
@@ -62,6 +72,64 @@ Wrap a term in word boundaries to match it only as a whole word:
 
 Like start and end of input, boundaries consume no characters — they only assert
 that the position is (or isn't) on a word edge.
+
+Anchor constants
+----------------
+
+Each anchor also exists as a ready-made, importable :class:`~edify.Pattern`
+constant, so you can compose one without spelling out a builder. They emit
+exactly what the methods do:
+
+.. code-block:: python
+
+   from edify import START, END, WORD_BOUNDARY, NON_WORD_BOUNDARY
+
+   START.to_regex_string()             # '^'
+   END.to_regex_string()               # '$'
+   WORD_BOUNDARY.to_regex_string()     # '\\b'
+   NON_WORD_BOUNDARY.to_regex_string() # '\\B'
+
+Because a constant is a ``Pattern``, it composes with the ``+`` operator and
+drops into any chain — a compact way to bracket an expression:
+
+.. code-block:: python
+
+   from edify import START, END, RegexBuilder
+
+   (START + RegexBuilder().exactly(4).digit() + END).to_regex_string()   # '^\\d{4}$'
+
+See :doc:`composing` for the full story on constants and operators.
+
+Anchors and multiline
+---------------------
+
+By default ``^`` and ``$`` anchor to the ends of the *whole string*. Turn on the
+:meth:`~edify.RegexBuilder.multi_line` flag and they anchor to the ends of every
+*line* instead — so ``start_of_input`` matches just after each newline:
+
+.. code-block:: python
+
+   starts = (
+       RegexBuilder().multi_line()
+       .start_of_input().one_or_more().word()
+       .to_regex()
+   )
+   [m.group() for m in starts.finditer("one\ntwo\nthree")]   # ['one', 'two', 'three']
+
+Without ``multi_line`` that same pattern would only find ``'one'``. Flags are
+covered in full on :doc:`flags`.
+
+Try it
+------
+
+.. edify-playground::
+
+   (
+       RegexBuilder()
+       .word_boundary()
+       .string("cat")
+       .word_boundary()
+   )
 
 Next
 ----

@@ -30,6 +30,11 @@ And the letter classes spell out their ranges for you:
    R().lowercase().to_regex_string()     # '[a-z]'
    R().alphanumeric().to_regex_string()  # '[a-zA-Z0-9]'
 
+By default ``\w``, ``\d``, and ``\s`` match the full Unicode ranges. Restrict
+them to plain ASCII with the :meth:`~edify.RegexBuilder.ascii_only` flag (see
+:doc:`flags`), and let ``any_char`` also match newlines with
+:meth:`~edify.RegexBuilder.dot_all`.
+
 Whitespace and control literals
 -------------------------------
 
@@ -53,9 +58,11 @@ metacharacters for you, so you never have to think about backslashes:
 
    R().char(".").to_regex_string()      # '\\.'    a literal dot, not "any char"
    R().string("c.t").to_regex_string()  # 'c\\.t'  the dot is escaped for you
+   R().string("a+b*c").to_regex_string()   # 'a\\+b\\*c'  only what needs escaping
 
 That automatic escaping is the point: you write the text you mean, and edify
-emits the regex that matches exactly that text.
+emits the regex that matches exactly that text — no matter which metacharacters
+it happens to contain.
 
 Ranges and sets
 ---------------
@@ -81,7 +88,11 @@ that isn't the given literal:
 
 Inside a character set, edify escapes only what actually needs escaping for that
 position — so ``any_of_chars("#?!@$%^&*-")`` emits the minimal correct class,
-not a thicket of backslashes.
+not a thicket of backslashes:
+
+.. code-block:: python
+
+   R().any_of_chars("#?!@$%^&*-").to_regex_string()   # '[#?!@$%^&*-]'
 
 Combining classes
 -----------------
@@ -95,9 +106,30 @@ it with :meth:`~edify.RegexBuilder.end`. It folds them into one class:
    R().any_of().range("0", "9").range("a", "f").range("A", "F").end().to_regex_string()
    # '[0-9a-fA-F]'
 
-(Note the difference from ``any_of_chars``: that method takes *literal*
+Note the difference from ``any_of_chars``: that method takes *literal*
 characters — a dash inside it is a literal dash — while ``any_of().range(...)``
-builds true ranges.)
+builds true ranges. When you pass ``any_of`` plain strings instead, it becomes an
+alternation between whole branches; that's covered on :doc:`groups`.
+
+Character constants
+-------------------
+
+Every built-in class is also an importable :class:`~edify.Pattern` constant.
+Each is callable as a one-character validator and composable with ``+``:
+
+.. code-block:: python
+
+   from edify import DIGIT, LETTER, WORD, WHITESPACE, ALPHANUMERIC, ANY_CHAR
+
+   DIGIT("5")                        # True
+   DIGIT("x")                        # False
+   DIGIT.to_regex_string()           # '\\d'
+   (DIGIT + LETTER).to_regex_string()   # '\\d[a-zA-Z]'
+
+The full set mirrors the methods above: ``DIGIT``, ``NON_DIGIT``, ``WORD``,
+``NON_WORD``, ``WHITESPACE``, ``NON_WHITESPACE``, ``LETTER``, ``LOWERCASE``,
+``UPPERCASE``, ``ALPHANUMERIC``, ``ANY_CHAR``, ``TAB``, ``NEW_LINE``,
+``CARRIAGE_RETURN``, and ``NULL_BYTE``. See :doc:`composing` for combining them.
 
 Putting it together
 -------------------
@@ -114,6 +146,16 @@ A hex color is a ``#`` followed by exactly six hex digits:
    )
 
    hex_color.to_regex_string()   # '^\\#[0-9a-fA-F]{6}$'
+
+.. edify-playground::
+
+   (
+       RegexBuilder()
+       .start_of_input()
+       .char("#")
+       .exactly(6).any_of().range("0", "9").range("a", "f").range("A", "F").end()
+       .end_of_input()
+   )
 
 Next up: :doc:`quantifiers`, which control *how many* of any of these tokens to
 match.

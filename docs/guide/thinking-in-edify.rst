@@ -1,7 +1,7 @@
 Thinking in edify
 =================
 
-Two habits make the entire library predictable. Learn them once here and every
+Three habits make the entire library predictable. Learn them once here and every
 later topic reads the same way.
 
 Quantifiers come before the token
@@ -57,9 +57,29 @@ Because everything is immutable, ``copy`` is rarely necessary — two extensions
 of the same base are already independent — but it makes intent obvious when you
 are stashing a builder to branch from later.
 
+Patterns compare by what they emit
+----------------------------------
+
+Two builders are equal when they emit the **same regex** — regardless of which
+methods, factories, or operators produced them:
+
+.. code-block:: python
+
+   from edify import RegexBuilder, exactly, DIGIT
+
+   RegexBuilder().exactly(3).digit() == RegexBuilder().exactly(3).digit()   # True
+   RegexBuilder().exactly(3).digit() == exactly(3, DIGIT)                   # True
+   RegexBuilder().exactly(3).digit() == RegexBuilder().exactly(4).digit()   # False
+
+Equality is by value, and builders are hashable, so you can dedupe patterns in a
+``set`` or key a ``dict`` by them. It also makes patterns trivial to test: assert
+that a chain equals the shape you expect, and you're comparing intent, not
+whitespace.
+
 That's the whole mental model
 -----------------------------
 
-Say the quantity before the thing, and trust that nothing you build ever
-mutates something you built earlier. The rest of the guide is just vocabulary:
-which tokens exist, and what each one emits. Start with :doc:`anchors`.
+Say the quantity before the thing, trust that nothing you build ever mutates
+something you built earlier, and remember that two patterns are the same when
+they emit the same regex. The rest of the guide is just vocabulary: which tokens
+exist, and what each one emits. Start with :doc:`anchors`.

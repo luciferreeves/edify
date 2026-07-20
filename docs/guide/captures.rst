@@ -16,12 +16,15 @@ but the matched text is saved and numbered:
 
    R().capture().digit().end().to_regex_string()   # '(\\d)'
 
-Pull the captured text out of a match by position:
+Pull the captured text out of a match by position. Group ``0`` is always the
+whole match; your captures are numbered ``1``, ``2``, … from left to right by
+opening parenthesis:
 
 .. code-block:: python
 
    pair = R().capture().word().end().char("=").capture().one_or_more().digit().end().to_regex()
    hit = pair.match("x=42")
+   hit.group()    # 'x=42'  — group 0, the whole match
    hit.group(1)   # 'x'
    hit.group(2)   # '42'
 
@@ -50,8 +53,19 @@ and you read it back by that name — much clearer than counting parentheses:
    hit.captures.year    # '2024'
    hit.captures.month   # '07'
 
-That ``hit.captures`` namespace is edify's own — see :doc:`matching` for the
-full match surface.
+That ``hit.captures`` object is a :class:`~edify.result.NamedCaptures` namespace —
+edify's own convenience over the standard match. Every named group is an
+attribute on it, so you get autocomplete and a clear ``KeyError`` for a typo'd
+name instead of a silent ``None``. The standard ``hit.groupdict()`` still works
+too, if you'd rather have a plain dict:
+
+.. code-block:: python
+
+   hit.groupdict()   # {'year': '2024', 'month': '07'}
+
+Named and numbered captures coexist — a named group also has a number, so
+``hit.group(1)`` and ``hit.captures.year`` reach the same text. See
+:doc:`matching` for the full match surface.
 
 Backreferences
 --------------
@@ -81,5 +95,20 @@ quoted string whose closing quote matches its opening one:
    )
    quoted.search("say 'hi' now").group()   # "'hi'"
    quoted.search('say "hi" now').group()   # '"hi"'
+
+The closing quote *must* be the same character as the opening one, because the
+backreference demands it — a ``'`` opener will not match a ``"`` closer.
+
+Try it
+------
+
+.. edify-playground::
+
+   (
+       RegexBuilder()
+       .named_capture("year").exactly(4).digit().end()
+       .char("-")
+       .named_capture("month").exactly(2).digit().end()
+   )
 
 Next: :doc:`lookaround`, for asserting what surrounds a match without consuming it.

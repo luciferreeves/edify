@@ -15,10 +15,15 @@ For a quick check, the builder itself exposes five verbs — ``test``, ``match``
 
    digits = R().one_or_more().digit()
 
-   digits.test("42")             # True   — does the whole string match?
+   digits.test("42")             # True   — does the pattern match anywhere?
+   digits.match("42")            # a Match at the start, or None
    digits.search("x42").group()  # '42'   — first match anywhere
    digits.findall("1 22 333")    # ['1', '22', '333']
    digits.sub("#", "a1b2")       # 'a#b#'
+
+``test`` uses *search* semantics — it returns ``True`` if the pattern matches
+**anywhere** in the string, not only end-to-end. When you mean "the whole string
+is this," anchor the pattern (:doc:`anchors`) or use ``fullmatch`` below.
 
 These five are the everyday surface. When you want the full toolkit — including
 ``fullmatch``, ``finditer``, ``subn``, and ``split`` — compile the pattern into a
@@ -28,10 +33,16 @@ These five are the everyday surface. When you want the full toolkit — includin
 
    rx = digits.to_regex()
 
-   rx.fullmatch("42")               # a Match, or None
+   rx.fullmatch("42")               # a Match, or None — the whole string must match
    list(rx.finditer("1 22 333"))    # every match, lazily
    rx.subn("#", "a1b2")             # ('a#b#', 2)  — result and count
    rx.split("a1b2c")                # ['a', 'b', 'c']
+
+A compiled :class:`~edify.Regex` forwards every method of the underlying
+standard-library pattern, so anything ``re.Pattern`` can do, it can do — plus the
+introspection conveniences from :doc:`seeing` (``rx.explain()``,
+``rx.visualize()``, ``rx.to_verbose_string()``). The one verb it does *not*
+carry is ``test``; that lives on the builder.
 
 Compile once, reuse
 -------------------
@@ -66,7 +77,8 @@ captures are available as attributes on ``.captures``:
    hit.captures.year    # '2024'
    hit.captures.month   # '07'
 
-Everything else you'd expect from a match object — ``group(n)``, ``start()``,
-``end()``, ``span()`` — is there too.
+Everything else you'd expect from a match object — ``group(n)``, ``groupdict()``,
+``start()``, ``end()``, ``span()`` — is there too. See :doc:`captures` for the
+capture side of the story.
 
 Next: :doc:`errors`, on the diagnostics edify gives you when a pattern is wrong.

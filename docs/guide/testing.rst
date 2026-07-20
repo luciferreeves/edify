@@ -23,8 +23,17 @@ chain them right where you define the pattern:
    )
 
 If any input matches when it shouldn't (or the reverse), the assertion raises
-immediately, naming the offending input. Put these next to a pattern's
-definition and it documents *and* verifies its own contract at import time.
+immediately — with the same annotated format as every other edify error (see
+:doc:`errors`), naming the exact inputs that broke the contract:
+
+.. code-block:: text
+
+   error: pattern '\d{4}' did not match 1 expected input(s): '12'
+     ... help: adjust the pattern to accept these inputs, or drop them from the assert
+
+Because the assertions run at build time and return the builder, putting them
+next to a pattern's definition makes it document *and* verify its own contract
+the moment the module imports.
 
 Snapshot tests
 --------------
@@ -44,10 +53,16 @@ output surfaces as a failing test with a diff:
        assert_snapshot(emitted, Path(__file__).parent / "snapshots" / "year.regex")
 
 The first run writes the snapshot; later runs compare against it. Set
-``EDIFY_UPDATE_SNAPSHOTS=1`` when you *intend* to change a pattern and want to
-regenerate its snapshots in one pass. A missing snapshot or a mismatch raises a
-clear :class:`~edify.testing.SnapshotMissingError` or
-:class:`~edify.testing.SnapshotMismatchError`.
+``EDIFY_UPDATE_SNAPSHOTS=1`` in the environment when you *intend* to change a
+pattern and want to regenerate its snapshots in one pass. A missing snapshot
+raises :class:`~edify.testing.SnapshotMissingError`, and a mismatch raises
+:class:`~edify.testing.SnapshotMismatchError` — both carrying the snapshot path
+so you know exactly which file to look at.
+
+Snapshots aren't only for regex strings: any text works, so you can snapshot a
+pattern's :meth:`~edify.Regex.explain` output or its
+:meth:`~edify.Regex.to_verbose_string` form to lock down its *documentation*, not
+just its source.
 
 Next: :doc:`seeing`, on turning a pattern into a picture or a plain-English
 explanation.

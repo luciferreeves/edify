@@ -25,6 +25,10 @@ quantifier or alternation needs a single unit to operate on:
    R().exactly(3).group().digit().char("-").end().to_regex_string()
    # '(?:\\d\\-){3}'   — three "digit-dash" units
 
+A non-capturing group is invisible to the match results. When you actually want
+to pull the text back out, reach for a *capturing* group instead — that's the
+subject of :doc:`captures`.
+
 Alternation
 -----------
 
@@ -57,6 +61,25 @@ string literals:
 
    R().one_of("GET", "POST", "PUT").to_regex_string()   # '(?:GET|POST|PUT)'
 
+.. note::
+
+   When every alternative is a single character, edify folds the alternation into
+   a character class instead — ``any_of("a", "b", "c")`` emits ``[abc]``, which
+   matches the same text more efficiently.
+
+The functional form
+-------------------
+
+:func:`~edify.group` and :func:`~edify.any_of` also exist as factory functions
+that take the patterns they wrap, for composing without a leading builder:
+
+.. code-block:: python
+
+   from edify import group, any_of, one_or_more, DIGIT, string
+
+   group(one_or_more(DIGIT)).to_regex_string()       # '(?:\\d+)'
+   any_of(string("cat"), string("dog")).to_regex_string()   # '(?:cat|dog)'
+
 Nesting and reuse
 -----------------
 
@@ -68,6 +91,20 @@ named pieces — the subject of :doc:`composing`:
 .. code-block:: python
 
    word = R().one_or_more().word()
-   csv_field = R().subexpression(word).zero_or_more().group().char(",").subexpression(word).end()
+   csv_field = (
+       R().use(word)
+       .zero_or_more().group().char(",").use(word).end()
+   )
+   csv_field.to_regex_string()   # '\\w+(?:,\\w+)*'
+
+Try it
+------
+
+.. edify-playground::
+
+   (
+       RegexBuilder()
+       .any_of("cat", "dog", "fish")
+   )
 
 Next: :doc:`captures`, for pulling matched text back out.

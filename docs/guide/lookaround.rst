@@ -54,6 +54,45 @@ Lookbehind
 A classic use: match a value only when it carries the right prefix (a ``$``, an
 ``@``, a ``#``) without swallowing the prefix into your result.
 
+Stacking assertions
+-------------------
+
+Because a lookahead consumes nothing, you can stack several at the same position
+to require *all* of them at once — the idiom behind a password policy. Each
+lookahead scans the whole string for one requirement; the real tokens then match
+the length:
+
+.. code-block:: python
+
+   password = (
+       R().start_of_input()
+       .assert_ahead().zero_or_more().any_char().digit().end()        # has a digit
+       .assert_ahead().zero_or_more().any_char().uppercase().end()    # has an uppercase
+       .at_least(8).any_char()                                        # at least 8 chars
+       .end_of_input()
+   )
+   password.to_regex_string()   # '^(?=.*\\d)(?=.*[A-Z]).{8,}$'
+
+   rx = password.to_regex()
+   rx.match("Abcdef12")   # matches
+   rx.match("alllower1")  # None — no uppercase
+   rx.match("Ab1")        # None — too short
+
+The functional form
+-------------------
+
+Each assertion is also a factory function wrapping the pattern it looks for:
+
+.. code-block:: python
+
+   from edify import assert_ahead, assert_not_ahead, string
+
+   assert_ahead(string("px")).to_regex_string()       # '(?=px)'
+   assert_not_ahead(string("px")).to_regex_string()   # '(?!px)'
+
+The four factories — ``assert_ahead``, ``assert_not_ahead``, ``assert_behind``,
+``assert_not_behind`` — mirror the methods. See :doc:`composing`.
+
 .. admonition:: Engine note
    :class: note
 
@@ -61,5 +100,19 @@ A classic use: match a value only when it carries the right prefix (a ``$``, an
    lookbehind isn't supported by the standard-library backend, edify raises a
    clear error pointing you at the fix — see :doc:`errors`. You can also select
    the alternate engine on :meth:`~edify.RegexBuilder.to_regex` (see :doc:`flags`).
+
+Try it
+------
+
+.. edify-playground::
+
+   (
+       RegexBuilder()
+       .start_of_input()
+       .assert_ahead().zero_or_more().any_char().digit().end()
+       .assert_ahead().zero_or_more().any_char().uppercase().end()
+       .at_least(8).any_char()
+       .end_of_input()
+   )
 
 Next: :doc:`flags`, for case-insensitivity, multiline, and the other global switches.

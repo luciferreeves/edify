@@ -2,29 +2,31 @@ Seeing your pattern
 ===================
 
 A pattern you can read is good; a pattern you can *see* is better. Edify can turn
-any pattern into a plain-English explanation, a diagram, or an annotated regex —
-all from the compiled pattern's elements.
+any compiled pattern into a plain-English explanation, a diagram, or an annotated
+regex — three views onto the same expression.
 
-Each tool takes the ``.elements`` of a compiled :class:`~edify.Regex`:
+Every compiled :class:`~edify.Regex` carries these as methods, so the common case
+is a single call:
 
 .. code-block:: python
 
    from edify import RegexBuilder
 
    rx = RegexBuilder().start_of_input().exactly(4).digit().end_of_input().to_regex()
-   elements = rx.elements
+
+   rx.explain()             # a plain-English description
+   rx.visualize()           # an ASCII railroad diagram
+   rx.to_verbose_string()   # the annotated re.VERBOSE form
 
 Plain-English explanation
 -------------------------
 
-:func:`edify.introspect.explain_elements` describes the pattern in words, and
-even shows a few strings it would accept:
+:meth:`~edify.Regex.explain` describes the pattern in words, and even shows a few
+strings it would accept:
 
 .. code-block:: python
 
-   from edify.introspect import explain_elements
-
-   print(explain_elements(elements))
+   print(rx.explain())
 
 .. code-block:: text
 
@@ -38,14 +40,12 @@ even shows a few strings it would accept:
 ASCII diagram
 -------------
 
-:func:`edify.introspect.visualize_elements` draws a railroad diagram — great for
-dropping into a terminal, a comment, or a code review:
+:meth:`~edify.Regex.visualize` draws a railroad diagram — great for dropping into
+a terminal, a comment, or a code review:
 
 .. code-block:: python
 
-   from edify.introspect import visualize_elements
-
-   print(visualize_elements(elements))
+   print(rx.visualize())
 
 .. code-block:: text
 
@@ -54,24 +54,22 @@ dropping into a terminal, a comment, or a code review:
    +-------+   +------------------+   +----------+   +----------------+   +-----+
 
 For a polished vector diagram, render it through Graphviz (install it with
-``pip install edify[introspect]``):
+``pip install edify[graphviz]``):
 
 .. code-block:: python
 
-   svg = visualize_elements(elements, format="svg", engine="graphviz")
+   svg = rx.visualize(format="svg", engine="graphviz")
 
 Annotated regex
 ---------------
 
-:func:`edify.introspect.verbose_elements` emits the raw pattern in
-``re.VERBOSE`` form — each token on its own line with a comment — so you can see
-exactly how your chain maps to regex syntax:
+:meth:`~edify.Regex.to_verbose_string` emits the raw pattern in ``re.VERBOSE``
+form — each token on its own line with a comment — so you can see exactly how
+your chain maps to regex syntax:
 
 .. code-block:: python
 
-   from edify.introspect import verbose_elements
-
-   print(verbose_elements(elements))
+   print(rx.to_verbose_string())
 
 .. code-block:: text
 
@@ -79,8 +77,33 @@ exactly how your chain maps to regex syntax:
    \d{4}                   # exactly 4
    $                       # end of input
 
-Because these work on any compiled pattern, they pair beautifully with
+Working from raw elements
+-------------------------
+
+Under those methods sit three functions that operate on a pattern's
+``.elements`` directly. Reach for them when you have elements in hand — for
+example straight from :meth:`~edify.RegexBuilder.from_regex` — rather than a
+compiled :class:`~edify.Regex`:
+
+.. code-block:: python
+
+   from edify.introspect import explain_elements, visualize_elements, verbose_elements
+
+   elements = rx.elements
+   explain_elements(elements)
+   visualize_elements(elements, format="svg", engine="graphviz")
+   verbose_elements(elements)
+
+Because these work on any pattern's elements, they pair beautifully with
 :doc:`from-regex`: parse a mystery regex, compile it, and ask edify to explain or
 draw it.
+
+.. code-block:: python
+
+   from edify import RegexBuilder
+   from edify.introspect import explain_elements
+
+   mystery = RegexBuilder.from_regex(r"(?P<area>\d{3})-(?P<line>\d{4})").to_regex()
+   print(explain_elements(mystery.elements))
 
 Next: :doc:`serialization`, on saving and loading patterns as portable data.
