@@ -1,6 +1,8 @@
 port
 ====
 
+.. edify-validator:: port
+
 ``port`` matches a TCP/UDP port number — a decimal integer from 0 to 65535, with
 the upper bound enforced exactly rather than by digit count.
 
@@ -19,12 +21,6 @@ to a lone digit — which together cover 0–65535 and nothing above it:
        Pattern().start_of_input().range("1", "9").at_most(3).digit().end_of_input(),
        Pattern().start_of_input().char("0").end_of_input(),
    )
-
-which emits:
-
-.. code-block:: text
-
-   (?:^6553[0-5]$|^655[0-2]\d$|^65[0-4]\d{2}$|^6[0-4]\d{3}$|^[1-5]\d{4}$|^[1-9]\d{0,3}$|^0$)
 
 The full range, bounded exactly
 -------------------------------

@@ -1,6 +1,8 @@
 subdomain
 =========
 
+.. edify-validator:: subdomain
+
 ``subdomain`` matches a **single** DNS label — the ``api`` in ``api.example.com``
 — not a dotted name.
 
@@ -21,12 +23,6 @@ Because it anchors on a first *and* a last alphanumeric, the minimum length is t
        .alphanumeric()
        .end_of_input()
    )
-
-which emits:
-
-.. code-block:: text
-
-   ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]$
 
 A single label, 2 to 63 characters
 ----------------------------------

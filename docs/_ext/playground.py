@@ -12,11 +12,22 @@ import base64
 import html
 import importlib
 import pkgutil
+import re
 from typing import Any
 
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.application import Sphinx
+
+_CONTROL = {"\n": "\\n", "\t": "\\t", "\r": "\\r", "\f": "\\f", "\v": "\\v", "\0": "\\0"}
+
+
+def _display_regex(regex: str) -> str:
+    return re.sub(
+        r"[\x00-\x1f]",
+        lambda m: _CONTROL.get(m.group(), f"\\x{ord(m.group()):02x}"),
+        regex,
+    )
 
 _STANDALONE = {
     "playground": "wide.html",
@@ -119,6 +130,43 @@ def _library_nav(app: Sphinx, pagename: str) -> str:
     return "".join(parts)
 
 
+class EdifyValidator(Directive):
+    """``.. edify-validator:: name`` — a rich header card for a library validator.
+
+    Imports the validator, shows that it is a callable ``Pattern`` returning
+    ``bool``, its import line, and its emitted regex in a styled box.
+    """
+
+    required_arguments = 1
+    option_spec = {"module": directives.unchanged}
+
+    def run(self) -> list[nodes.Node]:
+        name = self.arguments[0].strip()
+        module = self.options.get("module", "edify.library").strip()
+        try:
+            loaded = importlib.import_module(module)
+            regex = _display_regex(getattr(loaded, name).to_regex_string())
+        except Exception:
+            regex = ""
+        regex_block = (
+            f'<div class="val-regex"><span class="val-regex-tag">emits</span>'
+            f"<code>{html.escape(regex)}</code></div>"
+            if regex
+            else ""
+        )
+        markup = (
+            '<div class="val-header">'
+            '<div class="val-meta">'
+            '<span class="val-kind">callable Pattern</span>'
+            '<span class="val-ret">&rarr; bool</span>'
+            f'<code class="val-import">from {html.escape(module)} import {html.escape(name)}</code>'
+            "</div>"
+            f"{regex_block}"
+            "</div>"
+        )
+        return [nodes.raw("", markup, format="html")]
+
+
 def _select_template(
     app: Sphinx,
     pagename: str,
@@ -138,5 +186,6 @@ def _select_template(
 
 def setup(app: Sphinx) -> dict[str, object]:
     app.add_directive("edify-playground", EdifyPlayground)
+    app.add_directive("edify-validator", EdifyValidator)
     app.connect("html-page-context", _select_template)
     return {"parallel_read_safe": True, "parallel_write_safe": True}

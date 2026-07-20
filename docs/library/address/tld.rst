@@ -1,6 +1,8 @@
 tld
 ===
 
+.. edify-validator:: tld
+
 ``tld`` matches a top-level domain — 2 to 63 letters, like ``com``, ``io``, or
 ``museum``. It is the trailing component :doc:`domain` requires.
 
@@ -13,12 +15,6 @@ Under the hood it is simply :meth:`~edify.RegexBuilder.between`\ ``(2, 63)`` of 
    from edify import Pattern
 
    tld = Pattern().start_of_input().between(2, 63).letter().end_of_input()
-
-which emits:
-
-.. code-block:: text
-
-   ^[a-zA-Z]{2,63}$
 
 Two to sixty-three letters
 --------------------------

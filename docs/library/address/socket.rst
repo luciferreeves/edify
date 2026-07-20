@@ -1,6 +1,8 @@
 socket
 ======
 
+.. edify-validator:: socket
+
 ``socket`` matches a ``host:port`` socket address. The host may take three forms
 — an IPv4 address, a bracketed IPv6 address, or a hostname — each followed by a
 colon and a port.
@@ -21,12 +23,6 @@ anchored with :meth:`~edify.RegexBuilder.start_of_input` /
        .char(":").between(1, 5).digit()
        .end_of_input()
    )
-
-which emits:
-
-.. code-block:: text
-
-   ^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|\[[0-9a-fA-F:]+\]|[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*):\d{1,5}$
 
 An IPv4 host
 ------------

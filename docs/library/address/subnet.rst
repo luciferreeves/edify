@@ -1,6 +1,8 @@
 subnet
 ======
 
+.. edify-validator:: subnet
+
 ``subnet`` matches a dotted-decimal IPv4 subnet mask — four octets, each one of
 the nine byte values a mask can legally take.
 
@@ -22,12 +24,6 @@ dots, anchored with :meth:`~edify.RegexBuilder.start_of_input` /
        .use(mask_octet).char(".").use(mask_octet)
        .end_of_input()
    )
-
-which emits:
-
-.. code-block:: text
-
-   ^(?:255|254|252|248|240|224|192|128|[0])\.(?:255|254|252|248|240|224|192|128|[0])\.(?:255|254|252|248|240|224|192|128|[0])\.(?:255|254|252|248|240|224|192|128|[0])$
 
 The nine mask bytes
 -------------------

@@ -1,15 +1,11 @@
 ipv4
 ====
 
+.. edify-validator:: ipv4
+
 An IPv4 address is 32 bits, written as four decimal octets joined by dots —
 ``192.168.0.1``. Each octet is 0 to 255, and ``ipv4`` enforces that range exactly:
 it is a shape check on the dotted-quad, not a lookup of what the address means.
-
-.. code-block:: python
-
-   from edify.library import ipv4
-
-   ipv4("192.168.0.1")   # True
 
 Under the hood, the range check lives in a single reusable
 :doc:`octet <../../guide/composing>`
@@ -40,12 +36,6 @@ between :meth:`~edify.RegexBuilder.start_of_input` and
        .use(octet).exactly(3).group().char(".").use(octet).end()
        .end_of_input()
    )
-
-which emits:
-
-.. code-block:: text
-
-   ^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$
 
 Four octets, each 0 to 255
 --------------------------
@@ -90,12 +80,9 @@ classic SSRF-style bug:
    from edify.library import ipv4
    ipv4
 
-Notes
------
+.. note::
 
-- ``ipv4`` checks the **textual form** only. It does not care whether an address
-  is routable, private, or reserved — ``127.0.0.1``, ``0.0.0.0``, and
-  ``255.255.255.255`` all match.
-- It matches an address on its own; for an address *and* a mask length use
-  :doc:`cidr`, and for a ``host:port`` pair use :doc:`socket`. The octet fragment
-  is shared with :doc:`ip`, :doc:`cidr`, and :doc:`socket`.
+   ``ipv4`` checks the **textual form** only — it does not care whether an address
+   is routable, private, or reserved (``127.0.0.1`` and ``0.0.0.0`` both match).
+   For an address plus a mask length use :doc:`cidr`, for a ``host:port`` pair
+   :doc:`socket`, and for either IP family :doc:`ip`; each reuses this octet.

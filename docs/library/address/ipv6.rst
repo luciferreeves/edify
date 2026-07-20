@@ -1,18 +1,14 @@
 ipv6
 ====
 
+.. edify-validator:: ipv6
+
 An IPv6 address is 128 bits, written as eight groups of four hexadecimal digits
 joined by colons — ``2001:0db8:0000:0000:0000:ff00:0042:8329``. Almost nobody
 writes the full form, because the notation (RFC 4291, with the canonical
 short-form rules of RFC 5952) allows a stack of shorthands. ``ipv6`` accepts every
 one of them: dropped leading zeros, ``::`` zero-compression, the embedded-IPv4
 tail, and the scoped ``%zone`` suffix.
-
-.. code-block:: python
-
-   from edify.library import ipv6
-
-   ipv6("2001:db8::1")   # True
 
 Under the hood, the base unit is a **hex group** — one to four hex digits, written as
 :meth:`~edify.RegexBuilder.between`\ ``(1, 4)`` of a
@@ -35,12 +31,6 @@ the full eight-group form, one branch for each position ``::`` can occupy, the
        .use(any_of(full_form, *compressed_forms, link_local, ipv4_mapped))
        .end_of_input()
    )
-
-which emits:
-
-.. code-block:: text
-
-   ^(?:(?:(?:[0-9a-fA-F]){1,4}:){7}(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,7}:|(?:(?:[0-9a-fA-F]){1,4}:){1,6}:(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,5}(?::(?:[0-9a-fA-F]){1,4}){1,2}|(?:(?:[0-9a-fA-F]){1,4}:){1,4}(?::(?:[0-9a-fA-F]){1,4}){1,3}|(?:(?:[0-9a-fA-F]){1,4}:){1,3}(?::(?:[0-9a-fA-F]){1,4}){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,2}(?::(?:[0-9a-fA-F]){1,4}){1,5}|(?:[0-9a-fA-F]){1,4}:(?:(?::(?:[0-9a-fA-F]){1,4}){1,6})|:(?:(?:(?::(?:[0-9a-fA-F]){1,4}){1,7}|[:]))|fe80:(?::(?:[0-9a-fA-F]){0,4}){0,4}%[0-9a-zA-Z]+|::(?:ffff(?::0{1,4})?:)?(?:(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)\.){3}(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)|(?:(?:[0-9a-fA-F]){1,4}:){1,4}:(?:(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)\.){3}(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d))$
 
 The forms it accepts
 --------------------
@@ -169,14 +159,11 @@ interface it is scoped to, named (``eth0``) or numbered (``1``). Without it, a
    from edify.library import ipv6
    ipv6
 
-Notes
------
+.. note::
 
-- ``ipv6`` validates the **textual form** only. It does not check whether an
-  address is reachable, allocated, or in a reserved range — ``::`` and ``::1``
-  both match.
-- It accepts case-insensitive hex; it does not *require* the RFC 5952 canonical
-  lowercase, minimal-``::`` form. Both ``2001:DB8::1`` and ``2001:db8::1`` pass.
-- The embedded-IPv4 tail reuses the same octet range check as :doc:`ipv4`; for
-  either family use :doc:`ip`, and for an address plus a ``/prefix`` use
-  :doc:`cidr`.
+   ``ipv6`` validates the **textual form** only — it does not check whether an
+   address is reachable, allocated, or in a reserved range (``::`` and ``::1``
+   both match), and it accepts case-insensitive hex rather than requiring the RFC
+   5952 canonical form. The embedded-IPv4 tail reuses the octet range check of
+   :doc:`ipv4`; for either family use :doc:`ip`, and for an address plus a
+   ``/prefix`` use :doc:`cidr`.

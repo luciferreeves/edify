@@ -1,6 +1,8 @@
 ip
 ==
 
+.. edify-validator:: ip
+
 ``ip`` matches an IP address of **either** family — an IPv4 dotted-quad or any
 IPv6 form. It is the union of :doc:`ipv4` and :doc:`ipv6`, for the common case
 where a field may legitimately hold either.
@@ -20,12 +22,6 @@ with :meth:`~edify.RegexBuilder.start_of_input` /
        .use(any_of(ipv4_body, ipv6_body))
        .end_of_input()
    )
-
-which emits:
-
-.. code-block:: text
-
-   ^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|<the full IPv6 alternation>)$
 
 An IPv4 address
 ---------------

@@ -1,6 +1,8 @@
 zip_code
 ========
 
+.. edify-validator:: zip_code
+
 ``zip_code`` matches a US postal code in either of its two shapes — the
 five-digit ZIP and the nine-digit ZIP+4.
 
@@ -19,12 +21,6 @@ group of ``-`` plus four more digits, anchored with
        .optional().group().char("-").exactly(4).digit().end()
        .end_of_input()
    )
-
-which emits:
-
-.. code-block:: text
-
-   ^\d{5}(?:\-\d{4})?$
 
 The five-digit ZIP
 ------------------

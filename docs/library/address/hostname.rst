@@ -1,6 +1,8 @@
 hostname
 ========
 
+.. edify-validator:: hostname
+
 ``hostname`` matches an RFC 1123 hostname. It is close to :doc:`domain`, with two
 differences: a bare single label such as ``localhost`` is valid, and there is no
 letters-only TLD requirement.
@@ -21,12 +23,6 @@ letters/digits/hyphens, alphanumeric) is followed by
        .use(label).zero_or_more().group().char(".").use(label).end()
        .end_of_input()
    )
-
-which emits:
-
-.. code-block:: text
-
-   ^(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$
 
 Single labels are allowed
 -------------------------
