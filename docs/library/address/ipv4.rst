@@ -11,10 +11,8 @@ it is a shape check on the dotted-quad, not a lookup of what the address means.
 
    ipv4("192.168.0.1")   # True
 
-How edify builds it
--------------------
-
-The range check lives in a single reusable :doc:`octet <../../guide/composing>`
+Under the hood, the range check lives in a single reusable
+:doc:`octet <../../guide/composing>`
 fragment — an :func:`~edify.any_of` over five branches that between them cover
 0–255 with no overlap and no gap, which is why ``256`` has no branch to match:
 

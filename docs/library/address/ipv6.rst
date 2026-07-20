@@ -14,10 +14,7 @@ tail, and the scoped ``%zone`` suffix.
 
    ipv6("2001:db8::1")   # True
 
-How edify builds it
--------------------
-
-The base unit is a **hex group** — one to four hex digits, written as
+Under the hood, the base unit is a **hex group** — one to four hex digits, written as
 :meth:`~edify.RegexBuilder.between`\ ``(1, 4)`` of a
 :doc:`nibble <../../guide/composing>` (a ``0``–``9`` ``a``–``f`` ``A``–``F``
 :meth:`~edify.RegexBuilder.range` class). Those groups feed an
