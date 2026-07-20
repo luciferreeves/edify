@@ -4,41 +4,46 @@ uri
 :doc:`Library <../index>` › :doc:`Address <index>` › **uri**
 
 ``uri`` matches the generic URI shape — a scheme, a colon, and a non-empty
-opaque-or-path remainder. It accepts *any* scheme, not just HTTP.
+remainder. Unlike :doc:`url`, it accepts *any* scheme, not just HTTP.
 
 .. code-block:: python
 
    from edify.library import uri
 
-   uri("https://example.com")   # True
-   uri("mailto:a@b.com")        # True
-   uri("urn:isbn:0451450523")   # True
-   uri("no scheme")             # False — no scheme + colon
+   uri("mailto:jane@example.com")   # True
 
-What it matches
+Any scheme
+----------
+
+The scheme starts with a letter and may contain letters, digits, ``+``, ``.``,
+and ``-``; after the ``:`` comes any run of non-whitespace. That covers the whole
+family of URI schemes:
+
+.. code-block:: python
+
+   uri("https://example.com")        # True — web
+   uri("mailto:jane@example.com")    # True — email
+   uri("tel:+15551234567")           # True — telephone
+   uri("urn:isbn:0451450523")        # True — a URN
+   uri("ftp://host/file.txt")        # True — file transfer
+
+What it rejects
 ---------------
 
-- A **scheme** starting with a letter, then any of letters, digits, ``+``, ``.``,
-  ``-``.
-- A ``:`` followed by **one or more non-whitespace characters**.
-- Anchored at both ends.
+.. code-block:: python
 
-Because it accepts any scheme, ``mailto:``, ``urn:``, ``ftp:``, ``tel:`` and
-friends all match. For the narrower HTTP/HTTPS web-URL shape (with an optional
-scheme and a validated TLD), use :doc:`url`.
+   uri("no scheme")     # False — there is no scheme + colon
+   uri("ht tp://x")     # False — a space breaks the scheme
+   uri("http:")         # False — the part after the colon is empty
+
+For the narrower HTTP/HTTPS web-URL shape — with an optional scheme, a ``www.``
+prefix, and a validated short TLD — use :doc:`url`.
 
 Try it
 ------
 
 .. edify-playground::
-   :tests: https://example.com|mailto:a@b.com|urn:isbn:0451450523|ftp://host/f|no scheme
+   :tests: https://example.com|mailto:jane@example.com|tel:+15551234567|urn:isbn:0451450523|no scheme
 
    from edify.library import uri
    uri
-
-Pattern
--------
-
-.. code-block:: text
-
-   ^[a-zA-Z][a-zA-Z0-9\+\.\-]*:\S+$

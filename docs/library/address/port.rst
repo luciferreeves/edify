@@ -3,38 +3,52 @@ port
 
 :doc:`Library <../index>` › :doc:`Address <index>` › **port**
 
-``port`` matches a TCP/UDP port number — an integer from 0 to 65535, with the
-upper bound enforced exactly.
+``port`` matches a TCP/UDP port number — a decimal integer from 0 to 65535, with
+the upper bound enforced exactly rather than by digit count.
 
 .. code-block:: python
 
    from edify.library import port
 
-   port("80")       # True
-   port("8080")     # True
-   port("0")        # True
-   port("65535")    # True — the maximum
-   port("65536")    # False — above the maximum
-   port("-1")       # False — no sign
+   port("443")   # True
 
-What it matches
+The full range 0–65535
+----------------------
+
+Any port in range, from the reserved low ports to the ephemeral high ones:
+
+.. code-block:: python
+
+   port("0")       # True — the wildcard "any port"
+   port("80")      # True — HTTP
+   port("443")     # True — HTTPS
+   port("8080")    # True
+   port("65535")   # True — the maximum
+
+The upper boundary is exact
+---------------------------
+
+The pattern range-checks the value, so it stops precisely at 65535 — it does not
+merely allow "up to five digits":
+
+.. code-block:: python
+
+   port("65535")   # True  — the largest legal port
+   port("65536")   # False — one past the maximum
+   port("99999")   # False — five digits, but out of range
+
+What it rejects
 ---------------
 
-- A decimal integer **0–65535**, with the range enforced digit-by-digit
-  (``65535`` matches, ``65536`` does not).
-- No leading ``+`` or ``-`` sign, and no leading zeros beyond a lone ``0``.
-- Anchored at both ends.
+.. code-block:: python
 
-To validate a full ``host:port`` address, use :doc:`socket`.
+   port("-1")     # False — no sign is allowed
+   port("+80")    # False — no sign is allowed
+   port("abc")    # False — digits only
+   port("8.0")    # False — an integer, not a decimal
 
-Try it
-------
-
-.. edify-playground::
-   :tests: 80|8080|443|0|65535|65536
-
-   from edify.library import port
-   port
+To validate a whole ``host:port`` address rather than the port alone, use
+:doc:`socket`.
 
 Pattern
 -------

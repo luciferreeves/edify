@@ -3,38 +3,52 @@ subdomain
 
 :doc:`Library <../index>` › :doc:`Address <index>` › **subdomain**
 
-``subdomain`` matches a single DNS label — the ``api`` in ``api.example.com`` — 2
-to 63 characters, alphanumeric with optional interior hyphens.
+``subdomain`` matches a **single** DNS label — the ``api`` in
+``api.example.com`` — not a dotted name.
 
 .. code-block:: python
 
    from edify.library import subdomain
 
-   subdomain("api")      # True
-   subdomain("my-sub")   # True
-   subdomain("a1")       # True
-   subdomain("-bad")     # False — can't start with a hyphen
-   subdomain("a b")      # False — no spaces or dots
+   subdomain("api")   # True
 
-What it matches
+A single label
+--------------
+
+Letters and digits, with hyphens allowed only in the interior. The first and last
+characters must be alphanumeric:
+
+.. code-block:: python
+
+   subdomain("api")        # True
+   subdomain("my-sub")     # True — interior hyphen
+   subdomain("staging-2")  # True — digits and hyphen
+   subdomain("a1")         # True — the two-character minimum
+
+Length is 2 to 63
+-----------------
+
+Because the pattern anchors on a first *and* a last alphanumeric character, the
+minimum length is **two**; the maximum is **63**:
+
+.. code-block:: python
+
+   subdomain("a1")          # True  — two characters
+   subdomain("a")           # False — a single character can't satisfy first + last
+   subdomain("a" * 63)      # True  — at the 63-character maximum
+   subdomain("a" * 64)      # False — one over the maximum
+
+What it rejects
 ---------------
 
-- A **single label** of 2–63 characters.
-- Letters, digits, and **interior** hyphens only — the first and last character
-  must be alphanumeric.
-- No dots (it is one label, not a dotted name).
-- Anchored at both ends.
+.. code-block:: python
+
+   subdomain("-bad")   # False — can't start with a hyphen
+   subdomain("bad-")   # False — can't end with a hyphen
+   subdomain("a.b")    # False — a dot makes it two labels, not one
+   subdomain("a b")    # False — no spaces
 
 For a full dotted name use :doc:`domain` or :doc:`hostname`.
-
-Try it
-------
-
-.. edify-playground::
-   :tests: api|my-sub|a1|staging-2|-bad|a b
-
-   from edify.library import subdomain
-   subdomain
 
 Pattern
 -------

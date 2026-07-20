@@ -3,42 +3,67 @@ domain
 
 :doc:`Library <../index>` › :doc:`Address <index>` › **domain**
 
-``domain`` matches a DNS domain name — one or more dot-separated labels ending in
-a letters-only top-level domain.
+``domain`` matches a DNS domain name — one or more dot-separated labels followed
+by a letters-only top-level domain.
 
 .. code-block:: python
 
    from edify.library import domain
 
-   domain("example.com")      # True
-   domain("sub.example.io")   # True
-   domain("a.co")             # True
-   domain("example")          # False — no TLD
-   domain("-bad.com")         # False — a label can't start with a hyphen
+   domain("example.com")   # True
 
-What it matches
+Labels
+------
+
+A domain is a series of labels joined by dots. Each label is 1–63 characters of
+letters, digits, and hyphens, and there is no limit on how many you stack:
+
+.. code-block:: python
+
+   domain("example.com")        # True — one label + TLD
+   domain("a.b.example.io")     # True — several labels deep
+   domain("xn--nxasmq6b.com")   # True — a Punycode (IDNA) label
+
+The TLD
+-------
+
+The final component must be a **letters-only TLD of 2–63 characters** (this is
+the :doc:`tld` shape). A bare label with no TLD is not a domain:
+
+.. code-block:: python
+
+   domain("example.com")   # True
+   domain("example")       # False — no TLD
+   domain("example.123")   # False — a TLD is letters only
+
+Hyphens are interior only
+-------------------------
+
+A label may contain hyphens, but may not begin or end with one:
+
+.. code-block:: python
+
+   domain("my-site.org")   # True  — interior hyphen
+   domain("-x.com")        # False — label starts with a hyphen
+   domain("x-.com")        # False — label ends with a hyphen
+
+What it rejects
 ---------------
 
-- **One or more labels**, each 1–63 characters of letters, digits, and interior
-  hyphens (a label may not start or end with a hyphen).
-- A trailing **TLD of 2–63 letters** (see :doc:`tld`).
-- Anchored at both ends.
+.. code-block:: python
 
-For a name that may be a bare single label (like ``localhost``) use
-:doc:`hostname`; for one label on its own use :doc:`subdomain`.
+   domain(".com")       # False — empty leading label
+   domain("a b.com")    # False — no spaces
+   domain("localhost")  # False — no TLD (use hostname for bare labels)
+
+For a name that may be a single bare label such as ``localhost``, use
+:doc:`hostname`; for one label on its own, :doc:`subdomain`.
 
 Try it
 ------
 
 .. edify-playground::
-   :tests: example.com|sub.example.io|a.co|my-site.org|example|-bad.com
+   :tests: example.com|a.b.example.io|my-site.org|example|-x.com|localhost
 
    from edify.library import domain
    domain
-
-Pattern
--------
-
-.. code-block:: text
-
-   ^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$

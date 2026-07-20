@@ -3,36 +3,51 @@ zip_code
 
 :doc:`Library <../index>` › :doc:`Address <index>` › **zip_code**
 
-``zip_code`` matches a US postal code — five digits, optionally followed by a
-hyphen and four more (the ZIP+4 form).
+``zip_code`` matches a US postal code in either of its two shapes: the five-digit
+ZIP and the nine-digit ZIP+4.
 
 .. code-block:: python
 
    from edify.library import zip_code
 
-   zip_code("90210")        # True — five-digit ZIP
-   zip_code("12345-6789")   # True — ZIP+4
-   zip_code("1234")         # False — too few digits
-   zip_code("abcde")        # False — digits only
+   zip_code("90210")   # True
 
-What it matches
+The five-digit ZIP
+------------------
+
+Exactly five decimal digits — leading zeros included, since real ZIPs like
+``01001`` (Massachusetts) begin with one:
+
+.. code-block:: python
+
+   zip_code("90210")   # True
+   zip_code("10001")   # True
+   zip_code("01001")   # True — leading zero preserved
+
+The ZIP+4 extension
+-------------------
+
+Optionally, a hyphen and four more digits — the ZIP+4 form that narrows delivery
+to a block or building:
+
+.. code-block:: python
+
+   zip_code("12345-6789")   # True
+   zip_code("90210-1234")   # True
+
+What it rejects
 ---------------
 
-- **Five decimal digits**, optionally followed by ``-`` and **four more**.
-- Anchored at both ends.
+.. code-block:: python
 
-It does **not** check postal-service validity — every 5- and 5+4-digit string
-matches, including unassigned or reserved ranges. Non-US postal codes belong to a
-country-specific validator; see also the ``postal`` validator in the Geo category.
+   zip_code("1234")         # False — too few digits
+   zip_code("123456")       # False — six digits (not a valid ZIP length)
+   zip_code("12345 6789")   # False — the +4 uses a hyphen, not a space
+   zip_code("abcde")        # False — digits only
 
-Try it
-------
-
-.. edify-playground::
-   :tests: 90210|10001|12345-6789|1234|abcde
-
-   from edify.library import zip_code
-   zip_code
+``zip_code`` checks the *shape* — every 5- and 5+4-digit string matches, including
+unassigned ranges. It does not cover non-US postal codes; for those see the
+``postal`` validator in the Geo category.
 
 Pattern
 -------
