@@ -13,7 +13,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx.ext.extlinks",
-    "edify_playground",
+    "playground",
 ]
 
 extlinks = {

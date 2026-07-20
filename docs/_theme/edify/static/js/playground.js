@@ -23,7 +23,9 @@ const editorTheme = EditorView.theme({
   ".cm-activeLine": { backgroundColor: "var(--accent-weak)" },
   ".cm-activeLineGutter": { backgroundColor: "transparent", color: "var(--fg)" },
   ".cm-lineNumbers .cm-gutterElement": { padding: "0 10px 0 10px" },
-  "&.cm-focused .cm-selectionBackground, .cm-selectionBackground": {
+  "&.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, .cm-selectionBackground":
+    { background: "var(--select)" },
+  ".cm-line ::selection, .cm-line::selection, .cm-content ::selection": {
     backgroundColor: "var(--select)",
   },
   ".cm-selectionMatch": { backgroundColor: "var(--select)" },
