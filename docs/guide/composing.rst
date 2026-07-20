@@ -44,6 +44,15 @@ Anchors survive composition, so you can bracket a pattern with ``START`` and
 
    (START + R().exactly(4).digit() + END).to_regex_string()   # '^\\d{4}$'
 
+``DIGIT + WORD`` reads *"a digit, then a word character"* — ``1a`` matches, ``a1``
+doesn't:
+
+.. edify-playground::
+   :tests: 1a|12|a1|ab
+
+   from edify import DIGIT, WORD
+   DIGIT + WORD
+
 Module constants
 ----------------
 

@@ -33,7 +33,15 @@ some slice of it:
 
 Without the anchors the same pattern would happily match the ``2024`` inside
 ``"in 2024 AD"``. Anchoring both ends is the difference between *"contains four
-digits"* and *"is four digits."*
+digits"* and *"is four digits."* Try it — only the bare four-digit strings match:
+
+.. edify-playground::
+   :tests: 2024|in 2024|2024 AD|abcd
+
+   RegexBuilder() \
+       .start_of_input() \
+       .exactly(4).digit() \
+       .end_of_input()
 
 .. tip::
 
@@ -71,7 +79,16 @@ Wrap a term in word boundaries to match it only as a whole word:
    cat.search("concatenate")     # no match — "cat" here isn't a whole word
 
 Like start and end of input, boundaries consume no characters — they only assert
-that the position is (or isn't) on a word edge.
+that the position is (or isn't) on a word edge. Watch ``cat`` match as a whole
+word but not inside ``concatenate`` or ``scatter``:
+
+.. edify-playground::
+   :tests: the cat sat|concatenate|a cat|scatter
+
+   RegexBuilder() \
+       .word_boundary() \
+       .string("cat") \
+       .word_boundary()
 
 Anchor constants
 ----------------
@@ -146,17 +163,6 @@ Quick reference
      - ``NON_WORD_BOUNDARY``
      - ``\B``
      - any position that isn't a seam
-
-Try it
-------
-
-.. edify-playground::
-   :tests: the cat sat|concatenate|a cat|scatter
-
-   RegexBuilder() \
-       .word_boundary() \
-       .string("cat") \
-       .word_boundary()
 
 Next
 ----

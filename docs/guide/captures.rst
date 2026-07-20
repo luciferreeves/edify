@@ -28,6 +28,16 @@ opening parenthesis:
    hit.group(1)   # 'x'
    hit.group(2)   # '42'
 
+A ``key=number`` pair — both sides must be present to match:
+
+.. edify-playground::
+   :tests: x=42|y=7|z=|=5
+
+   RegexBuilder() \
+       .capture().word().end() \
+       .char("=") \
+       .capture().one_or_more().digit().end()
+
 Named captures
 --------------
 

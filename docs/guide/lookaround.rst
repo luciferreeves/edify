@@ -31,6 +31,15 @@ in the match:
    before_px = R().one_or_more().digit().assert_ahead().string("px").end().to_regex()
    before_px.search("16px").group()   # '16'  — the 'px' matched the lookahead, but isn't captured
 
+Digits, but only when ``px`` follows — ``16em`` and a bare ``px`` don't match:
+
+.. edify-playground::
+   :tests: 16px|24px|16em|px
+
+   RegexBuilder() \
+       .one_or_more().digit() \
+       .assert_ahead().string("px").end()
+
 Lookbehind
 ----------
 

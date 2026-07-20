@@ -25,6 +25,15 @@ quantifier or alternation needs a single unit to operate on:
    R().exactly(3).group().digit().char("-").end().to_regex_string()
    # '(?:\\d\\-){3}'   — three "digit-dash" units
 
+One or more "digit-dash" units — the quantifier repeats the whole group:
+
+.. edify-playground::
+   :tests: 1-2-|9-|12|abc
+
+   RegexBuilder() \
+       .one_or_more() \
+       .group().digit().char("-").end()
+
 A non-capturing group is invisible to the match results. When you actually want
 to pull the text back out, reach for a *capturing* group instead — that's the
 subject of :doc:`captures`.

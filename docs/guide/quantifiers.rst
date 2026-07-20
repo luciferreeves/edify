@@ -17,6 +17,16 @@ Fixed counts
    R().at_most(4).digit().to_regex_string()      # '\\d{0,4}'    up to four
    R().between(2, 5).digit().to_regex_string()   # '\\d{2,5}'    two to five
 
+Exactly three digits — no more, no less:
+
+.. edify-playground::
+   :tests: 123|12|1234|abc
+
+   RegexBuilder() \
+       .start_of_input() \
+       .exactly(3).digit() \
+       .end_of_input()
+
 Open-ended counts
 -----------------
 

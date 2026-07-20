@@ -62,7 +62,14 @@ metacharacters for you, so you never have to think about backslashes:
 
 That automatic escaping is the point: you write the text you mean, and edify
 emits the regex that matches exactly that text — no matter which metacharacters
-it happens to contain.
+it happens to contain. The dot below is a *literal* dot, so ``a.b`` matches but
+``axb`` doesn't:
+
+.. edify-playground::
+   :tests: a.b|axb|a-b|xyz
+
+   RegexBuilder() \
+       .string("a.b")
 
 Ranges and sets
 ---------------
