@@ -42,46 +42,6 @@ which emits:
 
    ^(?:(?:(?:[0-9a-fA-F]){1,4}:){7}(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,7}:|(?:(?:[0-9a-fA-F]){1,4}:){1,6}:(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,5}(?::(?:[0-9a-fA-F]){1,4}){1,2}|(?:(?:[0-9a-fA-F]){1,4}:){1,4}(?::(?:[0-9a-fA-F]){1,4}){1,3}|(?:(?:[0-9a-fA-F]){1,4}:){1,3}(?::(?:[0-9a-fA-F]){1,4}){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,2}(?::(?:[0-9a-fA-F]){1,4}){1,5}|(?:[0-9a-fA-F]){1,4}:(?:(?::(?:[0-9a-fA-F]){1,4}){1,6})|:(?:(?:(?::(?:[0-9a-fA-F]){1,4}){1,7}|[:]))|fe80:(?::(?:[0-9a-fA-F]){0,4}){0,4}%[0-9a-zA-Z]+|::(?:ffff(?::0{1,4})?:)?(?:(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)\.){3}(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)|(?:(?:[0-9a-fA-F]){1,4}:){1,4}:(?:(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)\.){3}(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d))$
 
-The forms it accepts
---------------------
-
-Every textual form of an IPv6 address, at a glance:
-
-.. list-table::
-   :header-rows: 1
-   :widths: 30 40 30
-
-   * - Form
-     - Example
-     - Notes
-   * - Full
-     - ``2001:0db8:0000:0000:0000:ff00:0042:8329``
-     - eight four-digit groups
-   * - Leading zeros dropped
-     - ``2001:db8:0:0:0:ff00:42:8329``
-     - each group 1–4 digits
-   * - Zero-compressed
-     - ``2001:db8::ff00:42:8329``
-     - one ``::`` for a run of zeros
-   * - Loopback
-     - ``::1``
-     - seven zero groups, then 1
-   * - Unspecified
-     - ``::``
-     - all zeros
-   * - Link-local
-     - ``fe80::1``
-     - the ``fe80::/10`` block
-   * - Scoped link-local
-     - ``fe80::1%eth0``
-     - a ``%zone`` interface suffix
-   * - IPv4-mapped
-     - ``::ffff:192.0.2.1``
-     - a dotted-quad tail
-   * - IPv4-embedded
-     - ``2001:db8::192.0.2.1``
-     - a dotted-quad in a routable prefix
-
 The full form
 -------------
 
@@ -168,21 +128,3 @@ interface it is scoped to, named (``eth0``) or numbered (``1``). Without it, a
 
    from edify.library import ipv6
    ipv6
-
-Notes
------
-
-- ``ipv6`` validates the **textual form** only. It does not check whether an
-  address is reachable, allocated, or in a reserved range — ``::`` and ``::1``
-  both match.
-- It accepts case-insensitive hex; it does not *require* the RFC 5952 canonical
-  lowercase, minimal-``::`` form. Both ``2001:DB8::1`` and ``2001:db8::1`` pass.
-
-See also
---------
-
-- :doc:`ipv4` — the IPv4 dotted-quad, whose octet range check the embedded-IPv4
-  tail reuses.
-- :doc:`ip` — accepts either family.
-- :doc:`cidr` — an IPv6 (or IPv4) address plus a ``/prefix``.
-- :doc:`ptr` — the reversed-nibble ``ip6.arpa`` form of this same grammar.
