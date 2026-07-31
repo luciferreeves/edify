@@ -11,7 +11,7 @@ import pytest
 
 from edify import EdifySyntaxError, Pattern, between, between_lazy
 
-_PLACEHOLDER_LABELS = ["x", "y", "X", "Y"]
+_PLACEHOLDER_LABELS = ["x", "y", "X", "Y", "a", "b", "Value"]
 
 
 def _summary_of(callable_under_test) -> str:
@@ -61,12 +61,39 @@ def test_inverted_bounds_are_reported_as_lower_and_upper(callable_under_test):
     assert "upper" in summary
 
 
-@pytest.mark.parametrize("placeholder", _PLACEHOLDER_LABELS)
-def test_no_quantifier_diagnostic_falls_back_to_a_placeholder_label(placeholder: str):
-    summaries = [
-        _summary_of(lambda: Pattern().between(-1, 3)),
-        _summary_of(lambda: Pattern().between(1, 0)),
-        _summary_of(lambda: Pattern().between(5, 2)),
-    ]
-    for summary in summaries:
-        assert f" {placeholder} " not in f" {summary} "
+@pytest.mark.parametrize(
+    ("callable_under_test", "expected_name"),
+    [
+        (lambda: Pattern().range("ab", "z"), "start_character"),
+        (lambda: Pattern().range("a", "yz"), "end_character"),
+        (lambda: Pattern().anything_but_range("ab", "z"), "start_character"),
+        (lambda: Pattern().anything_but_range("a", "yz"), "end_character"),
+        (lambda: Pattern().char("ab"), "value"),
+        (lambda: Pattern().string(""), "value"),
+        (lambda: Pattern().anything_but_string(""), "value"),
+        (lambda: Pattern().anything_but_chars(""), "characters"),
+    ],
+)
+def test_a_rejected_character_argument_is_reported_by_its_parameter_name(
+    callable_under_test, expected_name: str
+):
+    assert expected_name in _summary_of(callable_under_test)
+
+
+_REJECTING_CALLS = [
+    lambda: Pattern().between(-1, 3),
+    lambda: Pattern().between(1, 0),
+    lambda: Pattern().between(5, 2),
+    lambda: Pattern().range("ab", "z"),
+    lambda: Pattern().range("a", "yz"),
+    lambda: Pattern().anything_but_range("ab", "z"),
+    lambda: Pattern().char("ab"),
+    lambda: Pattern().string(""),
+    lambda: Pattern().anything_but_chars(""),
+]
+
+
+@pytest.mark.parametrize("rejecting_call", _REJECTING_CALLS)
+def test_no_diagnostic_names_a_placeholder_as_its_subject(rejecting_call):
+    subject = _summary_of(rejecting_call).removeprefix("error: ").split(" ", 1)[0]
+    assert subject not in _PLACEHOLDER_LABELS
