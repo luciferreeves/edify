@@ -103,6 +103,12 @@ img { max-width: 100%; }
 }
 .brand:hover { text-decoration: none; }
 .brand-mark { color: var(--accent); font-size: 12px; }
+/* the wordmark ships in two colourways; show the one that reads on the active theme */
+.brand-logo { display: block; width: auto; height: 22px; }
+.brand-logo-dark { display: none; }
+[data-theme="dark"] .brand-logo-light { display: none; }
+[data-theme="dark"] .brand-logo-dark { display: block; }
+.footer-brand .brand-logo { height: 18px; }
 .navlinks { display: flex; gap: 20px; }
 .navlinks a { color: var(--muted); font-size: 14px; font-weight: 500;
   position: relative; padding: 4px 0; }
