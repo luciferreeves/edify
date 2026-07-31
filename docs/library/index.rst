@@ -27,6 +27,7 @@ sidebar, or start here:
    data/index
    document/index
    grammar/index
+   media/index
    numeric/index
    security/index
    text/index
@@ -48,11 +49,12 @@ Categories
 - :doc:`document/index` — document formats identified by their content
   signature: PDF, office packages, e-books, and source formats.
 - :doc:`grammar/index` — grammar notations: BNF, EBNF, ABNF, PEG, pest, ANTLR.
+- :doc:`media/index` — file names, media types, encodings, locales, and globs.
 - :doc:`numeric/index` — integers, decimals, percentages, fractions, and Roman
   numerals.
 - :doc:`security/index` — cryptographic artifacts: PEM blocks, certificates, SSH
   and PGP keys, nonces, and signatures.
 - :doc:`text/index` — character classes, encodings, scripts, and slugs.
 - :doc:`web/index` — server configuration, site metadata, and HTTP header values.
-- **Finance, Geo, Identifiers, Media, Medical, Product, Publishing,
+- **Finance, Geo, Identifiers, Medical, Product, Publishing,
   Software, Temporal, Transport** — being handcrafted, one validator at a time.
