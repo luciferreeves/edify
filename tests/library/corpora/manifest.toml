@@ -1,0 +1,10 @@
+accepts = [
+    "{\"short_name\":\"App\",\"start_url\":\"/\",\"display\":\"standalone\"}",
+    "{\"icons\":[]}",
+]
+
+rejects = [
+    "",
+    "hello",
+    "{\"a\":1}",
+]

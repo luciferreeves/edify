@@ -1,41 +1,25 @@
-"""``bnf`` — bnf grammar-spec content shape."""
+"""``bnf`` — Backus-Naur form grammar shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_name = Pattern().char("<").one_or_more().anything_but_chars("<>\r\n").char(">")
+
 bnf = (
     Pattern()
     .start_of_input()
-    .between(4, 65536)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char("-")
-    .char("<")
-    .char(">")
-    .char(":")
-    .char("=")
-    .char("|")
-    .char("*")
-    .char("+")
-    .char("?")
-    .char("(")
-    .char(")")
-    .char("[")
-    .char("]")
-    .char("{")
-    .char("}")
+    .zero_or_more()
     .whitespace_char()
-    .char(".")
-    .char("'")
-    .char('"')
-    .char("/")
-    .char(";")
-    .char(",")
-    .end()
+    .use(_name)
+    .zero_or_more()
+    .whitespace_char()
+    .string("::=")
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for bnf grammar-specification content."""
+"""Callable :class:`Pattern` for a Backus-Naur form grammar: an
+``<angle-bracketed>`` rule name followed by ``::=``.
+"""

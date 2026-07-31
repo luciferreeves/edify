@@ -1,1 +1,1 @@
-^[A-Za-z0-9_\.\-/\+=\?\&\#:%\~]{2,4096}$
+^\s*(?:<\?xml.*)?<(?:urlset|sitemapindex).*http://www\.sitemaps\.org/schemas/sitemap/.*$

@@ -1,30 +1,57 @@
-"""``apache`` — apache web-artifact identifier/URL/content shape."""
+"""``apache`` — Apache server configuration shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_section = (
+    Pattern()
+    .char("<")
+    .any_of()
+    .string("VirtualHost")
+    .string("Directory")
+    .string("Location")
+    .string("Files")
+    .string("IfModule")
+    .string("Limit")
+    .string("Proxy")
+    .end()
+)
+
+_directive = (
+    Pattern()
+    .any_of()
+    .string("ServerName")
+    .string("ServerRoot")
+    .string("ServerAdmin")
+    .string("DocumentRoot")
+    .string("Listen")
+    .string("LoadModule")
+    .string("ErrorLog")
+    .string("CustomLog")
+    .string("Include")
+    .end()
+    .one_or_more()
+    .whitespace_char()
+)
+
+_comment = Pattern().char("#")
+
 apache = (
     Pattern()
     .start_of_input()
-    .between(2, 4096)
+    .zero_or_more()
+    .whitespace_char()
     .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .char("+")
-    .char("=")
-    .char("?")
-    .char("&")
-    .char("#")
-    .char(":")
-    .char("%")
-    .char("~")
+    .use(_comment)
+    .use(_section)
+    .use(_directive)
     .end()
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for apache web-artifact identifier or content marker."""
+"""Callable :class:`Pattern` for an Apache server configuration: a comment, a
+``<VirtualHost>``-style section, or a top-level directive.
+"""

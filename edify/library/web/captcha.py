@@ -1,4 +1,4 @@
-"""``captcha`` — captcha web-artifact identifier/URL/content shape."""
+"""``captcha`` — CAPTCHA verification token shape."""
 
 from __future__ import annotations
 
@@ -7,24 +7,13 @@ from edify import Pattern
 captcha = (
     Pattern()
     .start_of_input()
-    .between(2, 4096)
+    .between(20, 2048)
     .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .char("+")
-    .char("=")
-    .char("?")
-    .char("&")
-    .char("#")
-    .char(":")
-    .char("%")
-    .char("~")
+    .alphanumeric()
+    .any_of_chars("-_")
     .end()
     .end_of_input()
 )
-"""Callable :class:`Pattern` for captcha web-artifact identifier or content marker."""
+"""Callable :class:`Pattern` for a CAPTCHA verification token: a long
+URL-safe base64 response string.
+"""

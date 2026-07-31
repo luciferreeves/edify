@@ -1,4 +1,4 @@
-"""``manifest`` — manifest web-artifact identifier/URL/content shape."""
+"""``manifest`` — web application manifest shape."""
 
 from __future__ import annotations
 
@@ -7,24 +7,32 @@ from edify import Pattern
 manifest = (
     Pattern()
     .start_of_input()
-    .between(2, 4096)
+    .zero_or_more()
+    .whitespace_char()
+    .char("{")
+    .zero_or_more()
+    .any_char()
+    .char('"')
     .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .char("+")
-    .char("=")
-    .char("?")
-    .char("&")
-    .char("#")
-    .char(":")
-    .char("%")
-    .char("~")
+    .string("start_url")
+    .string("display")
+    .string("icons")
+    .string("short_name")
+    .string("theme_color")
     .end()
+    .char('"')
+    .zero_or_more()
+    .whitespace_char()
+    .char(":")
+    .zero_or_more()
+    .any_char()
+    .char("}")
+    .zero_or_more()
+    .whitespace_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for manifest web-artifact identifier or content marker."""
+"""Callable :class:`Pattern` for a web application manifest: a JSON object
+carrying a ``start_url``, ``display``, ``icons``, ``short_name``, or
+``theme_color`` member.
+"""

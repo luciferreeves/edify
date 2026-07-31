@@ -22,5 +22,6 @@ antlr = (
     .zero_or_more()
     .any_char()
     .end_of_input()
+    .dot_all()
 )
 """Callable :class:`Pattern` for an ANTLR grammar source (``grammar Name;`` header + rules)."""

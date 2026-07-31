@@ -1,30 +1,31 @@
-"""``sitemap`` — sitemap web-artifact identifier/URL/content shape."""
+"""``sitemap`` — XML sitemap document shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_declaration = Pattern().string("<?xml").zero_or_more().any_char()
+
 sitemap = (
     Pattern()
     .start_of_input()
-    .between(2, 4096)
+    .zero_or_more()
+    .whitespace_char()
+    .optional()
+    .use(_declaration)
+    .char("<")
     .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .char("+")
-    .char("=")
-    .char("?")
-    .char("&")
-    .char("#")
-    .char(":")
-    .char("%")
-    .char("~")
+    .string("urlset")
+    .string("sitemapindex")
     .end()
+    .zero_or_more()
+    .any_char()
+    .string("http://www.sitemaps.org/schemas/sitemap/")
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for sitemap web-artifact identifier or content marker."""
+"""Callable :class:`Pattern` for an XML sitemap: a ``<urlset`` or
+``<sitemapindex`` root carrying the sitemap schema namespace.
+"""

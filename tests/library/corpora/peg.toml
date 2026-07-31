@@ -1,0 +1,11 @@
+accepts = [
+    "expr <- term \"+\" expr",
+    "Digit <- [0-9]\n",
+]
+
+rejects = [
+    "",
+    "hello",
+    "<expr> ::= x",
+    "expr = x ;",
+]

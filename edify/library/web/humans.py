@@ -1,30 +1,49 @@
-"""``humans`` — humans web-artifact identifier/URL/content shape."""
+"""``humans`` — humans.txt credits file shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_section = (
+    Pattern()
+    .string("/*")
+    .zero_or_more()
+    .any_of()
+    .alphanumeric()
+    .any_of_chars(" -_")
+    .end()
+    .string("*/")
+)
+
+_field = (
+    Pattern()
+    .one_or_more()
+    .any_of()
+    .alphanumeric()
+    .any_of_chars(" -_")
+    .end()
+    .char(":")
+    .zero_or_more()
+    .whitespace_char()
+)
+
+_comment = Pattern().char("#")
+
 humans = (
     Pattern()
     .start_of_input()
-    .between(2, 4096)
+    .zero_or_more()
+    .whitespace_char()
     .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .char("+")
-    .char("=")
-    .char("?")
-    .char("&")
-    .char("#")
-    .char(":")
-    .char("%")
-    .char("~")
+    .use(_comment)
+    .use(_section)
+    .use(_field)
     .end()
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for humans web-artifact identifier or content marker."""
+"""Callable :class:`Pattern` for a humans.txt credits file: a comment, a
+``/* TEAM */`` style section marker, or a ``Field: value`` line.
+"""

@@ -1,41 +1,29 @@
-"""``abnf`` — abnf grammar-spec content shape."""
+"""``abnf`` — augmented Backus-Naur form grammar shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_name = Pattern().letter().zero_or_more().any_of().alphanumeric().char("-").end()
+
 abnf = (
     Pattern()
     .start_of_input()
-    .between(4, 65536)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char("-")
-    .char("<")
-    .char(">")
-    .char(":")
-    .char("=")
-    .char("|")
-    .char("*")
-    .char("+")
-    .char("?")
-    .char("(")
-    .char(")")
-    .char("[")
-    .char("]")
-    .char("{")
-    .char("}")
+    .zero_or_more()
     .whitespace_char()
-    .char(".")
-    .char("'")
-    .char('"')
+    .use(_name)
+    .one_or_more()
+    .any_of_chars(" \t")
+    .char("=")
+    .optional()
     .char("/")
-    .char(";")
-    .char(",")
-    .end()
+    .one_or_more()
+    .any_of_chars(" \t")
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for abnf grammar-specification content."""
+"""Callable :class:`Pattern` for an augmented Backus-Naur form grammar: a rule
+name followed by a space-delimited ``=`` or ``=/`` definition.
+"""

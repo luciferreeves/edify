@@ -1,0 +1,12 @@
+accepts = [
+    "/* TEAM */\nDeveloper: Jane",
+    "Developer: Jane\nSite: x",
+    "# c\nThanks: y",
+    "/* SITE */",
+]
+
+rejects = [
+    "",
+    "{\"a\":1}",
+    "hello world",
+]
