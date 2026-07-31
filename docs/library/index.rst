@@ -29,6 +29,7 @@ sidebar, or start here:
    numeric/index
    security/index
    text/index
+   web/index
 
 Categories
 ----------
@@ -50,6 +51,6 @@ Categories
 - :doc:`security/index` — cryptographic artifacts: PEM blocks, certificates, SSH
   and PGP keys, nonces, and signatures.
 - :doc:`text/index` — character classes, encodings, scripts, and slugs.
+- :doc:`web/index` — server configuration, site metadata, and HTTP header values.
 - **Finance, Geo, Grammar, Identifiers, Media, Medical, Product, Publishing,
-  Software, Temporal, Transport, Web** — being handcrafted, one validator at a
-  time.
+  Software, Temporal, Transport** — being handcrafted, one validator at a time.
