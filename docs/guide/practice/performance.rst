@@ -36,6 +36,41 @@ pattern ever meets user input. That is only possible because edify keeps an elem
 tree rather than a string: the check is structural, so it inspects what you built
 rather than trying to parse a regex back into meaning.
 
+How bad it gets
+---------------
+
+"Exponential" is easy to nod at and hard to feel. Matching ``a…a!`` against
+``^(?:[a-zA-Z]+)+$`` costs roughly four times as much for every two characters
+added:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 35 35
+
+   * - Input length
+     - ``^(?:[a-zA-Z]+)+$``
+     - ``^[a-zA-Z]+$``
+   * - 19 characters
+     - ~7 ms
+     - under 0.01 ms
+   * - 21 characters
+     - ~29 ms
+     - under 0.01 ms
+   * - 23 characters
+     - ~118 ms
+     - under 0.01 ms
+   * - 25 characters
+     - ~473 ms
+     - under 0.01 ms
+
+Two more characters at the bottom of that table is another two seconds. At forty
+characters — still a short string, well under any length limit you would think to
+impose — the same match takes longer than the age of the request that triggered it.
+The safe pattern on the right is flat because it never has a choice to reconsider.
+
+That is why this is a denial-of-service issue and not a tuning problem: the attacker
+picks the input, and the input is tiny.
+
 Why edify can see it and a string cannot
 ----------------------------------------
 
@@ -86,6 +121,34 @@ work; ``one_or_more`` invites an attacker to choose the length:
 :func:`~edify.any_of` can match the same text, the engine has to try both on
 failure. The :doc:`../../library/address/ipv4` octet is a good model: its five
 branches cover 0–255 with no overlap at all, so exactly one can ever apply.
+
+A timeout as the last line of defence
+-------------------------------------
+
+Bounding the pattern is the fix. A timeout is the seatbelt for the case you did not
+anticipate: the match surface takes a ``timeout`` in seconds, and it is available
+under the third-party engine.
+
+.. code-block:: python
+
+   from edify import RegexBuilder as R
+
+   pattern = R().start_of_input().one_or_more().letter().end_of_input()
+   compiled = pattern.to_regex(engine="regex")
+
+   compiled.match("abcdef", timeout=0.1)
+
+Asking for one under the standard library is an error rather than a silently ignored
+argument, so you always know whether you have the protection:
+
+.. code-block:: text
+
+   error: the timeout= kwarg is only supported under engine='regex'
+
+Install it with ``pip install edify[regex]``. Note that the third-party engine also
+optimizes away some of the shapes that make ``re`` backtrack, so switching engines
+can resolve a slow pattern on its own — but neither the switch nor the timeout is a
+substitute for bounding the quantifier.
 
 What the check does not cover
 -----------------------------
