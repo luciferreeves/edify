@@ -35,14 +35,13 @@
     <div class="api-nav-title{% if not loop.first %} api-nav-onpage{% endif %}">{{ group_label }}</div>
     <ul class="api-nav-list">
       {% for name, label in pages %}
-      <li><a href="{{ pathto(name) }}"{% if pagename == name %} class="current"{% endif %}>{{ label }}</a></li>
+      <li>
+        <a href="{{ pathto(name) }}"{% if pagename == name %} class="current"{% endif %}>{{ label }}</a>
+        {% if pagename == name and api_page_toc %}<div class="api-nav-toc">{{ api_page_toc }}</div>{% endif %}
+      </li>
       {% endfor %}
     </ul>
     {% endfor %}
-    {% if toc and pagename != 'api/index' %}
-    <div class="api-nav-title api-nav-onpage">On this page</div>
-    <div class="api-nav-toc">{{ toc }}</div>
-    {% endif %}
   </aside>
   <main id="main" class="content api-content" role="main">
     {{ body }}

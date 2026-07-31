@@ -6,8 +6,8 @@
    ============================================================ */
 
 .api-layout {
-  display: grid; grid-template-columns: 220px minmax(0, 1fr);
-  gap: 48px; align-items: start; padding: 34px 0 96px;
+  display: grid; grid-template-columns: 264px minmax(0, 1fr);
+  gap: 44px; align-items: start; padding: 34px 0 96px;
 }
 .api-nav { position: sticky; top: 78px; align-self: start;
   max-height: calc(100vh - 96px); overflow-y: auto; font-size: 14px; }
@@ -26,8 +26,19 @@
 .api-nav-list a { font-weight: 500; }
 .api-nav-list a.current { color: var(--accent); border-left-color: var(--accent);
   background: var(--accent-weak); }
-/* on-this-page symbol list */
-.api-nav-toc a { font-family: var(--mono); font-size: 0.78rem; }
+/* symbol list, nested under the current page's entry */
+.api-nav-toc { margin: 2px 0 6px; border-left: 2px solid var(--accent-weak); }
+.api-nav-toc ul { padding-left: 0; }
+.api-nav-toc a { font-family: var(--mono); font-size: 0.75rem; font-weight: 400;
+  padding: 3px 0 3px 20px; border-left: none;
+  overflow-wrap: anywhere; hyphens: none; }
+/* section headings within a page's symbol list */
+.api-nav-toc > ul > li > a { font-family: var(--sans); font-size: 0.8rem;
+  color: var(--faint); margin-top: 4px; }
+.api-nav-toc ul ul { padding-left: 10px; }
+.api-nav-toc a:hover { color: var(--accent); }
+.api-nav-toc code { background: none; border: none; padding: 0; font-size: inherit;
+  color: inherit; }
 
 .api-content { max-width: none; min-width: 0; }
 .api-content > h1 { font-size: 2rem; letter-spacing: -0.02em; margin: 0 0 10px; }

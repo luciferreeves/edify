@@ -12,6 +12,7 @@ import base64
 import html
 import importlib
 import pkgutil
+import re
 from typing import Any, ClassVar
 
 from docutils import nodes
@@ -307,8 +308,21 @@ def _select_template(
         context["library_nav"] = _guide_nav(app, pagename)
         return "guide.html"
     if pagename.startswith("api/"):
+        context["api_page_toc"] = _inner_toc(context.get("toc", ""))
         return "api.html"
     return _STANDALONE.get(pagename)
+
+
+_QUALIFIER = re.compile(r'(<span class="pre">)(?:[A-Za-z_][\w.]*\.)(?=\w)')
+
+
+def _inner_toc(rendered_toc: str) -> str:
+    """Return the section list from ``toc``, dropping the wrapper that repeats the page title."""
+    opening = rendered_toc.find("<ul>", rendered_toc.find("</a>"))
+    closing = rendered_toc.rfind("</ul>", 0, rendered_toc.rfind("</ul>"))
+    if opening == -1 or closing <= opening:
+        return ""
+    return _QUALIFIER.sub(r"\1", rendered_toc[opening : closing + len("</ul>")])
 
 
 def setup(app: Sphinx) -> dict[str, object]:
