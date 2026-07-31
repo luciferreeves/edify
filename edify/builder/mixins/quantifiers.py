@@ -78,9 +78,9 @@ class QuantifiersMixin(BuilderProtocol):
 
     def between(self, lower: int, upper: int) -> Self:
         """Return a new builder with ``{lower,upper}`` queued as the pending quantifier."""
-        _ensure_non_negative_integer("x", lower)
-        _ensure_positive_integer("y", upper)
-        _ensure_strictly_ascending("X", "Y", lower, upper)
+        _ensure_non_negative_integer("lower", lower)
+        _ensure_positive_integer("upper", upper)
+        _ensure_strictly_ascending("lower", "upper", lower, upper)
         call_site = capture_caller_context()
         return _set_pending(
             self, _between_factory(lower, upper), call_site, f"between({lower}, {upper})"
@@ -88,9 +88,9 @@ class QuantifiersMixin(BuilderProtocol):
 
     def between_lazy(self, lower: int, upper: int) -> Self:
         """Return a new builder with ``{lower,upper}?`` queued as the pending quantifier."""
-        _ensure_non_negative_integer("x", lower)
-        _ensure_positive_integer("y", upper)
-        _ensure_strictly_ascending("X", "Y", lower, upper)
+        _ensure_non_negative_integer("lower", lower)
+        _ensure_positive_integer("upper", upper)
+        _ensure_strictly_ascending("lower", "upper", lower, upper)
         call_site = capture_caller_context()
         return _set_pending(
             self,

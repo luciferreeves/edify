@@ -78,9 +78,9 @@ def at_most(count: int, operand: BuilderProtocol) -> Pattern:
 
 def between(lower: int, upper: int, operand: BuilderProtocol) -> Pattern:
     """Return ``operand`` wrapped in a greedy ``{lower,upper}`` quantifier."""
-    _ensure_non_negative_integer("x", lower)
-    _ensure_positive_integer("y", upper)
-    _ensure_strictly_ascending("X", "Y", lower, upper)
+    _ensure_non_negative_integer("lower", lower)
+    _ensure_positive_integer("upper", upper)
+    _ensure_strictly_ascending("lower", "upper", lower, upper)
     return pattern_containing(
         BetweenElement(lower=lower, upper=upper, child=target_element(operand))
     )
@@ -88,9 +88,9 @@ def between(lower: int, upper: int, operand: BuilderProtocol) -> Pattern:
 
 def between_lazy(lower: int, upper: int, operand: BuilderProtocol) -> Pattern:
     """Return ``operand`` wrapped in a lazy ``{lower,upper}?`` quantifier."""
-    _ensure_non_negative_integer("x", lower)
-    _ensure_positive_integer("y", upper)
-    _ensure_strictly_ascending("X", "Y", lower, upper)
+    _ensure_non_negative_integer("lower", lower)
+    _ensure_positive_integer("upper", upper)
+    _ensure_strictly_ascending("lower", "upper", lower, upper)
     return pattern_containing(
         BetweenLazyElement(lower=lower, upper=upper, child=target_element(operand))
     )
