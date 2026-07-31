@@ -10,7 +10,7 @@ from __future__ import annotations
 from typing import Self
 
 from edify.builder.types.protocol import BuilderProtocol
-from edify.compile.escape import escape_for_char_class, escape_special
+from edify.compile.escape import escape_for_char_class, escape_range_bound, escape_special
 from edify.elements.types.chars import (
     AnyOfCharsElement,
     AnythingButCharsElement,
@@ -51,7 +51,9 @@ class CharsMixin(BuilderProtocol):
         _ensure_single_character("a", start_character)
         _ensure_single_character("b", end_character)
         _ensure_ascending_codepoints(start_character, end_character)
-        element = RangeElement(start=start_character, end=end_character)
+        element = RangeElement(
+            start=escape_range_bound(start_character), end=escape_range_bound(end_character)
+        )
         new_state = self.state.with_element_added_to_top(element)
         return self.with_state(new_state)
 
@@ -83,7 +85,9 @@ class CharsMixin(BuilderProtocol):
         _ensure_single_character("a", start_character)
         _ensure_single_character("b", end_character)
         _ensure_ascending_codepoints(start_character, end_character)
-        element = AnythingButRangeElement(start=start_character, end=end_character)
+        element = AnythingButRangeElement(
+            start=escape_range_bound(start_character), end=escape_range_bound(end_character)
+        )
         new_state = self.state.with_element_added_to_top(element)
         return self.with_state(new_state)
 
