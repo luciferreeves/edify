@@ -1,4 +1,4 @@
-"""``hdf5`` — hdf5 data-format / file-marker shape."""
+"""``hdf5`` — HDF5 file signature shape."""
 
 from __future__ import annotations
 
@@ -7,17 +7,12 @@ from edify import Pattern
 hdf5 = (
     Pattern()
     .start_of_input()
-    .between(2, 256)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .char("+")
-    .end()
+    .string("\x89HDF\r\n\x1a\n")
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for hdf5 data-format identifier or content marker."""
+"""Callable :class:`Pattern` for an HDF5 file (``\\x89HDF\\r\\n\\x1a\\n`` magic
+prefix).
+"""

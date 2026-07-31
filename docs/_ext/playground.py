@@ -12,7 +12,7 @@ import base64
 import html
 import importlib
 import pkgutil
-from typing import Any
+from typing import Any, ClassVar
 
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
@@ -28,20 +28,43 @@ _STANDALONE = {
 }
 
 _CATEGORY_TITLES = {
-    "address": "Address", "api": "API", "auth": "Auth", "color": "Color",
-    "contact": "Contact", "data": "Data", "document": "Documents",
-    "financial": "Finance", "geo": "Geo", "grammar": "Grammar",
-    "identifier": "Identifiers", "media": "Media", "medical": "Medical",
-    "numeric": "Numeric", "product": "Product", "publishing": "Publishing",
-    "security": "Security", "software": "Software", "temporal": "Temporal",
-    "text": "Text", "transport": "Transport", "web": "Web",
+    "address": "Address",
+    "api": "API",
+    "auth": "Auth",
+    "color": "Color",
+    "contact": "Contact",
+    "data": "Data",
+    "document": "Documents",
+    "financial": "Finance",
+    "geo": "Geo",
+    "grammar": "Grammar",
+    "identifier": "Identifiers",
+    "media": "Media",
+    "medical": "Medical",
+    "numeric": "Numeric",
+    "product": "Product",
+    "publishing": "Publishing",
+    "security": "Security",
+    "software": "Software",
+    "temporal": "Temporal",
+    "text": "Text",
+    "transport": "Transport",
+    "web": "Web",
 }
 _CATEGORY_ORDER = list(_CATEGORY_TITLES)
 
 _DISPLAY_NAMES = {
-    "ip": "IP", "ipv4": "IPv4", "ipv6": "IPv6", "cidr": "CIDR",
-    "subnet": "Subnet mask", "tld": "TLD", "url": "URL", "uri": "URI",
-    "ptr": "PTR record", "socket": "Socket address", "zip_code": "ZIP Code",
+    "ip": "IP",
+    "ipv4": "IPv4",
+    "ipv6": "IPv6",
+    "cidr": "CIDR",
+    "subnet": "Subnet mask",
+    "tld": "TLD",
+    "url": "URL",
+    "uri": "URI",
+    "ptr": "PTR record",
+    "socket": "Socket address",
+    "zip_code": "ZIP Code",
 }
 
 _NESTING: dict[str, dict[str, list[str]]] = {
@@ -55,6 +78,7 @@ _NESTING: dict[str, dict[str, list[str]]] = {
 
 def _display_name(name: str) -> str:
     return _DISPLAY_NAMES.get(name) or name.replace("_", " ").capitalize()
+
 
 _sections_cache: list[tuple[str, str, list[str]]] | None = None
 
@@ -75,7 +99,8 @@ def _library_sections() -> list[tuple[str, str, list[str]]]:
             continue
         loaded = importlib.import_module(f"edify.library.{module.name}")
         names = sorted(
-            name for name in dir(loaded)
+            name
+            for name in dir(loaded)
             if not name.startswith("_") and hasattr(getattr(loaded, name), "to_regex_string")
         )
         if names:
@@ -90,7 +115,7 @@ class EdifyPlayground(Directive):
     """``.. edify-playground::`` — a live builder/regex/test widget."""
 
     has_content = True
-    option_spec = {"tests": directives.unchanged}
+    option_spec: ClassVar[dict[str, object]] = {"tests": directives.unchanged}
 
     def run(self) -> list[nodes.Node]:
         source = "\n".join(self.content).strip()
@@ -155,7 +180,8 @@ def _library_nav(app: Sphinx, pagename: str) -> str:
         cat_cls = " open" if active else ""
         cat_current = " current" if pagename == f"library/{directory}/index" else ""
         parts.append(f'<div class="lib-nav-section{cat_cls}">')
-        parts.append(f'<a class="lib-nav-cat{cat_current}" href="{cat_uri}">{html.escape(title)}</a>')
+        cat_label = html.escape(title)
+        parts.append(f'<a class="lib-nav-cat{cat_current}" href="{cat_uri}">{cat_label}</a>')
         parts.append(_library_items(builder, pagename, directory, present))
         parts.append("</div>")
     parts.append("</nav>")

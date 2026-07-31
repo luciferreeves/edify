@@ -1,0 +1,17 @@
+accepts = [
+    "<?xml version=\"1.0\"?>\n<root/>",
+    "<root><a>1</a></root>",
+    "<html lang=\"en\">x</html>",
+    "  <?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<a/>",
+    "<ns:tag attr=\"v\"/>",
+    "<_under/>",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "not xml",
+    "{\"a\":1}",
+    "< root>",
+    "<1bad/>",
+]

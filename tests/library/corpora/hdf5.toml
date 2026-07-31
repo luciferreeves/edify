@@ -1,0 +1,10 @@
+accepts = [
+    "\u0089HDF\r\n\u001a\nbody\nmore",
+]
+
+rejects = [
+    "",
+    "hello",
+    "HDF",
+    "\u0089HDF",
+]

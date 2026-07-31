@@ -4,5 +4,5 @@ from __future__ import annotations
 
 from edify import Pattern
 
-orc = Pattern().start_of_input().string("ORC").zero_or_more().any_char().end_of_input()
+orc = Pattern().start_of_input().string("ORC").zero_or_more().any_char().end_of_input().dot_all()
 """Callable :class:`Pattern` for an Apache ORC file (``ORC`` magic prefix)."""

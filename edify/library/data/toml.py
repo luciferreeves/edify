@@ -1,23 +1,54 @@
-"""``toml`` — toml data-format / file-marker shape."""
+"""``toml`` — TOML document shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_table = (
+    Pattern()
+    .char("[")
+    .optional()
+    .char("[")
+    .one_or_more()
+    .anything_but_chars("[]\r\n")
+    .char("]")
+    .optional()
+    .char("]")
+)
+
+_key = (
+    Pattern()
+    .any_of()
+    .alphanumeric()
+    .any_of_chars("_-\"'")
+    .end()
+    .zero_or_more()
+    .any_of()
+    .alphanumeric()
+    .any_of_chars("_.-\"'")
+    .end()
+    .zero_or_more()
+    .whitespace_char()
+    .char("=")
+)
+
+_comment = Pattern().char("#")
+
 toml = (
     Pattern()
     .start_of_input()
-    .between(2, 256)
+    .zero_or_more()
+    .whitespace_char()
     .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .char("+")
+    .use(_table)
+    .use(_comment)
+    .use(_key)
     .end()
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for toml data-format identifier or content marker."""
+"""Callable :class:`Pattern` for a TOML document: a ``[table]`` header, a
+comment, or a ``key =`` assignment.
+"""

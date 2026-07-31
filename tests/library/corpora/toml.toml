@@ -1,0 +1,15 @@
+accepts = [
+    "[table]\nkey = 1",
+    "key = \"v\"",
+    "# comment\na = 1",
+    "[[array]]\nx = 1",
+    "a.b = 2",
+    "[a.b.c]",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "<xml/>",
+    "{\"a\":1}",
+]

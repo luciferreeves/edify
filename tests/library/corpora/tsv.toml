@@ -1,0 +1,13 @@
+accepts = [
+    "a\tb",
+    "a\tb\tc",
+    "x\ty\n1\t2",
+    "\t",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "a,b",
+    "nocols",
+]

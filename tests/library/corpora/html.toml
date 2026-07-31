@@ -1,0 +1,16 @@
+accepts = [
+    "<!DOCTYPE html>\n<html></html>",
+    "<html lang=\"en\">x</html>",
+    "<!doctype HTML>",
+    "<!-- c -->\n<html>",
+    "<HTML>",
+    "  <!DOCTYPE html>",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "{\"a\":1}",
+    "<xml/>",
+    "<root/>",
+]
