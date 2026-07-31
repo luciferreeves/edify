@@ -1,0 +1,2 @@
+digits :: regex :: \d+
+setting :: regex :: (?P<k>\w+)=(?P<v>\w+)

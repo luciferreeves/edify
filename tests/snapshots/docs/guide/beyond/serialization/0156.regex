@@ -1,0 +1,2 @@
+extended :: pattern :: (?P<year>\d{4})\-\d{2}
+loaded :: pattern :: (?P<year>\d{4})
