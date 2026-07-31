@@ -16,34 +16,6 @@ Every validator has its own page covering what it matches, each variant with
 verified examples and a live playground you can edit. Browse by category in the
 sidebar, or start here:
 
-.. toctree::
-   :maxdepth: 1
-
-   address/index
-   api/index
-   auth/index
-   color/index
-   contact/index
-   data/index
-   document/index
-   financial/index
-   geo/index
-   grammar/index
-   media/index
-   medical/index
-   numeric/index
-   product/index
-   publishing/index
-   security/index
-   software/index
-   temporal/index
-   text/index
-   transport/index
-   web/index
-
-Categories
-----------
-
 - :doc:`address/index` — IP addresses, host and domain names, ports, URLs, paths,
   and postal codes.
 - :doc:`api/index` — specification documents and protocol payloads: OpenAPI,
