@@ -249,9 +249,7 @@ def _guide_nav(app: Sphinx, pagename: str) -> str:
         current_cls = " current" if pagename == index_doc else ""
         uri = builder.get_relative_uri(pagename, index_doc)
         parts.append(f'<div class="lib-nav-section{section_cls}">')
-        parts.append(
-            f'<a class="lib-nav-cat{current_cls}" href="{uri}">{html.escape(title)}</a>'
-        )
+        parts.append(f'<a class="lib-nav-cat{current_cls}" href="{uri}">{html.escape(title)}</a>')
         parts.append("<ul>")
         for name in present:
             target = f"guide/{directory}/{name}"
