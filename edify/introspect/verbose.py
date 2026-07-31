@@ -68,7 +68,15 @@ _COMMENT_COLUMN = 24
 
 
 def verbose_elements(elements: tuple[BaseElement, ...]) -> str:
-    """Return the pattern as an annotated ``re.VERBOSE``-compatible multi-line string."""
+    """Return the pattern as an annotated ``re.VERBOSE``-compatible multi-line string.
+
+    Args:
+        elements: The element tree to render, as taken from ``Regex.elements``.
+
+    Returns:
+        The pattern with one token per line, each commented with the chain call that
+        produced it.
+    """
     lines: list[str] = []
     for element in elements:
         lines.extend(_verbose(element, depth=0))

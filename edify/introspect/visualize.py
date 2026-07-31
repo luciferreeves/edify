@@ -21,7 +21,19 @@ def visualize_elements(
     format: str = _FORMAT_ASCII,
     engine: str = _ENGINE_ASCII,
 ) -> str:
-    """Render ``elements`` in the requested ``format`` / ``engine`` combination."""
+    """Render ``elements`` in the requested ``format`` / ``engine`` combination.
+
+    Args:
+        elements: The element tree to draw, as taken from ``Regex.elements``.
+        format: The output format — ``"ascii"`` or ``"svg"``.
+        engine: The renderer — ``"ascii"``, or ``"graphviz"`` for SVG output.
+
+    Returns:
+        The rendered diagram.
+
+    Raises:
+        UnsupportedVisualizationEngineError: If the format and engine do not pair.
+    """
     if format == _FORMAT_ASCII:
         if engine != _ENGINE_ASCII:
             raise UnsupportedVisualizationEngineError(format, engine)

@@ -24,22 +24,38 @@ from edify.pattern.factories.wrap import pattern_containing
 
 
 def assert_ahead(operand: BuilderProtocol) -> Pattern:
-    """Return a positive lookahead ``(?=operand)``."""
+    """Return a positive lookahead ``(?=operand)``.
+
+    Args:
+        operand: The pattern the assertion looks for. It is not consumed by the match.
+    """
     return pattern_containing(AssertAheadElement(children=_operand_children(operand)))
 
 
 def assert_not_ahead(operand: BuilderProtocol) -> Pattern:
-    """Return a negative lookahead ``(?!operand)``."""
+    """Return a negative lookahead ``(?!operand)``.
+
+    Args:
+        operand: The pattern the assertion looks for. It is not consumed by the match.
+    """
     return pattern_containing(AssertNotAheadElement(children=_operand_children(operand)))
 
 
 def assert_behind(operand: BuilderProtocol) -> Pattern:
-    """Return a positive lookbehind ``(?<=operand)``."""
+    """Return a positive lookbehind ``(?<=operand)``.
+
+    Args:
+        operand: The pattern the assertion looks back for. It is not consumed by the match.
+    """
     return pattern_containing(AssertBehindElement(children=_operand_children(operand)))
 
 
 def assert_not_behind(operand: BuilderProtocol) -> Pattern:
-    """Return a negative lookbehind ``(?<!operand)``."""
+    """Return a negative lookbehind ``(?<!operand)``.
+
+    Args:
+        operand: The pattern the assertion looks back for. It is not consumed by the match.
+    """
     return pattern_containing(AssertNotBehindElement(children=_operand_children(operand)))
 
 

@@ -34,50 +34,105 @@ from edify.pattern.factories.wrap import pattern_containing, target_element
 
 
 def optional(operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a greedy ``?`` quantifier."""
+    """Return ``operand`` wrapped in a greedy ``?`` quantifier.
+
+    Args:
+        operand: The pattern the quantifier repeats.
+    """
     return pattern_containing(OptionalElement(child=target_element(operand)))
 
 
 def zero_or_more(operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a greedy ``*`` quantifier."""
+    """Return ``operand`` wrapped in a greedy ``*`` quantifier.
+
+    Args:
+        operand: The pattern the quantifier repeats.
+    """
     return pattern_containing(ZeroOrMoreElement(child=target_element(operand)))
 
 
 def zero_or_more_lazy(operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a lazy ``*?`` quantifier."""
+    """Return ``operand`` wrapped in a lazy ``*?`` quantifier.
+
+    Args:
+        operand: The pattern the quantifier repeats.
+    """
     return pattern_containing(ZeroOrMoreLazyElement(child=target_element(operand)))
 
 
 def one_or_more(operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a greedy ``+`` quantifier."""
+    """Return ``operand`` wrapped in a greedy ``+`` quantifier.
+
+    Args:
+        operand: The pattern the quantifier repeats.
+    """
     return pattern_containing(OneOrMoreElement(child=target_element(operand)))
 
 
 def one_or_more_lazy(operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a lazy ``+?`` quantifier."""
+    """Return ``operand`` wrapped in a lazy ``+?`` quantifier.
+
+    Args:
+        operand: The pattern the quantifier repeats.
+    """
     return pattern_containing(OneOrMoreLazyElement(child=target_element(operand)))
 
 
 def exactly(count: int, operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in ``{count}``."""
+    """Return ``operand`` wrapped in ``{count}``.
+
+    Args:
+        count: How many repetitions are required. Must be at least 1.
+        operand: The pattern the quantifier repeats.
+
+    Raises:
+        MustBePositiveIntegerError: If ``count`` is not an int of 1 or more.
+    """
     _ensure_positive_integer("count", count)
     return pattern_containing(ExactlyElement(times=count, child=target_element(operand)))
 
 
 def at_least(count: int, operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in ``{count,}``."""
+    """Return ``operand`` wrapped in ``{count,}``.
+
+    Args:
+        count: The minimum number of repetitions; the maximum is unbounded.
+        operand: The pattern the quantifier repeats.
+
+    Raises:
+        MustBePositiveIntegerError: If ``count`` is not an int of 1 or more.
+    """
     _ensure_positive_integer("count", count)
     return pattern_containing(AtLeastElement(times=count, child=target_element(operand)))
 
 
 def at_most(count: int, operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in ``{0,count}``."""
+    """Return ``operand`` wrapped in ``{0,count}``.
+
+    Args:
+        count: The maximum number of repetitions; the minimum is zero.
+        operand: The pattern the quantifier repeats.
+
+    Raises:
+        MustBePositiveIntegerError: If ``count`` is not an int of 1 or more.
+    """
     _ensure_positive_integer("count", count)
     return pattern_containing(AtMostElement(times=count, child=target_element(operand)))
 
 
 def between(lower: int, upper: int, operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a greedy ``{lower,upper}`` quantifier."""
+    """Return ``operand`` wrapped in a greedy ``{lower,upper}`` quantifier.
+
+    Args:
+        lower: The minimum number of repetitions. Must be zero or more.
+        upper: The maximum number of repetitions. Must be greater than ``lower``.
+        operand: The pattern the quantifier repeats.
+
+    Raises:
+        MustBeIntegerGreaterThanZeroError: If ``lower`` is negative.
+        MustBePositiveIntegerError: If ``upper`` is not an int of 1 or more.
+        MustBeLessThanError: If ``lower`` is not strictly less than ``upper``.
+    """
     _ensure_non_negative_integer("lower", lower)
     _ensure_positive_integer("upper", upper)
     _ensure_strictly_ascending("lower", "upper", lower, upper)
@@ -87,7 +142,18 @@ def between(lower: int, upper: int, operand: BuilderProtocol) -> Pattern:
 
 
 def between_lazy(lower: int, upper: int, operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a lazy ``{lower,upper}?`` quantifier."""
+    """Return ``operand`` wrapped in a lazy ``{lower,upper}?`` quantifier.
+
+    Args:
+        lower: The minimum number of repetitions. Must be zero or more.
+        upper: The maximum number of repetitions. Must be greater than ``lower``.
+        operand: The pattern the quantifier repeats.
+
+    Raises:
+        MustBeIntegerGreaterThanZeroError: If ``lower`` is negative.
+        MustBePositiveIntegerError: If ``upper`` is not an int of 1 or more.
+        MustBeLessThanError: If ``lower`` is not strictly less than ``upper``.
+    """
     _ensure_non_negative_integer("lower", lower)
     _ensure_positive_integer("upper", upper)
     _ensure_strictly_ascending("lower", "upper", lower, upper)

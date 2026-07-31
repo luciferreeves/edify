@@ -7,7 +7,11 @@ from typing import cast
 
 
 class NamedCaptures:
-    """A namespace exposing every named capture group as an attribute."""
+    """A namespace exposing every named capture group as an attribute.
+
+    Args:
+        wrapped_match: The :class:`re.Match` whose named groups are exposed.
+    """
 
     def __init__(self, wrapped_match: re.Match[str]) -> None:
         self._wrapped_match = wrapped_match
@@ -34,6 +38,9 @@ class Match:
     reach for, plus a ``captures`` namespace that exposes named groups by attribute
     access. The underlying :class:`re.Match` stays reachable via :attr:`wrapped`
     for anything not forwarded.
+
+    Args:
+        wrapped_match: The :class:`re.Match` to wrap.
     """
 
     def __init__(self, wrapped_match: re.Match[str]) -> None:
