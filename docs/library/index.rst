@@ -30,11 +30,15 @@ sidebar, or start here:
    geo/index
    grammar/index
    media/index
+   medical/index
    numeric/index
+   product/index
+   publishing/index
    security/index
    software/index
    temporal/index
    text/index
+   transport/index
    web/index
 
 Categories
@@ -58,8 +62,11 @@ Categories
   codes.
 - :doc:`grammar/index` — grammar notations: BNF, EBNF, ABNF, PEG, pest, ANTLR.
 - :doc:`media/index` — file names, media types, encodings, locales, and globs.
+- :doc:`medical/index` — clinical codes, blood types, and dosages.
 - :doc:`numeric/index` — integers, decimals, percentages, fractions, and Roman
   numerals.
+- :doc:`product/index` — trade item numbers and part identifiers.
+- :doc:`publishing/index` — ISBNs, DOIs, and article identifiers.
 - :doc:`security/index` — cryptographic artifacts: PEM blocks, certificates, SSH
   and PGP keys, nonces, and signatures.
 - :doc:`software/index` — versions, package names, container images, and build
@@ -68,5 +75,5 @@ Categories
   expressions.
 - :doc:`text/index` — character classes, encodings, scripts, and slugs.
 - :doc:`web/index` — server configuration, site metadata, and HTTP header values.
-- **Identifiers, Medical, Product, Publishing,
-  Transport** — being handcrafted, one validator at a time.
+- :doc:`transport/index` — vehicle, plate, aircraft, and flight identifiers.
+- **Identifiers** — being handcrafted, one validator at a time.
