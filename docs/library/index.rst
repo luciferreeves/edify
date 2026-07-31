@@ -22,7 +22,10 @@ sidebar, or start here:
    address/index
    api/index
    auth/index
+   color/index
+   contact/index
    data/index
+   text/index
 
 Categories
 ----------
@@ -33,8 +36,11 @@ Categories
   GraphQL, OAuth, SAML, feeds, and webhooks.
 - :doc:`auth/index` — credentials and tokens: JWTs, API keys, one-time codes,
   session and CSRF tokens, passkeys.
+- :doc:`color/index` — CSS colours, gradients, filters, and palettes.
+- :doc:`contact/index` — email addresses, phone numbers, usernames, and handles.
 - :doc:`data/index` — serialisation formats: JSON, YAML, XML, CSV, and the binary
   containers behind analytics pipelines.
-- **Color, Contact, Documents, Finance, Geo, Grammar, Identifiers, Media, Medical,
-  Numeric, Product, Publishing, Security, Software, Temporal, Text, Transport,
-  Web** — being handcrafted, one validator at a time.
+- :doc:`text/index` — character classes, encodings, scripts, and slugs.
+- **Documents, Finance, Geo, Grammar, Identifiers, Media, Medical, Numeric,
+  Product, Publishing, Security, Software, Temporal, Transport, Web** — being
+  handcrafted, one validator at a time.
