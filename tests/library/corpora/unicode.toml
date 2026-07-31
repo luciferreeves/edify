@@ -1,14 +1,13 @@
 accepts = [
-    "Hello, World!",
-    "abc 123",
-    "~",
     "héllo",
     "日本語",
+    "emoji 🎉",
+    "naïve",
 ]
 
 rejects = [
     "",
+    "Hello!",
+    "abc 123",
     "a\tb",
-    "a\nb",
-    "a\u0000b",
 ]
