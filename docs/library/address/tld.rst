@@ -1,48 +1,56 @@
-tld
+TLD
 ===
 
-``tld`` matches a top-level domain — the ``com`` in ``example.com``. The grammar
-is small (2 to 63 letters) but there are three things worth being precise about:
-how long it can be, which characters count, and the fact that it checks the shape
-rather than the registry.
+**TLD** matches a top-level domain — the ``com`` in ``example.com``, or any of the
+`IANA-registered <https://www.iana.org/domains/root/db>`__ endings. It is the smallest
+grammar in the library: a single :meth:`~edify.RegexBuilder.between`\ ``(2, 63)`` over
+a :meth:`~edify.RegexBuilder.letter` class, anchored end to end with
+:meth:`~edify.RegexBuilder.start_of_input` / :meth:`~edify.RegexBuilder.end_of_input`.
+
+Length — two to sixty-three
+---------------------------
+
+Two letters at the short end (country codes like ``io`` and ``uk``), up to 63 at the
+long end (the legacy and branded gTLDs). A single letter is below the minimum:
 
 .. edify-playground::
-   :tests: io|com|museum|COM|Dev|zzz|c|c0m|co-op|.com
 
    from edify.library import tld
-   tld
 
-**Length — two to sixty-three.** Two letters at the short end (country codes like
-``io`` and ``uk``), up to 63 at the long end (legacy and branded gTLDs). A single
-letter is below the minimum:
+   tld("io")       # the two-letter minimum
+   tld("uk")       # a country code
+   tld("museum")   # a long gTLD
+   tld("c")        # one letter is too short
 
-.. code-block:: python
+Case-insensitive
+----------------
 
-   tld("io")       # True  — the two-letter minimum
-   tld("museum")   # True  — a long gTLD
-   tld("c")        # False — one letter is too short
+DNS is case-insensitive, and so is **TLD** — upper, lower, and mixed all match, so you
+never have to normalise before checking:
 
-**Case doesn't matter.** DNS is case-insensitive, and so is ``tld`` — upper,
-lower, and mixed all match, which is why you never have to normalise before
-checking:
+.. edify-playground::
 
-.. code-block:: python
+   from edify.library import tld
 
-   tld("com")   # True
-   tld("COM")   # True
-   tld("Dev")   # True
+   tld("com")   # lowercase
+   tld("COM")   # uppercase
+   tld("Dev")   # mixed case
 
-**Letters only.** No digits, no hyphens, no dots — the leading dot of ``.com`` is
-punctuation in a domain, not part of the TLD:
+Letters only, and only the shape
+--------------------------------
 
-.. code-block:: python
+No digits, no hyphens, no dots — the leading dot of ``.com`` is punctuation in a
+domain, not part of the TLD. And it matches the *form* of a TLD, not the IANA
+registry, so an unregistered string of letters still passes:
 
-   tld("c0m")     # False — digits
-   tld("co-op")   # False — hyphens
-   tld(".com")    # False — the leading dot
+.. edify-playground::
 
-Note that it matches the *form* of a TLD, not the IANA list, so an unregistered
-string of letters like ``zzz`` still passes. Under the hood it is just
-:meth:`~edify.RegexBuilder.between`\ ``(2, 63)`` of a
-:meth:`~edify.RegexBuilder.letter` class — ``^[a-zA-Z]{2,63}$`` — and it is the
-trailing component that a full :doc:`domain` requires.
+   from edify.library import tld
+
+   tld("zzz")     # well-formed, though not a real TLD
+   tld("c0m")     # digits
+   tld("co-op")   # hyphens
+   tld(".com")    # the leading dot
+
+**TLD** is the trailing component that a full :doc:`domain` requires; for a single
+label anywhere in a name, see :doc:`subdomain`.

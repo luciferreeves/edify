@@ -1,11 +1,10 @@
 Address
 =======
 
-:doc:`Library <../index>` › **Address**
-
 Network and location addressing — IP addresses, host and domain names, ports,
-subnets, reverse-DNS records, URLs, and postal codes. Each is a callable
-:class:`~edify.Pattern`: import it, call it, get a ``bool``.
+subnets, reverse-DNS records, URLs, and postal codes. Each validator is a callable
+:class:`~edify.Pattern`: import it, call it with a string, get a ``bool``. Every
+method each one is built from is documented in the :doc:`API reference <../../api/index>`.
 
 .. code-block:: python
 
@@ -35,12 +34,26 @@ subnets, reverse-DNS records, URLs, and postal codes. Each is a callable
    url
    zip_code
 
-The sixteen address validators:
+Addresses of a machine
+----------------------
 
-- :doc:`ipv4` / :doc:`ipv6` / :doc:`ip` — IPv4, IPv6, or either.
-- :doc:`cidr` / :doc:`subnet` — CIDR blocks and dotted-decimal masks.
-- :doc:`domain` / :doc:`hostname` / :doc:`subdomain` / :doc:`tld` — name shapes.
-- :doc:`ptr` — reverse-DNS records.
-- :doc:`url` / :doc:`uri` / :doc:`path` — locators and paths.
-- :doc:`port` / :doc:`socket` — ports and ``host:port`` pairs.
-- :doc:`zip_code` — US postal codes.
+- :doc:`ip` — an IPv4 or IPv6 address; :doc:`ipv4` and :doc:`ipv6` pin one family.
+- :doc:`cidr` — an address plus a ``/prefix`` network block.
+- :doc:`subnet` — a dotted-decimal mask such as ``255.255.255.0``.
+- :doc:`ptr` — a reverse-DNS ``in-addr.arpa`` / ``ip6.arpa`` record.
+
+Names of a host
+---------------
+
+- :doc:`domain` — a dotted name ending in a letters-only :doc:`tld`.
+- :doc:`hostname` — the same, but a bare single label like ``localhost`` is allowed.
+- :doc:`subdomain` — one label on its own.
+- :doc:`tld` — a top-level domain.
+
+Locators, ports, and codes
+--------------------------
+
+- :doc:`url` — an HTTP/HTTPS web address; :doc:`uri` — any ``scheme:`` locator.
+- :doc:`path` — a POSIX, Windows, or UNC filesystem path.
+- :doc:`port` — a 0–65535 port; :doc:`socket` — a ``host:port`` pair.
+- :doc:`zip_code` — a US ZIP or ZIP+4 postal code.
