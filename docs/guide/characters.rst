@@ -25,6 +25,8 @@ And the letter classes spell out their ranges for you:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().letter().to_regex_string()        # '[a-zA-Z]'
    R().uppercase().to_regex_string()     # '[A-Z]'
    R().lowercase().to_regex_string()     # '[a-z]'
@@ -42,6 +44,8 @@ Named tokens for the characters you can't type comfortably:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().tab().to_regex_string()              # '\\t'
    R().new_line().to_regex_string()         # '\\n'
    R().carriage_return().to_regex_string()  # '\\r'
@@ -55,6 +59,8 @@ Literal text
 metacharacters for you, so you never have to think about backslashes:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    R().char(".").to_regex_string()      # '\\.'    a literal dot, not "any char"
    R().string("c.t").to_regex_string()  # 'c\\.t'  the dot is escaped for you
@@ -80,6 +86,8 @@ character from a set you list:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().range("a", "z").to_regex_string()          # '[a-z]'
    R().any_of_chars("aeiou").to_regex_string()    # '[aeiou]'
 
@@ -88,6 +96,8 @@ Each has a negated twin that matches any character *not* in the set — and
 that isn't the given literal:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    R().anything_but_chars("aeiou").to_regex_string()      # '[^aeiou]'
    R().anything_but_range("a", "z").to_regex_string()     # '[^a-z]'
@@ -99,6 +109,8 @@ not a thicket of backslashes:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().any_of_chars("#?!@$%^&*-").to_regex_string()   # '[#?!@$%^&*-]'
 
 Combining classes
@@ -109,6 +121,8 @@ To match a character from *several* ranges or sets at once, open an
 it with :meth:`~edify.RegexBuilder.end`. It folds them into one class:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    R().any_of().range("0", "9").range("a", "f").range("A", "F").end().to_regex_string()
    # '[0-9a-fA-F]'
@@ -227,6 +241,8 @@ Putting it together
 A hex color is a ``#`` followed by exactly six hex digits:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    hex_color = (
        R().start_of_input()

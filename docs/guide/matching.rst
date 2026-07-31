@@ -31,6 +31,10 @@ These five are the everyday surface. When you want the full toolkit — includin
 
 .. code-block:: python
 
+   from edify import RegexBuilder
+
+   digits = RegexBuilder().one_or_more().digit()
+
    rx = digits.to_regex()
 
    rx.fullmatch("42")               # a Match, or None — the whole string must match
@@ -52,6 +56,10 @@ compiled object, so there's no cost to calling it wherever you need it.
 
 .. code-block:: python
 
+   from edify import RegexBuilder
+
+   digits = RegexBuilder().one_or_more().digit()
+
    digits.to_regex() is digits.to_regex()   # True
 
 Compile in a module-level constant and match against it as often as you like.
@@ -64,6 +72,8 @@ a thin wrapper over the standard match object with one extra convenience: named
 captures are available as attributes on ``.captures``:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    date = (
        R().named_capture("year").exactly(4).digit().end()

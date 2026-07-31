@@ -22,6 +22,8 @@ quantifier or alternation needs a single unit to operate on:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().exactly(3).group().digit().char("-").end().to_regex_string()
    # '(?:\\d\\-){3}'   — three "digit-dash" units
 
@@ -46,6 +48,8 @@ alternatives as strings for the common case:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().any_of("cat", "dog", "fish").to_regex_string()   # '(?:cat|dog|fish)'
 
 For branches that are more than plain strings, open ``any_of`` with no
@@ -53,6 +57,8 @@ arguments, add each branch, and close with ``end``. Each branch is its own
 sub-chain:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    protocol = (
        R().any_of()
@@ -67,6 +73,8 @@ sub-chain:
 string literals:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    R().one_of("GET", "POST", "PUT").to_regex_string()   # '(?:GET|POST|PUT)'
 
@@ -98,6 +106,8 @@ Groups nest freely, and you can drop a whole pre-built pattern into a chain with
 named pieces — the subject of :doc:`composing`:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    word = R().one_or_more().word()
    csv_field = (

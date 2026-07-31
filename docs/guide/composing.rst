@@ -42,6 +42,8 @@ Anchors survive composition, so you can bracket a pattern with ``START`` and
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    (START + R().exactly(4).digit() + END).to_regex_string()   # '^\\d{4}$'
 
 ``DIGIT + WORD`` reads *"a digit, then a word character"* — ``1a`` matches, ``a1``
@@ -117,6 +119,8 @@ already independent. When you want to make that intent obvious — stashing a
 builder to branch from later — ask for a copy:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    base = R().start_of_input().one_or_more().digit()
    snapshot = base.copy()   # a fresh builder with the same state (alias: .fork())

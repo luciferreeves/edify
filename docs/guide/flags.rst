@@ -43,6 +43,8 @@ The available flags:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    starts = R().multi_line().start_of_input().one_or_more().word().to_regex()
    [m.group() for m in starts.finditer("one\ntwo\nthree")]   # ['one', 'two', 'three']
 
@@ -53,6 +55,8 @@ You can also pass flags straight to :meth:`~edify.RegexBuilder.to_regex`, which
 is handy when the *same* builder should compile different ways:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    word = R().string("cat")
 
@@ -71,6 +75,8 @@ with ``pip install edify[regex]``), which supports features ``re`` doesn't — s
 as variable-width lookbehind:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    pattern = R().assert_behind().one_or_more().char("$").end().one_or_more().digit()
    pattern.to_regex(engine="regex")   # compiled with the regex engine

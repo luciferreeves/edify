@@ -22,6 +22,8 @@ opening parenthesis:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    pair = R().capture().word().end().char("=").capture().one_or_more().digit().end().to_regex()
    hit = pair.match("x=42")
    hit.group()    # 'x=42'  — group 0, the whole match
@@ -46,12 +48,16 @@ gives a capture a name instead:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    year = R().named_capture("year").exactly(4).digit().end()
    year.to_regex_string()   # '(?P<year>\\d{4})'
 
 and you read it back by that name — much clearer than counting parentheses:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    date = (
        R().named_capture("year").exactly(4).digit().end()
@@ -71,6 +77,16 @@ too, if you'd rather have a plain dict:
 
 .. code-block:: python
 
+   from edify import RegexBuilder
+
+   dated = (
+       RegexBuilder()
+       .named_capture("year").exactly(4).digit().end()
+       .char("-")
+       .named_capture("month").exactly(2).digit().end()
+   )
+   hit = dated.to_regex().match("2024-07")
+
    hit.groupdict()   # {'year': '2024', 'month': '07'}
 
 Named and numbered captures coexist — a named group also has a number, so
@@ -86,6 +102,8 @@ with :meth:`~edify.RegexBuilder.named_back_reference`:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().capture().word().end().back_reference(1).to_regex_string()
    # '(\\w)\\1'   — a word character, then the same one again
 
@@ -96,6 +114,8 @@ Backreferences are how you match balanced repetition — a doubled letter, or a
 quoted string whose closing quote matches its opening one:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    quoted = (
        R().named_capture("quote").any_of_chars("'\"").end()

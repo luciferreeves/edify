@@ -28,6 +28,8 @@ in the match:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    before_px = R().one_or_more().digit().assert_ahead().string("px").end().to_regex()
    before_px.search("16px").group()   # '16'  — the 'px' matched the lookahead, but isn't captured
 
@@ -49,6 +51,8 @@ Lookbehind
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().assert_behind().char("$").end().one_or_more().digit().to_regex_string()
    # '(?<=\\$)\\d+'    digits, but only right after a '$'
 
@@ -56,6 +60,8 @@ Lookbehind
    # '(?<!\\$)\\d+'    digits, but only when NOT right after a '$'
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    price = R().assert_behind().char("$").end().one_or_more().digit().to_regex()
    price.search("$42").group()   # '42'  — the '$' is required but not part of the match
@@ -72,6 +78,8 @@ lookahead scans the whole string for one requirement; the real tokens then match
 the length:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    password = (
        R().start_of_input()

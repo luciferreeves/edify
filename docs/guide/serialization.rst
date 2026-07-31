@@ -52,7 +52,12 @@ stored patterns stay safe to load as the format evolves:
 
 .. code-block:: python
 
-   Pattern.from_dict({"edify": 999, "pattern": {"kind": "root", "children": []}})
+   from edify import EdifyError, Pattern
+
+   try:
+       Pattern.from_dict({"edify": 999, "pattern": {"kind": "root", "children": []}})
+   except EdifyError as problem:
+       print(problem)
    # error: canonical dict declares schema version 999, but this build only understands 0
 
 The lower-level functions

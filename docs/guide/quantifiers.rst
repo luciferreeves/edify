@@ -34,6 +34,8 @@ The three classic quantifiers have plain-English names:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().optional().char("s").to_regex_string()    # 's?'    zero or one
    R().zero_or_more().digit().to_regex_string()  # '\\d*'  zero or more
    R().one_or_more().digit().to_regex_string()   # '\\d+'  one or more
@@ -48,6 +50,8 @@ forced. Every open-ended and range quantifier has a lazy twin:
 
 .. code-block:: python
 
+   from edify import RegexBuilder as R
+
    R().one_or_more_lazy().digit().to_regex_string()    # '\\d+?'
    R().zero_or_more_lazy().digit().to_regex_string()   # '\\d*?'
    R().between_lazy(2, 5).digit().to_regex_string()    # '\\d{2,5}?'
@@ -56,6 +60,8 @@ The difference matters the moment you match between two delimiters. Greedy runs
 to the *last* delimiter; lazy stops at the *first*:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    greedy = R().char("<").one_or_more().any_char().char(">").to_regex()
    lazy = R().char("<").one_or_more_lazy().any_char().char(">").to_regex()
@@ -72,6 +78,8 @@ A quantifier before a group repeats the entire group — see :doc:`groups` for t
 grouping tokens:
 
 .. code-block:: python
+
+   from edify import RegexBuilder as R
 
    R().one_or_more().group().digit().char("-").end().to_regex_string()
    # '(?:\\d\\-)+'   — one or more "digit-dash" units
@@ -106,10 +114,19 @@ emitting a nonsensical regex:
 
 .. code-block:: python
 
-   R().exactly(0).digit()     # error: count must be a positive integer
-                              #   ... help: use .optional() if you meant zero-or-one.
+   from edify import RegexBuilder as R
 
-   R().between(5, 2).digit()  # error: the lower bound must be less than the upper bound
+   from edify import EdifyError
+
+   for build in (lambda: R().exactly(0).digit(), lambda: R().between(5, 2).digit()):
+       try:
+           build()
+       except EdifyError as problem:
+           print(problem)
+
+   # error: count must be a positive integer
+   #   ... help: use .optional() if you meant zero-or-one.
+   # error: the lower bound must be less than the upper bound
 
 Both raise immediately at the call site with a fix — the diagnostics are covered
 on :doc:`errors`.

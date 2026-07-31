@@ -51,6 +51,10 @@ When you want an explicit, independent copy of a builder as-is, ask for one:
 
 .. code-block:: python
 
+   from edify import RegexBuilder
+
+   digits = RegexBuilder().one_or_more().digit()
+
    snapshot = digits.copy()   # a fresh builder with the same state (alias: .fork())
 
 Because everything is immutable, ``copy`` is rarely necessary — two extensions

@@ -64,7 +64,13 @@ rather than guessing — so you know precisely what to hand-write instead:
 
 .. code-block:: python
 
-   RegexBuilder.from_regex(r"(a)\1")
+   from edify import RegexBuilder
+   from edify.builder.reverse import UnsupportedReverseParseError
+
+   try:
+       RegexBuilder.from_regex(r"(a)\1")
+   except UnsupportedReverseParseError as problem:
+       print(problem)
    # error: from_regex cannot translate the regex construct 'GROUPREF' yet ...
 
 Next: :doc:`matching`, for actually running a compiled pattern against text.

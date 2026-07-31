@@ -25,8 +25,14 @@ validator you can attach to a field with pydantic's ``AfterValidator``:
    class Article(BaseModel):
        handle: Annotated[str, AfterValidator(pattern_validator(slug))]
 
+   from pydantic import ValidationError
+
    Article(handle="my-post")     # ok
-   Article(handle="Not A Slug")  # raises a validation error
+
+   try:
+       Article(handle="Not A Slug")
+   except ValidationError as problem:
+       print(problem)          # pydantic surfaces it as a normal field error
 
 The validator returns the value unchanged when it matches and raises
 ``PatternDidNotMatchError`` otherwise, which pydantic surfaces as a normal field

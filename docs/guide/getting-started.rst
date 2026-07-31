@@ -65,6 +65,10 @@ To actually match something, compile it once and reuse the result. A compiled
 
 .. code-block:: python
 
+   from edify import RegexBuilder
+
+   four_digit_year = RegexBuilder().start_of_input().exactly(4).digit().end_of_input()
+
    year = four_digit_year.to_regex()
 
    year.match("2024")             # a Match object
@@ -76,6 +80,10 @@ every builder carries five match verbs itself (``test``, ``match``, ``search``,
 ``findall``, ``sub``):
 
 .. code-block:: python
+
+   from edify import RegexBuilder
+
+   four_digit_year = RegexBuilder().start_of_input().exactly(4).digit().end_of_input()
 
    four_digit_year.test("2024")   # True  — does the pattern match anywhere?
 

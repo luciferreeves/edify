@@ -26,6 +26,10 @@ strings it would accept:
 
 .. code-block:: python
 
+   from edify import RegexBuilder
+
+   rx = RegexBuilder().start_of_input().exactly(4).digit().to_regex()
+
    print(rx.explain())
 
 .. code-block:: text
@@ -45,6 +49,10 @@ a terminal, a comment, or a code review:
 
 .. code-block:: python
 
+   from edify import RegexBuilder
+
+   rx = RegexBuilder().start_of_input().exactly(4).digit().to_regex()
+
    print(rx.visualize())
 
 .. code-block:: text
@@ -58,6 +66,10 @@ For a polished vector diagram, render it through Graphviz (install it with
 
 .. code-block:: python
 
+   from edify import RegexBuilder
+
+   rx = RegexBuilder().start_of_input().exactly(4).digit().to_regex()
+
    svg = rx.visualize(format="svg", engine="graphviz")
 
 Annotated regex
@@ -68,6 +80,10 @@ form — each token on its own line with a comment — so you can see exactly ho
 your chain maps to regex syntax:
 
 .. code-block:: python
+
+   from edify import RegexBuilder
+
+   rx = RegexBuilder().start_of_input().exactly(4).digit().to_regex()
 
    print(rx.to_verbose_string())
 
@@ -86,6 +102,10 @@ example straight from :meth:`~edify.RegexBuilder.from_regex` — rather than a
 compiled :class:`~edify.Regex`:
 
 .. code-block:: python
+
+   from edify import RegexBuilder
+
+   rx = RegexBuilder().start_of_input().exactly(4).digit().to_regex()
 
    from edify.introspect import explain_elements, visualize_elements, verbose_elements
 

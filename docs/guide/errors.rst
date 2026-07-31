@@ -9,9 +9,12 @@ Try giving a named capture an invalid name:
 
 .. code-block:: python
 
-   from edify import RegexBuilder
+   from edify import EdifyError, RegexBuilder
 
-   RegexBuilder().named_capture("2bad").digit().end().to_regex_string()
+   try:
+       RegexBuilder().named_capture("2bad").digit().end().to_regex_string()
+   except EdifyError as problem:
+       print(problem)
 
 Instead of a traceback into the regex engine, you get:
 
@@ -51,7 +54,12 @@ the call site, with a fix:
 
 .. code-block:: python
 
-   RegexBuilder().one_or_more().to_regex_string()   # dangling quantifier — nothing to repeat
+   from edify import EdifyError, RegexBuilder
+
+   try:
+       RegexBuilder().one_or_more().to_regex_string()   # nothing to repeat
+   except EdifyError as problem:
+       print(problem)
 
    # error: dangling .one_or_more() with no operand to apply to
    #   ... help: append the element the quantifier should apply to (e.g. .digit()).

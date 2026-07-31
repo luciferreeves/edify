@@ -91,21 +91,16 @@ def _snapshot_bodies_for_block(namespace: dict[str, object], pre_exec_names: fro
 
 DISCOVERED_BLOCKS: list[tuple[Path, int, str, Path]] = list(_discover_blocks())
 
-_BLOCKS_DEFERRED_TO_DOCS_REWRITE = frozenset(
+_BLOCKS_REQUIRING_FRAMEWORK_SETUP = frozenset(
     {
-        ("built-in/index", 46),
-        ("built-in/index", 83),
-        ("built-in/index", 98),
-        ("built-in/index", 142),
-        ("built-in/index", 175),
-        ("built-in/index", 184),
-        ("built-in/index", 936),
-        ("regex-builder/builder/index", 396),
+        ("guide/integrations", 76),
     }
 )
 
 _ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS = frozenset(
     {
+        ("upgrading/0.3-to-1.0", 102),
+        ("upgrading/0.3-to-1.0", 134),
         ("upgrading/0.3-to-1.0", 140),
     }
 )
@@ -128,8 +123,8 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     rst_path: Path, block_start: int, block_source: str, relative_stem: Path
 ) -> None:
     stem_string = str(relative_stem)
-    if (stem_string, block_start) in _BLOCKS_DEFERRED_TO_DOCS_REWRITE:
-        pytest.skip("doc block references validators / kwargs slated for the docs rewrite")
+    if (stem_string, block_start) in _BLOCKS_REQUIRING_FRAMEWORK_SETUP:
+        pytest.skip("doc block needs a configured web framework, not available in this suite")
     if (stem_string, block_start) in _ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS:
         pytest.skip("doc block shows pre/post-migration code that is intentionally not executable")
     if _ON_PYPY and (stem_string, block_start) in _BLOCKS_SKIPPED_ON_PYPY:
