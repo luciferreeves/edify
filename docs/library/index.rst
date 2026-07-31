@@ -21,6 +21,7 @@ sidebar, or start here:
 
    address/index
    api/index
+   auth/index
    data/index
 
 Categories
@@ -30,8 +31,10 @@ Categories
   and postal codes.
 - :doc:`api/index` — specification documents and protocol payloads: OpenAPI,
   GraphQL, OAuth, SAML, feeds, and webhooks.
+- :doc:`auth/index` — credentials and tokens: JWTs, API keys, one-time codes,
+  session and CSRF tokens, passkeys.
 - :doc:`data/index` — serialisation formats: JSON, YAML, XML, CSV, and the binary
   containers behind analytics pipelines.
-- **Auth, Color, Contact, Documents, Finance, Geo, Grammar, Identifiers, Media,
-  Medical, Numeric, Product, Publishing, Security, Software, Temporal, Text,
-  Transport, Web** — being handcrafted, one validator at a time.
+- **Color, Contact, Documents, Finance, Geo, Grammar, Identifiers, Media, Medical,
+  Numeric, Product, Publishing, Security, Software, Temporal, Text, Transport,
+  Web** — being handcrafted, one validator at a time.

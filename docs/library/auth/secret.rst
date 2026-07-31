@@ -1,7 +1,8 @@
 Secret
 ======
 
-A shared secret is the value two parties both hold — a client secret in an OAuth
+A `shared secret <https://en.wikipedia.org/wiki/Shared_secret>`__ is the value two
+parties both hold — a client secret in an OAuth
 exchange, a webhook signing secret, or an application key. **Secret** matches 16 to
 256 characters of letters, digits, ``-``, and ``_``.
 
