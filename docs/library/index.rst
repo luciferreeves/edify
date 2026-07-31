@@ -25,6 +25,7 @@ sidebar, or start here:
    color/index
    contact/index
    data/index
+   numeric/index
    text/index
 
 Categories
@@ -40,7 +41,9 @@ Categories
 - :doc:`contact/index` — email addresses, phone numbers, usernames, and handles.
 - :doc:`data/index` — serialisation formats: JSON, YAML, XML, CSV, and the binary
   containers behind analytics pipelines.
+- :doc:`numeric/index` — integers, decimals, percentages, fractions, and Roman
+  numerals.
 - :doc:`text/index` — character classes, encodings, scripts, and slugs.
-- **Documents, Finance, Geo, Grammar, Identifiers, Media, Medical, Numeric,
-  Product, Publishing, Security, Software, Temporal, Transport, Web** — being
-  handcrafted, one validator at a time.
+- **Documents, Finance, Geo, Grammar, Identifiers, Media, Medical, Product,
+  Publishing, Security, Software, Temporal, Transport, Web** — being handcrafted,
+  one validator at a time.
