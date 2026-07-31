@@ -12,19 +12,26 @@ callable :class:`~edify.Pattern`: import it, call it, get a ``bool``.
    semver("1.2.3")                   # True
    iban("GB82WEST12345698765432")    # True
 
-Every validator has its own page with what it matches, each variant covered with
-verified examples, a live playground, and the emitted regex. Browse by category
-in the sidebar, or start here:
+Every validator has its own page covering what it matches, each variant with
+verified examples and a live playground you can edit. Browse by category in the
+sidebar, or start here:
 
 .. toctree::
    :maxdepth: 1
 
    address/index
+   api/index
+   data/index
 
 Categories
 ----------
 
-- **Address** — IPs, hosts, domains, ports, URLs, postal codes. *(done)*
-- **API, Auth, Color, Contact, Data, Documents, Finance, Geo, Grammar,
-  Identifiers, Media, Medical, Numeric, Product, Publishing, Security, Software,
-  Temporal, Text, Transport, Web** — being handcrafted, one validator at a time.
+- :doc:`address/index` — IP addresses, host and domain names, ports, URLs, paths,
+  and postal codes.
+- :doc:`api/index` — specification documents and protocol payloads: OpenAPI,
+  GraphQL, OAuth, SAML, feeds, and webhooks.
+- :doc:`data/index` — serialisation formats: JSON, YAML, XML, CSV, and the binary
+  containers behind analytics pipelines.
+- **Auth, Color, Contact, Documents, Finance, Geo, Grammar, Identifiers, Media,
+  Medical, Numeric, Product, Publishing, Security, Software, Temporal, Text,
+  Transport, Web** — being handcrafted, one validator at a time.

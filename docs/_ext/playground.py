@@ -65,6 +65,18 @@ _DISPLAY_NAMES = {
     "ptr": "PTR record",
     "socket": "Socket address",
     "zip_code": "ZIP Code",
+    "atom": "Atom",
+    "graphql": "GraphQL",
+    "hal": "HAL",
+    "jsonapi": "JSON:API",
+    "oauth": "OAuth",
+    "openapi": "OpenAPI",
+    "openid": "OpenID Connect",
+    "rss": "RSS",
+    "saml": "SAML",
+    "soap": "SOAP",
+    "swagger": "Swagger",
+    "webhook": "Webhook",
 }
 
 _NESTING: dict[str, dict[str, list[str]]] = {
