@@ -100,8 +100,12 @@ Flags and the backend engine are keyword arguments on
 
 .. code-block:: python
 
-   builder.to_regex(ignore_case=True)
-   builder.to_regex(engine="regex")   # third-party engine (pip install edify[regex])
+   from edify import RegexBuilder
+
+   builder = RegexBuilder().one_or_more().letter()
+
+   builder.ignore_case().to_regex()   # flags are chain methods now
+   builder.to_regex()                 # the default engine
 
 .. _regex-wrapper-return:
 
@@ -131,6 +135,11 @@ A :class:`~edify.result.Match` exposes named groups as attributes on
 ``.captures``:
 
 .. code-block:: python
+
+   from edify import RegexBuilder
+
+   dated = RegexBuilder().named_capture("year").exactly(4).digit().end()
+   hit = dated.to_regex().match("2024")
 
    hit.captures.year   # instead of hit.group("year")
 

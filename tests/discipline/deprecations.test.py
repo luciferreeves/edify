@@ -27,14 +27,16 @@ _MESSAGE_PATTERN = re.compile(
 _DEPRECATED_STUBS: list[tuple[str, str, tuple[object, ...]]] = []
 
 
-@pytest.mark.parametrize(
-    ("import_path", "symbol_name", "call_args"),
-    _DEPRECATED_STUBS,
-    ids=[f"{path}.{name}" for path, name, _ in _DEPRECATED_STUBS],
-)
+_STUB_CASES = _DEPRECATED_STUBS or [pytest.param(None, None, None, id="registry-is-empty")]
+
+
+@pytest.mark.parametrize(("import_path", "symbol_name", "call_args"), _STUB_CASES)
 def test_deprecated_stub_fires_one_well_formed_warning(
-    import_path: str, symbol_name: str, call_args: tuple[object, ...]
+    import_path: str | None, symbol_name: str | None, call_args: tuple[object, ...] | None
 ) -> None:
+    if import_path is None:
+        assert _DEPRECATED_STUBS == [], "registry is non-empty; the sentinel row should be gone"
+        return
     module = importlib.import_module(import_path)
     stub = getattr(module, symbol_name)
     with warnings.catch_warnings(record=True) as caught:

@@ -6,7 +6,7 @@ to reach for them, and the mistakes they prevent — with a live playground on e
 page.
 
 .. toctree::
-   :maxdepth: 1
+   :hidden:
 
    anchors
    characters

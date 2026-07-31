@@ -14,6 +14,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.extlinks",
     "playground",
+    "autolink",
 ]
 
 extlinks = {

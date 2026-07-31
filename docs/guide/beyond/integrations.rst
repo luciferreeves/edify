@@ -74,14 +74,33 @@ Django
 
 .. code-block:: python
 
+   from django.core.exceptions import ValidationError
    from django.db import models
    from edify import Pattern
    from edify.integrations.django import pattern_validator
 
    sku = Pattern().start_of_input().exactly(3).uppercase().char("-").exactly(4).digit().end_of_input()
 
-   class Product(models.Model):
-       code = models.CharField(max_length=8, validators=[pattern_validator(sku)])
+   code = models.CharField(max_length=8, validators=[pattern_validator(sku)])
+
+Declare it on a model or form field exactly as above. The validator is callable on
+its own, which is the easiest way to see what it does:
+
+.. code-block:: python
+
+   from django.core.exceptions import ValidationError
+   from edify import Pattern
+   from edify.integrations.django import pattern_validator
+
+   sku = Pattern().start_of_input().exactly(3).uppercase().char("-").exactly(4).digit().end_of_input()
+   validate_sku = pattern_validator(sku)
+
+   validate_sku("ABC-1234")          # passes, returns None
+
+   try:
+       validate_sku("nope")
+   except ValidationError as problem:
+       print(problem.messages)
 
 Because it's a plain ``RegexValidator``, it composes with Django's own
 validators and raises the framework's usual ``ValidationError`` when a value

@@ -5,7 +5,7 @@ What surrounds the builder: composing patterns from parts, running them, reading
 what they do, storing them, and wiring them into a framework.
 
 .. toctree::
-   :maxdepth: 1
+   :hidden:
 
    composing
    from-regex

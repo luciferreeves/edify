@@ -91,19 +91,7 @@ def _snapshot_bodies_for_block(namespace: dict[str, object], pre_exec_names: fro
 
 DISCOVERED_BLOCKS: list[tuple[Path, int, str, Path]] = list(_discover_blocks())
 
-_BLOCKS_REQUIRING_FRAMEWORK_SETUP = frozenset(
-    {
-        ("guide/beyond/integrations", 76),
-    }
-)
-
-_ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS = frozenset(
-    {
-        ("upgrading/0.3-to-1.0", 102),
-        ("upgrading/0.3-to-1.0", 134),
-        ("upgrading/0.3-to-1.0", 140),
-    }
-)
+_ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS: frozenset[tuple[str, int]] = frozenset()
 
 _BLOCKS_SKIPPED_ON_PYPY = frozenset(
     {
@@ -123,8 +111,6 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     rst_path: Path, block_start: int, block_source: str, relative_stem: Path
 ) -> None:
     stem_string = str(relative_stem)
-    if (stem_string, block_start) in _BLOCKS_REQUIRING_FRAMEWORK_SETUP:
-        pytest.skip("doc block needs a configured web framework, not available in this suite")
     if (stem_string, block_start) in _ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS:
         pytest.skip("doc block shows pre/post-migration code that is intentionally not executable")
     if _ON_PYPY and (stem_string, block_start) in _BLOCKS_SKIPPED_ON_PYPY:
@@ -137,7 +123,25 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     assert_snapshot(rendered, snapshot_path)
 
 
+def _configure_django_once() -> None:
+    """Give Django the minimum settings a doc block needs to define a model."""
+    from django.apps import apps
+    from django.conf import settings
+
+    if not settings.configured:
+        settings.configure(
+            INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
+            DATABASES={},
+            USE_TZ=True,
+        )
+    if not apps.ready:
+        import django
+
+        django.setup()
+
+
 def _prepared_exec_namespace() -> dict[str, object]:
+    _configure_django_once()
     namespace: dict[str, object] = {"edify": edify, "Pattern": Pattern, "Regex": Regex, "re": re}
     for edify_export in dir(edify):
         if edify_export.startswith("_"):

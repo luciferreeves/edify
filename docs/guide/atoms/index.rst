@@ -66,7 +66,7 @@ The eight groups
 ----------------
 
 .. toctree::
-   :maxdepth: 1
+   :hidden:
 
    network
    numbers

@@ -17,7 +17,7 @@ verified examples and a live playground you can edit. Browse by category in the
 sidebar, or start here:
 
 .. toctree::
-   :maxdepth: 1
+   :hidden:
 
    address/index
    api/index

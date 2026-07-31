@@ -115,6 +115,16 @@ drops into any chain — a compact way to bracket an expression:
 
    (START + RegexBuilder().exactly(4).digit() + END).to_regex_string()   # '^\\d{4}$'
 
+The composed pattern behaves exactly like the spelled-out chain — edit the
+constants and watch the emitted regex change:
+
+.. edify-playground::
+   :tests: 2024|in 2024|2024 AD|abcd
+
+   from edify import START, END, RegexBuilder
+
+   START + RegexBuilder().exactly(4).digit() + END
+
 See :doc:`../beyond/composing` for the full story on constants and operators.
 
 Anchors and multiline
@@ -133,8 +143,20 @@ By default ``^`` and ``$`` anchor to the ends of the *whole string*. Turn on the
    )
    [m.group() for m in starts.finditer("one\ntwo\nthree")]   # ['one', 'two', 'three']
 
-Without ``multi_line`` that same pattern would only find ``'one'``. Flags are
-covered in full on :doc:`flags`.
+Without ``multi_line`` that same pattern would only find ``'one'``. Toggle the
+flag on and off in the playground and watch the emitted regex gain and lose its
+``(?m)``:
+
+.. edify-playground::
+   :tests: one|two|three
+
+   from edify import RegexBuilder
+
+   RegexBuilder().multi_line() \
+       .start_of_input() \
+       .one_or_more().word()
+
+Flags are covered in full on :doc:`flags`.
 
 Quick reference
 ---------------

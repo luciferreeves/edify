@@ -5,7 +5,7 @@ Install edify, build your first pattern, and learn the two rules that make the r
 of the chain predictable.
 
 .. toctree::
-   :maxdepth: 1
+   :hidden:
 
    getting-started
    thinking-in-edify

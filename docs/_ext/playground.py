@@ -198,6 +198,73 @@ def _library_items(builder: Any, pagename: str, directory: str, present: list[st
     return "".join(out)
 
 
+_GUIDE_SECTIONS = [
+    ("start", "Get started", ["getting-started", "thinking-in-edify"]),
+    (
+        "builder",
+        "The builder",
+        ["anchors", "characters", "quantifiers", "groups", "captures", "lookaround", "flags"],
+    ),
+    (
+        "atoms",
+        "Atoms",
+        ["network", "numbers", "text", "encodings", "datetime", "web", "finance", "grouping"],
+    ),
+    (
+        "beyond",
+        "Beyond the chain",
+        [
+            "composing",
+            "from-regex",
+            "matching",
+            "errors",
+            "testing",
+            "seeing",
+            "serialization",
+            "integrations",
+        ],
+    ),
+]
+
+
+def _page_title(app: Sphinx, docname: str) -> str:
+    title = app.env.titles.get(docname)
+    return title.astext() if title is not None else docname.rsplit("/", 1)[-1]
+
+
+def _guide_nav(app: Sphinx, pagename: str) -> str:
+    builder = app.builder
+    docs = set(app.env.found_docs)
+    parts = ['<nav class="lib-nav" aria-label="Guide navigation">']
+    home = builder.get_relative_uri(pagename, "guide/index")
+    home_cls = " current" if pagename == "guide/index" else ""
+    parts.append(f'<a class="lib-nav-home{home_cls}" href="{home}">Guide</a>')
+    for directory, title, pages in _GUIDE_SECTIONS:
+        index_doc = f"guide/{directory}/index"
+        present = [name for name in pages if f"guide/{directory}/{name}" in docs]
+        if index_doc not in docs or not present:
+            continue
+        active = pagename.startswith(f"guide/{directory}/")
+        section_cls = " open" if active else ""
+        current_cls = " current" if pagename == index_doc else ""
+        uri = builder.get_relative_uri(pagename, index_doc)
+        parts.append(f'<div class="lib-nav-section{section_cls}">')
+        parts.append(
+            f'<a class="lib-nav-cat{current_cls}" href="{uri}">{html.escape(title)}</a>'
+        )
+        parts.append("<ul>")
+        for name in present:
+            target = f"guide/{directory}/{name}"
+            page_uri = builder.get_relative_uri(pagename, target)
+            item_cls = ' class="current"' if pagename == target else ""
+            label = html.escape(_page_title(app, target))
+            parts.append(f'<li><a href="{page_uri}"{item_cls}>{label}</a></li>')
+        parts.append("</ul>")
+        parts.append("</div>")
+    parts.append("</nav>")
+    return "".join(parts)
+
+
 def _library_nav(app: Sphinx, pagename: str) -> str:
     builder = app.builder
     docs = set(app.env.found_docs)
@@ -232,9 +299,14 @@ def _select_template(
 ) -> str | None:
     if pagename == "index":
         return "home.html"
+    if pagename.startswith("_modules/"):
+        return "wide.html"
     if pagename == "library/index" or pagename.startswith("library/"):
         context["library_nav"] = _library_nav(app, pagename)
         return "library.html"
+    if pagename == "guide/index" or pagename.startswith("guide/"):
+        context["library_nav"] = _guide_nav(app, pagename)
+        return "guide.html"
     if pagename.startswith("api/"):
         return "api.html"
     return _STANDALONE.get(pagename)
