@@ -1,0 +1,10 @@
+accepts = [
+    "{\\rtf1\\ansi text}",
+    "{\\rtf\\x}",
+]
+
+rejects = [
+    "",
+    "hello",
+    "{rtf1}",
+]

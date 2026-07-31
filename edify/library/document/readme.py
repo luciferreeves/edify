@@ -1,4 +1,4 @@
-"""``readme`` — readme document-format filename / marker shape."""
+"""``readme`` — README file name shape."""
 
 from __future__ import annotations
 
@@ -7,16 +7,22 @@ from edify import Pattern
 readme = (
     Pattern()
     .start_of_input()
-    .between(1, 256)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
+    .string("readme")
+    .optional()
+    .group()
     .char(".")
-    .char("-")
-    .char("/")
+    .any_of()
+    .string("md")
+    .string("markdown")
+    .string("rst")
+    .string("txt")
+    .string("adoc")
+    .string("org")
+    .end()
     .end()
     .end_of_input()
+    .ignore_case()
 )
-"""Callable :class:`Pattern` for a readme document identifier or file name."""
+"""Callable :class:`Pattern` for a README file name, with or without a common
+documentation extension.
+"""

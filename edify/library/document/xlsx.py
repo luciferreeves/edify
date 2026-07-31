@@ -1,4 +1,4 @@
-"""``xlsx`` — xlsx document-format filename / marker shape."""
+"""``xlsx`` — spreadsheet package signature shape."""
 
 from __future__ import annotations
 
@@ -7,16 +7,15 @@ from edify import Pattern
 xlsx = (
     Pattern()
     .start_of_input()
-    .between(1, 256)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .end()
+    .string("PK\x03\x04")
+    .zero_or_more()
+    .any_char()
+    .string("xl/")
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for a xlsx document identifier or file name."""
+"""Callable :class:`Pattern` for a spreadsheet package: a ZIP container whose
+entries include ``xl/``.
+"""

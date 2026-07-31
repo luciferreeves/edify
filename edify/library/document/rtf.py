@@ -13,5 +13,6 @@ rtf = (
     .zero_or_more()
     .any_char()
     .end_of_input()
+    .dot_all()
 )
 """Callable :class:`Pattern` for an RTF document (``{\\rtfN`` prefix)."""

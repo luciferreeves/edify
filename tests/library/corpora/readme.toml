@@ -1,0 +1,16 @@
+accepts = [
+    "README",
+    "README.md",
+    "readme.rst",
+    "Readme.txt",
+    "README.markdown",
+    "readme.adoc",
+]
+
+rejects = [
+    "",
+    "hello",
+    "READ.ME",
+    "README.pdf",
+    "readme.",
+]

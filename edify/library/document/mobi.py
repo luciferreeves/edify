@@ -1,4 +1,4 @@
-"""``mobi`` — mobi document-format filename / marker shape."""
+"""``mobi`` — MOBI e-book signature shape."""
 
 from __future__ import annotations
 
@@ -7,16 +7,14 @@ from edify import Pattern
 mobi = (
     Pattern()
     .start_of_input()
-    .between(1, 256)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .end()
+    .exactly(60)
+    .any_char()
+    .string("BOOKMOBI")
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for a mobi document identifier or file name."""
+"""Callable :class:`Pattern` for a MOBI e-book: the ``BOOKMOBI`` type/creator
+pair at offset 60 of the database header.
+"""

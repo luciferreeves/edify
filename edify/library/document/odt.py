@@ -1,4 +1,4 @@
-"""``odt`` — odt document-format filename / marker shape."""
+"""``odt`` — OpenDocument text package signature shape."""
 
 from __future__ import annotations
 
@@ -7,16 +7,15 @@ from edify import Pattern
 odt = (
     Pattern()
     .start_of_input()
-    .between(1, 256)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .end()
+    .string("PK\x03\x04")
+    .zero_or_more()
+    .any_char()
+    .string("application/vnd.oasis.opendocument.text")
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for a odt document identifier or file name."""
+"""Callable :class:`Pattern` for an OpenDocument text package: a ZIP container
+declaring the ``application/vnd.oasis.opendocument.text`` media type.
+"""

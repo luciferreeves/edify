@@ -1,0 +1,10 @@
+accepts = [
+    "\\documentclass{article}\n\\begin{document}\\end{document}",
+    "\\documentclass[12pt]{book}\nx",
+]
+
+rejects = [
+    "",
+    "hello",
+    "\\document",
+]
