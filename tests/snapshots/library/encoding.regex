@@ -1,1 +1,1 @@
-^[a-zA-Z][a-zA-Z0-9_\+\.\-]{1,39}$
+^(?:gzip|compress|deflate|br|zstd|identity|x\-gzip|x\-compress|[\*])(?:\s*;q=\d(?:\.\d{1,3})?)?$
