@@ -54,4 +54,4 @@ out of a longer string — a template placeholder, a bracketed log field, a
 parenthesised aside.
 
 That is the last of the atom groups. Back to :doc:`index`, or on to
-:doc:`../composing` for the other ways to build patterns from parts.
+:doc:`../beyond/composing` for the other ways to build patterns from parts.

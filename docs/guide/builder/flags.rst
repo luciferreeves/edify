@@ -82,7 +82,7 @@ as variable-width lookbehind:
    pattern.to_regex(engine="regex")   # compiled with the regex engine
 
 If a pattern needs a feature the selected engine lacks, edify raises a clear,
-actionable error instead of a cryptic one — the subject of :doc:`errors`.
+actionable error instead of a cryptic one — the subject of :doc:`../beyond/errors`.
 
 Quick reference
 ---------------
@@ -129,5 +129,5 @@ the compiled pattern — so ``CAT`` and ``Cat`` match too:
        .ignore_case() \
        .string("cat")
 
-That completes the builder. Next, :doc:`composing` shows how to combine and
+That completes the builder. Next, :doc:`../beyond/composing` shows how to combine and
 reuse the patterns you now know how to write.

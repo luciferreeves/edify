@@ -131,17 +131,17 @@ What's in the box
 The builder is the foundation, but Edify ships a whole toolkit around it:
 
 - **The builder** — anchors, character classes, quantifiers, groups, captures,
-  lookaround, and flags, one topic per page starting at :doc:`anchors`.
+  lookaround, and flags, one topic per page starting at :doc:`../builder/anchors`.
 - **228 ready-made validators** — email, URL, semver, IBAN, phone, and hundreds
-  more, each a callable ``Pattern``. Browse them in the :doc:`../library/index`.
+  more, each a callable ``Pattern``. Browse them in the :doc:`../../library/index`.
 - **A match API** — five verbs on every builder plus the full ``re`` surface on a
-  compiled pattern (:doc:`matching`).
+  compiled pattern (:doc:`../beyond/matching`).
 - **Introspection** — turn any pattern into a plain-English explanation, an ASCII
-  or vector diagram, or an annotated verbose form (:doc:`seeing`).
+  or vector diagram, or an annotated verbose form (:doc:`../beyond/seeing`).
 - **Round-trip serialization** — store a pattern as a dict or JSON and rebuild it
-  exactly (:doc:`serialization`).
+  exactly (:doc:`../beyond/serialization`).
 - **Framework integrations** — pydantic, FastAPI, and Django bindings
-  (:doc:`integrations`).
+  (:doc:`../beyond/integrations`).
 
 Where to go next
 ----------------

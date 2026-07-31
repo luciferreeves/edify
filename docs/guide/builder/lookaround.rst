@@ -108,14 +108,14 @@ Each assertion is also a factory function wrapping the pattern it looks for:
    assert_not_ahead(string("px")).to_regex_string()   # '(?!px)'
 
 The four factories — ``assert_ahead``, ``assert_not_ahead``, ``assert_behind``,
-``assert_not_behind`` — mirror the methods. See :doc:`composing`.
+``assert_not_behind`` — mirror the methods. See :doc:`../beyond/composing`.
 
 .. admonition:: Engine note
    :class: note
 
    Some engines restrict lookbehind to fixed-width patterns. If a variable-width
    lookbehind isn't supported by the standard-library backend, edify raises a
-   clear error pointing you at the fix — see :doc:`errors`. You can also select
+   clear error pointing you at the fix — see :doc:`../beyond/errors`. You can also select
    the alternate engine on :meth:`~edify.RegexBuilder.to_regex` (see :doc:`flags`).
 
 Quick reference

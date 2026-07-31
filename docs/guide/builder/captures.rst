@@ -91,7 +91,7 @@ too, if you'd rather have a plain dict:
 
 Named and numbered captures coexist — a named group also has a number, so
 ``hit.group(1)`` and ``hit.captures.year`` reach the same text. See
-:doc:`matching` for the full match surface.
+:doc:`../beyond/matching` for the full match surface.
 
 Backreferences
 --------------

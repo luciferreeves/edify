@@ -149,4 +149,4 @@ Invalid patterns raise, loudly
 
 Mistakes that used to slip through silently now raise an annotated
 :class:`~edify.EdifyError` at the call site, telling you what went wrong and how
-to fix it. See :doc:`../guide/errors`.
+to fix it. See :doc:`../guide/beyond/errors`.

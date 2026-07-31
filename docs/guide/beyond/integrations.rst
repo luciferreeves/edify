@@ -88,6 +88,6 @@ validators and raises the framework's usual ``ValidationError`` when a value
 doesn't match — so forms, the admin, and DRF serializers all report it the way
 they report everything else.
 
-That's the whole guide. From here, browse the :doc:`../library/index` for the
-228 ready-made validators, keep the :doc:`../api/index` handy as a reference, or
-open the :doc:`../playground` and build something.
+That's the whole guide. From here, browse the :doc:`../../library/index` for the
+228 ready-made validators, keep the :doc:`../../api/index` handy as a reference, or
+open the :doc:`../../playground` and build something.

@@ -2,7 +2,7 @@ Quantifiers
 ===========
 
 A quantifier says *how many* of the next token to match. Remember the one habit
-from :doc:`thinking-in-edify`: the quantifier comes **before** the token it
+from :doc:`../start/thinking-in-edify`: the quantifier comes **before** the token it
 governs.
 
 Fixed counts
@@ -104,7 +104,7 @@ counts — reading *"exactly three digits"* left to right:
 
 The factories mirror the methods one-for-one — ``at_least``, ``at_most``,
 ``between``, ``optional``, ``zero_or_more``, ``one_or_more`` and their ``_lazy``
-twins. See :doc:`composing`.
+twins. See :doc:`../beyond/composing`.
 
 Counts are validated
 --------------------
@@ -129,7 +129,7 @@ emitting a nonsensical regex:
    # error: the lower bound must be less than the upper bound
 
 Both raise immediately at the call site with a fix — the diagnostics are covered
-on :doc:`errors`.
+on :doc:`../beyond/errors`.
 
 Quick reference
 ---------------

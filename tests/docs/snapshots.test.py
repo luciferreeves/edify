@@ -93,7 +93,7 @@ DISCOVERED_BLOCKS: list[tuple[Path, int, str, Path]] = list(_discover_blocks())
 
 _BLOCKS_REQUIRING_FRAMEWORK_SETUP = frozenset(
     {
-        ("guide/integrations", 76),
+        ("guide/beyond/integrations", 76),
     }
 )
 

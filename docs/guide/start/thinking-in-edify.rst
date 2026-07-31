@@ -86,4 +86,4 @@ That's the whole mental model
 Say the quantity before the thing, trust that nothing you build ever mutates
 something you built earlier, and remember that two patterns are the same when
 they emit the same regex. The rest of the guide is just vocabulary: which tokens
-exist, and what each one emits. Start with :doc:`anchors`.
+exist, and what each one emits. Start with :doc:`../builder/anchors`.

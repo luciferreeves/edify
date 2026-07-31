@@ -115,7 +115,7 @@ drops into any chain — a compact way to bracket an expression:
 
    (START + RegexBuilder().exactly(4).digit() + END).to_regex_string()   # '^\\d{4}$'
 
-See :doc:`composing` for the full story on constants and operators.
+See :doc:`../beyond/composing` for the full story on constants and operators.
 
 Anchors and multiline
 ---------------------

@@ -23,7 +23,7 @@ For a quick check, the builder itself exposes five verbs — ``test``, ``match``
 
 ``test`` uses *search* semantics — it returns ``True`` if the pattern matches
 **anywhere** in the string, not only end-to-end. When you mean "the whole string
-is this," anchor the pattern (:doc:`anchors`) or use ``fullmatch`` below.
+is this," anchor the pattern (:doc:`../builder/anchors`) or use ``fullmatch`` below.
 
 These five are the everyday surface. When you want the full toolkit — including
 ``fullmatch``, ``finditer``, ``subn``, and ``split`` — compile the pattern into a
@@ -88,7 +88,7 @@ captures are available as attributes on ``.captures``:
    hit.captures.month   # '07'
 
 Everything else you'd expect from a match object — ``group(n)``, ``groupdict()``,
-``start()``, ``end()``, ``span()`` — is there too. See :doc:`captures` for the
+``start()``, ``end()``, ``span()`` — is there too. See :doc:`../builder/captures` for the
 capture side of the story.
 
 Quick reference

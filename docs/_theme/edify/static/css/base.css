@@ -144,7 +144,7 @@ img { max-width: 100%; }
   border-left: 2px solid transparent; line-height: 1.4; }
 .sidenav a:hover { color: var(--fg); text-decoration: none; }
 .sidenav a.current {
-  color: var(--fg); font-weight: 600; border-left-color: var(--accent); }
+  color: var(--accent); border-left-color: var(--accent); background: var(--accent-weak); }
 .sidenav .caption { text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px;
   color: var(--faint); font-weight: 700; margin: 18px 0 6px; padding-left: 12px; }
 .sidenav ul ul { padding-left: 12px; }

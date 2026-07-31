@@ -150,7 +150,7 @@ Each is callable as a one-character validator and composable with ``+``:
 The full set mirrors the methods above: ``DIGIT``, ``NON_DIGIT``, ``WORD``,
 ``NON_WORD``, ``WHITESPACE``, ``NON_WHITESPACE``, ``LETTER``, ``LOWERCASE``,
 ``UPPERCASE``, ``ALPHANUMERIC``, ``ANY_CHAR``, ``TAB``, ``NEW_LINE``,
-``CARRIAGE_RETURN``, and ``NULL_BYTE``. See :doc:`composing` for combining them.
+``CARRIAGE_RETURN``, and ``NULL_BYTE``. See :doc:`../beyond/composing` for combining them.
 
 Quick reference
 ---------------

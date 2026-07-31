@@ -3,7 +3,7 @@ Factory functions
 
 Each builder method has a matching factory function that builds a standalone
 :class:`~edify.Pattern`, for a functional composition style (see
-:doc:`../guide/composing`).
+:doc:`../guide/beyond/composing`).
 
 Characters and literals
 -----------------------

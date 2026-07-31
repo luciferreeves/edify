@@ -103,7 +103,7 @@ Nesting and reuse
 Groups nest freely, and you can drop a whole pre-built pattern into a chain with
 :meth:`~edify.RegexBuilder.subexpression` (or its alias
 :meth:`~edify.RegexBuilder.use`). That is how you compose bigger patterns from
-named pieces — the subject of :doc:`composing`:
+named pieces — the subject of :doc:`../beyond/composing`:
 
 .. code-block:: python
 

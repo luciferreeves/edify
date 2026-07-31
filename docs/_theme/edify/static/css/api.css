@@ -21,10 +21,11 @@
   border-left: 2px solid transparent; line-height: 1.4; }
 .api-nav a:hover { color: var(--fg); text-decoration: none; }
 .api-nav a.current, .api-nav li.current > a {
-  color: var(--fg); font-weight: 600; border-left-color: var(--accent); }
+  color: var(--accent); border-left-color: var(--accent); background: var(--accent-weak); }
 /* fixed page list (primary API nav) */
 .api-nav-list a { font-weight: 500; }
-.api-nav-list a.current { color: var(--accent); border-left-color: var(--accent); }
+.api-nav-list a.current { color: var(--accent); border-left-color: var(--accent);
+  background: var(--accent-weak); }
 /* on-this-page symbol list */
 .api-nav-toc a { font-family: var(--mono); font-size: 0.78rem; }
 

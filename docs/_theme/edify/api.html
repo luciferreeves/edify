@@ -1,24 +1,44 @@
 {% extends "layout.html" %}
 {% block extrahead %}<link rel="stylesheet" href="{{ pathto('_static/css/api.css', 1) }}">{% endblock %}
-{% set api_pages = [
-  ('api/index', 'Overview'),
-  ('api/builder', 'Builder'),
-  ('api/factories', 'Factory functions'),
-  ('api/constants', 'Constants'),
-  ('api/results', 'Results'),
-  ('api/introspection', 'Introspection'),
-  ('api/serialization', 'Serialization'),
-  ('api/testing', 'Testing & errors'),
+{% set api_groups = [
+  ('API reference', [('api/index', 'Overview')]),
+  ('Builder', [
+    ('api/builder/index', 'RegexBuilder & Pattern'),
+    ('api/builder/anchors', 'Anchors'),
+    ('api/builder/characters', 'Characters'),
+    ('api/builder/classes', 'Character classes'),
+    ('api/builder/quantifiers', 'Quantifiers'),
+    ('api/builder/groups', 'Groups'),
+    ('api/builder/captures', 'Captures'),
+    ('api/builder/assertions', 'Assertions'),
+    ('api/builder/flags', 'Flags'),
+    ('api/builder/composition', 'Composition'),
+    ('api/builder/matching', 'Matching'),
+    ('api/builder/output', 'Output'),
+  ]),
+  ('Other surfaces', [
+    ('api/factories', 'Factory functions'),
+    ('api/constants', 'Constants'),
+    ('api/results', 'Results'),
+  ]),
+  ('Tooling', [
+    ('api/introspection', 'Introspection'),
+    ('api/serialization', 'Serialization'),
+    ('api/testing', 'Testing'),
+    ('api/errors', 'Errors'),
+  ]),
 ] %}
 {% block content %}
 <div class="wrap api-layout">
   <aside class="api-nav" aria-label="API navigation">
-    <div class="api-nav-title">API reference</div>
+    {% for group_label, pages in api_groups %}
+    <div class="api-nav-title{% if not loop.first %} api-nav-onpage{% endif %}">{{ group_label }}</div>
     <ul class="api-nav-list">
-      {% for name, label in api_pages %}
+      {% for name, label in pages %}
       <li><a href="{{ pathto(name) }}"{% if pagename == name %} class="current"{% endif %}>{{ label }}</a></li>
       {% endfor %}
     </ul>
+    {% endfor %}
     {% if toc and pagename != 'api/index' %}
     <div class="api-nav-title api-nav-onpage">On this page</div>
     <div class="api-nav-toc">{{ toc }}</div>
@@ -26,6 +46,12 @@
   </aside>
   <main id="main" class="content api-content" role="main">
     {{ body }}
+    {% if prev or next %}
+    <nav class="page-nav" aria-label="Sequential">
+      {% if prev %}<a class="page-nav-prev" href="{{ prev.link }}"><span class="page-nav-dir">&larr; Previous</span><span class="page-nav-title">{{ prev.title }}</span></a>{% else %}<span></span>{% endif %}
+      {% if next %}<a class="page-nav-next" href="{{ next.link }}"><span class="page-nav-dir">Next &rarr;</span><span class="page-nav-title">{{ next.title }}</span></a>{% endif %}
+    </nav>
+    {% endif %}
   </main>
 </div>
 {% endblock %}
