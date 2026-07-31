@@ -5,7 +5,7 @@ Hostname
 older :rfc:`952`). It differs in two ways that matter: a **bare single label** is
 valid, and there is **no letters-only TLD** requirement.
 
-Structurally it is a :doc:`label <../../guide/composing>` — an
+Structurally it is a :doc:`label <../../guide/atoms/network>` — an
 :meth:`~edify.RegexBuilder.alphanumeric` start and end around up to 61 interior
 letters/digits/hyphens — repeated with :meth:`~edify.RegexBuilder.zero_or_more`
 dot-prefixed labels, behind a leading :meth:`~edify.RegexBuilder.assert_ahead` that

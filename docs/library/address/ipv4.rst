@@ -7,7 +7,7 @@ exactly: it is a shape check on the dotted-quad, not a lookup of what the addres
 means, so ``127.0.0.1`` and ``0.0.0.0`` both match regardless of whether they are
 routable.
 
-The range check lives in one reusable :doc:`octet <../../guide/composing>` fragment —
+The range check lives in one reusable :doc:`octet <../../guide/atoms/network>` fragment —
 an :func:`~edify.any_of` over five branches that between them cover 0–255 with no
 overlap and no gap (``250``–``255``, ``200``–``249``, ``100``–``199``, ``10``–``99``,
 and ``0``–``9``), which is why ``256`` has no branch to match. **IPv4** joins four of
@@ -52,6 +52,6 @@ bug that this no-leading-zero rule closes off:
    ipv4("010.0.0.1")      # 010 has a leading zero
    ipv4("192.168.01.1")   # 01 has a leading zero
 
-The :doc:`octet <../../guide/composing>` fragment is reused across the family: for an
+The :doc:`octet <../../guide/atoms/network>` fragment is reused across the family: for an
 address plus a mask length use :doc:`cidr`, for a ``host:port`` pair :doc:`socket`,
 and to accept either IP family with one validator, :doc:`ip`.

@@ -29,6 +29,12 @@ to any single page as a reference later.
    flags
 
 .. toctree::
+   :maxdepth: 2
+   :caption: Atoms
+
+   atoms/index
+
+.. toctree::
    :maxdepth: 1
    :caption: Beyond the chain
 

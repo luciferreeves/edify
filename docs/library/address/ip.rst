@@ -9,8 +9,8 @@ single family, use the specific validator.
 It adds no grammar of its own. It takes the whole un-anchored body of each family
 validator and offers them as the two branches of a single :func:`~edify.any_of`,
 anchored with :meth:`~edify.RegexBuilder.start_of_input` /
-:meth:`~edify.RegexBuilder.end_of_input` — the :doc:`octet <../../guide/composing>`
-range check of :doc:`ipv4` and the :doc:`hex group <../../guide/composing>` layouts of
+:meth:`~edify.RegexBuilder.end_of_input` — the :doc:`octet <../../guide/atoms/network>`
+range check of :doc:`ipv4` and the :doc:`hex group <../../guide/atoms/network>` layouts of
 :doc:`ipv6`, side by side.
 
 An IPv4 address

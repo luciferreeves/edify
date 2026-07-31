@@ -13,7 +13,7 @@ matches, a single ``:`` and a :meth:`~edify.RegexBuilder.between`\ ``(1, 5)``
 An IPv4 host
 ------------
 
-A dotted-quad, reusing the :doc:`octet <../../guide/composing>` range check of
+A dotted-quad, reusing the :doc:`octet <../../guide/atoms/network>` range check of
 :doc:`ipv4`, then a colon and a port. Without the port the whole thing fails:
 
 .. edify-playground::

@@ -10,9 +10,9 @@ leading zeros, ``::`` zero-compression, the embedded-IPv4 tail, and the scoped
 address is reachable or allocated, and it accepts case-insensitive hex, so ``::``,
 ``::1``, and ``2001:DB8::1`` all match.
 
-The base unit edify composes it from is a :doc:`hex group <../../guide/composing>` —
+The base unit edify composes it from is a :doc:`hex group <../../guide/atoms/network>` —
 one to four hex digits, written as :meth:`~edify.RegexBuilder.between`\ ``(1, 4)`` of
-a :doc:`nibble <../../guide/composing>` (a ``0``–``9`` ``a``–``f`` ``A``–``F``
+a :doc:`nibble <../../guide/atoms/network>` (a ``0``–``9`` ``a``–``f`` ``A``–``F``
 :meth:`~edify.RegexBuilder.range` class). Those groups feed an :func:`~edify.any_of`
 alternation whose branches enumerate every legal layout — the full eight-group form,
 one branch for each position ``::`` can occupy, the
@@ -131,6 +131,6 @@ interface it is scoped to, named (``eth0``) or numbered (``1``). Without one, a
    ipv6("fe80::abcd%wlan0") # another named zone
    ipv6("fe80::1%")         # the zone identifier can't be empty
 
-The embedded-IPv4 tail reuses the :doc:`octet <../../guide/composing>` range check of
+The embedded-IPv4 tail reuses the :doc:`octet <../../guide/atoms/network>` range check of
 :doc:`ipv4`. To accept either address family with one validator use :doc:`ip`, and
 for an IPv6 network block — an address plus a ``/prefix`` — use :doc:`cidr`.

@@ -10,8 +10,8 @@ Each family is one branch of an :func:`~edify.any_of`: an address, a ``/``, and 
 prefix. The prefix is not "one or two digits" — it is its own :func:`~edify.any_of` of
 range branches that stops at the family maximum, the same value-checked technique
 :doc:`port` uses. On the IPv4 side the address is the range-checked
-:doc:`octet <../../guide/composing>` quad from :doc:`ipv4`; on the IPv6 side it is the
-plain full-form :doc:`hex group <../../guide/composing>` chain — which is exactly why
+:doc:`octet <../../guide/atoms/network>` quad from :doc:`ipv4`; on the IPv6 side it is the
+plain full-form :doc:`hex group <../../guide/atoms/network>` chain — which is exactly why
 ``::`` compression is *not* accepted here.
 
 IPv4 blocks

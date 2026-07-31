@@ -27,7 +27,7 @@ The four octets of the address, **reversed**, followed by the literal
 IPv6 — ``ip6.arpa``
 -------------------
 
-All 32 hex :doc:`nibbles <../../guide/composing>` of the address, reversed and
+All 32 hex :doc:`nibbles <../../guide/atoms/network>` of the address, reversed and
 dot-separated, followed by ``ip6.arpa`` (:rfc:`3596`) — one nibble per label, 32 of
 them, via :meth:`~edify.RegexBuilder.exactly`\ ``(32)``:
 

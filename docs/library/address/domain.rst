@@ -6,7 +6,7 @@ letters-only :doc:`tld` — ``example.com``, ``a.b.example.io``. That trailing T
 what distinguishes **Domain** from :doc:`hostname`, where a bare ``localhost`` is
 allowed.
 
-Each :doc:`label <../../guide/composing>` is an :meth:`~edify.RegexBuilder.alphanumeric`
+Each :doc:`label <../../guide/atoms/network>` is an :meth:`~edify.RegexBuilder.alphanumeric`
 start and end around up to 61 interior letters/digits/hyphens; that group,
 dot-terminated, repeats with :meth:`~edify.RegexBuilder.one_or_more`, and the name
 closes with :meth:`~edify.RegexBuilder.between`\ ``(2, 63)`` letters for the TLD.
