@@ -33,6 +33,8 @@ sidebar, or start here:
 - :doc:`geo/index` — coordinates, geohashes, grid references, bearings, and postal
   codes.
 - :doc:`grammar/index` — grammar notations: BNF, EBNF, ABNF, PEG, pest, ANTLR.
+- :doc:`identifier/index` — UUIDs, bank and securities identifiers, government and
+  device numbers.
 - :doc:`media/index` — file names, media types, encodings, locales, and globs.
 - :doc:`medical/index` — clinical codes, blood types, and dosages.
 - :doc:`numeric/index` — integers, decimals, percentages, fractions, and Roman
@@ -48,4 +50,3 @@ sidebar, or start here:
 - :doc:`text/index` — character classes, encodings, scripts, and slugs.
 - :doc:`web/index` — server configuration, site metadata, and HTTP header values.
 - :doc:`transport/index` — vehicle, plate, aircraft, and flight identifiers.
-- **Identifiers** — being handcrafted, one validator at a time.
