@@ -38,6 +38,24 @@ _CATEGORY_TITLES = {
 }
 _CATEGORY_ORDER = list(_CATEGORY_TITLES)
 
+_DISPLAY_NAMES = {
+    "ip": "IP", "ipv4": "IPv4", "ipv6": "IPv6", "cidr": "CIDR",
+    "subnet": "Subnet mask", "tld": "TLD", "url": "URL", "uri": "URI",
+    "ptr": "PTR record", "socket": "Socket address", "zip_code": "ZIP Code",
+}
+
+_NESTING: dict[str, dict[str, list[str]]] = {
+    "address": {
+        "ip": ["ipv4", "ipv6"],
+        "subnet": ["cidr"],
+        "domain": ["subdomain", "hostname", "tld"],
+    },
+}
+
+
+def _display_name(name: str) -> str:
+    return _DISPLAY_NAMES.get(name) or name.replace("_", " ").capitalize()
+
 _sections_cache: list[tuple[str, str, list[str]]] | None = None
 
 
@@ -89,6 +107,37 @@ class EdifyPlayground(Directive):
         return [nodes.raw("", markup, format="html")]
 
 
+def _library_link(builder: Any, pagename: str, target: str, label: str) -> str:
+    uri = builder.get_relative_uri(pagename, target)
+    current = ' class="current"' if pagename == target else ""
+    return f'<a href="{uri}"{current}>{html.escape(label)}</a>'
+
+
+def _library_items(builder: Any, pagename: str, directory: str, present: list[str]) -> str:
+    nesting = _NESTING.get(directory, {})
+    present_set = set(present)
+    child_parent = {child: parent for parent, children in nesting.items() for child in children}
+    out = ["<ul>"]
+    for name in present:
+        parent = child_parent.get(name)
+        if parent and parent in present_set:
+            continue
+        link = _library_link(builder, pagename, f"library/{directory}/{name}", _display_name(name))
+        children = [child for child in nesting.get(name, []) if child in present_set]
+        if not children:
+            out.append(f"<li>{link}</li>")
+            continue
+        out.append(f'<li class="has-children">{link}<ul>')
+        for child in children:
+            child_link = _library_link(
+                builder, pagename, f"library/{directory}/{child}", _display_name(child)
+            )
+            out.append(f"<li>{child_link}</li>")
+        out.append("</ul></li>")
+    out.append("</ul>")
+    return "".join(out)
+
+
 def _library_nav(app: Sphinx, pagename: str) -> str:
     builder = app.builder
     docs = set(app.env.found_docs)
@@ -104,16 +153,10 @@ def _library_nav(app: Sphinx, pagename: str) -> str:
         active = directory == current_dir
         cat_uri = builder.get_relative_uri(pagename, f"library/{directory}/index")
         cat_cls = " open" if active else ""
+        cat_current = " current" if pagename == f"library/{directory}/index" else ""
         parts.append(f'<div class="lib-nav-section{cat_cls}">')
-        parts.append(f'<a class="lib-nav-cat" href="{cat_uri}">{html.escape(title)}</a>')
-        if active:
-            parts.append("<ul>")
-            for name in present:
-                target = f"library/{directory}/{name}"
-                uri = builder.get_relative_uri(pagename, target)
-                item_cls = ' class="current"' if pagename == target else ""
-                parts.append(f'<li><a href="{uri}"{item_cls}>{html.escape(name)}</a></li>')
-            parts.append("</ul>")
+        parts.append(f'<a class="lib-nav-cat{cat_current}" href="{cat_uri}">{html.escape(title)}</a>')
+        parts.append(_library_items(builder, pagename, directory, present))
         parts.append("</div>")
     parts.append("</nav>")
     return "".join(parts)

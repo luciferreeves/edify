@@ -146,13 +146,16 @@ img { max-width: 100%; }
 .lib-nav-cat { display: block; color: var(--muted); font-weight: 600; font-size: 13.5px;
   padding: 5px 0 5px 12px; border-left: 2px solid transparent; }
 .lib-nav-cat:hover { color: var(--fg); text-decoration: none; }
-.lib-nav-section.open > .lib-nav-cat { color: var(--fg); border-left-color: var(--border-strong); }
-.lib-nav ul { list-style: none; margin: 0 0 6px; padding: 0 0 0 12px; }
+.lib-nav-cat.current { color: var(--accent); border-left-color: var(--accent); }
+.lib-nav ul { list-style: none; margin: 0 0 4px; padding: 0; }
 .lib-nav li { margin: 0; }
-.lib-nav li a { display: block; color: var(--muted); font-family: var(--mono); font-size: 12.5px;
-  padding: 3px 0 3px 12px; border-left: 2px solid transparent; line-height: 1.4; }
+.lib-nav li a { display: block; color: var(--muted); font-size: 13px; line-height: 1.5;
+  padding: 3px 0 3px 24px; border-left: 2px solid transparent; }
 .lib-nav li a:hover { color: var(--fg); text-decoration: none; }
-.lib-nav li a.current { color: var(--fg); font-weight: 600; border-left-color: var(--accent); }
+.lib-nav li a.current { color: var(--accent); border-left-color: var(--accent);
+  background: var(--accent-weak); }
+.lib-nav li.has-children > a { color: var(--muted); }
+.lib-nav li.has-children > ul li a { padding-left: 38px; }
 
 /* ---- standalone (no-sidebar) pages: playground, library, meta ---- */
 .doc-wide { padding-top: 34px; padding-bottom: 88px; }

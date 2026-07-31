@@ -11,7 +11,6 @@ import { runEdify, testLine } from "./pyodide-runtime.js";
 
 const API = window.EDIFY_API || [];
 const KIND = { method: "method", constant: "constant", function: "function" };
-const DEFAULT_TESTS = "2024\n90210\nabcd\n12";
 
 // Structural colors reference the theme's CSS custom properties, so the editor
 // follows the site's light/dark toggle without a second theme definition.
@@ -96,14 +95,15 @@ function decodeAttr(root, name, fallback) {
 
 function mount(root) {
   const source = decodeAttr(root, "data-source", "");
-  const tests = decodeAttr(root, "data-tests", DEFAULT_TESTS);
+  const tests = decodeAttr(root, "data-tests", null);
+  const buildMode = tests != null;
   root.replaceChildren();
   root.classList.add("pg-live");
 
   const grid = el("div", "pg-grid");
   const left = el("div", "pg-left");
   const builderPane = el("div", "pg-pane pg-builder");
-  builderPane.appendChild(head("Builder", "pg-status", ""));
+  builderPane.appendChild(head("edify", "pg-status", ""));
   const editorHost = el("div", "pg-editor");
   builderPane.appendChild(editorHost);
 
@@ -114,21 +114,24 @@ function mount(root) {
   left.appendChild(builderPane);
   left.appendChild(regexPane);
 
-  const testPane = el("div", "pg-pane pg-test");
-  testPane.appendChild(head("Test strings", "pg-count"));
-  const testArea = el("textarea", "pg-test-input");
-  testArea.spellcheck = false;
-  testArea.value = tests;
-  const testResults = el("div", "pg-test-results");
-  testPane.appendChild(testArea);
-  testPane.appendChild(testResults);
+  const outPane = el("div", "pg-pane pg-test");
+  outPane.appendChild(head(buildMode ? "Test strings" : "Result", "pg-count"));
+  let testArea = null;
+  if (buildMode) {
+    testArea = el("textarea", "pg-test-input");
+    testArea.spellcheck = false;
+    testArea.value = tests;
+    outPane.appendChild(testArea);
+  }
+  const outResults = el("div", "pg-test-results");
+  outPane.appendChild(outResults);
 
   grid.appendChild(left);
-  grid.appendChild(testPane);
+  grid.appendChild(outPane);
   root.appendChild(grid);
 
   const status = builderPane.querySelector(".pg-status");
-  const count = testPane.querySelector(".pg-count");
+  const count = outPane.querySelector(".pg-count");
 
   const view = new EditorView({
     doc: source,
@@ -145,9 +148,41 @@ function mount(root) {
     parent: editorHost,
   });
 
+  // run mode (library pages): each call in the source, with its live True/False
+  function renderResults(data) {
+    outResults.replaceChildren();
+    const results = data.results || [];
+    let hits = 0;
+    let bools = 0;
+    for (const item of results) {
+      const row = el("div", "pg-test-row");
+      if (item.kind === "bool") {
+        bools += 1;
+        if (item.value) hits += 1;
+        row.classList.add(item.value ? "pg-hit" : "pg-miss");
+        row.appendChild(el("span", "pg-mark", item.value ? "✓" : "✗"));
+        row.appendChild(el("code", "pg-str", item.code));
+        row.appendChild(el("span", "pg-bool", item.value ? "True" : "False"));
+      } else {
+        row.classList.add("pg-val");
+        row.appendChild(el("code", "pg-str", item.code));
+        row.appendChild(el("span", "pg-outval", item.value));
+      }
+      outResults.appendChild(row);
+    }
+    if (data.error) {
+      const errRow = el("div", "pg-test-row pg-miss pg-err");
+      errRow.appendChild(el("span", "pg-mark", "!"));
+      errRow.appendChild(el("span", "pg-str", data.error));
+      outResults.appendChild(errRow);
+    }
+    count.textContent = bools ? hits + " / " + bools + " match" : "";
+  }
+
+  // build mode (playground + guide): editable strings tested against the pattern
   async function refreshTests() {
     const lines = testArea.value.split("\n");
-    testResults.replaceChildren();
+    outResults.replaceChildren();
     let matches = 0;
     let tested = 0;
     for (const line of lines) {
@@ -163,50 +198,41 @@ function mount(root) {
       const row = el("div", "pg-test-row " + (ok ? "pg-hit" : "pg-miss"));
       row.appendChild(el("span", "pg-mark", ok ? "✓" : "✗"));
       row.appendChild(el("span", "pg-str", line));
-      testResults.appendChild(row);
+      outResults.appendChild(row);
     }
     count.textContent = tested ? matches + " / " + tested + " match" : "";
   }
 
   async function run() {
     status.textContent = "loading…";
-    let result;
+    let data;
     try {
-      result = await runEdify(view.state.doc.toString(), (s) => {
+      data = await runEdify(view.state.doc.toString(), (s) => {
         status.textContent = s === "ready" ? "" : "installing edify…";
       });
     } catch (e) {
       status.textContent = "error";
-      regexOut.textContent = String(e);
+      regexOut.textContent = "";
+      outResults.replaceChildren();
+      outResults.appendChild(el("div", "pg-test-row pg-miss pg-err", String(e)));
       return;
     }
     status.textContent = "";
-    if (result.error) {
-      regexPane.classList.add("has-error");
-      regexOut.textContent = result.error;
-      testResults.replaceChildren();
+    regexPane.classList.toggle("has-error", Boolean(data.error));
+    regexOut.textContent = data.regex || (data.error ? "" : "—");
+    if (!buildMode) {
+      renderResults(data);
+    } else if (data.error) {
+      outResults.replaceChildren();
+      outResults.appendChild(el("div", "pg-test-row pg-miss pg-err", data.error));
       count.textContent = "";
-      return;
-    }
-    regexPane.classList.remove("has-error");
-    if (result.engineUnsupported) {
-      regexOut.textContent =
-        result.regex +
-        "\n\n(the 'regex' engine isn't bundled in the browser — use the default engine to test here.)";
-      return;
-    }
-    if (result.regex != null) {
-      regexOut.textContent = result.regex;
-      await refreshTests();
     } else {
-      regexOut.textContent = result.value != null ? result.value : "";
-      testResults.replaceChildren();
-      count.textContent = "";
+      await refreshTests();
     }
   }
 
   const scheduleRun = debounce(run, 400);
-  testArea.addEventListener("input", debounce(refreshTests, 300));
+  if (buildMode) testArea.addEventListener("input", debounce(refreshTests, 300));
 
   // Boot the shared runtime as soon as the widget scrolls into view, so every
   // playground runs on its own without a click. The runtime is memoised, so

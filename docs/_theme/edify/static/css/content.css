@@ -20,6 +20,33 @@
   color: var(--faint); margin-left: 0.4rem; opacity: 0; text-decoration: none;
   font-weight: 400; transition: opacity .12s;
 }
+
+.content .title-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin: 0 0 1rem;
+}
+.content .title-row h1 { margin: 0; }
+.api-pill {
+  flex: none; align-self: center;
+  display: inline-flex; align-items: center;
+  padding: 5px 14px; border-radius: 999px;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--accent); background: var(--accent-weak);
+  border: 1px solid var(--accent); text-decoration: none; white-space: nowrap;
+}
+.api-pill:hover { background: var(--accent); color: var(--accent-fg); text-decoration: none; }
+
+.content a.reference.external::after {
+  content: "\2197";
+  display: inline-block;
+  font-size: 0.72em;
+  font-weight: 600;
+  line-height: 1;
+  margin-left: 0.12em;
+  vertical-align: 0.28em;
+  color: var(--faint);
+}
+.content a.reference.external:hover::after { color: var(--accent); }
 .content h1:hover .headerlink, .content h2:hover .headerlink,
 .content h3:hover .headerlink, .content h4:hover .headerlink { opacity: 1; }
 

@@ -77,9 +77,22 @@
 .pg-mark { width: 1.1em; text-align: center; font-weight: 700; flex: 0 0 auto; }
 .pg-hit .pg-mark { color: var(--ok); }
 .pg-miss .pg-mark { color: var(--no); }
-.pg-str { white-space: pre-wrap; word-break: break-all; }
+.pg-str { flex: 1 1 auto; white-space: pre-wrap; word-break: break-all; }
 .pg-hit .pg-str { color: var(--fg); }
-.pg-miss .pg-str { color: var(--faint); }
+.pg-miss .pg-str { color: var(--fg); }
+/* result rows hold a call (code) + its live value; strip the inline-code box */
+.edify-playground .pg-test-results code.pg-str {
+  background: none; border: none; padding: 0; border-radius: 0;
+  font-size: 1em; color: var(--fg);
+}
+.pg-bool { flex: 0 0 auto; font-weight: 700; }
+.pg-hit .pg-bool { color: var(--ok); }
+.pg-miss .pg-bool { color: var(--no); }
+.pg-outval {
+  flex: 0 0 auto; color: var(--muted); white-space: pre-wrap; word-break: break-all;
+  max-width: 55%; text-align: right;
+}
+.pg-err .pg-str { color: var(--no); }
 
 /* ---- autocomplete dropdown (always dark, IDE style, no arrow) ---- */
 .cm-tooltip.cm-tooltip-autocomplete {

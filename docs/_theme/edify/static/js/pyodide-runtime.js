@@ -13,50 +13,53 @@ const HARNESS = String.raw`
 import ast, json
 import edify
 import edify.library as _lib
-from edify.introspect import explain_elements
 
 _ns_base = {k: getattr(edify, k) for k in edify.__all__}
 _ns_base.update({k: getattr(_lib, k) for k in dir(_lib) if not k.startswith("_")})
 _state = {"regex": None}
 
-def _eval_source(src):
-    ns = dict(_ns_base)
-    block = ast.parse(src, mode="exec")
-    result = None
-    if block.body and isinstance(block.body[-1], ast.Expr):
-        last = block.body.pop()
-        exec(compile(block, "<playground>", "exec"), ns)
-        result = eval(compile(ast.Expression(last.value), "<playground>", "eval"), ns)
-    else:
-        exec(compile(block, "<playground>", "exec"), ns)
-    return result
+def _regex_string(target, regex):
+    if regex is None and _state["regex"] is None:
+        try:
+            _state["regex"] = target.to_regex()
+        except Exception:
+            pass
+    return target.to_regex_string()
 
 def edify_run(src):
     _state["regex"] = None
+    ns = dict(_ns_base)
     try:
-        result = _eval_source(src)
-    except edify.EdifyError as problem:
-        return json.dumps({"error": str(problem)})
+        tree = ast.parse(src, mode="exec")
     except SyntaxError as problem:
-        return json.dumps({"error": "syntax error: " + (problem.msg or "invalid syntax")})
-    except Exception as problem:
-        return json.dumps({"error": str(problem)})
-    if hasattr(result, "to_regex_string"):
+        return json.dumps({"error": "syntax error: " + (problem.msg or "invalid syntax"), "results": [], "regex": None})
+    results = []
+    regex = None
+    for node in tree.body:
         try:
-            compiled = result.to_regex()
+            if isinstance(node, ast.Expr):
+                code = ast.get_source_segment(src, node) or ""
+                value = eval(compile(ast.Expression(node.value), "<playground>", "eval"), ns)
+                if isinstance(value, bool):
+                    results.append({"code": code, "kind": "bool", "value": value})
+                    if regex is None and isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name):
+                        target = ns.get(node.value.func.id)
+                        if hasattr(target, "to_regex_string"):
+                            regex = _regex_string(target, regex)
+                elif hasattr(value, "to_regex_string"):
+                    if regex is None:
+                        regex = _regex_string(value, regex)
+                elif value is not None:
+                    results.append({"code": code, "kind": "value", "value": repr(value)})
+            else:
+                module = ast.Module(body=[node], type_ignores=[])
+                ast.fix_missing_locations(module)
+                exec(compile(module, "<playground>", "exec"), ns)
+        except edify.EdifyError as problem:
+            return json.dumps({"error": str(problem), "results": results, "regex": regex})
         except Exception as problem:
-            name = type(problem).__name__
-            if "Regex" in name or "Backend" in name or "regex" in str(problem).lower():
-                return json.dumps({"engineUnsupported": True, "regex": result.to_regex_string()})
-            return json.dumps({"error": str(problem)})
-        _state["regex"] = compiled
-        return json.dumps({
-            "regex": result.to_regex_string(),
-            "explain": explain_elements(compiled.elements),
-        })
-    if isinstance(result, bool):
-        return json.dumps({"value": "True" if result else "False"})
-    return json.dumps({"value": repr(result)})
+            return json.dumps({"error": type(problem).__name__ + ": " + str(problem), "results": results, "regex": regex})
+    return json.dumps({"regex": regex, "results": results})
 
 def edify_test(line):
     rx = _state.get("regex")
