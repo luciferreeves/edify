@@ -30,6 +30,9 @@ opening parenthesis:
    hit.group(1)   # 'x'
    hit.group(2)   # '42'
 
+Numbering follows the **opening** parenthesis, which is what makes nested
+captures read in the order you wrote them rather than the order they close.
+
 A ``key=number`` pair — both sides must be present to match:
 
 .. edify-playground::
@@ -43,8 +46,9 @@ A ``key=number`` pair — both sides must be present to match:
 Named captures
 --------------
 
-Positions are easy to lose track of. :meth:`~edify.RegexBuilder.named_capture`
-gives a capture a name instead:
+Positions are easy to lose track of, and they shift the moment you insert a group
+earlier in the pattern. :meth:`~edify.RegexBuilder.named_capture` gives a capture
+a name instead:
 
 .. code-block:: python
 
@@ -71,9 +75,16 @@ and you read it back by that name — much clearer than counting parentheses:
 
 That ``hit.captures`` object is a :class:`~edify.result.NamedCaptures` namespace —
 edify's own convenience over the standard match. Every named group is an
-attribute on it, so you get autocomplete and a clear ``KeyError`` for a typo'd
-name instead of a silent ``None``. The standard ``hit.groupdict()`` still works
-too, if you'd rather have a plain dict:
+attribute on it, so a typo fails immediately and tells you what the real names
+are, instead of returning a silent ``None``:
+
+.. code-block:: text
+
+   AttributeError: named capture group 'yaer' does not exist on this pattern;
+   declared groups are ['month', 'year']
+
+The standard ``hit.groupdict()`` still works too, if you'd rather have a plain
+dict:
 
 .. code-block:: python
 
@@ -93,6 +104,68 @@ Named and numbered captures coexist — a named group also has a number, so
 ``hit.group(1)`` and ``hit.captures.year`` reach the same text. See
 :doc:`../beyond/matching` for the full match surface.
 
+.. edify-playground::
+   :tests: 2024-07|1999-12|2024|July
+
+   RegexBuilder() \
+       .named_capture("year").exactly(4).digit().end() \
+       .char("-") \
+       .named_capture("month").exactly(2).digit().end()
+
+When a capture does not participate
+-----------------------------------
+
+A capture inside an optional part may never match at all. The pattern still
+succeeds; that group is simply ``None``:
+
+.. code-block:: python
+
+   from edify import RegexBuilder as R
+
+   tagged = (
+       R().start_of_input()
+       .named_capture("word").one_or_more().letter().end()
+       .optional().group()
+           .char("-").named_capture("num").one_or_more().digit().end()
+       .end()
+       .end_of_input()
+       .to_regex()
+   )
+   tagged.source   # '^(?P<word>[a-zA-Z]+)(?:\\-(?P<num>\\d+))?$'
+
+   tagged.match("abc").groupdict()      # {'word': 'abc', 'num': None}
+   tagged.match("abc-12").groupdict()   # {'word': 'abc', 'num': '12'}
+
+``None`` and ``''`` mean different things here — ``None`` is "this group never
+matched", an empty string is "it matched nothing". Check for ``None`` explicitly
+rather than relying on truthiness, or a legitimately empty capture will take the
+same branch as an absent one.
+
+A repeated capture keeps only the **last** repetition, because there is one slot
+per group no matter how many times it matches:
+
+.. code-block:: python
+
+   from edify import RegexBuilder as R
+
+   letters = R().one_or_more().capture().letter().end().to_regex()
+   letters.source                    # '([a-zA-Z])+'
+   letters.match("abc").group(1)     # 'c' — not 'abc'
+
+To capture the whole run, put the quantifier *inside* the capture —
+``capture().one_or_more().letter().end()`` — so the group spans every repetition
+instead of being re-entered on each one.
+
+.. edify-playground::
+   :tests: abc|a|abc-12|-12
+
+   from edify import RegexBuilder as R
+
+   R().start_of_input() \
+       .named_capture("word").one_or_more().letter().end() \
+       .optional().group().char("-").named_capture("num").one_or_more().digit().end().end() \
+       .end_of_input()
+
 Backreferences
 --------------
 
@@ -110,6 +183,10 @@ with :meth:`~edify.RegexBuilder.named_back_reference`:
    R().named_capture("q").word().end().named_back_reference("q").to_regex_string()
    # '(?P<q>\\w)(?P=q)'
 
+This is the one thing on this page that no sequence of tokens can express. A
+character class says "any of these"; a backreference says "whichever one you saw
+before" — it carries information forward through the match.
+
 Backreferences are how you match balanced repetition — a doubled letter, or a
 quoted string whose closing quote matches its opening one:
 
@@ -125,9 +202,21 @@ quoted string whose closing quote matches its opening one:
    )
    quoted.search("say 'hi' now").group()   # "'hi'"
    quoted.search('say "hi" now').group()   # '"hi"'
+   quoted.search("say 'hi\" now")          # None — the quotes must match
 
 The closing quote *must* be the same character as the opening one, because the
-backreference demands it — a ``'`` opener will not match a ``"`` closer.
+backreference demands it. Note the lazy ``one_or_more_lazy``: a greedy body would
+run to the *last* quote in the string rather than the first matching one. See
+:doc:`quantifiers` for that distinction.
+
+.. edify-playground::
+   :tests: 'hi'|"hi"|'hi"|hi
+
+   from edify import RegexBuilder as R
+
+   R().named_capture("quote").any_of_chars("'\"").end() \
+       .one_or_more_lazy().any_char() \
+       .named_back_reference("quote")
 
 Quick reference
 ---------------
@@ -154,16 +243,5 @@ Quick reference
 
 Read numbered captures back with ``hit.group(n)`` and named ones with
 ``hit.captures.name`` or ``hit.groupdict()``.
-
-Try it
-------
-
-.. edify-playground::
-   :tests: 2024-07|1999-12|2024|July
-
-   RegexBuilder() \
-       .named_capture("year").exactly(4).digit().end() \
-       .char("-") \
-       .named_capture("month").exactly(2).digit().end()
 
 Next: :doc:`lookaround`, for asserting what surrounds a match without consuming it.
