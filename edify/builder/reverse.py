@@ -27,6 +27,14 @@ _CATEGORY_METHOD_BY_CONSTANT: dict[int, str] = {
     sre.CATEGORY_NOT_SPACE: "non_whitespace_char",
 }
 
+_FLAG_METHOD_BY_CONSTANT: dict[re.RegexFlag, str] = {
+    re.IGNORECASE: "ignore_case",
+    re.MULTILINE: "multi_line",
+    re.DOTALL: "dot_all",
+    re.VERBOSE: "verbose",
+    re.ASCII: "ascii_only",
+}
+
 
 class UnsupportedReverseParseError(ValueError):
     """Raised when ``from_regex`` encounters a construct the reverse parser cannot translate."""
@@ -43,13 +51,24 @@ def build_from_regex(pattern_text: str) -> builder_module.RegexBuilder:
     """Return a :class:`RegexBuilder` whose emitted pattern is equivalent to ``pattern_text``."""
     node_list = sre.parse(pattern_text)
     name_by_number = _name_by_group_number(pattern_text)
-    empty_builder = builder_module.RegexBuilder()
-    return _translate_sequence(empty_builder, node_list, name_by_number)
+    flagged_builder = _apply_inline_flags(builder_module.RegexBuilder(), pattern_text)
+    return _translate_sequence(flagged_builder, node_list, name_by_number)
 
 
 def _name_by_group_number(pattern_text: str) -> dict[int, str]:
     compiled_pattern = re.compile(pattern_text)
     return {number: name for name, number in compiled_pattern.groupindex.items()}
+
+
+def _apply_inline_flags(
+    builder: builder_module.RegexBuilder, pattern_text: str
+) -> builder_module.RegexBuilder:
+    declared_flags = re.compile(pattern_text).flags
+    current = builder
+    for flag, method_name in _FLAG_METHOD_BY_CONSTANT.items():
+        if declared_flags & flag:
+            current = cast(builder_module.RegexBuilder, getattr(current, method_name)())
+    return current
 
 
 def _translate_sequence(
