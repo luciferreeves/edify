@@ -26,6 +26,7 @@ sidebar, or start here:
    contact/index
    data/index
    document/index
+   financial/index
    grammar/index
    media/index
    numeric/index
@@ -50,6 +51,8 @@ Categories
   containers behind analytics pipelines.
 - :doc:`document/index` — document formats identified by their content
   signature: PDF, office packages, e-books, and source formats.
+- :doc:`financial/index` — payment cards, bank routing identifiers, currency codes,
+  and wallet addresses.
 - :doc:`grammar/index` — grammar notations: BNF, EBNF, ABNF, PEG, pest, ANTLR.
 - :doc:`media/index` — file names, media types, encodings, locales, and globs.
 - :doc:`numeric/index` — integers, decimals, percentages, fractions, and Roman
@@ -62,5 +65,5 @@ Categories
   expressions.
 - :doc:`text/index` — character classes, encodings, scripts, and slugs.
 - :doc:`web/index` — server configuration, site metadata, and HTTP header values.
-- **Finance, Geo, Identifiers, Medical, Product, Publishing,
+- **Geo, Identifiers, Medical, Product, Publishing,
   Transport** — being handcrafted, one validator at a time.
