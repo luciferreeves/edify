@@ -27,6 +27,7 @@ sidebar, or start here:
    data/index
    document/index
    financial/index
+   geo/index
    grammar/index
    media/index
    numeric/index
@@ -53,6 +54,8 @@ Categories
   signature: PDF, office packages, e-books, and source formats.
 - :doc:`financial/index` — payment cards, bank routing identifiers, currency codes,
   and wallet addresses.
+- :doc:`geo/index` — coordinates, geohashes, grid references, bearings, and postal
+  codes.
 - :doc:`grammar/index` — grammar notations: BNF, EBNF, ABNF, PEG, pest, ANTLR.
 - :doc:`media/index` — file names, media types, encodings, locales, and globs.
 - :doc:`numeric/index` — integers, decimals, percentages, fractions, and Roman
@@ -65,5 +68,5 @@ Categories
   expressions.
 - :doc:`text/index` — character classes, encodings, scripts, and slugs.
 - :doc:`web/index` — server configuration, site metadata, and HTTP header values.
-- **Geo, Identifiers, Medical, Product, Publishing,
+- **Identifiers, Medical, Product, Publishing,
   Transport** — being handcrafted, one validator at a time.
