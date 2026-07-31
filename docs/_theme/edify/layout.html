@@ -30,10 +30,10 @@
     <div class="wrap topnav-inner">
       <a class="brand" href="{{ pathto(root_doc) }}"><span class="brand-mark">&#9670;</span> EDIFY</a>
       <nav class="navlinks">
-        <a href="{{ pathto('guide/index') }}">Guide</a>
-        <a href="{{ pathto('library/index') }}">Library</a>
-        <a href="{{ pathto('playground') }}">Playground</a>
-        <a href="{{ pathto('api/index') }}">API</a>
+        <a class="{{ 'current' if pagename.startswith('guide/') }}" href="{{ pathto('guide/index') }}">Guide</a>
+        <a class="{{ 'current' if pagename.startswith('library/') }}" href="{{ pathto('library/index') }}">Library</a>
+        <a class="{{ 'current' if pagename == 'playground' }}" href="{{ pathto('playground') }}">Playground</a>
+        <a class="{{ 'current' if pagename.startswith('api/') }}" href="{{ pathto('api/index') }}">API</a>
       </nav>
       <span class="grow"></span>
       <button class="icon-btn theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle light / dark">

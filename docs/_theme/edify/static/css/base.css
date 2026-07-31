@@ -104,8 +104,14 @@ img { max-width: 100%; }
 .brand:hover { text-decoration: none; }
 .brand-mark { color: var(--accent); font-size: 12px; }
 .navlinks { display: flex; gap: 20px; }
-.navlinks a { color: var(--muted); font-size: 14px; font-weight: 500; }
+.navlinks a { color: var(--muted); font-size: 14px; font-weight: 500;
+  position: relative; padding: 4px 0; }
 .navlinks a:hover { color: var(--fg); text-decoration: none; }
+.navlinks a.current { color: var(--accent); }
+.navlinks a.current::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -9px;
+  height: 2px; background: var(--accent); border-radius: 2px;
+}
 .icon-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border);
