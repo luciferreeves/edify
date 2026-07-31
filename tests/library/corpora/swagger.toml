@@ -1,0 +1,12 @@
+accepts = [
+    "swagger: \"2.0\"\ninfo:",
+    "{\"swagger\": \"2.0\"}",
+    "swagger: '2.0'",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "openapi: 3.0.0",
+    "swagger: \"3.0\"",
+]

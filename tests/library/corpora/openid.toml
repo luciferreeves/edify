@@ -1,0 +1,12 @@
+accepts = [
+    "https://accounts.example.com/.well-known/openid-configuration",
+    "/.well-known/openid-configuration",
+    "https://id.example.com:8443/tenant/.well-known/openid-configuration",
+]
+
+rejects = [
+    "",
+    "hello",
+    "/.well-known/jwks.json",
+    "http://x/.well-known/openid-configuration",
+]

@@ -1,0 +1,10 @@
+accepts = [
+    "<?xml version=\"1.0\"?>\n<samlp:Response xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\"/>",
+    "<Assertion xmlns=\"urn:oasis:names:tc:SAML:2.0:assertion\"/>",
+]
+
+rejects = [
+    "",
+    "hello",
+    "<Response/>",
+]

@@ -1,0 +1,16 @@
+accepts = [
+    "query GetUser { user { id } }",
+    "mutation { add(x: 1) }",
+    "type User {\n  id: ID!\n}",
+    "{ user { id } }",
+    "# c\nquery Q {}",
+    "fragment F on User { id }",
+    "schema {\n  query: Query\n}",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "{\"a\":1}",
+    "{\"data\":{}}",
+]
