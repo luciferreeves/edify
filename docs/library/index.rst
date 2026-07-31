@@ -27,6 +27,7 @@ sidebar, or start here:
    data/index
    document/index
    numeric/index
+   security/index
    text/index
 
 Categories
@@ -46,7 +47,9 @@ Categories
   signature: PDF, office packages, e-books, and source formats.
 - :doc:`numeric/index` — integers, decimals, percentages, fractions, and Roman
   numerals.
+- :doc:`security/index` — cryptographic artifacts: PEM blocks, certificates, SSH
+  and PGP keys, nonces, and signatures.
 - :doc:`text/index` — character classes, encodings, scripts, and slugs.
-- **Finance, Geo, Grammar, Identifiers, Media, Medical, Product,
-  Publishing, Security, Software, Temporal, Transport, Web** — being handcrafted,
-  one validator at a time.
+- **Finance, Geo, Grammar, Identifiers, Media, Medical, Product, Publishing,
+  Software, Temporal, Transport, Web** — being handcrafted, one validator at a
+  time.

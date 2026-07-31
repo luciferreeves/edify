@@ -1,0 +1,39 @@
+X.509
+=====
+
+`X.509 <https://www.itu.int/rec/T-REC-X.509/en>`__ is the certificate standard the
+web runs on, and a certificate file arrives in one of two encodings: PEM-armoured
+text, or raw DER bytes. **X.509** accepts either, which makes it the validator to
+use when you do not control the file's provenance.
+
+The two encodings are the branches of an :func:`~edify.any_of`: the armoured branch
+is the ``CERTIFICATE`` block of :doc:`certificate`; the binary branch is the DER
+``SEQUENCE`` opening of :doc:`der`, restricted to the long-length forms a real
+certificate uses.
+
+Either encoding
+---------------
+
+.. edify-playground::
+
+   from edify.library import x509
+
+   x509("-----BEGIN CERTIFICATE-----\nMIIBkTCB+wIJAJ5v\n-----END CERTIFICATE-----")   # PEM
+   x509("\x30\x82\x03\x0a\x02\x01\x02")                                                # DER
+   x509("-----BEGIN TRUSTED CERTIFICATE-----\nAA==\n-----END TRUSTED CERTIFICATE-----")
+
+Not any artifact
+----------------
+
+.. edify-playground::
+
+   from edify.library import x509
+
+   x509("\x30\x82\x03\x0a")    # a DER sequence
+   x509("hello")               # text
+   x509("")                    # empty
+
+Accepting both encodings is a convenience, not a validation: as with
+:doc:`certificate`, nothing here checks the signature, chain, validity dates, or
+subject. Feed the artifact to a TLS library and let it decide. For a single encoding
+see :doc:`certificate` or :doc:`der`.
