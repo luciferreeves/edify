@@ -30,6 +30,7 @@ sidebar, or start here:
    media/index
    numeric/index
    security/index
+   software/index
    temporal/index
    text/index
    web/index
@@ -55,9 +56,11 @@ Categories
   numerals.
 - :doc:`security/index` — cryptographic artifacts: PEM blocks, certificates, SSH
   and PGP keys, nonces, and signatures.
+- :doc:`software/index` — versions, package names, container images, and build
+  identifiers.
 - :doc:`temporal/index` — dates, times, durations, time zones, and cron
   expressions.
 - :doc:`text/index` — character classes, encodings, scripts, and slugs.
 - :doc:`web/index` — server configuration, site metadata, and HTTP header values.
 - **Finance, Geo, Identifiers, Medical, Product, Publishing,
-  Software, Transport** — being handcrafted, one validator at a time.
+  Transport** — being handcrafted, one validator at a time.
