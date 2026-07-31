@@ -49,6 +49,7 @@ tag at all:
 
    from edify.library import xml
 
+   xml("<good/>")     # a valid element name
    xml("<1bad/>")     # a name cannot start with a digit
    xml("< root>")     # a space after the angle bracket
    xml('{"a": 1}')    # that is JSON

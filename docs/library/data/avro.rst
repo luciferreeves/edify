@@ -33,6 +33,7 @@ The version byte matters
 
    from edify.library import avro
 
+   avro("Obj\x01")   # the complete marker
    avro("Obj")        # missing the version byte
    avro("OBJ\x01")    # wrong case
    avro("hello")      # not a signature

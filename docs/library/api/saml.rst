@@ -47,6 +47,7 @@ rejected — which is what stops an unrelated ``<Response>`` from passing:
 
    from edify.library import saml
 
+   saml('<Response xmlns="urn:oasis:names:tc:SAML:2.0:protocol"/>')   # element + namespace
    saml("<Response/>")                              # no SAML namespace
    saml('<Response xmlns="urn:other"/>')            # the wrong namespace
    saml("hello-world")                               # not XML

@@ -34,6 +34,7 @@ syndication format has its own validator:
 
    from edify.library import rss
 
+   rss('<rss version="2.0"/>')   # the exact root element
    rss("<rssfeed/>")     # a different element
    rss("<feed/>")        # that is Atom
    rss("hello-world")    # not XML

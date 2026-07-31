@@ -35,6 +35,7 @@ syndication format has its own root:
 
    from edify.library import atom
 
+   atom('<feed xmlns="http://www.w3.org/2005/Atom"/>')   # the namespace makes it Atom
    atom("<feed/>")                          # no namespace
    atom('<feed xmlns="urn:other"/>')        # the wrong namespace
    atom('<rss version="2.0"/>')             # that is RSS

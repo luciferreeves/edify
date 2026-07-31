@@ -35,6 +35,7 @@ a Parquet file:
 
    from edify.library import parquet
 
+   parquet("PAR1")    # the complete marker
    parquet("PAR")     # truncated
    parquet("par1")    # wrong case
    parquet("hello")   # not a signature

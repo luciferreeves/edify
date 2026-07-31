@@ -28,6 +28,7 @@ Exactly those three bytes
 
    from edify.library import orc
 
+   orc("ORC")     # the complete marker
    orc("OR")      # truncated
    orc("orc")     # wrong case
    orc("hello")   # not a signature

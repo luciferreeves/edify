@@ -47,6 +47,7 @@ in another format is not MessagePack at all:
 
    from edify.library import msgpack
 
+   msgpack("\x82\xa1a\x01")   # a map root
    msgpack("\x01")      # an integer root
    msgpack('{"a":1}')   # JSON text
    msgpack("hello")     # plain text

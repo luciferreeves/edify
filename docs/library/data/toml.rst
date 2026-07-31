@@ -49,6 +49,7 @@ colon-based formats:
 
    from edify.library import toml
 
+   toml('key = "value"')   # the equals sign makes it TOML
    toml("key: value")   # that is YAML or INI
    toml("hello-world")  # no assignment
    toml("<root/>")      # XML

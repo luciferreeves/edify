@@ -46,6 +46,7 @@ a tag name:
 
    from edify.library import soap
 
+   soap('<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/"/>')   # element + namespace
    soap("<Envelope/>")                       # no namespace
    soap('<Envelope xmlns="urn:other"/>')     # the wrong namespace
    soap("hello-world")                        # not XML

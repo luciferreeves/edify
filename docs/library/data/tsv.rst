@@ -49,6 +49,7 @@ Commas do not count, and a line without any tab is not tabular:
 
    from edify.library import tsv
 
+   tsv("a\tb")          # a tab delimiter
    tsv("a,b")           # comma-separated: use csv
    tsv("nocols")        # no delimiter
    tsv("hello world")   # a space is not a tab

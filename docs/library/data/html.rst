@@ -47,6 +47,7 @@ A generic XML document is not HTML, and plain text is not markup:
 
    from edify.library import html
 
+   html("<html>")        # an HTML root
    html("<root/>")       # XML, not HTML
    html('{"a": 1}')      # JSON
    html("hello-world")   # plain text

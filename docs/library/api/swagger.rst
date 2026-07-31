@@ -36,6 +36,7 @@ The version is not a range. A 3.x document belongs to :doc:`openapi`, and a
 
    from edify.library import swagger
 
+   swagger('swagger: "2.0"')     # the only valid version
    swagger('swagger: "3.0"')     # no such Swagger version
    swagger("openapi: 3.0.0")     # that is OpenAPI
    swagger("hello-world")        # not a specification

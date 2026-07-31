@@ -33,6 +33,7 @@ detect corruption:
 
    from edify.library import hdf5
 
+   hdf5("\x89HDF\r\n\x1a\n")   # all eight bytes
    hdf5("\x89HDF")   # truncated
    hdf5("HDF")       # missing the guard byte
    hdf5("hello")     # not a signature

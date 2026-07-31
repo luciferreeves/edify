@@ -50,6 +50,7 @@ discovery endpoint:
 
    from edify.library import openid
 
+   openid("/.well-known/openid-configuration")               # the discovery path
    openid("/.well-known/jwks.json")                          # the key set, not discovery
    openid("http://x.example.com/.well-known/openid-configuration")   # discovery requires https
 

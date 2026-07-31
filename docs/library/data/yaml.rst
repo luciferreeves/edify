@@ -52,6 +52,7 @@ nearly any text:
 
    from edify.library import yaml
 
+   yaml("key: hello-world")   # the same value under a key
    yaml("hello-world")   # a bare scalar
    yaml("42")            # a bare number
    yaml('{"a": 1}')      # JSON flow style is not matched

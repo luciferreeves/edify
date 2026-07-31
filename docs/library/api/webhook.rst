@@ -36,6 +36,7 @@ with no dot, which usually means an internal or loopback target:
 
    from edify.library import webhook
 
+   webhook("https://example.com/hooks")    # TLS and a dotted host
    webhook("http://example.com/hooks")     # not TLS
    webhook("https://localhost/hooks")      # no dotted host
    webhook("example.com/hooks")            # no scheme

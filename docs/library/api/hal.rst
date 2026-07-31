@@ -50,6 +50,7 @@ navigable, and not HAL:
 
    from edify.library import hal
 
+   hal('{"id": 1, "_links": {}}')      # one reserved member is enough
    hal('{"id": 1, "total": 9.99}')   # valid JSON, no HAL members
    hal("{}")                         # an empty object
    hal("hello-world")                # not JSON at all

@@ -49,6 +49,7 @@ This matches schema *source*, not encoded messages — and not unrelated text:
 
    from edify.library import protobuf
 
+   protobuf("message A {}")   # a schema declaration
    protobuf("hello-world")   # not a schema
    protobuf('{"a": 1}')      # JSON
    protobuf("<root/>")       # XML

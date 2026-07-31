@@ -47,6 +47,7 @@ Bare text is not configuration, and markup belongs to another validator:
 
    from edify.library import ini
 
+   ini("key=value")     # an assignment
    ini("hello-world")   # no assignment or section
    ini("<root/>")       # XML
    ini('{"a": 1}')      # JSON

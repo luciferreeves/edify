@@ -52,6 +52,7 @@ different format:
 
    from edify.library import csv
 
+   csv("a,b")           # one delimiter is enough
    csv("nocommas")      # a single column is not distinguishable
    csv("hello-world")   # plain text
    csv("a\tb")          # tab-separated: use tsv

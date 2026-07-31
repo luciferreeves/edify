@@ -51,6 +51,7 @@ JSON:
 
    from edify.library import jsonapi
 
+   jsonapi('{"data": {"id": "1"}}')          # a top-level member is present
    jsonapi('{"id": 1, "type": "orders"}')   # no top-level member
    jsonapi("{}")                             # empty object
    jsonapi("hello-world")                    # not JSON

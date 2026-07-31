@@ -53,6 +53,7 @@ random word or an unrelated document is rejected outright:
 
    from edify.library import openapi
 
+   openapi("openapi: 3.0.0")   # a real declaration
    openapi("hello-world")   # not a specification
    openapi("")              # empty
 

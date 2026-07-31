@@ -51,6 +51,7 @@ name, an uppercase spelling, or an unknown bare word all fail:
 
    from edify.library import oauth
 
+   oauth("authorization_code")       # the registered spelling
    oauth("AUTHORIZATION_CODE")       # grant types are lowercase
    oauth("grant_type")               # that is the parameter name
    oauth("magic_link")               # unregistered, and not a URN
