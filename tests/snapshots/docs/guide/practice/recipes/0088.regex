@@ -1,0 +1,1 @@
+doubled :: regex :: \b(?P<w>[a-zA-Z]+)\s(?P=w)\b

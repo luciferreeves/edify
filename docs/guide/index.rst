@@ -17,6 +17,7 @@ any single page as a reference later.
    builder/index
    atoms/index
    beyond/index
+   practice/index
 
 :doc:`Get started <start/index>`
 --------------------------------
@@ -62,6 +63,17 @@ The 83 named fragments the :doc:`../library/index` validators are assembled from
 - :doc:`beyond/seeing` — explaining a pattern in prose or as a diagram.
 - :doc:`beyond/serialization` — round-tripping a pattern through JSON.
 - :doc:`beyond/integrations` — using a pattern as a framework validator.
+
+:doc:`In practice <practice/index>`
+-----------------------------------
+
+- :doc:`practice/recipes` — complete patterns for parsing, extracting, replacing,
+  and splitting.
+- :doc:`practice/performance` — catastrophic backtracking and the build-time check
+  that catches it.
+- :doc:`practice/debugging` — four ways to find out why a pattern does not match.
+- :doc:`practice/unicode` — which tokens reach beyond ASCII, and which quietly do
+  not.
 
 For method signatures and parameter tables see the :doc:`../api/index`; for
 ready-made validators you can call today, the :doc:`../library/index`.

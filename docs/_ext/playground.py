@@ -224,6 +224,7 @@ _GUIDE_SECTIONS = [
             "integrations",
         ],
     ),
+    ("practice", "In practice", ["recipes", "performance", "debugging", "unicode"]),
 ]
 
 
