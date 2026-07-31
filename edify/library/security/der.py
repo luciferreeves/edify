@@ -1,26 +1,26 @@
-"""``der`` — der cryptography artifact shape."""
+"""``der`` — DER-encoded structure shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_short_form = Pattern().range("\x00", "\x7f")
+
+_long_form = Pattern().range("\x81", "\x84").one_or_more().any_char()
+
 der = (
     Pattern()
     .start_of_input()
-    .between(16, 4096)
+    .char("\x30")
     .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("+")
-    .char("/")
-    .char("=")
-    .char("_")
-    .char("-")
-    .char(".")
-    .char(":")
-    .whitespace_char()
+    .use(_long_form)
+    .use(_short_form)
     .end()
+    .zero_or_more()
+    .any_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for der cryptographic-artifact identifier or payload."""
+"""Callable :class:`Pattern` for a DER-encoded structure: a ``SEQUENCE`` tag
+followed by a short- or long-form length.
+"""

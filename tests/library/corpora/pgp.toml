@@ -1,0 +1,11 @@
+accepts = [
+    "-----BEGIN PGP MESSAGE-----\nhQEMA\n-----END PGP MESSAGE-----",
+    "-----BEGIN PGP SIGNATURE-----\niQEz\n-----END PGP SIGNATURE-----",
+    "-----BEGIN PGP PUBLIC KEY BLOCK-----\nmQENB\n-----END PGP PUBLIC KEY BLOCK-----",
+]
+
+rejects = [
+    "",
+    "hello",
+    "-----BEGIN CERTIFICATE-----\nMIIBkTCB+wIJAJ5vJ7Cm3S7h\nMA0GCSqGSIb3DQEBCwUAMBQx\n-----END CERTIFICATE-----",
+]

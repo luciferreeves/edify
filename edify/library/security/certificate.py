@@ -1,26 +1,29 @@
-"""``certificate`` — certificate cryptography artifact shape."""
+"""``certificate`` — PEM certificate shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_label = Pattern().optional().string("TRUSTED ").string("CERTIFICATE")
+
+_body = Pattern().zero_or_more().any_of().alphanumeric().any_of_chars("+/=").whitespace_char().end()
+
 certificate = (
     Pattern()
     .start_of_input()
-    .between(16, 4096)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("+")
-    .char("/")
-    .char("=")
-    .char("_")
-    .char("-")
-    .char(".")
-    .char(":")
+    .zero_or_more()
     .whitespace_char()
-    .end()
+    .string("-----BEGIN ")
+    .use(_label)
+    .string("-----")
+    .use(_body)
+    .string("-----END ")
+    .use(_label)
+    .string("-----")
+    .zero_or_more()
+    .whitespace_char()
     .end_of_input()
 )
-"""Callable :class:`Pattern` for certificate cryptographic-artifact identifier or payload."""
+"""Callable :class:`Pattern` for a PEM certificate: a ``CERTIFICATE`` or
+``TRUSTED CERTIFICATE`` armoured block.
+"""

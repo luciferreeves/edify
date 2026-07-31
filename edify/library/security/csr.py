@@ -1,26 +1,29 @@
-"""``csr`` — csr cryptography artifact shape."""
+"""``csr`` — PEM certificate-signing-request shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_label = Pattern().optional().string("NEW ").string("CERTIFICATE REQUEST")
+
+_body = Pattern().zero_or_more().any_of().alphanumeric().any_of_chars("+/=").whitespace_char().end()
+
 csr = (
     Pattern()
     .start_of_input()
-    .between(16, 4096)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("+")
-    .char("/")
-    .char("=")
-    .char("_")
-    .char("-")
-    .char(".")
-    .char(":")
+    .zero_or_more()
     .whitespace_char()
-    .end()
+    .string("-----BEGIN ")
+    .use(_label)
+    .string("-----")
+    .use(_body)
+    .string("-----END ")
+    .use(_label)
+    .string("-----")
+    .zero_or_more()
+    .whitespace_char()
     .end_of_input()
 )
-"""Callable :class:`Pattern` for csr cryptographic-artifact identifier or payload."""
+"""Callable :class:`Pattern` for a PEM certificate-signing request: a
+``CERTIFICATE REQUEST`` or ``NEW CERTIFICATE REQUEST`` armoured block.
+"""

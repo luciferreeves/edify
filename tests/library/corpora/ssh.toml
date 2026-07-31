@@ -1,0 +1,14 @@
+accepts = [
+    "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAB user@host",
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5 me",
+    "ecdsa-sha2-nistp256 AAAAE2VjZHNh x",
+    "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1r\n-----END OPENSSH PRIVATE KEY-----",
+]
+
+rejects = [
+    "",
+    "hello",
+    "ssh-rsa",
+    "rsa AAAAB3",
+    "ssh-foo AAAA",
+]

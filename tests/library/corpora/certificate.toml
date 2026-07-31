@@ -1,0 +1,10 @@
+accepts = [
+    "-----BEGIN CERTIFICATE-----\nMIIBkTCB+wIJAJ5vJ7Cm3S7h\nMA0GCSqGSIb3DQEBCwUAMBQx\n-----END CERTIFICATE-----",
+    "-----BEGIN TRUSTED CERTIFICATE-----\nAA==\n-----END TRUSTED CERTIFICATE-----",
+]
+
+rejects = [
+    "",
+    "hello",
+    "-----BEGIN RSA PRIVATE KEY-----\nMIIB\n-----END RSA PRIVATE KEY-----",
+]
