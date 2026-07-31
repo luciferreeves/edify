@@ -43,7 +43,7 @@ Not a configuration
 
    apache("Listen 80")     # a directive
    apache("hello-world")   # plain text
-   apache('{"a": 1}')      # JSON
+   apache('{"a": 1}')      # JSON, not a directive
    apache("")              # empty
 
 As with :doc:`nginx`, this matches the opening rather than validating the whole file

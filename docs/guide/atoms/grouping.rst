@@ -11,7 +11,28 @@ Delimited spans
 ---------------
 
 Each matches an opening delimiter, any content that is not the closing delimiter,
-and the close:
+and the close. The shape is identical in all three, with only the delimiter pair
+changing:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 30 48
+
+   * - Atom
+     - Emits
+     - Matches
+   * - ``parens``
+     - ``\([^)]*\)``
+     - a parenthesised span
+   * - ``brackets``
+     - ``\[[^\]]*\]``
+     - a square-bracketed span
+   * - ``braces``
+     - ``\{[^}]*\}``
+     - a brace-delimited span
+
+The ``*`` means the body may be empty, so ``{}`` matches. Both delimiters are
+required — an unterminated span does not match at all.
 
 .. edify-playground::
 
@@ -23,7 +44,7 @@ and the close:
    p = Pattern().start_of_input().use(parens).end_of_input()
 
    b("{value}")
-   b("{}")            # an empty span is fine
+   b("{}")            # a span with nothing inside still matches
    sq("[1, 2, 3]")
    p("(a + b)")
    p("(unclosed")     # both delimiters are required
@@ -46,12 +67,22 @@ as a whole:
    b("{outer {inner}}")    # the span ends at the first }, so anchoring fails
 
 That is not a defect in the atom — matching balanced, arbitrarily nested delimiters
-is beyond what a regular expression can express at all. When you need to handle
+is beyond what a regular expression can express at all. A regex has no counter, so
+it cannot know how many opens are still waiting to close. When you need to handle
 nesting, parse rather than match.
 
 Used unanchored, though, they are exactly right for pulling the first delimited span
 out of a longer string — a template placeholder, a bracketed log field, a
-parenthesised aside.
+parenthesised aside:
+
+.. code-block:: python
+
+   from edify import Pattern
+   from edify.atoms import braces
+
+   placeholder = Pattern().use(braces)
+   placeholder.to_regex().findall("Hello {name}, you have {count} messages")
+   # ['{name}', '{count}']
 
 That is the last of the atom groups. Back to :doc:`index`, or on to
 :doc:`../beyond/composing` for the other ways to build patterns from parts.

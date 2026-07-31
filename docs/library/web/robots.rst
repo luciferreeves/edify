@@ -34,7 +34,7 @@ Arbitrary text is not a robots file:
 
    robots("Disallow: /private")   # a known field
    robots("hello-world")          # no directive
-   robots('{"a": 1}')             # JSON
+   robots('{"a": 1}')             # JSON, not a directive
    robots("")                     # empty
 
 Two things worth remembering: robots.txt is advisory — it asks well-behaved crawlers

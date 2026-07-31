@@ -49,7 +49,7 @@ in another format is not MessagePack at all:
 
    msgpack("\x82\xa1a\x01")   # a map root
    msgpack("\x01")      # an integer root
-   msgpack('{"a":1}')   # JSON text
+   msgpack('{"a":1}')   # JSON text, not the binary framing
    msgpack("hello")     # plain text
 
 Because the format has no signature, this is a root-type check rather than proof the

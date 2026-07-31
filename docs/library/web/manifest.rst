@@ -33,7 +33,7 @@ Plain JSON without any of those keys is not a manifest:
 
    manifest('{"display": "fullscreen"}')   # a manifest member
    manifest('{"name": "My App"}')          # name alone is not distinctive
-   manifest('{"a": 1}')                    # unrelated JSON
+   manifest('{"a": 1}')                    # JSON without the manifest keys
    manifest("hello")                       # not JSON
 
 This identifies the document; whether the icons resolve, the ``start_url`` is in

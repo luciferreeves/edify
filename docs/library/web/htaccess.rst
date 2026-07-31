@@ -42,7 +42,7 @@ Not a configuration
 
    htaccess("RewriteEngine On")   # a directive
    htaccess("hello-world")        # plain text
-   htaccess('{"a": 1}')           # JSON
+   htaccess('{"a": 1}')           # JSON, not a directive
    htaccess("")                   # empty
 
 Per-directory files are read on every request and can weaken server settings, so

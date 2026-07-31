@@ -36,7 +36,7 @@ newline — are rejected:
    useragent("curl/8.4.0")     # valid
    useragent("abc")            # too short
    useragent("a" * 1025)       # too long
-   useragent('bad"quote')      # a quote
+   useragent('bad"quote')      # a bare quote is rejected
    useragent("")               # empty
 
 A User-Agent is client-supplied and trivially forged, so never use it for access

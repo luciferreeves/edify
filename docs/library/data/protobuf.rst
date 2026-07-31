@@ -51,7 +51,7 @@ This matches schema *source*, not encoded messages — and not unrelated text:
 
    protobuf("message A {}")   # a schema declaration
    protobuf("hello-world")   # not a schema
-   protobuf('{"a": 1}')      # JSON
+   protobuf('{"a": 1}')      # JSON, not a schema
    protobuf("<root/>")       # XML
 
 It confirms the file opens as a schema; field numbering, type correctness, and

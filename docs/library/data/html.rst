@@ -49,7 +49,7 @@ A generic XML document is not HTML, and plain text is not markup:
 
    html("<html>")        # an HTML root
    html("<root/>")       # XML, not HTML
-   html('{"a": 1}')      # JSON
+   html('{"a": 1}')      # JSON, not markup
    html("hello-world")   # plain text
 
 HTML is famously forgiving, so this identifies the document rather than validating

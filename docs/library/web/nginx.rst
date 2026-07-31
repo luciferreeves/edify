@@ -42,7 +42,7 @@ Not a configuration
 
    nginx("server {}")    # a block
    nginx("hello-world")  # plain text
-   nginx('{"a": 1}')     # JSON
+   nginx('{"a": 1}')     # JSON, not a directive
    nginx("")             # empty
 
 This matches how a file opens, not that the whole configuration is valid — brace

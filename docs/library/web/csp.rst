@@ -33,7 +33,7 @@ A name must be lowercase letters and hyphens, and a value is required:
    from edify.library import csp
 
    csp("frame-ancestors 'none'")   # a hyphenated name
-   csp("Default-Src 'self'")       # uppercase
+   csp("Default-Src 'self'")       # uppercase is rejected
    csp("default-src")              # no value
    csp("hello")                    # not a policy
 

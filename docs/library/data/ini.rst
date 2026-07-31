@@ -50,7 +50,7 @@ Bare text is not configuration, and markup belongs to another validator:
    ini("key=value")     # an assignment
    ini("hello-world")   # no assignment or section
    ini("<root/>")       # XML
-   ini('{"a": 1}')      # JSON
+   ini('{"a": 1}')      # JSON, not an INI section
 
 Because the format is unstandardised this checks the opening rather than enforcing
 one dialect's rules — duplicate keys, value quoting, and line continuations all vary

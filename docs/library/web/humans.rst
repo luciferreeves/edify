@@ -31,7 +31,7 @@ A marker or field is required
 
    humans("Developer: Jane")   # a field line
    humans("hello world")       # prose with no field
-   humans('{"a": 1}')          # JSON
+   humans('{"a": 1}')          # JSON, not a section entry
    humans("")                  # empty
 
 The format is a convention rather than a specification, so this is a light structural
