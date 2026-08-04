@@ -1,23 +1,25 @@
-========
-Contents
-========
+Edify
+=====
+
+Build regex you can actually read.
 
 .. toctree::
-   :maxdepth: 3
 
-   readme
-   built-in/index
-   regex-builder/index
-   integrations/index
+   guide/index
+
+.. toctree::
+   :hidden:
+   :caption: Reference
+
+   library/index
+   playground
+   api/index
+
+.. toctree::
+   :hidden:
+   :caption: Meta
+
    upgrading/index
    deprecation-policy
-   contributing
-   authors
    changelog
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   contributing

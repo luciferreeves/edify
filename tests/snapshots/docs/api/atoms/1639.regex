@@ -1,0 +1,1 @@
+httpstatus :: pattern :: [1-5]\d{2}

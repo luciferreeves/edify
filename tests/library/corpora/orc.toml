@@ -1,0 +1,11 @@
+accepts = [
+    "ORCbody\nmore",
+    "ORC",
+]
+
+rejects = [
+    "",
+    "hello",
+    "OR",
+    "orc",
+]

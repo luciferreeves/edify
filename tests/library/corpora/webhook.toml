@@ -1,0 +1,12 @@
+accepts = [
+    "https://example.com/hooks/gh",
+    "https://a.io:8443/cb?x=1",
+    "https://hooks.example.co.uk/x",
+]
+
+rejects = [
+    "",
+    "hello",
+    "http://example.com/h",
+    "https://localhost/h",
+]

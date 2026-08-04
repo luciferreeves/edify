@@ -1,0 +1,29 @@
+accepts = [
+    "{}",
+    "[]",
+    '{"a": 1}',
+    '{"a": [1, 2], "b": {"c": null}}',
+    "[1, 2, 3]",
+    '"a string"',
+    "42",
+    "-3.5",
+    "1.2e-9",
+    "true",
+    "false",
+    "null",
+    '  {"a": 1}  ',
+    '{\n  "nested": {\n    "deep": true\n  }\n}',
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "undefined",
+    '{"a": 1',
+    '"unterminated',
+    "a: 1",
+    "<root/>",
+    '{"a":1}trailing',
+    "1 2",
+    "+5",
+]

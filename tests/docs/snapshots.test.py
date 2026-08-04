@@ -11,7 +11,9 @@ truthful.
 import re
 import sys
 from collections.abc import Iterator
+from importlib import import_module
 from pathlib import Path
+from typing import Protocol, cast
 
 import pytest
 
@@ -91,24 +93,7 @@ def _snapshot_bodies_for_block(namespace: dict[str, object], pre_exec_names: fro
 
 DISCOVERED_BLOCKS: list[tuple[Path, int, str, Path]] = list(_discover_blocks())
 
-_BLOCKS_DEFERRED_TO_DOCS_REWRITE = frozenset(
-    {
-        ("built-in/index", 46),
-        ("built-in/index", 83),
-        ("built-in/index", 98),
-        ("built-in/index", 142),
-        ("built-in/index", 175),
-        ("built-in/index", 184),
-        ("built-in/index", 936),
-        ("regex-builder/builder/index", 396),
-    }
-)
-
-_ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS = frozenset(
-    {
-        ("upgrading/0.3-to-1.0", 140),
-    }
-)
+_ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS: frozenset[tuple[str, int]] = frozenset()
 
 _BLOCKS_SKIPPED_ON_PYPY = frozenset(
     {
@@ -128,8 +113,6 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     rst_path: Path, block_start: int, block_source: str, relative_stem: Path
 ) -> None:
     stem_string = str(relative_stem)
-    if (stem_string, block_start) in _BLOCKS_DEFERRED_TO_DOCS_REWRITE:
-        pytest.skip("doc block references validators / kwargs slated for the docs rewrite")
     if (stem_string, block_start) in _ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS:
         pytest.skip("doc block shows pre/post-migration code that is intentionally not executable")
     if _ON_PYPY and (stem_string, block_start) in _BLOCKS_SKIPPED_ON_PYPY:
@@ -142,7 +125,41 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     assert_snapshot(rendered, snapshot_path)
 
 
+class _Settings(Protocol):
+    configured: bool
+
+    def configure(self, **options: object) -> None: ...
+
+
+class _Apps(Protocol):
+    ready: bool
+
+
+class _Django(Protocol):
+    def setup(self) -> None: ...
+
+
+def _configure_django_once() -> None:
+    """Give Django the minimum settings a doc block needs to define a model.
+
+    Django ships no type information, so it is reached through
+    :func:`importlib.import_module` behind local protocols, matching how
+    :mod:`edify.integrations.django` loads it.
+    """
+    settings = cast(_Settings, import_module("django.conf").settings)
+    apps = cast(_Apps, import_module("django.apps").apps)
+    if not settings.configured:
+        settings.configure(
+            INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
+            DATABASES={},
+            USE_TZ=True,
+        )
+    if not apps.ready:
+        cast(_Django, import_module("django")).setup()
+
+
 def _prepared_exec_namespace() -> dict[str, object]:
+    _configure_django_once()
     namespace: dict[str, object] = {"edify": edify, "Pattern": Pattern, "Regex": Regex, "re": re}
     for edify_export in dir(edify):
         if edify_export.startswith("_"):

@@ -28,33 +28,66 @@ from edify.pattern.factories.wrap import pattern_containing, target_element
 
 
 def group(operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a non-capturing ``(?:...)`` group."""
+    """Return ``operand`` wrapped in a non-capturing ``(?:...)`` group.
+
+    Args:
+        operand: The pattern to bundle into one unit.
+    """
     return pattern_containing(GroupElement(children=_operand_children(operand)))
 
 
 def capture(operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a numbered capture ``(...)``."""
+    """Return ``operand`` wrapped in a numbered capture ``(...)``.
+
+    Args:
+        operand: The pattern whose matched text is kept.
+    """
     return pattern_containing(CaptureElement(children=_operand_children(operand)))
 
 
 def named_capture(name: str, operand: BuilderProtocol) -> Pattern:
-    """Return ``operand`` wrapped in a named capture ``(?P<name>...)``."""
+    """Return ``operand`` wrapped in a named capture ``(?P<name>...)``.
+
+    Args:
+        name: The group's name. Must be a valid Python identifier.
+        operand: The pattern whose matched text is kept under ``name``.
+    """
     return pattern_containing(NamedCaptureElement(name=name, children=_operand_children(operand)))
 
 
 def back_reference(index: int) -> Pattern:
-    """Return a numbered back-reference ``\\<index>``."""
+    """Return a numbered back-reference ``\\<index>``.
+
+    Args:
+        index: The 1-based number of the capture to rematch.
+
+    Raises:
+        MustBePositiveIntegerError: If ``index`` is not an int of 1 or more.
+    """
     _ensure_positive_integer("index", index)
     return pattern_containing(BackReferenceElement(index=index))
 
 
 def named_back_reference(name: str) -> Pattern:
-    """Return a named back-reference ``(?P=name)``."""
+    """Return a named back-reference ``(?P=name)``.
+
+    Args:
+        name: The name of the capture to rematch.
+    """
     return pattern_containing(NamedBackReferenceElement(name=name))
 
 
 def any_of(*operands: BuilderProtocol) -> Pattern:
-    """Return an alternation ``(?:a|b|c)`` across the supplied operands."""
+    """Return an alternation ``(?:a|b|c)`` across the supplied operands.
+
+    Branches are tried left to right and the first to match wins.
+
+    Args:
+        *operands: The alternatives. At least two are required.
+
+    Raises:
+        MustBeAtLeastTwoOperandsError: If fewer than two operands are given.
+    """
     if len(operands) < 2:
         raise MustBeAtLeastTwoOperandsError("any_of")
     child_elements = [target_element(operand) for operand in operands]

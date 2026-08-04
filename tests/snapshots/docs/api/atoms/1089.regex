@@ -1,0 +1,2 @@
+hexstring :: pattern :: (?:[0-9a-fA-F])+
+nibble :: pattern :: [0-9a-fA-F]

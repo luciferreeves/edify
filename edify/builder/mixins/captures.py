@@ -39,7 +39,19 @@ class CapturesMixin(BuilderProtocol):
         return self.with_state(state_with_count)
 
     def named_capture(self, name: str) -> Self:
-        """Return a new builder with a named-capture frame opened under ``name``."""
+        """Return a new builder with a named-capture frame opened under ``name``.
+
+        Close the frame with :meth:`end`. The captured text is readable afterwards as
+        ``match.captures.<name>`` as well as by group number.
+
+        Args:
+            name: The group's name. Must be a valid Python identifier and unique within
+                this pattern.
+
+        Raises:
+            NameNotValidError: If ``name`` is not a valid identifier.
+            CannotCreateDuplicateNamedGroupError: If ``name`` is already used in this pattern.
+        """
         _validate_new_named_group(name, self.state.named_groups)
         new_frame = StackFrame(type_node=NamedCaptureElement(name=name))
         state_with_frame = self.state.with_frame_pushed(new_frame)
@@ -48,14 +60,34 @@ class CapturesMixin(BuilderProtocol):
         return self.with_state(state_with_name)
 
     def back_reference(self, index: int) -> Self:
-        """Return a new builder with a numbered back-reference to capture ``index`` appended."""
+        """Return a new builder with a numbered back-reference to capture ``index`` appended.
+
+        The back-reference matches the same text the referenced capture matched, not
+        merely text of the same shape.
+
+        Args:
+            index: The 1-based number of an already-opened capture group.
+
+        Raises:
+            InvalidTotalCaptureGroupsIndexError: If no capture with that number exists yet.
+        """
         _ensure_capture_index_in_range(index, self.state.total_capture_groups)
         element = BackReferenceElement(index=index)
         new_state = self.state.with_element_added_to_top(element)
         return self.with_state(new_state)
 
     def named_back_reference(self, name: str) -> Self:
-        """Return a new builder with a named back-reference to ``name`` appended."""
+        """Return a new builder with a named back-reference to ``name`` appended.
+
+        The back-reference matches the same text the named capture matched, not merely
+        text of the same shape.
+
+        Args:
+            name: The name of an already-declared named capture group.
+
+        Raises:
+            NamedGroupDoesNotExistError: If no capture with that name has been declared.
+        """
         _ensure_named_group_exists(name, self.state.named_groups)
         element = NamedBackReferenceElement(name=name)
         new_state = self.state.with_element_added_to_top(element)

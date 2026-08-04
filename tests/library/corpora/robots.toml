@@ -1,0 +1,12 @@
+accepts = [
+    "User-agent: *\nDisallow: /admin",
+    "# c\nUser-agent: Googlebot",
+    "Sitemap: https://a.io/sitemap.xml",
+    "user-agent: *",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "{\"a\":1}",
+]

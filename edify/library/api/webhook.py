@@ -1,23 +1,43 @@
-"""``webhook`` — API-spec/protocol identifier or payload shape."""
+"""``webhook`` — webhook callback endpoint shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_host = (
+    Pattern()
+    .one_or_more()
+    .any_of()
+    .alphanumeric()
+    .any_of_chars("-")
+    .end()
+    .one_or_more()
+    .group()
+    .char(".")
+    .one_or_more()
+    .any_of()
+    .alphanumeric()
+    .any_of_chars("-")
+    .end()
+    .end()
+)
+
+_port = Pattern().char(":").between(1, 5).digit()
+
+_tail = (
+    Pattern().char("/").zero_or_more().any_of().alphanumeric().any_of_chars("-._~/%?&=+:@#").end()
+)
+
 webhook = (
     Pattern()
     .start_of_input()
-    .between(3, 256)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .char("+")
-    .end()
+    .string("https://")
+    .use(_host)
+    .optional()
+    .use(_port)
+    .use(_tail)
     .end_of_input()
 )
-"""Callable :class:`Pattern` for a permissive webhook-related identifier."""
+"""Callable :class:`Pattern` for a webhook callback endpoint: an ``https`` URL
+with a dotted host and a delivery path.
+"""

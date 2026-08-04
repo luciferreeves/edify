@@ -23,7 +23,18 @@ from edify.serialize.version import SCHEMA_VERSION
 
 
 def dict_to_element(tree: dict[str, JSONValue]) -> BaseElement:
-    """Return the AST element described by ``tree``."""
+    """Return the AST element described by ``tree``.
+
+    Args:
+        tree: A canonical node dict, as produced by :func:`element_to_dict`.
+
+    Returns:
+        The reconstructed element.
+
+    Raises:
+        MissingSchemaKeyError: If the node has no ``kind``.
+        UnknownElementKindError: If the ``kind`` is not registered in this build.
+    """
     kind_value = tree.get("kind")
     if not isinstance(kind_value, str):
         raise MissingSchemaKeyError("kind")
@@ -43,7 +54,19 @@ def dict_to_element(tree: dict[str, JSONValue]) -> BaseElement:
 
 
 def dict_to_state(document: dict[str, JSONValue]) -> BuilderState:
-    """Return the :class:`BuilderState` described by ``document`` (canonical shape)."""
+    """Return the :class:`BuilderState` described by ``document`` (canonical shape).
+
+    Args:
+        document: A canonical document, as produced by :func:`state_to_dict`.
+
+    Returns:
+        The reconstructed builder state.
+
+    Raises:
+        MissingSchemaKeyError: If ``edify`` or ``pattern`` is absent.
+        IncompatibleSchemaVersionError: If the document declares a version this build
+            does not understand.
+    """
     _require_schema_version(document)
     pattern_tree = document.get("pattern")
     if not isinstance(pattern_tree, dict):

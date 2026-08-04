@@ -19,17 +19,17 @@ jobs:
               echo "PR marked [no-migration]; skipping the fragment requirement."
               exit 0
           fi
-          if ! git cat-file -e "$BASE_SHA:.public-surface" 2>/dev/null; then
-              echo ".public-surface is introduced on this branch; no prior surface to migrate from."
+          if ! git cat-file -e "$BASE_SHA:tools/surface/.public" 2>/dev/null; then
+              echo "tools/surface/.public is introduced on this branch; no prior surface to migrate from."
               exit 0
           fi
-          if git diff --quiet "$BASE_SHA" "$HEAD_SHA" -- .public-surface; then
+          if git diff --quiet "$BASE_SHA" "$HEAD_SHA" -- tools/surface/.public; then
               echo "Public surface unchanged; no fragment required."
               exit 0
           fi
           added_fragments=$(git diff --name-only --diff-filter=A "$BASE_SHA" "$HEAD_SHA" -- 'changes/*.rst' | grep -v 'changes/README.rst' || true)
           if [ -z "$added_fragments" ]; then
-              echo "::error::.public-surface changed but no changes/ fragment was added. Add a fragment describing the migration, or mark the PR title with [no-migration]."
+              echo "::error::tools/surface/.public changed but no changes/ fragment was added. Add a fragment describing the migration, or mark the PR title with [no-migration]."
               exit 1
           fi
           echo "Public surface changed and a changes/ fragment accompanies it:"

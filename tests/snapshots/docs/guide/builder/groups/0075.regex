@@ -1,0 +1,2 @@
+named :: pattern :: name\-[a-zA-Z]+
+numbered :: pattern :: id\-\d+

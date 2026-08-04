@@ -1,0 +1,2 @@
+hexnum :: pattern :: 0[xX](?:[0-9a-fA-F])+
+nibble :: pattern :: [0-9a-fA-F]

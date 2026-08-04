@@ -1,0 +1,11 @@
+accepts = [
+    "Obj\u0001\u0000schema\nbody",
+]
+
+rejects = [
+    "",
+    "hello",
+    "Obj",
+    "OBJ\u0001",
+    "obj\u0001",
+]

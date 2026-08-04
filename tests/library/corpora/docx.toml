@@ -1,0 +1,10 @@
+accepts = [
+    "PK\u0003\u0004\u0014\u0000[Content_Types].xml word/document.xml",
+]
+
+rejects = [
+    "",
+    "hello",
+    "PK\u0003\u0004xl/workbook.xml",
+    "PK\u0003\u0004",
+]

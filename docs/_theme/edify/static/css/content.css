@@ -1,0 +1,129 @@
+/* ============================================================
+   Edify docs theme — content: prose, code, admonitions, tables
+   ============================================================ */
+
+.content h1, .content h2, .content h3, .content h4 {
+  line-height: 1.25; font-weight: 750; letter-spacing: -0.01em; color: var(--fg);
+  scroll-margin-top: 80px;
+}
+.content h1 { font-size: 2.1rem; margin: 0 0 1rem; letter-spacing: -0.02em; }
+.content h2 { font-size: 1.5rem; margin: 2.6rem 0 0.9rem; padding-top: 0.4rem; }
+.content h3 { font-size: 1.2rem; margin: 2rem 0 0.6rem; }
+.content h4 { font-size: 1.02rem; margin: 1.6rem 0 0.5rem; }
+.content p { margin: 0 0 1.05rem; }
+.content ul, .content ol { margin: 0 0 1.05rem; padding-left: 1.4rem; }
+.content li { margin: 0.3rem 0; }
+.content strong { font-weight: 680; }
+.content hr { border: none; border-top: 1px solid var(--border); margin: 2.4rem 0; }
+
+.content a.headerlink {
+  color: var(--faint); margin-left: 0.4rem; opacity: 0; text-decoration: none;
+  font-weight: 400; transition: opacity .12s;
+}
+
+.content .title-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin: 0 0 1rem;
+}
+.content .title-row h1 { margin: 0; }
+.api-pill {
+  flex: none; align-self: center;
+  display: inline-flex; align-items: center;
+  padding: 5px 14px; border-radius: 999px;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.01em;
+  color: var(--accent); background: var(--accent-weak);
+  border: 1px solid var(--accent); text-decoration: none; white-space: nowrap;
+}
+.api-pill:hover { background: var(--accent); color: var(--accent-fg); text-decoration: none; }
+
+.content a.reference.external::after {
+  content: "\2197";
+  display: inline-block;
+  font-size: 0.72em;
+  font-weight: 600;
+  line-height: 1;
+  margin-left: 0.12em;
+  vertical-align: 0.28em;
+  color: var(--faint);
+}
+.content a.reference.external:hover::after { color: var(--accent); }
+.content h1:hover .headerlink, .content h2:hover .headerlink,
+.content h3:hover .headerlink, .content h4:hover .headerlink { opacity: 1; }
+
+/* inline + block code */
+.content code, .content tt {
+  font-family: var(--mono); font-size: 0.86em;
+  background: var(--code-bg); border: 1px solid var(--border);
+  border-radius: 5px; padding: 0.1em 0.36em;
+}
+.content pre {
+  font-family: var(--mono); font-size: 0.84rem; line-height: 1.6;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px; overflow-x: auto; margin: 0 0 1.2rem;
+}
+.content pre code, .content .highlight code {
+  background: none; border: none; padding: 0; font-size: inherit;
+}
+.content .highlight { background: none; }
+.content .highlight pre { margin: 0; }
+.highlight-python, .highlight-default { margin: 0 0 1.2rem; }
+
+/* admonitions */
+.content .admonition {
+  border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  border-radius: var(--radius); background: var(--surface);
+  padding: 12px 16px; margin: 0 0 1.3rem;
+}
+.content .admonition-title { font-weight: 700; margin: 0 0 0.3rem; font-size: 0.9rem; }
+.content .admonition.warning { border-left-color: var(--no); }
+.content .admonition.note { border-left-color: var(--accent); }
+.content .admonition > :last-child { margin-bottom: 0; }
+
+/* tables */
+.content table.docutils {
+  border-collapse: collapse; width: 100%; margin: 0 0 1.3rem; font-size: 0.92rem;
+  border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+}
+.content table.docutils th, .content table.docutils td {
+  border-bottom: 1px solid var(--border); padding: 8px 12px; text-align: left;
+}
+.content table.docutils th { background: var(--surface); font-weight: 700; }
+.content table.docutils tr:last-child td { border-bottom: none; }
+
+/* definition lists (autodoc) */
+.content dl.py { margin: 0 0 1.4rem; }
+.content dl.py > dt {
+  font-family: var(--mono); font-size: 0.88rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px;
+}
+.content dl.py > dd { margin: 0 0 0 0.4rem; padding-left: 12px; border-left: 2px solid var(--border); }
+
+/* chain vs regex side-by-side */
+.chain-vs-regex { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; margin: 0 0 1.3rem; }
+.chain-vs-regex .arrow { color: var(--accent); font-size: 1.3rem; }
+.chain-vs-regex pre { margin: 0; height: 100%; }
+@media (max-width: 620px) { .chain-vs-regex { grid-template-columns: 1fr; } .chain-vs-regex .arrow { transform: rotate(90deg); text-align: center; } }
+
+/* lead paragraph under h1 */
+.content > .lead, .content .lead { font-size: 1.12rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.6rem; }
+
+/* sequential prev/next navigation (standalone pages) */
+.page-nav { display: flex; justify-content: space-between; gap: 16px; margin-top: 3rem;
+  padding-top: 20px; border-top: 1px solid var(--border); }
+.page-nav a { display: flex; flex-direction: column; gap: 2px; padding: 12px 16px;
+  border: 1px solid var(--border); border-radius: var(--radius); min-width: 0; max-width: 48%;
+  transition: border-color .15s; }
+.page-nav a:hover { border-color: var(--accent); text-decoration: none; }
+.page-nav-next { text-align: right; margin-left: auto; }
+.page-nav-dir { font-size: 0.72rem; color: var(--faint); text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; }
+.page-nav-title { color: var(--fg); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* callouts (note/tip) as clean cards */
+.content .admonition { border: 1px solid var(--border); border-left: 3px solid var(--accent);
+  border-radius: var(--radius); padding: 12px 16px; margin: 1.3rem 0; background: var(--surface); }
+.content .admonition.note { border-left-color: var(--accent); }
+.content .admonition.tip { border-left-color: var(--ok); }
+.content .admonition.warning { border-left-color: var(--no); }
+.content .admonition > .admonition-title { font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--faint); margin: 0 0 6px; }
+.content .admonition > p:last-child { margin-bottom: 0; }

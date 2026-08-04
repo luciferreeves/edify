@@ -29,7 +29,15 @@ _PatternAttribute = int | str | Mapping[str, int] | Callable[..., _MethodReturn]
 
 
 class Regex:
-    """A compiled edify pattern; wraps the selected engine's ``Pattern`` by composition."""
+    """A compiled edify pattern; wraps the selected engine's ``Pattern`` by composition.
+
+    Args:
+        source: The emitted pattern string.
+        compiled: The engine's compiled pattern object.
+        elements: The element tree the pattern was built from, which the introspection
+            tools read.
+        engine: Which backend compiled it — ``"re"`` or ``"regex"``.
+    """
 
     def __init__(
         self,

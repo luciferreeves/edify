@@ -1,0 +1,10 @@
+accepts = [
+    "PK\u0003\u0004mimetypeapplication/epub+zip",
+]
+
+rejects = [
+    "",
+    "hello",
+    "PK\u0003\u0004word/",
+    "PK\u0003\u0004",
+]

@@ -1,4 +1,4 @@
-"""``hal`` — API-spec/protocol identifier or payload shape."""
+"""``hal`` — hypertext application language document shape."""
 
 from __future__ import annotations
 
@@ -7,17 +7,28 @@ from edify import Pattern
 hal = (
     Pattern()
     .start_of_input()
-    .between(3, 256)
+    .zero_or_more()
+    .whitespace_char()
+    .char("{")
+    .zero_or_more()
+    .any_char()
+    .char('"')
     .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("_")
-    .char(".")
-    .char("-")
-    .char("/")
-    .char("+")
+    .string("_links")
+    .string("_embedded")
     .end()
+    .char('"')
+    .zero_or_more()
+    .whitespace_char()
+    .char(":")
+    .zero_or_more()
+    .any_char()
+    .char("}")
+    .zero_or_more()
+    .whitespace_char()
     .end_of_input()
+    .dot_all()
 )
-"""Callable :class:`Pattern` for a permissive hal-related identifier."""
+"""Callable :class:`Pattern` for a hypertext application language document: a
+JSON object carrying a ``_links`` or ``_embedded`` member.
+"""

@@ -1,0 +1,52 @@
+/* ============================================================
+   GitHub-style syntax highlighting for code blocks.
+   Maps Pygments token classes onto the theme's --syn-* palette,
+   loaded after Sphinx's generated pygments.css so it wins.
+   ============================================================ */
+
+.highlight { background: transparent; }
+.highlight pre { background: transparent; color: var(--fg); }
+
+/* comments */
+.highlight .c, .highlight .ch, .highlight .cm, .highlight .cp, .highlight .cpf,
+.highlight .c1, .highlight .cs { color: var(--syn-comment); font-style: italic; }
+
+/* keywords */
+.highlight .k, .highlight .kd, .highlight .kn, .highlight .kp, .highlight .kr,
+.highlight .ow { color: var(--syn-keyword); }
+.highlight .kc, .highlight .kt { color: var(--syn-constant); }
+
+/* names */
+.highlight .nf, .highlight .fm, .highlight .nc, .highlight .nd,
+.highlight .ne { color: var(--syn-function); }
+.highlight .nb, .highlight .bp { color: var(--syn-constant); }
+.highlight .nn, .highlight .n, .highlight .na, .highlight .nv,
+.highlight .nl, .highlight .nx, .highlight .py { color: var(--fg); }
+.highlight .nt { color: var(--syn-keyword); }
+
+/* strings */
+.highlight .s, .highlight .sa, .highlight .sb, .highlight .sc, .highlight .dl,
+.highlight .sd, .highlight .s2, .highlight .se, .highlight .sh, .highlight .si,
+.highlight .sx, .highlight .sr, .highlight .s1, .highlight .ss { color: var(--syn-string); }
+
+/* numbers */
+.highlight .m, .highlight .mb, .highlight .mf, .highlight .mh, .highlight .mi,
+.highlight .mo, .highlight .il { color: var(--syn-constant); }
+
+/* operators, punctuation */
+.highlight .o { color: var(--syn-punct); }
+.highlight .p { color: var(--syn-punct); }
+
+/* generic (doctest prompts, output, tracebacks) */
+.highlight .gp { color: var(--syn-comment); }
+.highlight .go { color: var(--muted); }
+.highlight .gt, .highlight .gr { color: var(--no); }
+.highlight .gh, .highlight .gu { color: var(--syn-function); font-weight: 600; }
+.highlight .gs { font-weight: 600; }
+.highlight .ge { font-style: italic; }
+
+/* symbol names inside a code block that resolve to a reference entry */
+.highlight a.code-ref { color: inherit;
+  text-decoration: underline dotted var(--faint); text-underline-offset: 3px; }
+.highlight a.code-ref:hover { text-decoration: underline solid var(--accent); color: var(--accent); }
+.highlight a.code-ref:hover span { color: inherit; }

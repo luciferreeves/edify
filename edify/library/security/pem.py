@@ -1,26 +1,30 @@
-"""``pem`` — pem cryptography artifact shape."""
+"""``pem`` — PEM-armoured artifact shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
+_label = Pattern().uppercase().zero_or_more().any_of().uppercase().digit().any_of_chars(" ").end()
+
+_body = Pattern().zero_or_more().any_of().alphanumeric().any_of_chars("+/=").whitespace_char().end()
+
 pem = (
     Pattern()
     .start_of_input()
-    .between(16, 4096)
-    .any_of()
-    .range("A", "Z")
-    .range("a", "z")
-    .range("0", "9")
-    .char("+")
-    .char("/")
-    .char("=")
-    .char("_")
-    .char("-")
-    .char(".")
-    .char(":")
+    .zero_or_more()
     .whitespace_char()
-    .end()
+    .string("-----BEGIN ")
+    .use(_label)
+    .string("-----")
+    .use(_body)
+    .string("-----END ")
+    .use(_label)
+    .string("-----")
+    .zero_or_more()
+    .whitespace_char()
     .end_of_input()
 )
-"""Callable :class:`Pattern` for pem cryptographic-artifact identifier or payload."""
+"""Callable :class:`Pattern` for a PEM-armoured artifact: a ``-----BEGIN
+LABEL-----`` header, a base64 body, and a matching ``-----END LABEL-----``
+footer.
+"""

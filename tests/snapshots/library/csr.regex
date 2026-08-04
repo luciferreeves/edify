@@ -1,1 +1,1 @@
-^(?:\s|[A-Za-z0-9\+/=_\-\.:]){16,4096}$
+^\s*\-\-\-\-\-BEGIN (?:NEW )?CERTIFICATE REQUEST\-\-\-\-\-(?:[a-zA-Z0-9]|\s|[+/=])*\-\-\-\-\-END (?:NEW )?CERTIFICATE REQUEST\-\-\-\-\-\s*$

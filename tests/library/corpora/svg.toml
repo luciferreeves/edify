@@ -1,0 +1,13 @@
+accepts = [
+    "<svg xmlns=\"http://www.w3.org/2000/svg\"/>",
+    "<?xml version=\"1.0\"?>\n<svg/>",
+    "  <svg/>",
+    "<svg viewBox=\"0 0 1 1\"><path/></svg>",
+]
+
+rejects = [
+    "",
+    "hello",
+    "<html/>",
+    "<xml/>",
+]

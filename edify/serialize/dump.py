@@ -16,7 +16,15 @@ _ElementFieldValue = BaseElement | tuple[BaseElement, ...] | str | int
 
 
 def element_to_dict(element: BaseElement) -> dict[str, JSONValue]:
-    """Return the canonical dict representation of ``element``."""
+    """Return the canonical dict representation of ``element``.
+
+    Args:
+        element: The element to convert. Children are converted recursively.
+
+    Returns:
+        A JSON-compatible dict carrying the element's ``kind`` and its fields. This is
+        the bare node, without the schema envelope.
+    """
     result: dict[str, JSONValue] = {"kind": kind_for(type(element))}
     for spec in fields(element):
         raw_value = getattr(element, spec.name)
@@ -25,7 +33,15 @@ def element_to_dict(element: BaseElement) -> dict[str, JSONValue]:
 
 
 def state_to_dict(state: BuilderState) -> dict[str, JSONValue]:
-    """Return the canonical dict for a builder state (root element + flags)."""
+    """Return the canonical dict for a builder state (root element + flags).
+
+    Args:
+        state: The builder state to convert.
+
+    Returns:
+        A JSON-compatible dict with the schema version under ``edify`` and the element
+        tree under ``pattern``.
+    """
     root_children = tuple(state.top_frame.children)
     root_element = RootElement(children=root_children)
     root_dict = element_to_dict(root_element)

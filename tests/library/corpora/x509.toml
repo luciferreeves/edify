@@ -1,0 +1,9 @@
+accepts = [
+    "-----BEGIN CERTIFICATE-----\nMIIBkTCB+wIJAJ5vJ7Cm3S7h\nMA0GCSqGSIb3DQEBCwUAMBQx\n-----END CERTIFICATE-----",
+    "0\u0082\u0003\n\u0002",
+]
+
+rejects = [
+    "",
+    "hello",
+]

@@ -1,0 +1,192 @@
+/* ============================================================
+   Edify docs theme — base: tokens, reset, nav, layout, footer
+   ============================================================ */
+
+:root {
+  --bg: #ffffff;
+  --fg: #16161a;
+  --muted: #5b5b66;
+  --faint: #8a8a95;
+  --surface: #f7f7f8;
+  --surface-2: #eeeef1;
+  --border: rgba(16, 16, 26, 0.10);
+  --border-strong: rgba(16, 16, 26, 0.18);
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-weak: rgba(37, 99, 235, 0.10);
+  --select: rgba(84, 174, 255, 0.35);
+  --accent-fg: #ffffff;
+  /* GitHub light syntax palette */
+  --syn-keyword: #cf222e;
+  --syn-string: #0a3069;
+  --syn-comment: #6e7781;
+  --syn-function: #8250df;
+  --syn-constant: #0550ae;
+  --syn-variable: #953800;
+  --syn-punct: #24292f;
+  --nav-bg: rgba(255, 255, 255, 0.82);
+  --code-bg: #f4f4f5;
+  --ok: #16a34a;
+  --no: #dc2626;
+  --shadow: 0 1px 2px rgba(16, 16, 26, 0.06), 0 8px 24px rgba(16, 16, 26, 0.06);
+  --radius: 10px;
+  --maxw: 1180px;
+  --content-maxw: 760px;
+  --sidenav-w: 240px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0b0b0c;
+  --fg: #e8e8ea;
+  --muted: #9a9aa2;
+  --faint: #6b6b74;
+  --surface: #131317;
+  --surface-2: #1b1b21;
+  --border: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --accent: #60a5fa;
+  --accent-strong: #93c5fd;
+  --accent-weak: rgba(96, 165, 250, 0.13);
+  --select: rgba(56, 139, 253, 0.40);
+  --accent-fg: #0b0b0c;
+  /* GitHub dark syntax palette */
+  --syn-keyword: #ff7b72;
+  --syn-string: #a5d6ff;
+  --syn-comment: #8b949e;
+  --syn-function: #d2a8ff;
+  --syn-constant: #79c0ff;
+  --syn-variable: #ffa657;
+  --syn-punct: #c9d1d9;
+  --nav-bg: rgba(11, 11, 12, 0.82);
+  --code-bg: #16161b;
+  --ok: #22c55e;
+  --no: #ef4444;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+::selection { background: var(--select); color: var(--fg); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; }
+.wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+.grow { flex: 1; }
+.skip-link {
+  position: absolute; left: -9999px; top: 0; background: var(--accent); color: var(--accent-fg);
+  padding: 8px 14px; border-radius: 0 0 8px 0; z-index: 200;
+}
+.skip-link:focus { left: 0; }
+
+/* ---- top nav ---- */
+.topnav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--nav-bg); backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.topnav-inner { display: flex; align-items: center; gap: 22px; height: 58px; }
+.brand {
+  font-weight: 800; letter-spacing: 2.5px; font-size: 15px; color: var(--fg);
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.brand:hover { text-decoration: none; }
+.brand-mark { color: var(--accent); font-size: 12px; }
+/* the wordmark ships in two colourways; show the one that reads on the active theme */
+.brand-logo { display: block; width: auto; height: 22px; }
+.brand-logo-dark { display: none; }
+[data-theme="dark"] .brand-logo-light { display: none; }
+[data-theme="dark"] .brand-logo-dark { display: block; }
+.footer-brand .brand-logo { height: 18px; }
+.navlinks { display: flex; gap: 20px; }
+.navlinks a { color: var(--muted); font-size: 14px; font-weight: 500;
+  position: relative; padding: 4px 0; }
+.navlinks a:hover { color: var(--fg); text-decoration: none; }
+.navlinks a.current { color: var(--accent); }
+.navlinks a.current::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -9px;
+  height: 2px; background: var(--accent); border-radius: 2px;
+}
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); cursor: pointer; padding: 0;
+}
+.icon-btn:hover { color: var(--fg); border-color: var(--border-strong); }
+.theme-glyph { width: 15px; height: 15px; border-radius: 50%;
+  background: linear-gradient(90deg, var(--fg) 0 50%, transparent 50% 100%);
+  box-shadow: inset 0 0 0 1.5px var(--fg); }
+.ghlink { color: var(--muted); font-size: 14px; font-weight: 500;
+  border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; }
+.ghlink:hover { color: var(--fg); border-color: var(--border-strong); text-decoration: none; }
+
+/* ---- docs two-column layout ---- */
+.docs-layout {
+  display: grid; grid-template-columns: var(--sidenav-w) minmax(0, 1fr);
+  gap: 44px; align-items: start; padding-top: 34px; padding-bottom: 80px;
+}
+.sidenav { position: sticky; top: 78px; align-self: start; max-height: calc(100vh - 96px); overflow-y: auto; }
+.sidenav-inner { font-size: 14px; }
+.sidenav ul { list-style: none; margin: 0; padding: 0; }
+.sidenav > .sidenav-inner > ul > li { margin-bottom: 16px; }
+.sidenav a { color: var(--muted); display: block; padding: 4px 0 4px 12px;
+  border-left: 2px solid transparent; line-height: 1.4; }
+.sidenav a:hover { color: var(--fg); text-decoration: none; }
+.sidenav a.current {
+  color: var(--accent); border-left-color: var(--accent); background: var(--accent-weak); }
+.sidenav .caption { text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px;
+  color: var(--faint); font-weight: 700; margin: 18px 0 6px; padding-left: 12px; }
+.sidenav ul ul { padding-left: 12px; }
+.content { min-width: 0; max-width: var(--content-maxw); }
+
+/* ---- library sidebar nav (categories -> validators) ---- */
+.lib-nav-home { display: block; font-weight: 700; letter-spacing: 0.5px; color: var(--fg);
+  padding: 0 0 10px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+.lib-nav-home.current { color: var(--accent); }
+.lib-nav-section { margin: 1px 0; }
+.lib-nav-cat { display: block; color: var(--muted); font-weight: 600; font-size: 13.5px;
+  padding: 5px 0 5px 12px; border-left: 2px solid transparent; }
+.lib-nav-cat:hover { color: var(--fg); text-decoration: none; }
+.lib-nav-cat.current { color: var(--accent); border-left-color: var(--accent); }
+.lib-nav ul { list-style: none; margin: 0 0 4px; padding: 0; }
+.lib-nav li { margin: 0; }
+.lib-nav li a { display: block; color: var(--muted); font-size: 13px; line-height: 1.5;
+  padding: 3px 0 3px 24px; border-left: 2px solid transparent; }
+.lib-nav li a:hover { color: var(--fg); text-decoration: none; }
+.lib-nav li a.current { color: var(--accent); border-left-color: var(--accent);
+  background: var(--accent-weak); }
+.lib-nav li.has-children > a { color: var(--muted); }
+.lib-nav li.has-children > ul li a { padding-left: 38px; }
+
+/* ---- standalone (no-sidebar) pages: playground, library, meta ---- */
+.doc-wide { padding-top: 34px; padding-bottom: 88px; }
+.content-wide { max-width: 940px; margin: 0 auto; min-width: 0; }
+.content-wide .edify-playground { margin-left: auto; margin-right: auto; }
+
+/* ---- footer ---- */
+.site-footer { border-top: 1px solid var(--border); background: var(--surface); }
+.footer-inner { display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; height: 66px; flex-wrap: wrap; }
+.footer-brand { color: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: .5px;
+  display: inline-flex; align-items: center; gap: 7px; }
+.footer-links { display: flex; gap: 18px; }
+.footer-links a { color: var(--muted); font-size: 13px; }
+.footer-links a:hover { color: var(--fg); text-decoration: none; }
+
+/* ---- responsive ---- */
+@media (max-width: 860px) {
+  .docs-layout { grid-template-columns: 1fr; gap: 20px; }
+  .sidenav { position: static; max-height: none; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+  .navlinks { display: none; }
+}

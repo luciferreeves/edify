@@ -1,0 +1,9 @@
+accepts = [
+    "grammar Hello;\nr : \"hello\" ID ;",
+]
+
+rejects = [
+    "",
+    "hello",
+    "grammar Hello",
+]

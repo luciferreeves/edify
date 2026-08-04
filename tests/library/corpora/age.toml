@@ -1,0 +1,12 @@
+accepts = [
+    "age1ql3z7hjy54pw3hyww5ayyfg7zqgvc7w3j2elw8zmrj2kg5sfn9aqmcac8p",
+    "AGE-SECRET-KEY-1QWERTYUIOPASDFGHJKLZXCVBNM234567",
+]
+
+rejects = [
+    "",
+    "hello",
+    "age1",
+    "AGE-SECRET-KEY-",
+    "age1UPPER",
+]

@@ -1,0 +1,10 @@
+accepts = [
+    "<?xml version=\"1.0\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body/></soap:Envelope>",
+    "<Envelope xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\"/>",
+]
+
+rejects = [
+    "",
+    "hello",
+    "<Envelope/>",
+]

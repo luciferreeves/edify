@@ -1,0 +1,1 @@
+yesno :: pattern :: (?:yes|no|Yes|No|YES|NO|[ynYN])

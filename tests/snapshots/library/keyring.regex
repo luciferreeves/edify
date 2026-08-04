@@ -1,1 +1,1 @@
-^(?:\s|[A-Za-z0-9\+/=_\-\.:]){16,4096}$
+^\s*\-\-\-\-\-BEGIN PGP (?:PUBLIC|PRIVATE) KEY BLOCK\-\-\-\-\-(?:[a-zA-Z0-9]|\s|[+/=:])*\-\-\-\-\-END PGP (?:PUBLIC|PRIVATE) KEY BLOCK\-\-\-\-\-\s*$

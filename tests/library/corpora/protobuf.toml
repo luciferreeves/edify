@@ -1,0 +1,15 @@
+accepts = [
+    "syntax = \"proto3\";\nmessage A {}",
+    "package foo;\n",
+    "// c\nmessage B {}",
+    "message Foo {\n  int32 a = 1;\n}",
+    "import \"other.proto\";\n",
+    "enum E {\n A = 0;\n}",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "{\"a\":1}",
+    "<xml/>",
+]

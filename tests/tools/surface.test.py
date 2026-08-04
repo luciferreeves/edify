@@ -1,13 +1,13 @@
-"""Tests for the public-surface snapshot tool in ``tools/surface.py``."""
+"""Tests for the public-surface snapshot tool in ``tools/surface/surface.py``."""
 
 from pathlib import Path
 
 import pytest
 
-from tools import surface
+from tools.surface import surface
 
 _REPO_ROOT = Path(__file__).parent.parent.parent
-_SURFACE_PATH = _REPO_ROOT / ".public-surface"
+_SURFACE_PATH = _REPO_ROOT / "tools" / "surface" / ".public"
 
 
 def test_committed_surface_file_exists_and_is_non_empty() -> None:
@@ -19,8 +19,8 @@ def test_computed_surface_matches_the_committed_snapshot() -> None:
     computed = surface.compute_surface()
     committed = _SURFACE_PATH.read_text(encoding="utf-8")
     assert computed == committed, (
-        "public surface drift: run `python tools/surface.py --write` and commit "
-        ".public-surface with a changes/ fragment describing the change."
+        "public surface drift: run `python tools/surface/surface.py --write` and commit "
+        "tools/surface/.public with a changes/ fragment describing the change."
     )
 
 
@@ -57,7 +57,7 @@ def test_check_returns_zero_when_surface_matches() -> None:
 def test_check_returns_one_when_surface_drifts(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    drifted_snapshot = tmp_path / ".public-surface"
+    drifted_snapshot = tmp_path / ".public"
     drifted_snapshot.write_text("edify.SomethingRemoved\n", encoding="utf-8")
     monkeypatch.setattr(surface, "_SURFACE_PATH", drifted_snapshot)
     exit_code = surface.main(["--check"])
@@ -69,7 +69,7 @@ def test_check_returns_one_when_surface_drifts(
 def test_write_overwrites_the_snapshot_file(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    target = tmp_path / ".public-surface"
+    target = tmp_path / ".public"
     monkeypatch.setattr(surface, "_SURFACE_PATH", target)
     exit_code = surface.main(["--write"])
     assert exit_code == 0

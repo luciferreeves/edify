@@ -1,0 +1,12 @@
+accepts = [
+    "expr = { term ~ \"+\" ~ expr }",
+    "WHITESPACE = _{ \" \" }",
+    "ident = @{ ASCII_ALPHA+ }",
+]
+
+rejects = [
+    "",
+    "hello",
+    "<expr> ::= x",
+    "expr <- term",
+]

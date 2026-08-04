@@ -1,0 +1,16 @@
+accepts = [
+    "a,b,c",
+    "a,b\n1,2",
+    "name,age\r\n\"Doe, John\",42",
+    "1,2,3\n4,5,6\n",
+    "\"x\",\"y\"",
+    ",",
+    "a,",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "nocommas",
+    "a\tb",
+]

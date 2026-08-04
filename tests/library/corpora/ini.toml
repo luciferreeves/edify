@@ -1,0 +1,15 @@
+accepts = [
+    "[section]\nkey=value",
+    "key=value",
+    "; comment",
+    "# comment",
+    "key: value",
+    "[DEFAULT]\na = 1",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "<xml/>",
+    "{\"a\":1}",
+]

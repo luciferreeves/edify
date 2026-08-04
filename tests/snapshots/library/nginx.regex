@@ -1,1 +1,1 @@
-^[A-Za-z0-9_\.\-/\+=\?\&\#:%\~]{2,4096}$
+^\s*(?:\#|(?:http|server|events|location|upstream|stream|map).*\{|(?:worker_processes|worker_connections|include|user|pid|error_log|access_log)\s+).*$

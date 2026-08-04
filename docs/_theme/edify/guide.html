@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="wrap docs-layout">
+  <aside class="sidenav lib-sidenav" aria-label="Guide navigation">
+    <div class="sidenav-inner">
+      {{ library_nav }}
+    </div>
+  </aside>
+  <main id="main" class="content" role="main"{% if api_target %} data-api-url="{{ api_target }}"{% endif %}>
+    {{ body }}
+    {% if (prev or next) and pagename != 'guide/index' %}
+    <nav class="page-nav" aria-label="Sequential">
+      {% if prev %}<a class="page-nav-prev" href="{{ prev.link }}"><span class="page-nav-dir">&larr; Previous</span><span class="page-nav-title">{{ prev.title }}</span></a>{% else %}<span></span>{% endif %}
+      {% if next %}<a class="page-nav-next" href="{{ next.link }}"><span class="page-nav-dir">Next &rarr;</span><span class="page-nav-title">{{ next.title }}</span></a>{% endif %}
+    </nav>
+    {% endif %}
+  </main>
+</div>
+{% endblock %}

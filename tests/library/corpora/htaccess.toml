@@ -1,0 +1,11 @@
+accepts = [
+    "RewriteEngine On\nRewriteRule ^a$ /b",
+    "<IfModule mod_rewrite.c>\n</IfModule>",
+    "# c\nOptions -Indexes",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "{\"a\":1}",
+]

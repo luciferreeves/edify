@@ -1,0 +1,1 @@
+tagged :: regex :: ^(?P<word>[a-zA-Z]+)(?:\-(?P<num>\d+))?$

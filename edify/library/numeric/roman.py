@@ -7,6 +7,10 @@ from edify import Pattern
 roman = (
     Pattern()
     .start_of_input()
+    .assert_ahead()
+    .one_or_more()
+    .any_of_chars("MDCLXVI")
+    .end()
     .between(0, 3)
     .char("M")
     .group()

@@ -17,6 +17,7 @@ from __future__ import annotations
 import re
 
 _CHAR_CLASS_ESCAPE_ALWAYS = {"\\", "]"}
+_RANGE_BOUND_ESCAPE = {"\\", "]", "^", "-"}
 
 
 def escape_special(value: str) -> str:
@@ -30,6 +31,25 @@ def escape_special(value: str) -> str:
         directly into a compiled pattern.
     """
     return re.escape(value)
+
+
+def escape_range_bound(character: str) -> str:
+    """Return ``character`` escaped for use as a ``[a-z]`` range endpoint.
+
+    A range endpoint carries syntactic weight wherever it lands in the class, so
+    the position-sensitive rules of :func:`escape_for_char_class` do not apply:
+    ``]`` would close the class, ``^`` would negate it, ``-`` would be read as a
+    range operator, and ``\\`` would escape whatever follows.
+
+    Args:
+        character: A single range endpoint supplied by the user.
+
+    Returns:
+        The endpoint, backslash-escaped when it would otherwise be syntactic.
+    """
+    if character in _RANGE_BOUND_ESCAPE:
+        return "\\" + character
+    return character
 
 
 def escape_for_char_class(characters: str) -> str:

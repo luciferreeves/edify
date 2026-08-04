@@ -59,38 +59,81 @@ class QuantifiersMixin(BuilderProtocol):
         return _set_pending(self, _one_or_more_lazy_factory, call_site, "one_or_more_lazy()")
 
     def exactly(self, count: int) -> Self:
-        """Return a new builder with ``{count}`` queued as the pending quantifier."""
+        """Return a new builder with ``{count}`` queued as the pending quantifier.
+
+        Args:
+            count: How many repetitions the next element must have. Must be at least 1.
+
+        Raises:
+            MustBePositiveIntegerError: If ``count`` is not an int of 1 or more.
+        """
         _ensure_positive_integer("count", count)
         call_site = capture_caller_context()
         return _set_pending(self, _exactly_factory(count), call_site, f"exactly({count})")
 
     def at_least(self, count: int) -> Self:
-        """Return a new builder with ``{count,}`` queued as the pending quantifier."""
+        """Return a new builder with ``{count,}`` queued as the pending quantifier.
+
+        Args:
+            count: The minimum number of repetitions; the maximum is unbounded. Must be
+                at least 1.
+
+        Raises:
+            MustBePositiveIntegerError: If ``count`` is not an int of 1 or more.
+        """
         _ensure_positive_integer("count", count)
         call_site = capture_caller_context()
         return _set_pending(self, _at_least_factory(count), call_site, f"at_least({count})")
 
     def at_most(self, count: int) -> Self:
-        """Return a new builder with ``{0,count}`` queued as the pending quantifier."""
+        """Return a new builder with ``{0,count}`` queued as the pending quantifier.
+
+        Args:
+            count: The maximum number of repetitions; the minimum is zero. Must be at
+                least 1.
+
+        Raises:
+            MustBePositiveIntegerError: If ``count`` is not an int of 1 or more.
+        """
         _ensure_positive_integer("count", count)
         call_site = capture_caller_context()
         return _set_pending(self, _at_most_factory(count), call_site, f"at_most({count})")
 
     def between(self, lower: int, upper: int) -> Self:
-        """Return a new builder with ``{lower,upper}`` queued as the pending quantifier."""
-        _ensure_non_negative_integer("x", lower)
-        _ensure_positive_integer("y", upper)
-        _ensure_strictly_ascending("X", "Y", lower, upper)
+        """Return a new builder with ``{lower,upper}`` queued as the pending quantifier.
+
+        Args:
+            lower: The minimum number of repetitions. Must be zero or more.
+            upper: The maximum number of repetitions. Must be greater than ``lower``.
+
+        Raises:
+            MustBeIntegerGreaterThanZeroError: If ``lower`` is negative.
+            MustBePositiveIntegerError: If ``upper`` is not an int of 1 or more.
+            MustBeLessThanError: If ``lower`` is not strictly less than ``upper``.
+        """
+        _ensure_non_negative_integer("lower", lower)
+        _ensure_positive_integer("upper", upper)
+        _ensure_strictly_ascending("lower", "upper", lower, upper)
         call_site = capture_caller_context()
         return _set_pending(
             self, _between_factory(lower, upper), call_site, f"between({lower}, {upper})"
         )
 
     def between_lazy(self, lower: int, upper: int) -> Self:
-        """Return a new builder with ``{lower,upper}?`` queued as the pending quantifier."""
-        _ensure_non_negative_integer("x", lower)
-        _ensure_positive_integer("y", upper)
-        _ensure_strictly_ascending("X", "Y", lower, upper)
+        """Return a new builder with ``{lower,upper}?`` queued as the pending quantifier.
+
+        Args:
+            lower: The minimum number of repetitions. Must be zero or more.
+            upper: The maximum number of repetitions. Must be greater than ``lower``.
+
+        Raises:
+            MustBeIntegerGreaterThanZeroError: If ``lower`` is negative.
+            MustBePositiveIntegerError: If ``upper`` is not an int of 1 or more.
+            MustBeLessThanError: If ``lower`` is not strictly less than ``upper``.
+        """
+        _ensure_non_negative_integer("lower", lower)
+        _ensure_positive_integer("upper", upper)
+        _ensure_strictly_ascending("lower", "upper", lower, upper)
         call_site = capture_caller_context()
         return _set_pending(
             self,

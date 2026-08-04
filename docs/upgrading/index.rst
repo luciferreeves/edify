@@ -3,12 +3,10 @@
 Upgrading
 =========
 
-Every breaking transition between released versions of Edify has a dedicated
-guide below. Each guide freezes an explicit ``.. _label:`` anchor on every
-section so the deprecation-warning URLs stay valid even when a heading is
-reworded.
+Guides for moving your code between major versions of Edify. Each guide walks
+the breaking changes one at a time, with a before/after for every one.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    0.3-to-1.0

@@ -1,0 +1,11 @@
+accepts = [
+    "03AGdBq26aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "xxxxxxxxxxxxxxxxxxxx",
+    "A-b_CA-b_CA-b_CA-b_CA-b_CA-b_CA-b_CA-b_C",
+]
+
+rejects = [
+    "",
+    "hello",
+    "short",
+]

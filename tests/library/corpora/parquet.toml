@@ -1,0 +1,11 @@
+accepts = [
+    "PAR1body\nmore",
+    "PAR1",
+]
+
+rejects = [
+    "",
+    "hello",
+    "PAR",
+    "par1",
+]

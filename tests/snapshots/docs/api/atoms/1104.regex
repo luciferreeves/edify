@@ -1,0 +1,2 @@
+md5 :: pattern :: (?:[0-9a-fA-F]){32}
+nibble :: pattern :: [0-9a-fA-F]

@@ -1,0 +1,1260 @@
+Address
+=======
+
+Every validator in the :doc:`Address <../../library/address/index>` category.
+Each is a callable :class:`~edify.Pattern`: pass a string to get a ``bool``, or
+compose it into a larger pattern with :meth:`~edify.RegexBuilder.use`.
+
+Each entry states what the pattern guarantees, shows the chain that builds it, and
+ends with the regex it emits. For prose, worked examples, and a live playground, use
+the :doc:`library pages <../../library/address/index>`.
+
+.. py:data:: edify.library.cidr
+
+   Callable :class:`Pattern` for CIDR notation: IPv4 address + ``/0``-``/32``
+   or IPv6 address + ``/0``-``/128``.
+
+   Full description: :doc:`CIDR <../../library/address/cidr>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern, any_of
+
+      _ipv4_octet = any_of(
+          Pattern().string("25").any_of().range("0", "5").end(),
+          Pattern().char("2").any_of().range("0", "4").end().digit(),
+          Pattern().char("1").digit().digit(),
+          Pattern().any_of().range("1", "9").end().digit(),
+          Pattern().digit(),
+      )
+
+      _ipv4_prefix = any_of(
+          Pattern().char("3").any_of().range("0", "2").end(),
+          Pattern().optional().any_of_chars("12").digit(),
+      )
+
+      _hextet = Pattern().between(1, 4).any_of().range("0", "9").range("a", "f").range("A", "F").end()
+
+      _ipv6_prefix = any_of(
+          Pattern().string("12").any_of().range("0", "8").end(),
+          Pattern().char("1").any_of_chars("01").digit(),
+          Pattern().optional().any_of().range("1", "9").end().digit(),
+      )
+
+      _ipv4_cidr = (
+          Pattern()
+          .subexpression(_ipv4_octet)
+          .exactly(3)
+          .group()
+          .char(".")
+          .subexpression(_ipv4_octet)
+          .end()
+          .char("/")
+          .subexpression(_ipv4_prefix)
+      )
+
+      _ipv6_cidr = (
+          Pattern()
+          .between(0, 7)
+          .group()
+          .subexpression(_hextet)
+          .char(":")
+          .end()
+          .subexpression(_hextet)
+          .char("/")
+          .subexpression(_ipv6_prefix)
+      )
+
+      cidr = Pattern().start_of_input().subexpression(any_of(_ipv4_cidr, _ipv6_cidr)).end_of_input()
+
+   **Emits** ``^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}/(?:3[0-2]|[12]?\d)|(?:[0-9a-fA-F]{1,4}:){0,7}[0-9a-fA-F]{1,4}/(?:12[0-8]|1[01]\d|[1-9]?\d))$``
+
+.. py:data:: edify.library.domain
+
+   Callable :class:`Pattern` for the DNS domain name shape:
+   at least one label followed by a TLD of 2-63 letters.
+
+   Full description: :doc:`Domain <../../library/address/domain>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      domain = (
+          Pattern()
+          .start_of_input()
+          .one_or_more()
+          .group()
+          .alphanumeric()
+          .optional()
+          .group()
+          .at_most(61)
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .char("-")
+          .end()
+          .alphanumeric()
+          .end()
+          .char(".")
+          .end()
+          .between(2, 63)
+          .letter()
+          .end_of_input()
+      )
+
+   **Emits** ``^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,63}$``
+
+.. py:data:: edify.library.hostname
+
+   Callable :class:`Pattern` for the RFC 1123 hostname shape.
+
+   Full description: :doc:`Hostname <../../library/address/hostname>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import END, Pattern
+
+      _label_tail = (
+          Pattern()
+          .optional()
+          .group()
+          .at_most(61)
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .char("-")
+          .end()
+          .alphanumeric()
+          .end()
+      )
+
+      hostname = (
+          Pattern()
+          .start_of_input()
+          .assert_ahead()
+          .between(1, 253)
+          .any_char()
+          .subexpression(END, ignore_start_and_end=False)
+          .end()
+          .group()
+          .alphanumeric()
+          .subexpression(_label_tail)
+          .end()
+          .zero_or_more()
+          .group()
+          .char(".")
+          .alphanumeric()
+          .subexpression(_label_tail)
+          .end()
+          .end_of_input()
+      )
+
+   **Emits** ``^(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$``
+
+.. py:data:: edify.library.ip
+
+   Callable :class:`Pattern` matching an IPv4 dotted-quad **or** any IPv6 form.
+
+   Guarantees:
+       * Everything :data:`ipv4` and :data:`ipv6` guarantee individually.
+
+   Does not guarantee:
+       * Reachability, allocation, or reserved-range semantics.
+
+   Full description: :doc:`IP <../../library/address/ip>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern, any_of
+      from edify.atoms.nibble import nibble
+      from edify.atoms.octet import octet
+
+
+      def _hex_group() -> Pattern:
+          return Pattern().between(1, 4).subexpression(nibble)
+
+
+      _ipv4 = Pattern().subexpression(octet).exactly(3).group().char(".").subexpression(octet).end()
+
+
+      def _b1() -> Pattern:
+          return (
+              Pattern()
+              .exactly(7)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .subexpression(_hex_group())
+          )
+
+
+      def _b2() -> Pattern:
+          return Pattern().between(1, 7).group().subexpression(_hex_group()).char(":").end().char(":")
+
+
+      def _b3() -> Pattern:
+          return (
+              Pattern()
+              .between(1, 6)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .char(":")
+              .subexpression(_hex_group())
+          )
+
+
+      def _b_mixed(prefix_count: int, suffix_count: int) -> Pattern:
+          return (
+              Pattern()
+              .between(1, prefix_count)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .between(1, suffix_count)
+              .group()
+              .char(":")
+              .subexpression(_hex_group())
+              .end()
+          )
+
+
+      def _b8() -> Pattern:
+          return (
+              Pattern()
+              .subexpression(_hex_group())
+              .char(":")
+              .group()
+              .between(1, 6)
+              .group()
+              .char(":")
+              .subexpression(_hex_group())
+              .end()
+              .end()
+          )
+
+
+      def _b9() -> Pattern:
+          return (
+              Pattern()
+              .char(":")
+              .group()
+              .any_of()
+              .subexpression(Pattern().between(1, 7).group().char(":").subexpression(_hex_group()).end())
+              .char(":")
+              .end()
+              .end()
+          )
+
+
+      def _b_link_local() -> Pattern:
+          return (
+              Pattern()
+              .string("fe80:")
+              .between(0, 4)
+              .group()
+              .char(":")
+              .between(0, 4)
+              .subexpression(nibble)
+              .end()
+              .char("%")
+              .one_or_more()
+              .any_of()
+              .range("0", "9")
+              .range("a", "z")
+              .range("A", "Z")
+              .end()
+          )
+
+
+      def _map_octet() -> Pattern:
+          return any_of(
+              Pattern().string("25").range("0", "5"),
+              (
+                  Pattern()
+                  .optional()
+                  .group()
+                  .any_of()
+                  .subexpression(Pattern().char("2").range("0", "4"))
+                  .subexpression(Pattern().optional().char("1").digit())
+                  .end()
+                  .end()
+                  .digit()
+              ),
+          )
+
+
+      def _mapped_ipv4() -> Pattern:
+          return (
+              Pattern()
+              .exactly(3)
+              .group()
+              .subexpression(_map_octet())
+              .char(".")
+              .end()
+              .subexpression(_map_octet())
+          )
+
+
+      def _b_ipv4_mapped() -> Pattern:
+          return (
+              Pattern()
+              .string("::")
+              .optional()
+              .group()
+              .string("ffff")
+              .optional()
+              .group()
+              .char(":")
+              .between(1, 4)
+              .char("0")
+              .end()
+              .char(":")
+              .end()
+              .subexpression(_mapped_ipv4())
+          )
+
+
+      def _b_hybrid() -> Pattern:
+          return (
+              Pattern()
+              .between(1, 4)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .char(":")
+              .subexpression(_mapped_ipv4())
+          )
+
+
+      _ipv6 = any_of(
+          _b1(),
+          _b2(),
+          _b3(),
+          _b_mixed(5, 2),
+          _b_mixed(4, 3),
+          _b_mixed(3, 4),
+          _b_mixed(2, 5),
+          _b8(),
+          _b9(),
+          _b_link_local(),
+          _b_ipv4_mapped(),
+          _b_hybrid(),
+      )
+
+      ipv4 = Pattern().start_of_input().subexpression(_ipv4).end_of_input()
+
+      ipv6 = Pattern().start_of_input().subexpression(_ipv6).end_of_input()
+
+      ip = Pattern().start_of_input().subexpression(any_of(_ipv4, _ipv6)).end_of_input()
+
+   **Emits** ``^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|(?:(?:(?:[0-9a-fA-F]){1,4}:){7}(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,7}:|(?:(?:[0-9a-fA-F]){1,4}:){1,6}:(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,5}(?::(?:[0-9a-fA-F]){1,4}){1,2}|(?:(?:[0-9a-fA-F]){1,4}:){1,4}(?::(?:[0-9a-fA-F]){1,4}){1,3}|(?:(?:[0-9a-fA-F]){1,4}:){1,3}(?::(?:[0-9a-fA-F]){1,4}){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,2}(?::(?:[0-9a-fA-F]){1,4}){1,5}|(?:[0-9a-fA-F]){1,4}:(?:(?::(?:[0-9a-fA-F]){1,4}){1,6})|:(?:(?:(?::(?:[0-9a-fA-F]){1,4}){1,7}|[:]))|fe80:(?::(?:[0-9a-fA-F]){0,4}){0,4}%[0-9a-zA-Z]+|::(?:ffff(?::0{1,4})?:)?(?:(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)\.){3}(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)|(?:(?:[0-9a-fA-F]){1,4}:){1,4}:(?:(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)\.){3}(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)))$``
+
+.. py:data:: edify.library.ipv4
+
+   Callable :class:`Pattern` for an IPv4 dotted-quad.
+
+   Guarantees:
+       * Each octet is a decimal in the range ``0`` to ``255``.
+       * No leading zeros on multi-digit octets.
+       * Exactly four octets separated by ``.``.
+
+   Does not guarantee:
+       * Reachability, allocation, or reserved-range semantics — this is a shape check.
+       * IPv6 forms — use :data:`ipv6` or :data:`ip` for those.
+
+   Full description: :doc:`IPv4 <../../library/address/ipv4>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern, any_of
+      from edify.atoms.nibble import nibble
+      from edify.atoms.octet import octet
+
+
+      def _hex_group() -> Pattern:
+          return Pattern().between(1, 4).subexpression(nibble)
+
+
+      _ipv4 = Pattern().subexpression(octet).exactly(3).group().char(".").subexpression(octet).end()
+
+
+      def _b1() -> Pattern:
+          return (
+              Pattern()
+              .exactly(7)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .subexpression(_hex_group())
+          )
+
+
+      def _b2() -> Pattern:
+          return Pattern().between(1, 7).group().subexpression(_hex_group()).char(":").end().char(":")
+
+
+      def _b3() -> Pattern:
+          return (
+              Pattern()
+              .between(1, 6)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .char(":")
+              .subexpression(_hex_group())
+          )
+
+
+      def _b_mixed(prefix_count: int, suffix_count: int) -> Pattern:
+          return (
+              Pattern()
+              .between(1, prefix_count)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .between(1, suffix_count)
+              .group()
+              .char(":")
+              .subexpression(_hex_group())
+              .end()
+          )
+
+
+      def _b8() -> Pattern:
+          return (
+              Pattern()
+              .subexpression(_hex_group())
+              .char(":")
+              .group()
+              .between(1, 6)
+              .group()
+              .char(":")
+              .subexpression(_hex_group())
+              .end()
+              .end()
+          )
+
+
+      def _b9() -> Pattern:
+          return (
+              Pattern()
+              .char(":")
+              .group()
+              .any_of()
+              .subexpression(Pattern().between(1, 7).group().char(":").subexpression(_hex_group()).end())
+              .char(":")
+              .end()
+              .end()
+          )
+
+
+      def _b_link_local() -> Pattern:
+          return (
+              Pattern()
+              .string("fe80:")
+              .between(0, 4)
+              .group()
+              .char(":")
+              .between(0, 4)
+              .subexpression(nibble)
+              .end()
+              .char("%")
+              .one_or_more()
+              .any_of()
+              .range("0", "9")
+              .range("a", "z")
+              .range("A", "Z")
+              .end()
+          )
+
+
+      def _map_octet() -> Pattern:
+          return any_of(
+              Pattern().string("25").range("0", "5"),
+              (
+                  Pattern()
+                  .optional()
+                  .group()
+                  .any_of()
+                  .subexpression(Pattern().char("2").range("0", "4"))
+                  .subexpression(Pattern().optional().char("1").digit())
+                  .end()
+                  .end()
+                  .digit()
+              ),
+          )
+
+
+      def _mapped_ipv4() -> Pattern:
+          return (
+              Pattern()
+              .exactly(3)
+              .group()
+              .subexpression(_map_octet())
+              .char(".")
+              .end()
+              .subexpression(_map_octet())
+          )
+
+
+      def _b_ipv4_mapped() -> Pattern:
+          return (
+              Pattern()
+              .string("::")
+              .optional()
+              .group()
+              .string("ffff")
+              .optional()
+              .group()
+              .char(":")
+              .between(1, 4)
+              .char("0")
+              .end()
+              .char(":")
+              .end()
+              .subexpression(_mapped_ipv4())
+          )
+
+
+      def _b_hybrid() -> Pattern:
+          return (
+              Pattern()
+              .between(1, 4)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .char(":")
+              .subexpression(_mapped_ipv4())
+          )
+
+
+      _ipv6 = any_of(
+          _b1(),
+          _b2(),
+          _b3(),
+          _b_mixed(5, 2),
+          _b_mixed(4, 3),
+          _b_mixed(3, 4),
+          _b_mixed(2, 5),
+          _b8(),
+          _b9(),
+          _b_link_local(),
+          _b_ipv4_mapped(),
+          _b_hybrid(),
+      )
+
+      ipv4 = Pattern().start_of_input().subexpression(_ipv4).end_of_input()
+
+      ipv6 = Pattern().start_of_input().subexpression(_ipv6).end_of_input()
+
+      ip = Pattern().start_of_input().subexpression(any_of(_ipv4, _ipv6)).end_of_input()
+
+   **Emits** ``^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$``
+
+.. py:data:: edify.library.ipv6
+
+   Callable :class:`Pattern` for any IPv6 form.
+
+   Guarantees:
+       * Full 8-group form, all documented ``::``-compressed forms, link-local ``%zone`` suffixes,
+         IPv4-mapped ``::ffff:1.2.3.4`` shape, and the hybrid IPv4-suffix form.
+       * Case-insensitive hex digits.
+
+   Does not guarantee:
+       * Reachability or reserved-range semantics — this is a shape check.
+       * IPv4 dotted-quad forms — use :data:`ipv4` or :data:`ip` for those.
+
+   Full description: :doc:`IPv6 <../../library/address/ipv6>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern, any_of
+      from edify.atoms.nibble import nibble
+      from edify.atoms.octet import octet
+
+
+      def _hex_group() -> Pattern:
+          return Pattern().between(1, 4).subexpression(nibble)
+
+
+      _ipv4 = Pattern().subexpression(octet).exactly(3).group().char(".").subexpression(octet).end()
+
+
+      def _b1() -> Pattern:
+          return (
+              Pattern()
+              .exactly(7)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .subexpression(_hex_group())
+          )
+
+
+      def _b2() -> Pattern:
+          return Pattern().between(1, 7).group().subexpression(_hex_group()).char(":").end().char(":")
+
+
+      def _b3() -> Pattern:
+          return (
+              Pattern()
+              .between(1, 6)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .char(":")
+              .subexpression(_hex_group())
+          )
+
+
+      def _b_mixed(prefix_count: int, suffix_count: int) -> Pattern:
+          return (
+              Pattern()
+              .between(1, prefix_count)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .between(1, suffix_count)
+              .group()
+              .char(":")
+              .subexpression(_hex_group())
+              .end()
+          )
+
+
+      def _b8() -> Pattern:
+          return (
+              Pattern()
+              .subexpression(_hex_group())
+              .char(":")
+              .group()
+              .between(1, 6)
+              .group()
+              .char(":")
+              .subexpression(_hex_group())
+              .end()
+              .end()
+          )
+
+
+      def _b9() -> Pattern:
+          return (
+              Pattern()
+              .char(":")
+              .group()
+              .any_of()
+              .subexpression(Pattern().between(1, 7).group().char(":").subexpression(_hex_group()).end())
+              .char(":")
+              .end()
+              .end()
+          )
+
+
+      def _b_link_local() -> Pattern:
+          return (
+              Pattern()
+              .string("fe80:")
+              .between(0, 4)
+              .group()
+              .char(":")
+              .between(0, 4)
+              .subexpression(nibble)
+              .end()
+              .char("%")
+              .one_or_more()
+              .any_of()
+              .range("0", "9")
+              .range("a", "z")
+              .range("A", "Z")
+              .end()
+          )
+
+
+      def _map_octet() -> Pattern:
+          return any_of(
+              Pattern().string("25").range("0", "5"),
+              (
+                  Pattern()
+                  .optional()
+                  .group()
+                  .any_of()
+                  .subexpression(Pattern().char("2").range("0", "4"))
+                  .subexpression(Pattern().optional().char("1").digit())
+                  .end()
+                  .end()
+                  .digit()
+              ),
+          )
+
+
+      def _mapped_ipv4() -> Pattern:
+          return (
+              Pattern()
+              .exactly(3)
+              .group()
+              .subexpression(_map_octet())
+              .char(".")
+              .end()
+              .subexpression(_map_octet())
+          )
+
+
+      def _b_ipv4_mapped() -> Pattern:
+          return (
+              Pattern()
+              .string("::")
+              .optional()
+              .group()
+              .string("ffff")
+              .optional()
+              .group()
+              .char(":")
+              .between(1, 4)
+              .char("0")
+              .end()
+              .char(":")
+              .end()
+              .subexpression(_mapped_ipv4())
+          )
+
+
+      def _b_hybrid() -> Pattern:
+          return (
+              Pattern()
+              .between(1, 4)
+              .group()
+              .subexpression(_hex_group())
+              .char(":")
+              .end()
+              .char(":")
+              .subexpression(_mapped_ipv4())
+          )
+
+
+      _ipv6 = any_of(
+          _b1(),
+          _b2(),
+          _b3(),
+          _b_mixed(5, 2),
+          _b_mixed(4, 3),
+          _b_mixed(3, 4),
+          _b_mixed(2, 5),
+          _b8(),
+          _b9(),
+          _b_link_local(),
+          _b_ipv4_mapped(),
+          _b_hybrid(),
+      )
+
+      ipv4 = Pattern().start_of_input().subexpression(_ipv4).end_of_input()
+
+      ipv6 = Pattern().start_of_input().subexpression(_ipv6).end_of_input()
+
+      ip = Pattern().start_of_input().subexpression(any_of(_ipv4, _ipv6)).end_of_input()
+
+   **Emits** ``^(?:(?:(?:[0-9a-fA-F]){1,4}:){7}(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,7}:|(?:(?:[0-9a-fA-F]){1,4}:){1,6}:(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,5}(?::(?:[0-9a-fA-F]){1,4}){1,2}|(?:(?:[0-9a-fA-F]){1,4}:){1,4}(?::(?:[0-9a-fA-F]){1,4}){1,3}|(?:(?:[0-9a-fA-F]){1,4}:){1,3}(?::(?:[0-9a-fA-F]){1,4}){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,2}(?::(?:[0-9a-fA-F]){1,4}){1,5}|(?:[0-9a-fA-F]){1,4}:(?:(?::(?:[0-9a-fA-F]){1,4}){1,6})|:(?:(?:(?::(?:[0-9a-fA-F]){1,4}){1,7}|[:]))|fe80:(?::(?:[0-9a-fA-F]){0,4}){0,4}%[0-9a-zA-Z]+|::(?:ffff(?::0{1,4})?:)?(?:(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)\.){3}(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)|(?:(?:[0-9a-fA-F]){1,4}:){1,4}:(?:(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d)\.){3}(?:25[0-5]|(?:(?:2[0-4]|1?\d))?\d))$``
+
+.. py:data:: edify.library.path
+
+   Callable :class:`Pattern` for a filesystem path shape: POSIX
+   (``/absolute`` or ``relative/``), Windows drive-letter, or UNC.
+
+   Full description: :doc:`Path <../../library/address/path>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern, any_of
+
+      _posix = (
+          Pattern()
+          .optional()
+          .group()
+          .any_of()
+          .char("/")
+          .group()
+          .string("./")
+          .end()
+          .group()
+          .one_or_more()
+          .string("../")
+          .end()
+          .end()
+          .end()
+          .one_or_more()
+          .group()
+          .one_or_more()
+          .anything_but_chars("\x00\r\n/")
+          .optional()
+          .char("/")
+          .end()
+      )
+      _windows = (
+          Pattern()
+          .letter()
+          .string(":\\")
+          .one_or_more()
+          .group()
+          .one_or_more()
+          .anything_but_chars('\\/:*?"<>|\r\n')
+          .optional()
+          .char("\\")
+          .end()
+      )
+      _unc = (
+          Pattern()
+          .string("\\\\")
+          .one_or_more()
+          .anything_but_chars('\\/:*?"<>|\r\n')
+          .char("\\")
+          .one_or_more()
+          .anything_but_chars('\\/:*?"<>|\r\n')
+          .zero_or_more()
+          .group()
+          .char("\\")
+          .zero_or_more()
+          .anything_but_chars('\\/:*?"<>|\r\n')
+          .end()
+      )
+
+      path = Pattern().start_of_input().subexpression(any_of(_posix, _windows, _unc)).end_of_input()
+
+   **Emits** ``^(?:(?:(?:(?:\./)|(?:(?:\.\./)+)|[/]))?(?:[^ \r\n/]+/?)+|[a-zA-Z]:\\(?:[^\\/:*?"<>|\r\n]+\\?)+|\\\\[^\\/:*?"<>|\r\n]+\\[^\\/:*?"<>|\r\n]+(?:\\[^\\/:*?"<>|\r\n]*)*)$``
+
+.. py:data:: edify.library.port
+
+   Callable :class:`Pattern` for a TCP/UDP port number 0-65535.
+
+   Full description: :doc:`Port <../../library/address/port>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern, any_of
+
+      port = any_of(
+          Pattern().start_of_input().string("6553").range("0", "5").end_of_input(),
+          Pattern().start_of_input().string("655").range("0", "2").digit().end_of_input(),
+          Pattern().start_of_input().string("65").range("0", "4").exactly(2).digit().end_of_input(),
+          Pattern().start_of_input().string("6").range("0", "4").exactly(3).digit().end_of_input(),
+          Pattern().start_of_input().range("1", "5").exactly(4).digit().end_of_input(),
+          Pattern().start_of_input().range("1", "9").between(0, 3).digit().end_of_input(),
+          Pattern().start_of_input().char("0").end_of_input(),
+      )
+
+   **Emits** ``(?:^6553[0-5]$|^655[0-2]\d$|^65[0-4]\d{2}$|^6[0-4]\d{3}$|^[1-5]\d{4}$|^[1-9]\d{0,3}$|^0$)``
+
+.. py:data:: edify.library.ptr
+
+   Callable :class:`Pattern` for the reverse-DNS PTR shape: IPv4
+   ``d.c.b.a.in-addr.arpa`` or IPv6 32-nibble ``…ip6.arpa`` form.
+
+   Full description: :doc:`PTR record <../../library/address/ptr>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern, any_of
+      from edify.atoms.nibble import nibble
+
+      _ipv4_ptr = (
+          Pattern()
+          .exactly(4)
+          .group()
+          .between(1, 3)
+          .digit()
+          .char(".")
+          .end()
+          .string("in-addr")
+          .char(".")
+          .string("arpa")
+          .optional()
+          .char(".")
+      )
+      _ipv6_ptr = (
+          Pattern()
+          .exactly(32)
+          .group()
+          .subexpression(nibble)
+          .char(".")
+          .end()
+          .string("ip6")
+          .char(".")
+          .string("arpa")
+          .optional()
+          .char(".")
+      )
+
+      ptr = Pattern().start_of_input().subexpression(any_of(_ipv4_ptr, _ipv6_ptr)).end_of_input()
+
+   **Emits** ``^(?:(?:\d{1,3}\.){4}in\-addr\.arpa\.?|(?:[0-9a-fA-F]\.){32}ip6\.arpa\.?)$``
+
+.. py:data:: edify.library.socket
+
+   Callable :class:`Pattern` for the ``host:port`` socket-address shape.
+
+   Full description: :doc:`Socket address <../../library/address/socket>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern, any_of
+      from edify.atoms.octet import octet
+
+      _ipv4 = Pattern().subexpression(octet).exactly(3).group().char(".").subexpression(octet).end()
+      _ipv6_bracket = (
+          Pattern()
+          .char("[")
+          .one_or_more()
+          .any_of()
+          .range("0", "9")
+          .range("a", "f")
+          .range("A", "F")
+          .char(":")
+          .end()
+          .char("]")
+      )
+      _hostname_label = (
+          Pattern()
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .end()
+          .optional()
+          .group()
+          .between(0, 61)
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .char("-")
+          .end()
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .end()
+          .end()
+      )
+      _hostname = (
+          Pattern()
+          .subexpression(_hostname_label)
+          .zero_or_more()
+          .group()
+          .char(".")
+          .subexpression(_hostname_label)
+          .end()
+      )
+
+      socket = (
+          Pattern()
+          .start_of_input()
+          .subexpression(any_of(_ipv4, _ipv6_bracket, _hostname))
+          .char(":")
+          .between(1, 5)
+          .digit()
+          .end_of_input()
+      )
+
+   **Emits** ``^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}|\[[0-9a-fA-F:]+\]|[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*):\d{1,5}$``
+
+.. py:data:: edify.library.subdomain
+
+   Callable :class:`Pattern` for a single DNS subdomain label (1-63 chars,
+   alphanumeric with optional interior hyphens).
+
+   Full description: :doc:`Subdomain <../../library/address/subdomain>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      subdomain = (
+          Pattern()
+          .start_of_input()
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .end()
+          .between(0, 61)
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .char("-")
+          .end()
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .end()
+          .end_of_input()
+      )
+
+   **Emits** ``^[a-zA-Z0-9][a-zA-Z0-9\-]{0,61}[a-zA-Z0-9]$``
+
+.. py:data:: edify.library.subnet
+
+   Callable :class:`Pattern` for a dotted-decimal IPv4 subnet mask
+   (each octet is one of ``255``, ``254``, ``252``, …, ``128``, ``0``).
+
+   Full description: :doc:`Subnet mask <../../library/address/subnet>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern, any_of
+
+
+      def _mask_octet() -> Pattern:
+          return any_of(
+              Pattern().string("255"),
+              Pattern().string("254"),
+              Pattern().string("252"),
+              Pattern().string("248"),
+              Pattern().string("240"),
+              Pattern().string("224"),
+              Pattern().string("192"),
+              Pattern().string("128"),
+              Pattern().char("0"),
+          )
+
+
+      subnet = (
+          Pattern()
+          .start_of_input()
+          .subexpression(_mask_octet())
+          .char(".")
+          .subexpression(_mask_octet())
+          .char(".")
+          .subexpression(_mask_octet())
+          .char(".")
+          .subexpression(_mask_octet())
+          .end_of_input()
+      )
+
+   **Emits** ``^(?:255|254|252|248|240|224|192|128|[0])\.(?:255|254|252|248|240|224|192|128|[0])\.(?:255|254|252|248|240|224|192|128|[0])\.(?:255|254|252|248|240|224|192|128|[0])$``
+
+.. py:data:: edify.library.tld
+
+   Callable :class:`Pattern` for the TLD shape: 2 to 63 letters.
+
+   Full description: :doc:`TLD <../../library/address/tld>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      tld = (
+          Pattern()
+          .start_of_input()
+          .between(2, 63)
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .end()
+          .end_of_input()
+      )
+
+   **Emits** ``^[a-zA-Z]{2,63}$``
+
+.. py:data:: edify.library.uri
+
+   Callable :class:`Pattern` for the generic URI shape:
+   ``scheme:opaque-or-path`` where scheme starts with a letter.
+
+   Full description: :doc:`URI <../../library/address/uri>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      uri = (
+          Pattern()
+          .start_of_input()
+          .letter()
+          .zero_or_more()
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .char("+")
+          .char(".")
+          .char("-")
+          .end()
+          .char(":")
+          .one_or_more()
+          .non_whitespace_char()
+          .end_of_input()
+      )
+
+   **Emits** ``^[a-zA-Z][a-zA-Z0-9\+\.\-]*:\S+$``
+
+.. py:data:: edify.library.url
+
+   Callable :class:`Pattern` for a permissive HTTP/HTTPS URL shape.
+
+   Guarantees:
+       * Optional ``http[s]://`` scheme prefix.
+       * Optional ``www.`` host prefix.
+       * A dot-separated authority with a 1-6 character TLD, followed by an optional path.
+       * Anchored at both ends.
+
+   Does not guarantee:
+       * URI reachability, TLS certificate validity, or DNS resolution.
+       * Non-HTTP schemes (``ftp:``, ``mailto:``, ``file:``) — those require dedicated
+         validators.
+       * Full RFC 3986 URI grammar — the pattern is deliberately permissive for the
+         common web-URL shape.
+
+   Full description: :doc:`URL <../../library/address/url>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      url = (
+          Pattern()
+          .start_of_input()
+          .optional()
+          .group()
+          .string("http")
+          .optional()
+          .char("s")
+          .string("://")
+          .end()
+          .optional()
+          .group()
+          .string("www.")
+          .end()
+          .between(1, 256)
+          .any_of()
+          .char("-")
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .char("@")
+          .char(":")
+          .char("%")
+          .char(".")
+          .char("_")
+          .char("+")
+          .char("~")
+          .char("#")
+          .char("=")
+          .end()
+          .char(".")
+          .between(1, 6)
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .char("(")
+          .char(")")
+          .end()
+          .word_boundary()
+          .zero_or_more()
+          .any_of()
+          .char("-")
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .char("(")
+          .char(")")
+          .char("@")
+          .char(":")
+          .char("%")
+          .char("_")
+          .char("+")
+          .char(".")
+          .char("~")
+          .char("#")
+          .char("?")
+          .char("&")
+          .char("/")
+          .char("=")
+          .end()
+          .end_of_input()
+      )
+
+   **Emits** ``^(?:https?://)?(?:www\.)?[\-a-zA-Z0-9@:%\._\+\~\#=]{1,256}\.[a-zA-Z0-9\(\)]{1,6}\b[\-a-zA-Z0-9\(\)@:%_\+\.\~\#\?\&/=]*$``
+
+.. py:data:: edify.library.zip_code
+
+   Callable :class:`Pattern` for the US ZIP or ZIP+4 postal-code shape.
+
+   Guarantees:
+       * Five decimal digits, optionally followed by ``-`` and four more decimal digits.
+       * Anchored at both ends.
+
+   Does not guarantee:
+       * Postal-service validity — accepts every 5- and 5+4-digit string, including
+         unassigned or reserved ranges.
+       * Non-US postal codes — those live under a country-specific validator.
+
+   Full description: :doc:`ZIP Code <../../library/address/zip_code>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      zip_code = (
+          Pattern()
+          .start_of_input()
+          .exactly(5)
+          .digit()
+          .optional()
+          .group()
+          .char("-")
+          .exactly(4)
+          .digit()
+          .end()
+          .end_of_input()
+      )
+
+   **Emits** ``^\d{5}(?:\-\d{4})?$``
+

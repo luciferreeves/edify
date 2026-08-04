@@ -1,185 +1,161 @@
 .. _upgrading-0-3-to-1-0:
 
-Upgrading from 0.3 to 1.0
-=========================
+0.3 → 1.0
+=========
 
-The 1.0 release is a ground-up redesign. This guide covers only the breaking
-surface — the changes that require a code edit or a behavior review when moving
-a 0.3 codebase to 1.0. Every section below carries an explicit ``.. _label:``
-anchor; deprecation-warning URLs point at these anchors, so they stay valid even
-if a heading is later reworded.
-
-.. _license-mit:
-
-License changed to MIT
-----------------------
-
-Edify 1.0 is released under the MIT License. Releases ``0.3.0`` and earlier were
-Apache-2.0.
-
-Two user-facing facts:
-
-* MIT drops Apache-2.0's **explicit patent grant**. If your legal review
-  specifically relied on that grant, pin ``edify<1.0``.
-* Every git tag ``v0.3.0`` and earlier **remains Apache-2.0 permanently** — the
-  relicense applies going forward only. Installs pinned to a ``0.3.x`` tag are
-  unaffected.
+Edify 1.0 is the first release with a stable, fully-typed public API. This guide
+covers every breaking change from 0.3, each with what changed and how to update.
 
 .. _python-floor:
 
-Python floor raised to 3.11
----------------------------
+Python 3.11+ required
+---------------------
 
-Edify 1.0 requires Python 3.11 or newer. The 0.3 line supported 3.8+. Upgrade
-your interpreter before installing 1.0; ``pip install edify`` on 3.10 or older
-resolves to the last 0.3 release.
+Edify now requires **Python 3.11 or newer**. Earlier versions are no longer
+supported. If you're on an older interpreter, upgrade the interpreter before
+upgrading Edify.
+
+.. _license-mit:
+
+Relicensed to MIT
+-----------------
+
+Edify is now distributed under the **MIT License** (previously Apache-2.0). MIT
+is permissive and widely compatible; there is no API impact. Note two practical
+points: MIT carries no explicit patent grant (Apache-2.0 did), and if you pin to
+a Git tag, re-pin against the 1.0 tag so you pick up the relicensed tree.
 
 .. _validators-callable:
 
-Validators are callable ``Pattern`` instances
----------------------------------------------
+Pre-built validators are callable patterns
+------------------------------------------
 
-In 0.3 the built-in validators under ``edify.library`` were plain functions. In
-1.0 every validator is a callable :class:`edify.Pattern` instance:
+Every validator in :mod:`edify.library` is now a callable :class:`~edify.Pattern`
+— you call it directly instead of reaching for a helper:
 
 .. code-block:: python
 
-    import inspect
-    from edify import Pattern
-    from edify.library import email
+   from edify.library import email
 
-    inspect.isfunction(email)        # False   (was True in 0.3)
-    isinstance(email, Pattern)       # True    (was False in 0.3)
-    email("user@example.com")        # True    (call form unchanged)
-    email.match("user@example.com")  # <re.Match object>
+   email("a@b.com")   # True   — just call it
 
-The ``validator(value) -> bool`` call form is unchanged, so most call sites need
-no edit. The new surface adds ``.match``, ``.search``, ``.to_regex_string``, and
-every other :class:`Pattern` method on top.
+The same object composes into a chain with :meth:`~edify.RegexBuilder.use` and
+emits its own regex with ``to_regex_string()``.
 
 .. _library-reorg:
 
-Library reorganized into category submodules
---------------------------------------------
+The library is organised into categories
+----------------------------------------
 
-The library moved from a flat module into category folders (``identifier/``,
-``address/``, ``contact/``, ``auth/``, ``financial/``, ``temporal/``, and more).
-Every validator remains importable from the flat top-level namespace, and is now
-*also* importable from its category submodule:
-
-.. code-block:: python
-
-    from edify.library import uuid                # flat top-level (unchanged)
-    from edify.library.identifier import uuid     # category submodule (new)
-
-If you imported validators from ``edify.library`` in 0.3, those imports keep
-working.
-
-.. _named-backref-return:
-
-Named back-references no longer raise
--------------------------------------
-
-In 0.3, ``.named_back_reference(name)`` raised when the named group had not been
-declared earlier in the chain. In 1.0 it emits the back-reference and defers
-validation to compile time, matching the behavior of the numeric
-``.back_reference(index)``.
-
-.. _to-regex-string-output:
-
-``to_regex_string()`` output normalized
----------------------------------------
-
-The emitted pattern string is now the minimal correct form. The most visible
-change is character-class escaping: inside ``[...]`` only ``\``, ``]``,
-first-position ``^``, and interior ``-`` are escaped; every other metacharacter
-is a literal.
-
-.. code-block:: text
-
-    0.3:  any_of_chars('#?!@$%^&*-')  ->  [\#\?!@$%\^\&\*\-]
-    1.0:  any_of_chars('#?!@$%^&*-')  ->  [#?!@$%^&*-]
-
-The two forms match identically — only the string representation changed. Code
-that compared ``to_regex_string()`` against a hard-coded expected string with the
-old redundant backslashes must drop them.
-
-.. _char-class-escape:
-
-Character-class escaping is the minimal correct form
-----------------------------------------------------
-
-This is the rule behind the ``to_regex_string()`` change above, stated directly
-for callers who construct char classes: ``any_of_chars`` and
-``anything_but_chars`` escape only the characters that carry syntactic meaning
-inside ``[...]``. Match behavior is identical to 0.3's over-escaped output.
-
-.. _regex-wrapper-return:
-
-Match methods return an edify ``Match`` wrapper
------------------------------------------------
-
-``.match``, ``.search``, and ``.fullmatch`` on :class:`Regex` (and ``.finditer``)
-now return an edify :class:`edify.result.Match` rather than a bare
-:class:`re.Match`. Named captures are reachable as attributes
-(``m.username`` / ``m.captures.username``), and every :class:`re.Match` method
-(``.group()``, ``.groupdict()``, ``.span()``, …) is forwarded, so existing call
-sites keep working.
-
-.. _closed-match-verbs:
-
-Builder match-verb surface closed at five
------------------------------------------
-
-The builder exposes exactly ``test`` / ``match`` / ``search`` / ``findall`` /
-``sub``. The less-common ``fullmatch`` / ``finditer`` / ``subn`` / ``split``
-verbs moved off the builder — reach them through ``.to_regex()`` and call them on
-the returned :class:`Regex`:
+Validators are grouped into category subpackages (``edify.library.contact``,
+``edify.library.identifier``, ``edify.library.temporal``, …) and every one is
+also re-exported at the top level. Import from wherever reads best:
 
 .. code-block:: python
 
-    # 0.3
-    builder.finditer(text)
-
-    # 1.0
-    builder.to_regex().finditer(text)
-
-.. _silent-failure-raises:
-
-Silent failures now raise typed errors
----------------------------------------
-
-Constructs that failed silently or produced a cryptic stdlib error in 0.3 now
-raise a specific :class:`edify.errors.EdifySyntaxError` subclass with an
-annotated message. The most common case: a variable-width ``assert_behind`` under
-the default ``re`` engine raises
-:class:`edify.errors.backend.VariableWidthLookbehindNotSupportedError` instead of
-surfacing ``re``'s "look-behind requires fixed-width pattern".
-
-.. _engine-kwarg:
-
-Optional ``regex`` engine via ``engine=`` kwarg
------------------------------------------------
-
-``to_regex(engine="regex")`` selects the third-party ``regex`` backend, which
-unlocks variable-width lookbehind and per-call timeouts. It requires the extra:
-``pip install edify[regex]``. The default ``engine="re"`` is unchanged.
-
-.. _builder-equality:
-
-Builder equality compares emitted patterns
-------------------------------------------
-
-Two builders compare equal when they emit the same pattern string and carry the
-same flags, rather than by object identity. This makes builders usable as
-dict keys and in set membership.
+   from edify.library import phone            # top-level re-export
+   from edify.library.contact import phone    # categorised path
 
 .. _moved-import-paths:
 
-Moved internal import paths
----------------------------
+Some import paths moved
+-----------------------
 
-Internal machinery that leaked into 0.3's import surface has been privatized or
-relocated. If you imported from an undocumented internal path in 0.3, import the
-symbol from its documented location instead — every public symbol is reachable
-from ``edify`` or a documented submodule.
+Internal modules were reorganised alongside the library. Import public names from
+the top-level :mod:`edify` package (builder, factories, constants) and from
+:mod:`edify.library` (validators); those entry points are stable. If you imported
+from a deep internal module, switch to the public path.
+
+.. _char-class-escape:
+
+Character-class escaping is minimal and correct
+-----------------------------------------------
+
+Inside a character class, only the characters that actually need escaping for
+their position are escaped. ``any_of_chars("#?!@$%^&*-")`` now emits the minimal
+correct class rather than an over-escaped one. Match behavior is unchanged; the
+emitted string is cleaner.
+
+.. _closed-match-verbs:
+
+The builder exposes five match verbs
+------------------------------------
+
+The builder's match surface is exactly ``test``, ``match``, ``search``,
+``findall``, and ``sub``. For the full engine surface — ``fullmatch``,
+``finditer``, ``subn``, ``split`` — compile to a :class:`~edify.Regex` first:
+
+.. code-block:: python
+
+   rx = RegexBuilder().one_or_more().digit().to_regex()
+   list(rx.finditer("1 22 3"))   # via the compiled Regex
+
+.. _engine-kwarg:
+
+``to_regex`` takes flags and an engine
+--------------------------------------
+
+Flags and the backend engine are keyword arguments on
+:meth:`~edify.RegexBuilder.to_regex`:
+
+.. code-block:: python
+
+   from edify import RegexBuilder
+
+   builder = RegexBuilder().one_or_more().letter()
+
+   builder.ignore_case().to_regex()   # flags are chain methods now
+   builder.to_regex()                 # the default engine
+
+.. _regex-wrapper-return:
+
+Terminals return a ``Regex`` wrapper
+------------------------------------
+
+:meth:`~edify.RegexBuilder.to_regex` returns an :class:`~edify.Regex` — a thin,
+strongly-typed wrapper over the compiled pattern with ``.source``, the match
+verbs, and named captures on ``.captures``. Reach through it exactly as you would
+a compiled pattern.
+
+.. _to-regex-string-output:
+
+``to_regex_string`` returns the emitted source
+----------------------------------------------
+
+:meth:`~edify.RegexBuilder.to_regex_string` returns the regex **string**; flags
+never appear inline in it — they live on the compiled :class:`~edify.Regex`. Two
+builders that differ only by a flag emit the same string.
+
+.. _named-backref-return:
+
+Named captures read off ``.captures``
+-------------------------------------
+
+A :class:`~edify.result.Match` exposes named groups as attributes on
+``.captures``:
+
+.. code-block:: python
+
+   from edify import RegexBuilder
+
+   dated = RegexBuilder().named_capture("year").exactly(4).digit().end()
+   hit = dated.to_regex().match("2024")
+
+   hit.captures.year   # instead of hit.group("year")
+
+.. _builder-equality:
+
+Builders compare by emitted pattern
+-----------------------------------
+
+Two finished builders are equal when they emit the same pattern, which makes
+patterns easy to assert on in tests.
+
+.. _silent-failure-raises:
+
+Invalid patterns raise, loudly
+------------------------------
+
+Mistakes that used to slip through silently now raise an annotated
+:class:`~edify.EdifyError` at the call site, telling you what went wrong and how
+to fix it. See :doc:`../guide/beyond/errors`.

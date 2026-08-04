@@ -21,7 +21,21 @@ class TestingMixin(BuilderProtocol):
     """Provides ``assert_matches`` and ``assert_rejects`` on any fluent surface."""
 
     def assert_matches(self, inputs: Iterable[str]) -> Self:
-        """Assert every string in ``inputs`` matches this pattern; return ``self``."""
+        """Assert every string in ``inputs`` matches this pattern; return ``self``.
+
+        Returning the builder lets the assertion sit inside the expression that defines
+        the pattern, so the contract is checked at import time.
+
+        Args:
+            inputs: Strings that must all match.
+
+        Returns:
+            This builder, unchanged.
+
+        Raises:
+            PatternDidNotMatchInputsError: If any input is rejected. The message names
+                every string that failed.
+        """
         compiled = self.lazy_regex()
         input_tuple = tuple(inputs)
         rejected_items = [item for item in input_tuple if compiled.search(item) is None]
@@ -31,7 +45,21 @@ class TestingMixin(BuilderProtocol):
         return self
 
     def assert_rejects(self, inputs: Iterable[str]) -> Self:
-        """Assert every string in ``inputs`` is rejected by this pattern; return ``self``."""
+        """Assert every string in ``inputs`` is rejected by this pattern; return ``self``.
+
+        Returning the builder lets the assertion sit inside the expression that defines
+        the pattern, so the contract is checked at import time.
+
+        Args:
+            inputs: Strings that must all be rejected.
+
+        Returns:
+            This builder, unchanged.
+
+        Raises:
+            PatternMatchedRejectedInputsError: If any input matches. The message names
+                every string that did.
+        """
         compiled = self.lazy_regex()
         input_tuple = tuple(inputs)
         matched_items = [item for item in input_tuple if compiled.search(item) is not None]

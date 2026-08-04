@@ -1,0 +1,11 @@
+accepts = [
+    "rule = %x41 / %x42",
+    "name = 1*ALPHA\n",
+    "obs-fold =/ CRLF",
+]
+
+rejects = [
+    "",
+    "hello",
+    "<expr> ::= x",
+]

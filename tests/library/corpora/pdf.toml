@@ -1,0 +1,13 @@
+accepts = [
+    "%PDF-1.7\n%\u00e2\u00e3\ncontent",
+    "%PDF-1.4",
+    "%PDF-2.0\nbody",
+]
+
+rejects = [
+    "",
+    "hello",
+    "%PDF",
+    "PDF-1.7",
+    "%PDF-x.y",
+]

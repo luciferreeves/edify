@@ -64,7 +64,15 @@ from edify.elements.types.quantifiers import (
 
 
 def explain_elements(elements: tuple[BaseElement, ...]) -> str:
-    """Return a bullet-list explanation plus accept examples for ``elements``."""
+    """Return a bullet-list explanation plus accept examples for ``elements``.
+
+    Args:
+        elements: The element tree to describe, as taken from ``Regex.elements``.
+
+    Returns:
+        A bullet list of what the pattern requires, followed by example strings it
+        accepts.
+    """
     if not elements:
         return "This pattern is empty and matches an empty string."
     flat_elements = _flatten(elements)

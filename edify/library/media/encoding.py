@@ -1,23 +1,39 @@
-"""``encoding`` — text-encoding name shape."""
+"""``encoding`` — HTTP content-coding token shape."""
 
 from __future__ import annotations
 
 from edify import Pattern
 
-encoding = (
+_token = (
     Pattern()
-    .start_of_input()
-    .letter()
-    .between(1, 39)
     .any_of()
-    .range("a", "z")
-    .range("A", "Z")
-    .range("0", "9")
-    .char("_")
-    .char("+")
-    .char(".")
-    .char("-")
+    .string("gzip")
+    .string("compress")
+    .string("deflate")
+    .string("br")
+    .string("zstd")
+    .string("identity")
+    .string("x-gzip")
+    .string("x-compress")
+    .char("*")
     .end()
-    .end_of_input()
 )
-"""Callable :class:`Pattern` for a text-encoding name (utf-8, latin-1, etc.)."""
+
+_quality = (
+    Pattern()
+    .zero_or_more()
+    .whitespace_char()
+    .string(";q=")
+    .digit()
+    .optional()
+    .group()
+    .char(".")
+    .between(1, 3)
+    .digit()
+    .end()
+)
+
+encoding = Pattern().start_of_input().use(_token).optional().use(_quality).end_of_input()
+"""Callable :class:`Pattern` for an HTTP content-coding token such as ``gzip``
+or ``br``, with an optional ``;q=`` quality value.
+"""

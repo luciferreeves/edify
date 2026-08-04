@@ -1,0 +1,13 @@
+accepts = [
+    "Hello, World!",
+    "abc 123",
+    "~",
+    "!@#$%",
+]
+
+rejects = [
+    "",
+    "héllo",
+    "日本語",
+    "a\tb",
+]

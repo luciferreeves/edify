@@ -1,0 +1,11 @@
+accepts = [
+    "<VirtualHost *:80>\n  ServerName x\n</VirtualHost>",
+    "ServerName example.com\n",
+    "# c\nListen 80",
+]
+
+rejects = [
+    "",
+    "hello-world",
+    "{\"a\":1}",
+]

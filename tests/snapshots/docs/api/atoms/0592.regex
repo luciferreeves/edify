@@ -1,0 +1,1 @@
+octnum :: pattern :: 0[oO][0-7]+

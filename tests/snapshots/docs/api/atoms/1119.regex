@@ -1,0 +1,2 @@
+nibble :: pattern :: [0-9a-fA-F]
+objectid :: pattern :: (?:[0-9a-fA-F]){24}

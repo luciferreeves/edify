@@ -67,8 +67,7 @@ dev = [
     "ruff>=0.7",
 ]
 docs = [
-    "sphinx>=7.4.7",
-    "sphinx-rtd-theme",
+    "sphinx>=9.1; python_version >= '3.12'",
 ]
 bench = [
     "pytest-benchmark>=4.0",

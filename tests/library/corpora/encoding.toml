@@ -1,0 +1,17 @@
+accepts = [
+    "gzip",
+    "br",
+    "identity",
+    "deflate",
+    "zstd",
+    "*",
+    "gzip;q=0.8",
+    "br;q=1.0",
+]
+
+rejects = [
+    "",
+    "hello",
+    "utf-8",
+    "gzip;q=",
+]

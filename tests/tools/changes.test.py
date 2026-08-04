@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from tools import changes
+from tools.changes import changes
 
 _REPO_ROOT = Path(__file__).parent.parent.parent
 

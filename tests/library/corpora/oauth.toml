@@ -1,0 +1,14 @@
+accepts = [
+    "authorization_code",
+    "client_credentials",
+    "refresh_token",
+    "password",
+    "urn:ietf:params:oauth:grant-type:device_code",
+]
+
+rejects = [
+    "",
+    "hello",
+    "AUTHORIZATION_CODE",
+    "grant_type",
+]

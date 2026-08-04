@@ -38,6 +38,13 @@ class GroupsMixin(BuilderProtocol):
         closes later. With one or more string arguments each literal is
         wrapped as :class:`CharElement` or :class:`StringElement` and the
         whole set is appended as one :class:`AnyOfElement`.
+
+        Branches are tried left to right and the first to match wins, so a branch that
+        prefixes a later one will shadow it unless the pattern is anchored.
+
+        Args:
+            *literals: The alternatives, as strings. Pass none to open a frame instead
+                and add branches with further chain calls.
         """
         if not literals:
             return _open_frame(self, AnyOfElement())
@@ -48,6 +55,12 @@ class GroupsMixin(BuilderProtocol):
 
         Requires at least one literal; unlike :meth:`any_of` this method
         never opens a frame.
+
+        Args:
+            *literals: The alternatives, as strings. At least one is required.
+
+        Raises:
+            MustBeAtLeastOneLiteralError: If no literals are given.
         """
         _ensure_at_least_one_literal(literals)
         return _add_literal_alternation(self, literals)

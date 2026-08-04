@@ -1,73 +1,49 @@
-.. _deprecation-policy:
-
-Deprecation Policy
+Deprecation policy
 ==================
 
-This policy governs how every removed, renamed, or behavior-changed public API
-in Edify **1.0 and later** communicates the change to existing users. It does
-not apply to the 0.3 → 1.0 transition, which is a clean redesign with no
-deprecation stubs — see :ref:`upgrading-0-3-to-1-0` for that move.
+Edify follows `semantic versioning <https://semver.org>`_. This page is the
+contract for how public API is removed, so you can upgrade with confidence.
 
-The stub pattern
+What "public" means
+-------------------
+
+The public API is everything reachable from the top-level :mod:`edify` package
+and :mod:`edify.library`, plus the documented sub-package entry points
+(:mod:`edify.result`, :mod:`edify.introspect`, :mod:`edify.serialize`,
+:mod:`edify.testing`, and the framework integrations). Anything under a private
+module or a name with a leading underscore is internal and may change at any
+time.
+
+The committed public-surface snapshot is the source of truth: a change to it in
+a pull request is exactly what changed for you.
+
+How things are removed
+----------------------
+
+A public name is never deleted outright. It is **deprecated** for one full major
+version before removal:
+
+#. In the release that supersedes it, the old name keeps working but emits a
+   ``DeprecationWarning`` when used.
+#. The warning message states what to use instead and links to the matching
+   section of the relevant upgrade guide.
+#. The name is removed no earlier than the **next major version**.
+
+So a name deprecated in 1.x keeps working through all of 1.x and is only removed
+in 2.0 — you always have a full major cycle to migrate.
+
+Behavior changes
 ----------------
 
-When a public symbol is renamed or removed, the old name stays importable for one
-minor-release cycle as a **deprecation stub**. The stub forwards to the new
-implementation (for a rename) or raises on use (for a removal), and always emits
-a :class:`DeprecationWarning` on first use.
+A change to what an existing call *returns* or *matches* — not just its name — is
+treated as breaking and only ships in a major release, documented in the upgrade
+guide with a before/after. Bug fixes that bring behavior in line with documented
+intent are the exception and can ship in a minor release.
 
-.. code-block:: python
+Warnings point at the fix
+-------------------------
 
-    import warnings
-
-    def old_name(*args, **kwargs):
-        warnings.warn(
-            "old_name is deprecated since 1.1; use new_name. "
-            "See https://edify.readthedocs.io/en/latest/upgrading/1.0-to-1.1.html#new-name",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return new_name(*args, **kwargs)
-
-Message format
---------------
-
-Every deprecation warning message follows this exact shape::
-
-    <name> is deprecated since <version>; use <replacement>. See <docs-url>
-
-* ``<name>`` — the deprecated symbol, spelled exactly as the user typed it.
-* ``<version>`` — the release that introduced the deprecation.
-* ``<replacement>`` — the symbol to use instead, or a one-clause instruction
-  when there is no drop-in replacement.
-* ``<docs-url>`` — an absolute URL into the upgrade guide, ending in the frozen
-  ``#anchor`` for the relevant section. The anchor is a
-  ``.. _label:`` target under ``docs/upgrading/``, decoupled from the heading
-  text so rewording a heading never breaks the link.
-
-Warning category and stacklevel
--------------------------------
-
-* The category is always :class:`DeprecationWarning`.
-* ``stacklevel=2`` so the warning points at the caller's line, not at the stub.
-* Each stub fires its warning **exactly once per call site** — it never suppresses
-  or batches, and it never fires at import time.
-
-Removal cadence
----------------
-
-* A symbol deprecated in release ``X.Y`` remains importable through the end of the
-  ``X.(Y+1)`` line and is removed no earlier than ``X.(Y+2)``.
-* Removals only land in a minor or major release, never a patch release.
-* The removal is recorded as a breaking change in the CHANGELOG and gets its own
-  section (with a frozen anchor) in the matching upgrade guide.
-
-Behavior-change rule
---------------------
-
-A change to what an existing, unchanged call *returns* or *raises* — with no
-change to its name or signature — is a breaking change even though nothing looks
-different at the call site. It is documented in the upgrade guide with a
-before/after, cross-linked from the CHANGELOG, and (where technically possible)
-announced with a :class:`DeprecationWarning` for one cycle before the new
-behavior becomes the default.
+Every deprecation warning ends in a URL to the upgrade-guide anchor for that
+change, so the message you see at runtime links straight to the migration steps.
+The docs build verifies that every such anchor actually exists, so those links
+never rot.

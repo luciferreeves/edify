@@ -79,6 +79,30 @@ class TerminalsMixin(BuilderProtocol):
         Default (no-kwargs) calls hit a per-instance lazy cache: the second and
         subsequent no-kwargs calls return the same :class:`Regex` the first call
         produced. Passing any kwarg bypasses the cache and always compiles fresh.
+
+        Args:
+            ascii_only: Restrict ``\\w``, ``\\d``, ``\\s`` and ``\\b`` to ASCII instead of
+                Unicode.
+            debug: Emit the engine's parse output while compiling.
+            ignore_case: Match letters regardless of case.
+            multiline: Make ``^`` and ``$`` match at every line boundary.
+            dotall: Let ``any_char`` match a newline as well.
+            verbose: Allow insignificant whitespace and comments in the pattern.
+            engine: Which backend compiles the pattern — ``"re"`` for the standard
+                library, ``"regex"`` for the third-party module.
+
+        Returns:
+            The compiled :class:`~edify.result.Regex`.
+
+        Raises:
+            MissingRegexBackendError: If ``engine="regex"`` but the extra is not
+                installed.
+            VariableWidthLookbehindNotSupportedError: If a lookbehind has a
+                variable-width body and ``engine="re"``.
+
+        Warns:
+            ReDoSWarning: If the pattern nests unbounded quantifiers in the shape known
+                to cause catastrophic backtracking.
         """
         kwarg_flags = Flags(
             ascii_only=ascii_only,

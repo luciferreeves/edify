@@ -1,0 +1,10 @@
+accepts = [
+    "PK\u0003\u0004junk xl/workbook.xml",
+]
+
+rejects = [
+    "",
+    "hello",
+    "PK\u0003\u0004word/document.xml",
+    "PK\u0003\u0004",
+]

@@ -1,0 +1,13 @@
+accepts = [
+    "héllo",
+    "日本語",
+    "emoji 🎉",
+    "naïve",
+]
+
+rejects = [
+    "",
+    "Hello!",
+    "abc 123",
+    "a\tb",
+]

@@ -1,0 +1,1 @@
+ulid :: pattern :: [0-9A-HJ-KMNP-TV-Z]{26}

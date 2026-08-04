@@ -1,0 +1,10 @@
+accepts = [
+    "<?xml version=\"1.0\"?>\n<feed xmlns=\"http://www.w3.org/2005/Atom\"><title/></feed>",
+]
+
+rejects = [
+    "",
+    "hello",
+    "<rss version=\"2.0\"/>",
+    "<feed xmlns=\"other\"/>",
+]
