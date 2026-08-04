@@ -13,9 +13,14 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx.ext.extlinks",
+    "sphinx.ext.intersphinx",
     "playground",
     "autolink",
+    "signatures",
 ]
+
+intersphinx_mapping = {"python": ("https://docs.python.org/3", None)}
+intersphinx_timeout = 30
 
 extlinks = {
     "issue": ("https://github.com/luciferreeves/edify/issues/%s", "#%s"),
@@ -34,6 +39,9 @@ html_title = "Edify"
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
+
+python_use_unqualified_type_names = True
+autodoc_member_order = "bysource"
 
 
 def _wheel_filename() -> str:
