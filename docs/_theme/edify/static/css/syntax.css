@@ -44,3 +44,9 @@
 .highlight .gh, .highlight .gu { color: var(--syn-function); font-weight: 600; }
 .highlight .gs { font-weight: 600; }
 .highlight .ge { font-style: italic; }
+
+/* symbol names inside a code block that resolve to a reference entry */
+.highlight a.code-ref { color: inherit;
+  text-decoration: underline dotted var(--faint); text-underline-offset: 3px; }
+.highlight a.code-ref:hover { text-decoration: underline solid var(--accent); color: var(--accent); }
+.highlight a.code-ref:hover span { color: inherit; }
