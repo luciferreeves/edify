@@ -4,10 +4,15 @@ build:
   tools:
     python: "3.12"
   jobs:
+    # Read the Docs runs `python -m sphinx` from the virtualenv it created, so the
+    # docs dependencies have to land in that environment. Without
+    # UV_PROJECT_ENVIRONMENT, uv installs them into its own .venv instead and the
+    # build fails with "No module named sphinx". --inexact leaves packages uv does
+    # not manage alone, so the uv installed just above survives the sync.
     install:
       - pip install uv
-      - uv sync --group docs
+      - UV_PROJECT_ENVIRONMENT="$READTHEDOCS_VIRTUALENV_PATH" uv sync --group docs --inexact
     pre_build:
-      - uv run python tools/docs/build.py
+      - UV_PROJECT_ENVIRONMENT="$READTHEDOCS_VIRTUALENV_PATH" uv run python tools/docs/build.py
 sphinx:
   configuration: docs/conf.py
