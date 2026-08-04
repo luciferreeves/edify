@@ -20,6 +20,16 @@ from sphinx.application import Sphinx
 
 _CALL = re.compile(r"^\.?([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?$")
 
+# Names that are ordinary words or parameter names far more often than they are a
+# reference to the member of the same name. Linking these produces confident wrong
+# links -- ``re`` almost always means the standard library module, not ``Match.re``.
+_AMBIGUOUS = frozenset({"re", "engine"})
+
+# Atom names collide heavily with the domain vocabulary the library pages are written
+# in: ``mimetype`` is a file inside an EPUB, ``day`` is a dosage unit, ``sha256`` is an
+# algorithm name. Link them only where atoms are the subject.
+_ATOM_SECTION = "guide/atoms/"
+
 
 def _symbol_index() -> dict[str, tuple[str, str]]:
     """Map a bare symbol name to the (role, target) that documents it.
@@ -31,15 +41,15 @@ def _symbol_index() -> dict[str, tuple[str, str]]:
     import inspect
 
     import edify
-    from edify import atoms
     from edify.result import Regex
     from edify.result.match import Match
 
     index: dict[str, tuple[str, str]] = {}
 
     def add(name: str, role: str, target: str) -> None:
-        if not name.startswith("_") and name not in index:
-            index[name] = (role, target)
+        if name.startswith("_") or name in _AMBIGUOUS or name in index:
+            return
+        index[name] = (role, target)
 
     for name in dir(edify.RegexBuilder):
         add(name, "meth", f"edify.RegexBuilder.{name}")
@@ -61,12 +71,20 @@ def _symbol_index() -> dict[str, tuple[str, str]]:
             add(name, "func", f"edify.{name}")
         elif name.isupper():
             add(name, "data", f"edify.{name}")
-    for name in dir(atoms):
-        add(name, "data", f"edify.atoms.{name}")
     return index
 
 
+def _atom_index() -> dict[str, tuple[str, str]]:
+    """Map each atom name to its reference entry, for pages about atoms only."""
+    from edify import atoms
+
+    return {
+        name: ("data", f"edify.atoms.{name}") for name in dir(atoms) if not name.startswith("_")
+    }
+
+
 _SYMBOLS: dict[str, tuple[str, str]] = {}
+_ATOMS: dict[str, tuple[str, str]] = {}
 
 
 def _skip(node: nodes.Node) -> bool:
@@ -84,8 +102,10 @@ def _link_literals(app: Sphinx, doctree: nodes.document) -> None:
     docname = app.env.docname
     if not _SYMBOLS:
         _SYMBOLS.update(_symbol_index())
+        _ATOMS.update(_atom_index())
     if docname.startswith(("api/", "_modules")):
         return
+    atoms_apply = docname.startswith(_ATOM_SECTION)
     for literal in list(doctree.findall(nodes.literal)):
         if _skip(literal):
             continue
@@ -94,7 +114,8 @@ def _link_literals(app: Sphinx, doctree: nodes.document) -> None:
         match = _CALL.match(literal.astext().strip())
         if match is None:
             continue
-        entry = _SYMBOLS.get(match.group(1))
+        name = match.group(1)
+        entry = _SYMBOLS.get(name) or (_ATOMS.get(name) if atoms_apply else None)
         if entry is None:
             continue
         role, target = entry
