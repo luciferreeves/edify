@@ -13,10 +13,20 @@ const HARNESS = String.raw`
 import ast, json
 import edify
 import edify.library as _lib
+from edify.errors.backend import MissingRegexBackendError
 
 _ns_base = {k: getattr(edify, k) for k in edify.__all__}
 _ns_base.update({k: getattr(_lib, k) for k in dir(_lib) if not k.startswith("_")})
 _state = {"regex": None}
+
+# The alternate engine is a compiled extension, so it cannot load in WebAssembly.
+# Its own diagnostic says to pip install the extra, which a reader in a browser
+# cannot act on, so the playground answers with what is true here instead.
+_NO_ALTERNATE_ENGINE = (
+    "engine='regex' is not available in this playground: it is a compiled extension "
+    "and cannot load in the browser. Drop the argument to compile with the default "
+    "engine, or install edify[regex] to use it locally."
+)
 
 def _regex_string(target, regex):
     if regex is None and _state["regex"] is None:
@@ -55,6 +65,8 @@ def edify_run(src):
                 module = ast.Module(body=[node], type_ignores=[])
                 ast.fix_missing_locations(module)
                 exec(compile(module, "<playground>", "exec"), ns)
+        except MissingRegexBackendError:
+            return json.dumps({"error": _NO_ALTERNATE_ENGINE, "results": results, "regex": regex})
         except edify.EdifyError as problem:
             return json.dumps({"error": str(problem), "results": results, "regex": regex})
         except Exception as problem:
