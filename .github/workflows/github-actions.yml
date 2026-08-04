@@ -26,7 +26,7 @@ jobs:
             command: 'uv run python tools/surface/surface.py --check'
             os: 'ubuntu-latest'
           - name: 'docs'
-            python: '3.11'
+            python: '3.12'
             command: 'uv run --group docs sphinx-build -b html docs dist/docs && uv run --group docs sphinx-build -b linkcheck docs dist/docs'
             os: 'ubuntu-latest'
           - name: 'py311 (ubuntu)'
