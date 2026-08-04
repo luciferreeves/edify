@@ -4,6 +4,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # GitHub withholds Actions secrets from Dependabot-triggered runs, so the token
+    # is empty there and Codecov refuses the upload with "token required because
+    # branch is protected". Reading it through an env var lets the upload step be
+    # skipped in that case: the `secrets` context is not dependable inside a step
+    # `if:`, but `env` is. Runs that do have the token still upload and still fail
+    # hard when the upload breaks.
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
@@ -14,10 +22,11 @@ jobs:
       - name: install graphviz system package
         run: sudo apt-get update && sudo apt-get install -y graphviz
       - name: install dependencies
-        run: uv sync --frozen
+        run: uv sync --locked
       - name: run tests with coverage
         run: uv run pytest --cov=edify --cov-report=xml
       - name: upload coverage to codecov
+        if: env.CODECOV_TOKEN != ''
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

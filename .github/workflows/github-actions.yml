@@ -63,7 +63,7 @@ jobs:
       - name: install graphviz system package
         run: sudo apt-get update && sudo apt-get install -y graphviz
       - name: install dependencies
-        run: uv sync --frozen --all-groups
+        run: uv sync --locked --all-groups
       - name: ${{ matrix.name }}
         run: ${{ matrix.command }}
 
@@ -226,7 +226,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: install dependencies (includes bench group)
-        run: uv sync --frozen --all-groups
+        run: uv sync --locked --all-groups
       - name: run benchmarks against committed baseline (advisory only)
         run: |
           if [ -f tests/bench/baseline.json ]; then
