@@ -1,46 +1,216 @@
 Grammar
 =======
 
-Every validator in the :doc:`grammar <../../library/grammar/index>` category. Each is a
-callable :class:`~edify.Pattern`: pass a string to get a ``bool``, or compose it into a
-larger pattern with :meth:`~edify.RegexBuilder.use`.
+Every validator in the :doc:`Grammar <../../library/grammar/index>` category.
+Each is a callable :class:`~edify.Pattern`: pass a string to get a ``bool``, or
+compose it into a larger pattern with :meth:`~edify.RegexBuilder.use`.
 
-For what each one accepts and rejects, with runnable examples, see the
-:doc:`library pages <../../library/grammar/index>`.
+Each entry states what the pattern guarantees, shows the chain that builds it, and
+ends with the regex it emits. For prose, worked examples, and a live playground, use
+the :doc:`library pages <../../library/grammar/index>`.
 
-.. py:function:: edify.library.abnf(value: str) -> bool
+.. py:data:: edify.library.abnf
 
-   ABNF. See :doc:`../../library/grammar/abnf` for the full description.
+   Callable :class:`Pattern` for an augmented Backus-Naur form grammar: a rule
+   name followed by a space-delimited ``=`` or ``=/`` definition.
 
-   Emits ``^\s*[a-zA-Z](?:[a-zA-Z0-9]|[\-])*[ \t]+=/?[ \t]+.*$``
+   Full description: :doc:`ABNF <../../library/grammar/abnf>`
 
-.. py:function:: edify.library.antlr(value: str) -> bool
+   **How it is built**
 
-   ANTLR. See :doc:`../../library/grammar/antlr` for the full description.
+   .. code-block:: python
 
-   Emits ``^grammar\s+[a-zA-Z][a-zA-Z0-9_]*;.*$``
+      from edify import Pattern
 
-.. py:function:: edify.library.bnf(value: str) -> bool
+      _name = Pattern().letter().zero_or_more().any_of().alphanumeric().char("-").end()
 
-   BNF. See :doc:`../../library/grammar/bnf` for the full description.
+      abnf = (
+          Pattern()
+          .start_of_input()
+          .zero_or_more()
+          .whitespace_char()
+          .use(_name)
+          .one_or_more()
+          .any_of_chars(" \t")
+          .char("=")
+          .optional()
+          .char("/")
+          .one_or_more()
+          .any_of_chars(" \t")
+          .zero_or_more()
+          .any_char()
+          .end_of_input()
+          .dot_all()
+      )
 
-   Emits ``^\s*<[^<>\r\n]+>\s*::=.*$``
+   **Emits** ``^\s*[a-zA-Z](?:[a-zA-Z0-9]|[\-])*[ \t]+=/?[ \t]+.*$``
 
-.. py:function:: edify.library.ebnf(value: str) -> bool
+.. py:data:: edify.library.antlr
 
-   EBNF. See :doc:`../../library/grammar/ebnf` for the full description.
+   Callable :class:`Pattern` for an ANTLR grammar source (``grammar Name;`` header + rules).
 
-   Emits ``^\s*[a-zA-Z](?:[a-zA-Z0-9]|[_\- ])*=.*;\s*$``
+   Full description: :doc:`ANTLR <../../library/grammar/antlr>`
 
-.. py:function:: edify.library.peg(value: str) -> bool
+   **How it is built**
 
-   PEG. See :doc:`../../library/grammar/peg` for the full description.
+   .. code-block:: python
 
-   Emits ``^\s*[a-zA-Z](?:[a-zA-Z0-9]|[_])*[ \t]*<\-.*$``
+      from edify import Pattern
 
-.. py:function:: edify.library.pest(value: str) -> bool
+      antlr = (
+          Pattern()
+          .start_of_input()
+          .string("grammar")
+          .one_or_more()
+          .whitespace_char()
+          .letter()
+          .zero_or_more()
+          .any_of()
+          .range("a", "z")
+          .range("A", "Z")
+          .range("0", "9")
+          .char("_")
+          .end()
+          .char(";")
+          .zero_or_more()
+          .any_char()
+          .end_of_input()
+          .dot_all()
+      )
 
-   pest. See :doc:`../../library/grammar/pest` for the full description.
+   **Emits** ``^grammar\s+[a-zA-Z][a-zA-Z0-9_]*;.*$``
 
-   Emits ``^\s*[a-zA-Z](?:[a-zA-Z0-9]|[_])*[ \t]*=[ \t]*[_@$!]?\{.*$``
+.. py:data:: edify.library.bnf
+
+   Callable :class:`Pattern` for a Backus-Naur form grammar: an
+   ``<angle-bracketed>`` rule name followed by ``::=``.
+
+   Full description: :doc:`BNF <../../library/grammar/bnf>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      _name = Pattern().char("<").one_or_more().anything_but_chars("<>\r\n").char(">")
+
+      bnf = (
+          Pattern()
+          .start_of_input()
+          .zero_or_more()
+          .whitespace_char()
+          .use(_name)
+          .zero_or_more()
+          .whitespace_char()
+          .string("::=")
+          .zero_or_more()
+          .any_char()
+          .end_of_input()
+          .dot_all()
+      )
+
+   **Emits** ``^\s*<[^<>\r\n]+>\s*::=.*$``
+
+.. py:data:: edify.library.ebnf
+
+   Callable :class:`Pattern` for an extended Backus-Naur form grammar: a bare
+   rule name, ``=``, and a ``;``-terminated definition.
+
+   Full description: :doc:`EBNF <../../library/grammar/ebnf>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      _name = Pattern().letter().zero_or_more().any_of().alphanumeric().any_of_chars("_- ").end()
+
+      ebnf = (
+          Pattern()
+          .start_of_input()
+          .zero_or_more()
+          .whitespace_char()
+          .use(_name)
+          .char("=")
+          .zero_or_more()
+          .any_char()
+          .char(";")
+          .zero_or_more()
+          .whitespace_char()
+          .end_of_input()
+          .dot_all()
+      )
+
+   **Emits** ``^\s*[a-zA-Z](?:[a-zA-Z0-9]|[_\- ])*=.*;\s*$``
+
+.. py:data:: edify.library.peg
+
+   Callable :class:`Pattern` for a parsing expression grammar: a rule name
+   followed by the ``<-`` arrow.
+
+   Full description: :doc:`PEG <../../library/grammar/peg>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      _name = Pattern().letter().zero_or_more().any_of().alphanumeric().char("_").end()
+
+      peg = (
+          Pattern()
+          .start_of_input()
+          .zero_or_more()
+          .whitespace_char()
+          .use(_name)
+          .zero_or_more()
+          .any_of_chars(" \t")
+          .string("<-")
+          .zero_or_more()
+          .any_char()
+          .end_of_input()
+          .dot_all()
+      )
+
+   **Emits** ``^\s*[a-zA-Z](?:[a-zA-Z0-9]|[_])*[ \t]*<\-.*$``
+
+.. py:data:: edify.library.pest
+
+   Callable :class:`Pattern` for a pest parser grammar: a rule name, ``=``, and
+   a brace-delimited body with an optional silent/atomic modifier.
+
+   Full description: :doc:`pest <../../library/grammar/pest>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      _name = Pattern().letter().zero_or_more().any_of().alphanumeric().char("_").end()
+
+      pest = (
+          Pattern()
+          .start_of_input()
+          .zero_or_more()
+          .whitespace_char()
+          .use(_name)
+          .zero_or_more()
+          .any_of_chars(" \t")
+          .char("=")
+          .zero_or_more()
+          .any_of_chars(" \t")
+          .optional()
+          .any_of_chars("_@$!")
+          .char("{")
+          .zero_or_more()
+          .any_char()
+          .end_of_input()
+          .dot_all()
+      )
+
+   **Emits** ``^\s*[a-zA-Z](?:[a-zA-Z0-9]|[_])*[ \t]*=[ \t]*[_@$!]?\{.*$``
 

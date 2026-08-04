@@ -268,6 +268,19 @@ _GUIDE_API_PAGES = {
 }
 
 
+def _api_library_pages(app: Sphinx, pagename: str) -> list[tuple[str, str]]:
+    """(docname, label) for the library API index and each category page that exists."""
+    docs = set(app.env.found_docs)
+    pages: list[tuple[str, str]] = []
+    if "api/library/index" in docs:
+        pages.append(("api/library/index", "Overview"))
+    for category in _CATEGORY_ORDER:
+        docname = f"api/library/{category}"
+        if docname in docs:
+            pages.append((docname, _page_title(app, docname)))
+    return pages
+
+
 def _api_target(app: Sphinx, pagename: str) -> str | None:
     """Return the API-reference doc that documents what ``pagename`` describes."""
     docs = set(app.env.found_docs)
@@ -307,6 +320,7 @@ def _select_template(
         return "guide.html"
     if pagename.startswith("api/"):
         context["api_page_toc"] = _inner_toc(context.get("toc", ""))
+        context["api_library_pages"] = _api_library_pages(app, pagename)
         return "api.html"
     return _STANDALONE.get(pagename)
 

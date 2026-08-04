@@ -1,34 +1,129 @@
 Transport
 =========
 
-Every validator in the :doc:`transport <../../library/transport/index>` category. Each is a
-callable :class:`~edify.Pattern`: pass a string to get a ``bool``, or compose it into a
-larger pattern with :meth:`~edify.RegexBuilder.use`.
+Every validator in the :doc:`Transport <../../library/transport/index>` category.
+Each is a callable :class:`~edify.Pattern`: pass a string to get a ``bool``, or
+compose it into a larger pattern with :meth:`~edify.RegexBuilder.use`.
 
-For what each one accepts and rejects, with runnable examples, see the
-:doc:`library pages <../../library/transport/index>`.
+Each entry states what the pattern guarantees, shows the chain that builds it, and
+ends with the regex it emits. For prose, worked examples, and a live playground, use
+the :doc:`library pages <../../library/transport/index>`.
 
-.. py:function:: edify.library.aircraft(value: str) -> bool
+.. py:data:: edify.library.aircraft
 
-   Aircraft. See :doc:`../../library/transport/aircraft` for the full description.
+   Callable :class:`Pattern` for an aircraft-registration mark.
 
-   Emits ``^[A-Z]{1,2}\-?[A-Z0-9]{1,5}$``
+   Full description: :doc:`Aircraft <../../library/transport/aircraft>`
 
-.. py:function:: edify.library.flight(value: str) -> bool
+   **How it is built**
 
-   Flight. See :doc:`../../library/transport/flight` for the full description.
+   .. code-block:: python
 
-   Emits ``^[A-Z]{2}\d{1,4}[A-Z]?$``
+      from edify import Pattern
 
-.. py:function:: edify.library.plate(value: str) -> bool
+      aircraft = (
+          Pattern()
+          .start_of_input()
+          .between(1, 2)
+          .uppercase()
+          .optional()
+          .char("-")
+          .between(1, 5)
+          .any_of()
+          .range("A", "Z")
+          .range("0", "9")
+          .end()
+          .end_of_input()
+      )
 
-   Plate. See :doc:`../../library/transport/plate` for the full description.
+   **Emits** ``^[A-Z]{1,2}\-?[A-Z0-9]{1,5}$``
 
-   Emits ``^[A-Z0-9]{1,3}[- ]?[A-Z0-9]{1,4}$``
+.. py:data:: edify.library.flight
 
-.. py:function:: edify.library.vehicle(value: str) -> bool
+   Callable :class:`Pattern` for an IATA/ICAO flight-number shape.
 
-   Vehicle. See :doc:`../../library/transport/vehicle` for the full description.
+   Full description: :doc:`Flight <../../library/transport/flight>`
 
-   Emits ``^[A-Z0-9][A-Z0-9\- ]{3,17}$``
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      flight = (
+          Pattern()
+          .start_of_input()
+          .exactly(2)
+          .uppercase()
+          .between(1, 4)
+          .digit()
+          .optional()
+          .uppercase()
+          .end_of_input()
+      )
+
+   **Emits** ``^[A-Z]{2}\d{1,4}[A-Z]?$``
+
+.. py:data:: edify.library.plate
+
+   Callable :class:`Pattern` for a vehicle license-plate shape.
+
+   Full description: :doc:`Plate <../../library/transport/plate>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      plate = (
+          Pattern()
+          .start_of_input()
+          .between(1, 3)
+          .any_of()
+          .range("A", "Z")
+          .range("0", "9")
+          .end()
+          .optional()
+          .any_of_chars("- ")
+          .between(1, 4)
+          .any_of()
+          .range("A", "Z")
+          .range("0", "9")
+          .end()
+          .end_of_input()
+      )
+
+   **Emits** ``^[A-Z0-9]{1,3}[- ]?[A-Z0-9]{1,4}$``
+
+.. py:data:: edify.library.vehicle
+
+   Callable :class:`Pattern` for a permissive transport-vehicle identifier.
+
+   Full description: :doc:`Vehicle <../../library/transport/vehicle>`
+
+   **How it is built**
+
+   .. code-block:: python
+
+      from edify import Pattern
+
+      vehicle = (
+          Pattern()
+          .start_of_input()
+          .any_of()
+          .range("A", "Z")
+          .range("0", "9")
+          .end()
+          .between(3, 17)
+          .any_of()
+          .range("A", "Z")
+          .range("0", "9")
+          .char("-")
+          .char(" ")
+          .end()
+          .end_of_input()
+      )
+
+   **Emits** ``^[A-Z0-9][A-Z0-9\- ]{3,17}$``
 
