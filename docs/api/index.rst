@@ -22,11 +22,13 @@ with the :doc:`../guide/index`; for the ready-made validators see the
    builder/output
    factories
    constants
+   atoms
    results
    introspection
    serialization
    testing
    errors
+   types
 
 Building patterns
 -----------------
