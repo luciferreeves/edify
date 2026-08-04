@@ -50,11 +50,15 @@ autodoc_member_order = "bysource"
 # for a weaker one. Sending a browser user agent is not the answer: w3.org rejects
 # that in turn, so the set of reachable hosts only moves around.
 linkcheck_ignore = [
-    # Answer 403 to automated clients.
+    # Answer 403 to automated clients, or to datacenter address ranges. Which hosts
+    # do this varies with the runner's address, so the list is a courtesy that keeps
+    # the report readable rather than the thing keeping the build green.
     r"https://www\.iso\.org/",
     r"https://www\.gs1\.org/",
     r"https://www\.icao\.int/",
     r"https://www\.ssa\.gov/",
+    r"https://www\.cusip\.com/",
+    r"https://docs\.aws\.amazon\.com/",
     # Publishes an AAAA record; CI runners have no IPv6 route, so every request
     # fails with "network is unreachable" regardless of the URL being valid.
     r"https://www\.gnu\.org/",

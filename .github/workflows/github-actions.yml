@@ -27,7 +27,11 @@ jobs:
             os: 'ubuntu-latest'
           - name: 'docs'
             python: '3.12'
-            command: 'uv run --group docs sphinx-build -b html docs dist/docs && uv run --group docs sphinx-build -b linkcheck docs dist/docs'
+            # -W gates the HTML build on its own warnings, so a broken reference or a
+            # malformed directive fails here instead of shipping. linkcheck reports but
+            # does not gate: whether a reference site answers depends on the runner's
+            # address rather than on the change under review.
+            command: 'uv run --group docs sphinx-build -W -b html docs dist/docs && { uv run --group docs sphinx-build -b linkcheck docs dist/docs || echo "::warning title=linkcheck::external links reported problems - see the log"; }'
             os: 'ubuntu-latest'
           - name: 'py311 (ubuntu)'
             python: '3.11'
