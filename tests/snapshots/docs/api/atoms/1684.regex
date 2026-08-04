@@ -1,0 +1,1 @@
+rgbcolor :: pattern :: rgba?\(\s*\d+(?:,\s*\d+)*\)

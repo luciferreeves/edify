@@ -1,0 +1,1 @@
+truefalse :: pattern :: (?:true|false|True|False|TRUE|FALSE)

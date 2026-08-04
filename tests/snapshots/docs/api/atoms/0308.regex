@@ -1,0 +1,1 @@
+protocol :: pattern :: (?:https|http|ftps|ftp|wss|ws|ssh|git|file)

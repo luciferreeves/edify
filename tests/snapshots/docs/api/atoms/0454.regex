@@ -1,0 +1,1 @@
+binnum :: pattern :: 0[bB][01]+

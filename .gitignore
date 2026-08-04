@@ -83,3 +83,6 @@ design_docs
 
 # Docs playground wheel (built at docs-build time)
 docs/_static/edify-*.whl
+
+# Playwright test artifacts
+.playwright*
