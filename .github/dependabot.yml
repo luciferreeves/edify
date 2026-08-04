@@ -5,7 +5,11 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # The "uv" ecosystem — not "pip" — is the one that maintains uv.lock alongside
+  # pyproject.toml. Under "pip" the lockfile was left untouched, and because CI
+  # installs from the lockfile, a bump appeared to pass while still testing the
+  # version it claimed to replace.
+  - package-ecosystem: "uv"
+    directory: "/"
     schedule:
       interval: "weekly"

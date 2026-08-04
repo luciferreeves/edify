@@ -19,15 +19,15 @@ Edify
     :target: https://codecov.io/github/luciferreeves/edify
     :alt: Coverage
 
-.. image:: https://img.shields.io/pypi/v/edify.svg
+.. image:: https://img.shields.io/pypi/v/edify
     :target: https://pypi.org/project/edify
     :alt: PyPI
 
-.. image:: https://img.shields.io/pypi/pyversions/edify.svg
+.. image:: https://img.shields.io/pypi/pyversions/edify
     :target: https://pypi.org/project/edify
     :alt: Python versions
 
-.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+.. image:: https://img.shields.io/badge/license-MIT-blue
     :target: https://github.com/luciferreeves/edify/blob/main/LICENSE
     :alt: MIT License
 

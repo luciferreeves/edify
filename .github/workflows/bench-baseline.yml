@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: install dependencies (includes bench group)
-        run: uv sync --frozen --all-groups
+        run: uv sync --locked --all-groups
       - name: generate baseline.json on the runner
         run: |
           uv run pytest tests/bench/ --benchmark-only --benchmark-json=tests/bench/baseline.json
