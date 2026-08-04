@@ -238,6 +238,54 @@ def _library_nav(app: Sphinx, pagename: str) -> str:
     return "".join(parts)
 
 
+_GUIDE_API_PAGES = {
+    "builder/anchors": "api/builder/anchors",
+    "builder/characters": "api/builder/characters",
+    "builder/quantifiers": "api/builder/quantifiers",
+    "builder/groups": "api/builder/groups",
+    "builder/captures": "api/builder/captures",
+    "builder/lookaround": "api/builder/assertions",
+    "builder/flags": "api/builder/flags",
+    "builder/index": "api/builder/index",
+    "start/getting-started": "api/builder/index",
+    "start/thinking-in-edify": "api/builder/index",
+    "start/index": "api/builder/index",
+    "atoms/index": "api/atoms",
+    "beyond/composing": "api/factories",
+    "beyond/from-regex": "api/builder/composition",
+    "beyond/matching": "api/results",
+    "beyond/errors": "api/errors",
+    "beyond/testing": "api/testing",
+    "beyond/seeing": "api/introspection",
+    "beyond/serialization": "api/serialization",
+    "beyond/integrations": "api/integrations",
+    "beyond/index": "api/index",
+    "practice/recipes": "api/builder/index",
+    "practice/performance": "api/builder/output",
+    "practice/debugging": "api/introspection",
+    "practice/unicode": "api/builder/classes",
+    "practice/index": "api/index",
+}
+
+
+def _api_target(app: Sphinx, pagename: str) -> str | None:
+    """Return the API-reference doc that documents what ``pagename`` describes."""
+    docs = set(app.env.found_docs)
+    candidate: str | None = None
+    anchor = ""
+    if pagename.startswith("library/"):
+        parts = pagename.split("/")
+        if len(parts) == 3:
+            candidate = f"api/library/{parts[1]}"
+            anchor = "" if parts[2] == "index" else f"#edify.library.{parts[2]}"
+    elif pagename.startswith("guide/"):
+        relative = pagename[len("guide/") :]
+        candidate = "api/atoms" if relative.startswith("atoms/") else _GUIDE_API_PAGES.get(relative)
+    if candidate is None or candidate not in docs:
+        return None
+    return app.builder.get_relative_uri(pagename, candidate) + anchor
+
+
 def _select_template(
     app: Sphinx,
     pagename: str,
@@ -251,9 +299,11 @@ def _select_template(
         return "wide.html"
     if pagename == "library/index" or pagename.startswith("library/"):
         context["library_nav"] = _library_nav(app, pagename)
+        context["api_target"] = _api_target(app, pagename)
         return "library.html"
     if pagename == "guide/index" or pagename.startswith("guide/"):
         context["library_nav"] = _guide_nav(app, pagename)
+        context["api_target"] = _api_target(app, pagename)
         return "guide.html"
     if pagename.startswith("api/"):
         context["api_page_toc"] = _inner_toc(context.get("toc", ""))

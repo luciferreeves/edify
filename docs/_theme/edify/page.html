@@ -6,7 +6,7 @@
       {{ toctree(maxdepth=3, includehidden=True, collapse=False, titles_only=True) }}
     </div>
   </aside>
-  <main id="main" class="content" role="main"{% if pagename.startswith('guide/') %} data-api-url="{{ pathto('api/index') }}"{% endif %}>
+  <main id="main" class="content" role="main"{% if api_target %} data-api-url="{{ api_target }}"{% endif %}>
     {{ body }}
     {% if prev or next %}
     <nav class="page-nav" aria-label="Sequential">

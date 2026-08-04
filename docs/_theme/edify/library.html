@@ -6,7 +6,7 @@
       {{ library_nav }}
     </div>
   </aside>
-  <main id="main" class="content" role="main"{% if not pagename.endswith('/index') %} data-api-url="{{ pathto('api/index') }}"{% endif %}>
+  <main id="main" class="content" role="main"{% if api_target %} data-api-url="{{ api_target }}"{% endif %}>
     {{ body }}
     {% if (prev or next) and pagename != 'library/index' %}
     <nav class="page-nav" aria-label="Sequential">
