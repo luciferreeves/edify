@@ -7,6 +7,34 @@ Edify
 
 |
 
+.. image:: https://readthedocs.org/projects/edify/badge/?style=flat&version=latest
+    :target: https://edify.readthedocs.io/
+    :alt: Documentation
+
+.. image:: https://github.com/luciferreeves/edify/actions/workflows/github-actions.yml/badge.svg?branch=main
+    :target: https://github.com/luciferreeves/edify/actions
+    :alt: Build status
+
+.. image:: https://codecov.io/gh/luciferreeves/edify/branch/main/graph/badge.svg?branch=main
+    :target: https://codecov.io/github/luciferreeves/edify
+    :alt: Coverage
+
+.. image:: https://img.shields.io/pypi/v/edify.svg
+    :target: https://pypi.org/project/edify
+    :alt: PyPI
+
+.. image:: https://img.shields.io/pypi/pyversions/edify.svg
+    :target: https://pypi.org/project/edify
+    :alt: Python versions
+
+.. image:: https://img.shields.io/badge/license-MIT-blue.svg
+    :target: https://github.com/luciferreeves/edify/blob/main/LICENSE
+    :alt: MIT License
+
+.. end-badges
+
+|
+
 **Edify builds regular expressions you can actually read.** It's a fluent,
 immutable regex builder for Python: you describe a pattern step by step in plain
 English, and Edify hands you a compiled regex — one your teammates can review in
