@@ -45,11 +45,14 @@ python_use_unqualified_type_names = True
 autodoc_member_order = "bysource"
 
 
-# Hosts linkcheck cannot reach even though the links are good, so the citations stay
-# in the prose rather than being traded for weaker references.
+# Hosts that refuse automated clients outright while staying reachable in a browser.
+# Ignoring them keeps the citation in the prose instead of trading a good reference
+# for a weaker one. Sending a browser user agent is not the answer: w3.org rejects
+# that in turn, so the set of reachable hosts only moves around.
 linkcheck_ignore = [
-    # Serve 403 to automated clients while remaining reachable in a browser.
+    # Answer 403 to automated clients.
     r"https://www\.iso\.org/",
+    r"https://www\.gs1\.org/",
     r"https://www\.icao\.int/",
     r"https://www\.ssa\.gov/",
     # Publishes an AAAA record; CI runners have no IPv6 route, so every request
