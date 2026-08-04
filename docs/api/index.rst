@@ -23,10 +23,12 @@ with the :doc:`../guide/index`; for the ready-made validators see the
    factories
    constants
    atoms
+   library/index
    results
    introspection
    serialization
    testing
+   integrations
    errors
    types
 
