@@ -28,80 +28,30 @@ _STANDALONE = {
     "contributing": "wide.html",
 }
 
-_CATEGORY_TITLES = {
-    "address": "Address",
-    "api": "API",
-    "auth": "Auth",
-    "color": "Color",
-    "contact": "Contact",
-    "data": "Data",
-    "document": "Documents",
-    "financial": "Finance",
-    "geo": "Geo",
-    "grammar": "Grammar",
-    "identifier": "Identifiers",
-    "media": "Media",
-    "medical": "Medical",
-    "numeric": "Numeric",
-    "product": "Product",
-    "publishing": "Publishing",
-    "security": "Security",
-    "software": "Software",
-    "temporal": "Temporal",
-    "text": "Text",
-    "transport": "Transport",
-    "web": "Web",
-}
-_CATEGORY_ORDER = list(_CATEGORY_TITLES)
-
-_DISPLAY_NAMES = {
-    "ip": "IP",
-    "ipv4": "IPv4",
-    "ipv6": "IPv6",
-    "cidr": "CIDR",
-    "subnet": "Subnet mask",
-    "tld": "TLD",
-    "url": "URL",
-    "uri": "URI",
-    "ptr": "PTR record",
-    "socket": "Socket address",
-    "zip_code": "ZIP Code",
-    "atom": "Atom",
-    "graphql": "GraphQL",
-    "hal": "HAL",
-    "jsonapi": "JSON:API",
-    "oauth": "OAuth",
-    "openapi": "OpenAPI",
-    "openid": "OpenID Connect",
-    "rss": "RSS",
-    "saml": "SAML",
-    "soap": "SOAP",
-    "swagger": "Swagger",
-    "webhook": "Webhook",
-    "apikey": "API key",
-    "csrf": "CSRF token",
-    "hmac": "HMAC",
-    "jwt": "JWT",
-    "mfa": "MFA code",
-    "otp": "OTP",
-    "pin": "PIN",
-    "sso": "SSO",
-    "webauthn": "WebAuthn",
-    "csv": "CSV",
-    "tsv": "TSV",
-    "json": "JSON",
-    "yaml": "YAML",
-    "xml": "XML",
-    "html": "HTML",
-    "toml": "TOML",
-    "ini": "INI",
-    "hdf5": "HDF5",
-    "msgpack": "MessagePack",
-    "protobuf": "Protocol Buffers",
-    "avro": "Avro",
-    "orc": "ORC",
-    "parquet": "Parquet",
-}
+_CATEGORY_ORDER = [
+    "address",
+    "api",
+    "auth",
+    "color",
+    "contact",
+    "data",
+    "document",
+    "financial",
+    "geo",
+    "grammar",
+    "identifier",
+    "media",
+    "medical",
+    "numeric",
+    "product",
+    "publishing",
+    "security",
+    "software",
+    "temporal",
+    "text",
+    "transport",
+    "web",
+]
 
 _NESTING: dict[str, dict[str, list[str]]] = {
     "address": {
@@ -110,10 +60,6 @@ _NESTING: dict[str, dict[str, list[str]]] = {
         "domain": ["subdomain", "hostname", "tld"],
     },
 }
-
-
-def _display_name(name: str) -> str:
-    return _DISPLAY_NAMES.get(name) or name.replace("_", " ").capitalize()
 
 
 _sections_cache: list[tuple[str, str, list[str]]] | None = None
@@ -141,9 +87,7 @@ def _library_sections() -> list[tuple[str, str, list[str]]]:
         )
         if names:
             by_dir[module.name] = names
-    _sections_cache = [
-        (_CATEGORY_TITLES[key], key, by_dir[key]) for key in _CATEGORY_ORDER if key in by_dir
-    ]
+    _sections_cache = [(key, key, by_dir[key]) for key in _CATEGORY_ORDER if key in by_dir]
     return _sections_cache
 
 
@@ -174,7 +118,8 @@ def _library_link(builder: Any, pagename: str, target: str, label: str) -> str:
     return f'<a href="{uri}"{current}>{html.escape(label)}</a>'
 
 
-def _library_items(builder: Any, pagename: str, directory: str, present: list[str]) -> str:
+def _library_items(app: Sphinx, pagename: str, directory: str, present: list[str]) -> str:
+    builder = app.builder
     nesting = _NESTING.get(directory, {})
     present_set = set(present)
     child_parent = {child: parent for parent, children in nesting.items() for child in children}
@@ -183,15 +128,17 @@ def _library_items(builder: Any, pagename: str, directory: str, present: list[st
         parent = child_parent.get(name)
         if parent and parent in present_set:
             continue
-        link = _library_link(builder, pagename, f"library/{directory}/{name}", _display_name(name))
+        target = f"library/{directory}/{name}"
+        link = _library_link(builder, pagename, target, _page_title(app, target))
         children = [child for child in nesting.get(name, []) if child in present_set]
         if not children:
             out.append(f"<li>{link}</li>")
             continue
         out.append(f'<li class="has-children">{link}<ul>')
         for child in children:
+            child_target = f"library/{directory}/{child}"
             child_link = _library_link(
-                builder, pagename, f"library/{directory}/{child}", _display_name(child)
+                builder, pagename, child_target, _page_title(app, child_target)
             )
             out.append(f"<li>{child_link}</li>")
         out.append("</ul></li>")
@@ -273,18 +220,19 @@ def _library_nav(app: Sphinx, pagename: str) -> str:
     home = builder.get_relative_uri(pagename, "library/index")
     home_cls = " current" if pagename == "library/index" else ""
     parts.append(f'<a class="lib-nav-home{home_cls}" href="{home}">Library</a>')
-    for title, directory, names in _library_sections():
+    for _title, directory, names in _library_sections():
         present = [n for n in names if f"library/{directory}/{n}" in docs]
-        if not present or f"library/{directory}/index" not in docs:
+        index_doc = f"library/{directory}/index"
+        if not present or index_doc not in docs:
             continue
         active = directory == current_dir
-        cat_uri = builder.get_relative_uri(pagename, f"library/{directory}/index")
+        cat_uri = builder.get_relative_uri(pagename, index_doc)
         cat_cls = " open" if active else ""
-        cat_current = " current" if pagename == f"library/{directory}/index" else ""
+        cat_current = " current" if pagename == index_doc else ""
         parts.append(f'<div class="lib-nav-section{cat_cls}">')
-        cat_label = html.escape(title)
+        cat_label = html.escape(_page_title(app, index_doc))
         parts.append(f'<a class="lib-nav-cat{cat_current}" href="{cat_uri}">{cat_label}</a>')
-        parts.append(_library_items(builder, pagename, directory, present))
+        parts.append(_library_items(app, pagename, directory, present))
         parts.append("</div>")
     parts.append("</nav>")
     return "".join(parts)
