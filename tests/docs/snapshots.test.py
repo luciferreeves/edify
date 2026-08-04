@@ -11,7 +11,9 @@ truthful.
 import re
 import sys
 from collections.abc import Iterator
+from importlib import import_module
 from pathlib import Path
+from typing import Protocol, cast
 
 import pytest
 
@@ -123,11 +125,29 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     assert_snapshot(rendered, snapshot_path)
 
 
-def _configure_django_once() -> None:
-    """Give Django the minimum settings a doc block needs to define a model."""
-    from django.apps import apps
-    from django.conf import settings
+class _Settings(Protocol):
+    configured: bool
 
+    def configure(self, **options: object) -> None: ...
+
+
+class _Apps(Protocol):
+    ready: bool
+
+
+class _Django(Protocol):
+    def setup(self) -> None: ...
+
+
+def _configure_django_once() -> None:
+    """Give Django the minimum settings a doc block needs to define a model.
+
+    Django ships no type information, so it is reached through
+    :func:`importlib.import_module` behind local protocols, matching how
+    :mod:`edify.integrations.django` loads it.
+    """
+    settings = cast(_Settings, import_module("django.conf").settings)
+    apps = cast(_Apps, import_module("django.apps").apps)
     if not settings.configured:
         settings.configure(
             INSTALLED_APPS=["django.contrib.contenttypes", "django.contrib.auth"],
@@ -135,9 +155,7 @@ def _configure_django_once() -> None:
             USE_TZ=True,
         )
     if not apps.ready:
-        import django
-
-        django.setup()
+        cast(_Django, import_module("django")).setup()
 
 
 def _prepared_exec_namespace() -> dict[str, object]:

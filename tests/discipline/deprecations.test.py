@@ -34,7 +34,7 @@ _STUB_CASES = _DEPRECATED_STUBS or [pytest.param(None, None, None, id="registry-
 def test_deprecated_stub_fires_one_well_formed_warning(
     import_path: str | None, symbol_name: str | None, call_args: tuple[object, ...] | None
 ) -> None:
-    if import_path is None:
+    if import_path is None or symbol_name is None or call_args is None:
         assert _DEPRECATED_STUBS == [], "registry is non-empty; the sentinel row should be gone"
         return
     module = importlib.import_module(import_path)
