@@ -22,25 +22,47 @@ _CALL = re.compile(r"^\.?([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(.*\))?$")
 
 
 def _symbol_index() -> dict[str, tuple[str, str]]:
-    """Map a bare symbol name to the (role, target) that documents it."""
+    """Map a bare symbol name to the (role, target) that documents it.
+
+    Earlier sources win, so a name carried by several surfaces resolves to the one a
+    reader is most likely to mean: a builder method before a same-named result method,
+    and either before an atom.
+    """
     import inspect
 
     import edify
+    from edify import atoms
+    from edify.result import Regex
+    from edify.result.match import Match
 
     index: dict[str, tuple[str, str]] = {}
+
+    def add(name: str, role: str, target: str) -> None:
+        if not name.startswith("_") and name not in index:
+            index[name] = (role, target)
+
     for name in dir(edify.RegexBuilder):
-        if not name.startswith("_"):
-            index[name] = ("meth", f"edify.RegexBuilder.{name}")
+        add(name, "meth", f"edify.RegexBuilder.{name}")
+    for owner, dotted in ((Regex, "edify.Regex"), (Match, "edify.result.Match")):
+        for name in dir(owner):
+            role = (
+                "attr"
+                if isinstance(inspect.getattr_static(owner, name, None), property)
+                else "meth"
+            )
+            add(name, role, f"{dotted}.{name}")
     for name in dir(edify):
         if name.startswith("_"):
             continue
         value = getattr(edify, name)
-        if name in index:
-            continue
         if inspect.isclass(value):
-            index[name] = ("class", f"edify.{name}")
+            add(name, "class", f"edify.{name}")
         elif inspect.isfunction(value):
-            index[name] = ("func", f"edify.{name}")
+            add(name, "func", f"edify.{name}")
+        elif name.isupper():
+            add(name, "data", f"edify.{name}")
+    for name in dir(atoms):
+        add(name, "data", f"edify.atoms.{name}")
     return index
 
 
