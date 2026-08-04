@@ -45,13 +45,16 @@ python_use_unqualified_type_names = True
 autodoc_member_order = "bysource"
 
 
-# Standards bodies serve 403 to automated clients while remaining reachable in a
-# browser, so linkcheck cannot verify them. Ignoring the hosts keeps the citations
-# in the prose rather than trading them for links the reader does not want.
+# Hosts linkcheck cannot reach even though the links are good, so the citations stay
+# in the prose rather than being traded for weaker references.
 linkcheck_ignore = [
+    # Serve 403 to automated clients while remaining reachable in a browser.
     r"https://www\.iso\.org/",
     r"https://www\.icao\.int/",
     r"https://www\.ssa\.gov/",
+    # Publishes an AAAA record; CI runners have no IPv6 route, so every request
+    # fails with "network is unreachable" regardless of the URL being valid.
+    r"https://www\.gnu\.org/",
 ]
 linkcheck_retries = 2
 linkcheck_timeout = 30
