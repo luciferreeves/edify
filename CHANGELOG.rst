@@ -1,13 +1,14 @@
 
 Changelog
 =========
-1.0.0 (2026-07-17)
+1.0.0 (2026-08-04)
 ------------------
 
 The first stable release. Edify grows from a builder into a full toolkit: a
 library of ready-to-call validators, introspection, serialization, framework
 integrations, and a closed match API — with the builder itself hardened and its
-rough edges filed off. The changes worth knowing before you upgrade are below;
+rough edges filed off, and a documentation site you can run code inside. The
+changes worth knowing before you upgrade are below;
 the :doc:`0.3 → 1.0 guide <upgrading/0.3-to-1.0>` walks each one with
 before/after code.
 
@@ -33,6 +34,14 @@ Breaking
 * Named back-references resolve by name and named groups read off ``.captures``. See :ref:`named-backref-return`.
 * Character-class escaping is minimal and correct: only the metacharacters that need escaping inside a class are escaped. See :ref:`char-class-escape`.
 * The validator library is organised into categories, and a handful of import paths moved with it. See :ref:`library-reorg` and :ref:`moved-import-paths`.
+
+Documentation
+~~~~~~~~~~~~~
+
+* A rebuilt documentation site: a topic-first guide that works through the builder from anchors to lookaround, a page for every one of the 228 validators, and a complete API reference covering the public surface — every method, property, constant, atom, error, and type.
+* An in-browser playground. Examples throughout the guide and the library are live: edit the chain and the emitted regex and match results update as you type, with edify itself running in your browser. The :doc:`playground <playground>` page is the same widget at full size.
+* Every Python example in the documentation is executed by the test suite and snapshotted against the regex it emits, so a documented pattern cannot drift from what the code produces.
+* Method names, constants, and atoms are cross-linked to their reference entries throughout the prose and inside the code samples.
 
 Tooling and CI
 ~~~~~~~~~~~~~~
