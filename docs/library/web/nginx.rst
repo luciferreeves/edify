@@ -1,4 +1,4 @@
-Nginx
+nginx
 =====
 
 An `nginx <https://nginx.org/en/docs/beginners_guide.html>`__ configuration is built
