@@ -2,7 +2,7 @@ Username
 ========
 
 **Username** matches an
-`account name <https://en.wikipedia.org/wiki/User_(computing)#Username>`__ in the
+`account name <https://en.wikipedia.org/wiki/User_(computing)>`__ in the
 shape most services settle on: it starts
 with a letter or digit, then allows letters, digits, underscore, dot, and hyphen, for
 a total length of 3 to 30 characters.

@@ -1,7 +1,7 @@
 HDF5
 ====
 
-`HDF5 <https://docs.hdfgroup.org/hdf5/develop/_s_p_e_c.html>`__ is the container
+`HDF5 <https://docs.hdfgroup.org/documentation/hdf5/latest/_f_m_t3.html>`__ is the container
 format behind much scientific and numerical data. Its files open with an eight-byte
 signature chosen to survive mangling in transit: ``\x89HDF\r\n\x1a\n``. The high-bit
 byte detects seven-bit-stripping transfers, the ``\r\n`` pair detects line-ending

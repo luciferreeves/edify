@@ -45,6 +45,19 @@ python_use_unqualified_type_names = True
 autodoc_member_order = "bysource"
 
 
+# Standards bodies serve 403 to automated clients while remaining reachable in a
+# browser, so linkcheck cannot verify them. Ignoring the hosts keeps the citations
+# in the prose rather than trading them for links the reader does not want.
+linkcheck_ignore = [
+    r"https://www\.iso\.org/",
+    r"https://www\.icao\.int/",
+    r"https://www\.ssa\.gov/",
+]
+linkcheck_retries = 2
+linkcheck_timeout = 30
+linkcheck_workers = 5
+
+
 def _wheel_filename() -> str:
     wheels = sorted((Path(__file__).parent / "_static").glob("edify-*.whl"))
     return wheels[-1].name if wheels else ""

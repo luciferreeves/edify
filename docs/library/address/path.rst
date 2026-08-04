@@ -2,7 +2,7 @@ Path
 ====
 
 **Path** recognises three families of filesystem path —
-`POSIX <https://en.wikipedia.org/wiki/Path_(computing)#POSIX_pathname_definition>`__,
+`POSIX <https://en.wikipedia.org/wiki/Path_(computing)>`__,
 Windows, and `UNC <https://en.wikipedia.org/wiki/Path_(computing)#UNC>`__ — and is
 deliberately permissive within each: it matches the *shape* of a path, not whether the
 file exists. The only string it rejects outright is the empty one.

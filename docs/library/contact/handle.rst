@@ -1,7 +1,7 @@
 Handle
 ======
 
-A `handle <https://en.wikipedia.org/wiki/User_(computing)#Username>`__ is the public,
+A `handle <https://en.wikipedia.org/wiki/User_(computing)>`__ is the public,
 ``@``-prefixed name people use to mention each other on social platforms. **Handle** requires the ``@`` and allows 1 to 30 characters of
 letters, digits, and underscore after it — a narrower alphabet than
 :doc:`username`, which also permits dots and hyphens.

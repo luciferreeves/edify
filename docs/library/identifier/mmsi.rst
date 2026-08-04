@@ -1,7 +1,7 @@
 MMSI
 ====
 
-An `MMSI <https://www.itu.int/en/ITU-R/terrestrial/fmd/Pages/mmsi.aspx>`__ identifies
+An `MMSI <https://www.itu.int/en/ITU-R/terrestrial/fmd/Pages/default.aspx>`__ identifies
 a ship's radio station — the number transmitted by AIS and used for digital selective
 calling. It is nine digits, and **MMSI** matches that.
 

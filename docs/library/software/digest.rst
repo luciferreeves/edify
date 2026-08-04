@@ -1,7 +1,7 @@
 Digest
 ======
 
-A `content digest <https://github.com/opencontainers/image-spec/blob/main/descriptor.md#digests>`__
+A `content digest <https://github.com/opencontainers/image-spec/blob/main/descriptor.md>`__
 names an artifact by the hash of its bytes — ``sha256:abc123…``. Because the hash is
 derived from the content, the reference is immutable: the same digest always means
 the same bytes.

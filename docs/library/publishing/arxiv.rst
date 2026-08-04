@@ -1,7 +1,7 @@
 arXiv
 =====
 
-An `arXiv <https://arxiv.org/help/arxiv_identifier>`__ identifier names a preprint.
+An `arXiv <https://info.arxiv.org/help/arxiv_identifier.html>`__ identifier names a preprint.
 The scheme changed in 2007, so there are two forms: the modern ``YYMM.NNNNN`` and the
 older ``subject-class/YYMMNNN``. **arXiv** accepts both, with an optional version
 suffix.

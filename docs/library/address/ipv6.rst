@@ -101,7 +101,7 @@ Embedded IPv4
 
 The last 32 bits — the final two hex groups — may instead be written as a
 dotted-quad. This is the notation for
-`IPv4-mapped <https://en.wikipedia.org/wiki/IPv6_address#IPv4-mapped_IPv6_addresses>`__
+`IPv4-mapped <https://en.wikipedia.org/wiki/IPv6_address>`__
 (``::ffff:…``) and IPv4-translated addresses, and for IPv4 embedded in a routable
 prefix. The embedded octets are range-checked like a real :doc:`ipv4` address, so an
 out-of-range octet fails:

@@ -1,7 +1,7 @@
 HAL
 ===
 
-`HAL <https://stateful.co/hal-specification.html>`__ — the hypertext application
+`HAL <https://datatracker.ietf.org/doc/html/draft-kelly-json-hal-08>`__ — the hypertext application
 language — is a convention for making JSON responses navigable. A HAL document is
 an ordinary JSON object with two reserved members: ``_links``, holding the URIs
 related to this resource, and ``_embedded``, holding whole resources inlined to save

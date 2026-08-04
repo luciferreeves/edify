@@ -1,7 +1,7 @@
 SEDOL
 =====
 
-A `SEDOL <https://www.lseg.com/en/data-analytics/sedol-masterfile>`__ identifies a
+A `SEDOL <https://en.wikipedia.org/wiki/SEDOL>`__ identifies a
 security traded in the United Kingdom. It is seven characters: six from a restricted
 alphabet, then a check digit. **SEDOL** matches that.
 
