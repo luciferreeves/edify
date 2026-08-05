@@ -25,6 +25,7 @@ from edify.elements.types.chars import (
 )
 from edify.elements.types.groups import (
     AnyOfElement,
+    AnythingButAnyOfElement,
     AssertAheadElement,
     AssertBehindElement,
     AssertNotAheadElement,
@@ -103,6 +104,7 @@ _CLASS_BY_KIND: dict[str, type[BaseElement]] = {
     "named-back-reference": NamedBackReferenceElement,
     "group": GroupElement,
     "any-of": AnyOfElement,
+    "non-any-of": AnythingButAnyOfElement,
     "subexpression": SubexpressionElement,
     "assert-ahead": AssertAheadElement,
     "assert-not-ahead": AssertNotAheadElement,

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import re
+
+from edify.compile.fuse import fuse_char_class_members
 from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import (
     BackReferenceElement,
@@ -20,6 +23,7 @@ from edify.elements.types.chars import (
 )
 from edify.elements.types.groups import (
     AnyOfElement,
+    AnythingButAnyOfElement,
     AssertAheadElement,
     AssertBehindElement,
     AssertNotAheadElement,
@@ -270,6 +274,8 @@ def _describe_plural(element: BaseElement) -> str:
         return f'characters NOT from the set "{element.value}"'
     if isinstance(element, AnythingButRangeElement):
         return f'characters outside "{element.start}" through "{element.end}"'
+    if isinstance(element, AnythingButAnyOfElement):
+        return f"characters NOT from {_describe_rejected_members(element.children)}"
     return f"of {_describe_inline(element)}"
 
 
@@ -327,6 +333,8 @@ def _describe_inline(element: BaseElement) -> str:
         return f'one character NOT from the set "{element.value}"'
     if isinstance(element, AnythingButRangeElement):
         return f'one character outside "{element.start}" through "{element.end}"'
+    if isinstance(element, AnythingButAnyOfElement):
+        return f"one character NOT from {_describe_rejected_members(element.children)}"
     if isinstance(element, AnythingButStringElement):
         return (
             f"a run of {len(element.value)} characters "
@@ -476,6 +484,8 @@ def _example_for(element: BaseElement, alternative_index: int) -> str:
         return _pick_character_not_in(element.value)
     if isinstance(element, AnythingButRangeElement):
         return _pick_character_outside_range(element.start, element.end)
+    if isinstance(element, AnythingButAnyOfElement):
+        return _pick_character_outside_members(element.children)
     if isinstance(element, AnythingButStringElement):
         return "x" * len(element.value) if element.value else ""
     if isinstance(element, OptionalElement):
@@ -542,6 +552,35 @@ def _unescape_literal(escaped_value: str) -> str:
             result.append(character)
             index = index + 1
     return "".join(result)
+
+
+def _describe_rejected_members(children: tuple[BaseElement, ...]) -> str:
+    """Return the "X or Y" phrase naming the members a negated class rejects."""
+    phrases = [_describe_class_member(child) for child in children]
+    if len(phrases) == 1:
+        return phrases[0]
+    joined = ", ".join(phrases[:-1])
+    return f"{joined} or {phrases[-1]}"
+
+
+def _describe_class_member(element: BaseElement) -> str:
+    """Return the phrase naming one member of a character class."""
+    if isinstance(element, RangeElement):
+        return f'"{element.start}" through "{element.end}"'
+    if isinstance(element, AnyOfCharsElement):
+        return f'the set "{element.value}"'
+    assert isinstance(element, CharElement)
+    return f'"{_unescape_literal(element.value)}"'
+
+
+def _pick_character_outside_members(children: tuple[BaseElement, ...]) -> str:
+    """Return a single character that none of a negated class's members accept."""
+    fused_body, _ = fuse_char_class_members(children)
+    negated = re.compile(f"[^{fused_body}]")
+    for candidate in "abcdefghijklmnopqrstuvwxyz0123456789":
+        if negated.match(candidate):
+            return candidate
+    return "!"
 
 
 def _pick_character_not_in(disallowed: str) -> str:

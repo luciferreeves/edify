@@ -8,6 +8,7 @@ from edify.pattern.factories.assertions import (
 )
 from edify.pattern.factories.groups import (
     any_of,
+    anything_but_any_of,
     back_reference,
     capture,
     group,
@@ -38,6 +39,7 @@ from edify.pattern.factories.values import (
 
 __all__ = [
     "any_of",
+    "anything_but_any_of",
     "assert_ahead",
     "assert_behind",
     "assert_not_ahead",

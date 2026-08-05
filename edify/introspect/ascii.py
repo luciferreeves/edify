@@ -22,6 +22,7 @@ from edify.elements.types.chars import (
 )
 from edify.elements.types.groups import (
     AnyOfElement,
+    AnythingButAnyOfElement,
     AssertAheadElement,
     AssertBehindElement,
     AssertNotAheadElement,
@@ -191,7 +192,22 @@ def char_label(element: BaseElement) -> str | None:
         return f'anything outside "{element.start}"-"{element.end}"'
     if isinstance(element, AnythingButStringElement):
         return f'anything except the string "{_display_string(element.value)}"'
+    if isinstance(element, AnythingButAnyOfElement):
+        return f"anything except {_class_members_label(element.children)}"
     return None
+
+
+def _class_members_label(children: tuple[BaseElement, ...]) -> str:
+    """Return the comma-joined label naming the members of a character class."""
+    return ", ".join(_class_member_label(child) for child in children)
+
+
+def _class_member_label(element: BaseElement) -> str:
+    """Return the label for one member of a character class."""
+    if isinstance(element, RangeElement):
+        return f'"{element.start}"-"{element.end}"'
+    assert isinstance(element, AnyOfCharsElement | CharElement | StringElement)
+    return f'"{_display_string(element.value)}"'
 
 
 def _display_string(value: str) -> str:

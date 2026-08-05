@@ -7,11 +7,12 @@ into the element's children via the passed :data:`ElementRenderer` callable.
 
 from __future__ import annotations
 
-from edify.compile.fuse import fuse_char_class_members
+from edify.compile.fuse import describe_unfusable, fuse_char_class_members
 from edify.compile.types import ElementRenderer
 from edify.elements.types.base import BaseElement
 from edify.elements.types.groups import (
     AnyOfElement,
+    AnythingButAnyOfElement,
     AssertAheadElement,
     AssertBehindElement,
     AssertNotAheadElement,
@@ -20,6 +21,8 @@ from edify.elements.types.groups import (
     SubexpressionElement,
 )
 from edify.elements.types.union import GroupingElement
+from edify.errors.input import MustBeAtLeastOneOperandError
+from edify.errors.structure import CannotNegateNonCharacterMemberError
 
 
 def render_grouping(element: GroupingElement, render_element: ElementRenderer) -> str:
@@ -39,6 +42,8 @@ def render_grouping(element: GroupingElement, render_element: ElementRenderer) -
             return _render_subexpression(child_elements, render_element)
         case AnyOfElement(children=child_elements):
             return _render_alternation(child_elements, render_element)
+        case AnythingButAnyOfElement(children=child_elements):
+            return _render_negated_class(child_elements)
         case AssertAheadElement(children=child_elements):
             inner = _render_concatenation(child_elements, render_element)
             return f"(?={inner})"
@@ -86,3 +91,13 @@ def _render_alternation(children: tuple[BaseElement, ...], render_element: Eleme
     if not fused_body:
         return f"(?:{joined_remainder})"
     return f"(?:{joined_remainder}|[{fused_body}])"
+
+
+def _render_negated_class(children: tuple[BaseElement, ...]) -> str:
+    """Render a negated character class, rejecting members wider than one character."""
+    if not children:
+        raise MustBeAtLeastOneOperandError("anything_but_any_of")
+    fused_body, remaining_members = fuse_char_class_members(children)
+    if remaining_members:
+        raise CannotNegateNonCharacterMemberError(describe_unfusable(remaining_members[0]))
+    return f"[^{fused_body}]"

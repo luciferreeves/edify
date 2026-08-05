@@ -18,3 +18,5 @@ metacharacter.
 .. automethod:: edify.RegexBuilder.anything_but_range
 
 .. automethod:: edify.RegexBuilder.anything_but_string
+
+.. automethod:: edify.RegexBuilder.anything_but_any_of

@@ -37,6 +37,7 @@ Groups, captures, and alternation
 .. autofunction:: edify.capture
 .. autofunction:: edify.named_capture
 .. autofunction:: edify.any_of
+.. autofunction:: edify.anything_but_any_of
 .. autofunction:: edify.back_reference
 .. autofunction:: edify.named_back_reference
 

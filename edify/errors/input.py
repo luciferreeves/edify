@@ -225,6 +225,30 @@ class MustBeAtLeastTwoOperandsError(EdifySyntaxError):
         super().__init__(message)
 
 
+class MustBeAtLeastOneOperandError(EdifySyntaxError):
+    """Raised when a variadic factory needs at least one operand but got none.
+
+    Args:
+        label: The name of the factory function (e.g. ``"anything_but_any_of"``).
+    """
+
+    def __init__(self, label: str) -> None:
+        message = compose_annotated_message(
+            summary=f"{label} requires at least one operand",
+            trigger_hint=f"{label} called here",
+            note=(
+                f"{label} builds a character class from the members it is given; "
+                "with no members there is nothing for the class to reject, and "
+                "an empty class matches nothing at all."
+            ),
+            help_line=(
+                f"help: pass at least one Pattern operand to {label}(...) — "
+                "a character, a character set, or a character range."
+            ),
+        )
+        super().__init__(message)
+
+
 class MustBeAtLeastOneLiteralError(EdifySyntaxError):
     """Raised when a variadic literal-alternation chain method got zero literals.
 

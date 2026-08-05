@@ -132,6 +132,51 @@ characters — a dash inside it is a literal dash — while ``any_of().range(...
 builds true ranges. When you pass ``any_of`` plain strings instead, it becomes an
 alternation between whole branches; that's covered on :doc:`groups`.
 
+:meth:`~edify.RegexBuilder.anything_but_any_of` is the same frame, negated. Add
+the members you want to *reject* and close it the same way:
+
+.. code-block:: python
+
+   from edify import RegexBuilder as R
+
+   R().anything_but_any_of().range("a", "z").range("0", "9").end().to_regex_string()
+   # '[^a-z0-9]'
+
+   R().anything_but_any_of().range("a", "z").char("_").end().to_regex_string()
+   # '[^a-z_]'
+
+So the rule is: anything you can build positively, you can negate. The
+single-member forms above are the shorthands — reach for the frame when the class
+has more than one member.
+
+.. edify-playground::
+
+   from edify import Pattern
+
+   # An identifier segment that may not contain lowercase letters, digits, or "_".
+   shouty = (
+       Pattern()
+       .start_of_input()
+       .one_or_more()
+       .anything_but_any_of()
+       .range("a", "z")
+       .range("0", "9")
+       .char("_")
+       .end()
+       .end_of_input()
+   )
+
+   shouty("HOSTNAME")    # uppercase is not excluded
+   shouty("HOST-NAME")   # nor is the hyphen
+   shouty("hostname")    # lowercase is
+   shouty("HOST_NAME")   # so is the underscore
+   shouty("HOST9")       # and so are digits
+
+The frame rejects one character at a time, so every member has to be one
+character wide. A multi-character member raises rather than emitting something
+that does not mean what it reads like — to reject a whole sequence, use
+:meth:`~edify.RegexBuilder.anything_but_string` or a negative lookahead.
+
 Character constants
 -------------------
 
@@ -234,6 +279,8 @@ And the text/set builders:
      - a per-character negation of the literal
    * - ``any_of().…​.end()``
      - one class folding several ranges/sets together
+   * - ``anything_but_any_of().…​.end()``
+     - ``[^…]`` — the same class, negated
 
 Putting it together
 -------------------

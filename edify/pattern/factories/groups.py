@@ -9,6 +9,7 @@ single grouping element built from the supplied operand(s).
 * :func:`back_reference` — emit ``\\<index>``.
 * :func:`named_back_reference` — emit ``(?P=name)``.
 * :func:`any_of` — emit ``(?:a|b|c)`` alternation across the operands.
+* :func:`anything_but_any_of` — emit ``[^abc]`` rejecting the operands.
 """
 
 from __future__ import annotations
@@ -21,8 +22,12 @@ from edify.elements.types.captures import (
     NamedBackReferenceElement,
     NamedCaptureElement,
 )
-from edify.elements.types.groups import AnyOfElement, GroupElement
-from edify.errors.input import MustBeAtLeastTwoOperandsError, MustBePositiveIntegerError
+from edify.elements.types.groups import AnyOfElement, AnythingButAnyOfElement, GroupElement
+from edify.errors.input import (
+    MustBeAtLeastOneOperandError,
+    MustBeAtLeastTwoOperandsError,
+    MustBePositiveIntegerError,
+)
 from edify.pattern.composition import Pattern
 from edify.pattern.factories.wrap import pattern_containing, target_element
 
@@ -93,6 +98,25 @@ def any_of(*operands: BuilderProtocol) -> Pattern:
     child_elements = [target_element(operand) for operand in operands]
     children = tuple(child_elements)
     return pattern_containing(AnyOfElement(children=children))
+
+
+def anything_but_any_of(*operands: BuilderProtocol) -> Pattern:
+    """Return a negated character class ``[^abc]`` rejecting the supplied operands.
+
+    Args:
+        *operands: The rejected members. At least one is required, and each must
+            be a single character, a character set, or a character range.
+
+    Raises:
+        MustBeAtLeastOneOperandError: If no operands are given.
+        CannotNegateNonCharacterMemberError: At compile time, if an operand is
+            wider than a single character.
+    """
+    if not operands:
+        raise MustBeAtLeastOneOperandError("anything_but_any_of")
+    child_elements = [target_element(operand) for operand in operands]
+    children = tuple(child_elements)
+    return pattern_containing(AnythingButAnyOfElement(children=children))
 
 
 def _operand_children(operand: BuilderProtocol) -> tuple[BaseElement, ...]:

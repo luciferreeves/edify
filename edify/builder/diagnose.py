@@ -7,6 +7,7 @@ from edify.builder.types.state import BuilderState
 from edify.elements.types.captures import CaptureElement, NamedCaptureElement
 from edify.elements.types.groups import (
     AnyOfElement,
+    AnythingButAnyOfElement,
     AssertAheadElement,
     AssertBehindElement,
     AssertNotAheadElement,
@@ -53,6 +54,7 @@ def _frame_kind(frame: StackFrame) -> str:
 
 _STATIC_FRAME_KIND_NAMES: dict[type, str] = {
     AnyOfElement: "any_of",
+    AnythingButAnyOfElement: "anything_but_any_of",
     GroupElement: "group",
     AssertAheadElement: "assert_ahead",
     AssertNotAheadElement: "assert_not_ahead",
@@ -115,6 +117,7 @@ def _diagnose_dangling_quantifier(frame: StackFrame, subject: str) -> Problem:
 
 _STATIC_FRAME_NAMES: dict[type, str] = {
     AnyOfElement: "any_of()",
+    AnythingButAnyOfElement: "anything_but_any_of()",
     GroupElement: "group()",
     AssertAheadElement: "assert_ahead()",
     AssertNotAheadElement: "assert_not_ahead()",

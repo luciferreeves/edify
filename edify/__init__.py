@@ -25,6 +25,7 @@ from edify.pattern.classes import (
 from edify.pattern.composition import Pattern
 from edify.pattern.factories import (
     any_of,
+    anything_but_any_of,
     assert_ahead,
     assert_behind,
     assert_not_ahead,
@@ -92,6 +93,7 @@ __all__ = [
     "RegexBuilder",
     "__version__",
     "any_of",
+    "anything_but_any_of",
     "assert_ahead",
     "assert_behind",
     "assert_not_ahead",

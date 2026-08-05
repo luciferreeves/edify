@@ -15,6 +15,7 @@ from edify.elements.types.base import BaseElement
 from edify.elements.types.captures import CaptureElement, NamedCaptureElement
 from edify.elements.types.groups import (
     AnyOfElement,
+    AnythingButAnyOfElement,
     AssertAheadElement,
     AssertBehindElement,
     AssertNotAheadElement,
@@ -55,6 +56,8 @@ def _close_frame(frame: StackFrame) -> BaseElement:
         return GroupElement(children=children)
     if isinstance(type_node, AnyOfElement):
         return AnyOfElement(children=children)
+    if isinstance(type_node, AnythingButAnyOfElement):
+        return AnythingButAnyOfElement(children=children)
     if isinstance(type_node, AssertAheadElement):
         return AssertAheadElement(children=children)
     if isinstance(type_node, AssertNotAheadElement):
