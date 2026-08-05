@@ -39,12 +39,18 @@ Addresses, hosts, and the pieces they are assembled from. Covered with examples 
 
    .. code-block:: python
 
-      from edify import Pattern
+      from edify import Pattern, any_of
       from edify.atoms.ipv4 import ipv4
 
-      cidr = Pattern().use(ipv4).char("/").between(1, 2).digit()
+      prefix = any_of(
+          Pattern().char("3").range("0", "2"),
+          Pattern().range("1", "2").digit(),
+          Pattern().digit(),
+      )
 
-   **Emits** ``(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}/\d{1,2}``
+      cidr = Pattern().use(ipv4).char("/").use(prefix)
+
+   **Emits** ``(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}/(?:3[0-2]|[1-2]\d|\d)``
 
 .. py:data:: edify.atoms.email
 
@@ -113,30 +119,47 @@ Addresses, hosts, and the pieces they are assembled from. Covered with examples 
 
 .. py:data:: edify.atoms.ipv6
 
-   Composable :class:`Pattern` fragment for a permissive IPv6 address.
+   Composable :class:`Pattern` fragment for an IPv6 address.
 
    **How it is built**
+
+   Nine branches: the full eight-group form, a trailing-``::`` form, the six
+   interior-compression forms, and a leading-``::`` form.
 
    .. code-block:: python
 
       from edify import Pattern, any_of
       from edify.atoms.nibble import nibble
 
+      def hex_group():
+          return Pattern().between(1, 4).use(nibble)
+
+      def leading(groups):
+          if groups == 1:
+              return hex_group().char(":")
+          return Pattern().between(1, groups).group().use(hex_group()).char(":").end()
+
+      def trailing(groups):
+          if groups == 1:
+              return Pattern().char(":").use(hex_group())
+          return Pattern().between(1, groups).group().char(":").use(hex_group()).end()
+
+      def compressed(leading_groups, trailing_groups):
+          return leading(leading_groups).use(trailing(trailing_groups))
+
       ipv6 = any_of(
-          Pattern()
-          .exactly(7)
-          .group()
-          .between(1, 4)
-          .use(nibble)
-          .char(":")
-          .end()
-          .between(1, 4)
-          .use(nibble),
-          Pattern().between(1, 7).group().between(1, 4).use(nibble).char(":").end().char(":"),
-          Pattern().string("::"),
+          Pattern().exactly(7).group().use(hex_group()).char(":").end().use(hex_group()),
+          leading(7).char(":"),
+          compressed(6, 1),
+          compressed(5, 2),
+          compressed(4, 3),
+          compressed(3, 4),
+          compressed(2, 5),
+          compressed(1, 6),
+          Pattern().char(":").group().any_of().use(trailing(7)).char(":").end().end(),
       )
 
-   **Emits** ``(?:(?:(?:[0-9a-fA-F]){1,4}:){7}(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,7}:|::)``
+   **Emits** ``(?:(?:(?:[0-9a-fA-F]){1,4}:){7}(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,7}:|(?:(?:[0-9a-fA-F]){1,4}:){1,6}:(?:[0-9a-fA-F]){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,5}(?::(?:[0-9a-fA-F]){1,4}){1,2}|(?:(?:[0-9a-fA-F]){1,4}:){1,4}(?::(?:[0-9a-fA-F]){1,4}){1,3}|(?:(?:[0-9a-fA-F]){1,4}:){1,3}(?::(?:[0-9a-fA-F]){1,4}){1,4}|(?:(?:[0-9a-fA-F]){1,4}:){1,2}(?::(?:[0-9a-fA-F]){1,4}){1,5}|(?:[0-9a-fA-F]){1,4}:(?::(?:[0-9a-fA-F]){1,4}){1,6}|:(?:(?:(?::(?:[0-9a-fA-F]){1,4}){1,7}|[:])))``
 
 .. py:data:: edify.atoms.label
 
