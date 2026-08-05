@@ -19,6 +19,10 @@ from edify.elements.types.leaves import (
     NullByteElement,
     StartOfInputElement,
     TabElement,
+    UnicodeAlphanumericElement,
+    UnicodeLetterElement,
+    UnicodeLowercaseElement,
+    UnicodeUppercaseElement,
     UppercaseElement,
     WhitespaceCharElement,
     WordBoundaryElement,
@@ -75,5 +79,13 @@ def render_leaf(element: LeafElement) -> str:
             return "[a-z]"
         case AlphanumericElement():
             return "[a-zA-Z0-9]"
+        case UnicodeLetterElement():
+            return "\\p{L}"
+        case UnicodeUppercaseElement():
+            return "\\p{Lu}"
+        case UnicodeLowercaseElement():
+            return "\\p{Ll}"
+        case UnicodeAlphanumericElement():
+            return "[\\p{L}\\p{N}]"
         case NoopElement():
             return ""

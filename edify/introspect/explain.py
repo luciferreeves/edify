@@ -49,6 +49,10 @@ from edify.elements.types.leaves import (
     NullByteElement,
     StartOfInputElement,
     TabElement,
+    UnicodeAlphanumericElement,
+    UnicodeLetterElement,
+    UnicodeLowercaseElement,
+    UnicodeUppercaseElement,
     UppercaseElement,
     WhitespaceCharElement,
     WordBoundaryElement,
@@ -295,6 +299,14 @@ def _describe_plural(element: BaseElement) -> str:
         return "lowercase letters (a-z)"
     if isinstance(element, AlphanumericElement):
         return "letters or digits (a-z, A-Z, or 0-9)"
+    if isinstance(element, UnicodeLetterElement):
+        return "letters in any script"
+    if isinstance(element, UnicodeUppercaseElement):
+        return "uppercase letters in any script"
+    if isinstance(element, UnicodeLowercaseElement):
+        return "lowercase letters in any script"
+    if isinstance(element, UnicodeAlphanumericElement):
+        return "letters or numbers in any script"
     if isinstance(element, CharElement):
         return f'copies of the character "{_unescape_literal(element.value)}"'
     if isinstance(element, StringElement):
@@ -352,6 +364,14 @@ def _describe_inline(element: BaseElement) -> str:
         return "one lowercase letter (a-z)"
     if isinstance(element, AlphanumericElement):
         return "one letter or digit (a-z, A-Z, or 0-9)"
+    if isinstance(element, UnicodeLetterElement):
+        return "one letter in any script"
+    if isinstance(element, UnicodeUppercaseElement):
+        return "one uppercase letter in any script"
+    if isinstance(element, UnicodeLowercaseElement):
+        return "one lowercase letter in any script"
+    if isinstance(element, UnicodeAlphanumericElement):
+        return "one letter or number in any script"
     if isinstance(element, NoopElement):
         return "nothing"
     if isinstance(element, CharElement):
@@ -474,6 +494,8 @@ _LETTER_ROTATION = ("e", "o", "a", "i", "u")
 _DIGIT_ROTATION = ("1", "2", "3", "4", "5", "6", "7", "8", "9", "0")
 _UPPERCASE_ROTATION = ("A", "B", "C", "D", "E")
 _ALPHANUMERIC_ROTATION = ("a", "1", "b", "2", "c", "3")
+_UNICODE_LETTER_ROTATION = ("é", "ñ", "ß", "λ", "д")
+_UNICODE_UPPERCASE_ROTATION = ("É", "Ñ", "Λ", "Д", "Ω")
 _WORD_ROTATION = ("a", "b", "1", "_", "c", "2", "d")
 
 
@@ -514,6 +536,12 @@ def _example_for(element: BaseElement, alternative_index: int) -> str:
         return _LETTER_ROTATION[alternative_index % len(_LETTER_ROTATION)]
     if isinstance(element, AlphanumericElement):
         return _ALPHANUMERIC_ROTATION[alternative_index % len(_ALPHANUMERIC_ROTATION)]
+    if isinstance(element, UnicodeUppercaseElement):
+        return _UNICODE_UPPERCASE_ROTATION[alternative_index % len(_UNICODE_UPPERCASE_ROTATION)]
+    if isinstance(
+        element, UnicodeLetterElement | UnicodeLowercaseElement | UnicodeAlphanumericElement
+    ):
+        return _UNICODE_LETTER_ROTATION[alternative_index % len(_UNICODE_LETTER_ROTATION)]
     if isinstance(element, NoopElement):
         return ""
     if isinstance(element, CharElement):
