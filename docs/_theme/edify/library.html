@@ -2,7 +2,11 @@
 {% block content %}
 <div class="wrap docs-layout">
   <aside class="sidenav lib-sidenav" aria-label="Library navigation">
-    <div class="sidenav-inner">
+    <button class="sidenav-toggle" type="button" aria-expanded="false" aria-controls="sidenav-tree">
+      <span class="sidenav-toggle-label">Library</span>
+      <span class="sidenav-caret" aria-hidden="true"></span>
+    </button>
+    <div class="sidenav-inner" id="sidenav-tree">
       {{ library_nav }}
     </div>
   </aside>

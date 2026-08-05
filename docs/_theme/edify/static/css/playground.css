@@ -44,9 +44,9 @@
 .pg-count { color: var(--muted); }
 
 /* ---- builder / editor ---- */
-.pg-builder { flex: 1; }
-.pg-editor { flex: 1; display: flex; min-height: 0; }
-.pg-editor .cm-editor { width: 100%; min-height: 168px; background: transparent; }
+.pg-builder { flex: 1; min-width: 0; }
+.pg-editor { flex: 1; display: flex; min-height: 0; min-width: 0; }
+.pg-editor .cm-editor { width: 100%; max-width: 100%; min-height: 168px; background: transparent; }
 .pg-editor .cm-editor.cm-focused { outline: none; }
 .pg-editor .cm-scroller { overflow: auto; font-family: var(--mono); }
 /* selection — belt-and-suspenders alongside the CodeMirror theme */

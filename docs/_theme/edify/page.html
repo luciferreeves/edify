@@ -2,7 +2,11 @@
 {% block content %}
 <div class="wrap docs-layout">
   <aside class="sidenav" aria-label="Documentation navigation">
-    <div class="sidenav-inner">
+    <button class="sidenav-toggle" type="button" aria-expanded="false" aria-controls="sidenav-tree">
+      <span class="sidenav-toggle-label">Contents</span>
+      <span class="sidenav-caret" aria-hidden="true"></span>
+    </button>
+    <div class="sidenav-inner" id="sidenav-tree">
       {{ toctree(maxdepth=3, includehidden=True, collapse=False, titles_only=True) }}
     </div>
   </aside>

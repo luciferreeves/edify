@@ -35,7 +35,10 @@
         <img class="brand-logo brand-logo-dark" src="{{ pathto('_static/img/logo-light-on-dark.png', 1) }}" alt="" width="22" height="22">
         EDIFY
       </a>
-      <nav class="navlinks">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navlinks" aria-label="Open navigation">
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+      </button>
+      <nav class="navlinks" id="navlinks">
         <a class="{{ 'current' if pagename.startswith('guide/') }}" href="{{ pathto('guide/index') }}">Guide</a>
         <a class="{{ 'current' if pagename.startswith('library/') }}" href="{{ pathto('library/index') }}">Library</a>
         <a class="{{ 'current' if pagename == 'playground' }}" href="{{ pathto('playground') }}">Playground</a>
@@ -84,6 +87,7 @@
   <script src="{{ pathto('_static/js/apipill.js', 1) }}"></script>
   <script src="{{ pathto('_static/js/navscroll.js', 1) }}"></script>
   <script src="{{ pathto('_static/js/versions.js', 1) }}"></script>
+  <script src="{{ pathto('_static/js/mobilenav.js', 1) }}"></script>
   <script src="{{ pathto('_static/js/edify-api.js', 1) }}"></script>
   <script type="module" src="{{ pathto('_static/js/playground.js', 1) }}"></script>
 </body>
