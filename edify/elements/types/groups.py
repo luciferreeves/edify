@@ -43,6 +43,18 @@ class AnyOfElement(BaseElement):
 
 
 @dataclass(frozen=True)
+class AnythingButAnyOfElement(BaseElement):
+    """A negated character class rendered as ``[^abc]``.
+
+    Attributes:
+        children: The rejected members, in order. Each must be a single
+            character, a character set, or a character range.
+    """
+
+    children: tuple[BaseElement, ...] = field(default_factory=tuple)
+
+
+@dataclass(frozen=True)
 class SubexpressionElement(BaseElement):
     """A merged-in pattern fragment treated as a quantifiable atom.
 

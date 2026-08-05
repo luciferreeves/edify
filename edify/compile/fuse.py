@@ -10,7 +10,12 @@ combined char-class body.
 from __future__ import annotations
 
 from edify.elements.types.base import BaseElement
-from edify.elements.types.chars import AnyOfCharsElement, CharElement, RangeElement
+from edify.elements.types.chars import (
+    AnyOfCharsElement,
+    CharElement,
+    RangeElement,
+    StringElement,
+)
 
 
 def fuse_char_class_members(
@@ -31,6 +36,20 @@ def fuse_char_class_members(
     fragments = [_fragment_for(member) for member in fusable_members]
     fused_body = "".join(fragments)
     return fused_body, remainder
+
+
+def describe_unfusable(member: BaseElement) -> str:
+    """Return a human-readable description of a member that cannot join a char class.
+
+    Args:
+        member: An element that :func:`fuse_char_class_members` left in the remainder.
+
+    Returns:
+        A noun phrase naming the member, for use in an error message.
+    """
+    if isinstance(member, StringElement):
+        return f"the multi-character string {member.value!r}"
+    return f"a {type(member).__name__.removesuffix('Element').lower()} member"
 
 
 def _is_fusable(member: BaseElement) -> bool:

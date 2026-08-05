@@ -6,6 +6,8 @@
   those literals (the varargs shorthand for the common case).
 * :meth:`GroupsMixin.one_of` — always the varargs form; ``.one_of("a", "b")``
   is the canonical way to alternate between literal strings.
+* :meth:`GroupsMixin.anything_but_any_of` — opens a negated-character-class
+  frame; every member added inside it is rejected rather than accepted.
 * :meth:`GroupsMixin.group` — opens a non-capturing-group frame that
   :meth:`.end` closes later.
 """
@@ -19,7 +21,7 @@ from edify.builder.types.protocol import BuilderProtocol
 from edify.compile.escape import escape_special
 from edify.elements.types.base import BaseElement
 from edify.elements.types.chars import CharElement, StringElement
-from edify.elements.types.groups import AnyOfElement, GroupElement
+from edify.elements.types.groups import AnyOfElement, AnythingButAnyOfElement, GroupElement
 from edify.errors.input import (
     MustBeAtLeastOneLiteralError,
     MustBeOneCharacterError,
@@ -64,6 +66,19 @@ class GroupsMixin(BuilderProtocol):
         """
         _ensure_at_least_one_literal(literals)
         return _add_literal_alternation(self, literals)
+
+    def anything_but_any_of(self) -> Self:
+        """Return a new builder with a negated-character-class frame opened.
+
+        Add the rejected members with :meth:`.char`, :meth:`.any_of_chars` and
+        :meth:`.range`, then close the frame with :meth:`.end`. The result
+        matches any single character that is none of them.
+
+        Raises:
+            CannotNegateNonCharacterMemberError: At compile time, if the frame
+                holds a member wider than a single character.
+        """
+        return _open_frame(self, AnythingButAnyOfElement())
 
     def group(self) -> Self:
         """Return a new builder with a non-capturing-group frame opened."""

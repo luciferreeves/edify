@@ -19,6 +19,7 @@ from edify.elements.types.chars import (
 )
 from edify.elements.types.groups import (
     AnyOfElement,
+    AnythingButAnyOfElement,
     AssertAheadElement,
     AssertBehindElement,
     AssertNotAheadElement,
@@ -102,6 +103,7 @@ CaptureGroupElement = (
 GroupingElement = (
     GroupElement
     | AnyOfElement
+    | AnythingButAnyOfElement
     | SubexpressionElement
     | AssertAheadElement
     | AssertNotAheadElement
@@ -156,6 +158,7 @@ Element = (
     | NamedBackReferenceElement
     | GroupElement
     | AnyOfElement
+    | AnythingButAnyOfElement
     | SubexpressionElement
     | AssertAheadElement
     | AssertNotAheadElement

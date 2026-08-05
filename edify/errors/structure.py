@@ -42,6 +42,34 @@ class CannotEndWhileBuildingRootExpressionError(EdifySyntaxError):
         super().__init__(message)
 
 
+class CannotNegateNonCharacterMemberError(EdifySyntaxError):
+    """Raised when an ``anything_but_any_of`` frame holds a member wider than one character.
+
+    Args:
+        member_kind: Human-readable description of the offending member.
+    """
+
+    def __init__(self, member_kind: str) -> None:
+        message = compose_annotated_message(
+            summary=(
+                f"anything_but_any_of cannot negate {member_kind}, "
+                "because a negated character class rejects one character at a time"
+            ),
+            trigger_hint="pattern compiled here",
+            note=(
+                "[^...] means 'any single character that is none of these', so every "
+                "member must itself be one character wide. A member spanning several "
+                "characters has no single-character negation."
+            ),
+            help_line=(
+                "help: keep only .char(...), .any_of_chars(...) and .range(...) members "
+                "inside the frame; to reject a multi-character sequence, use "
+                ".anything_but_string(value) or a negative lookahead."
+            ),
+        )
+        super().__init__(message)
+
+
 class CannotCallSubexpressionError(EdifySyntaxError):
     """Raised when ``.subexpression(expression)`` is given an expression with open frames.
 

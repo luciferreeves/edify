@@ -32,7 +32,7 @@ The chain methods are documented by topic:
      - ``start_of_input`` ``end_of_input``
    * - :doc:`characters`
      - ``char`` ``string`` ``range`` ``any_of_chars`` ``anything_but_chars``
-       ``anything_but_range`` ``anything_but_string``
+       ``anything_but_range`` ``anything_but_string`` ``anything_but_any_of``
    * - :doc:`classes`
      - ``digit`` ``letter`` ``word`` ``whitespace_char`` ``alphanumeric``
        ``uppercase`` ``lowercase`` ``any_char`` and their negations
