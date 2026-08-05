@@ -283,7 +283,11 @@ readthedocs-flyout { display: none; }
   .sidenav-inner { display: none; max-height: 60vh; overflow-y: auto; padding-top: 12px; }
   .sidenav-open .sidenav-inner { display: block; }
 
-  /* the base rule wraps; a column that also wraps spills into a second column */
-  .footer-inner { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; gap: 14px; }
-  .footer-links { flex-wrap: wrap; row-gap: 10px; column-gap: 18px; }
+  /* the base rule wraps and fixes a height; a stacked footer needs neither, or
+     the links wrap into a second column and spill out of the footer box */
+  .footer-inner {
+    flex-direction: column; flex-wrap: nowrap; align-items: flex-start;
+    height: auto; gap: 16px; padding-top: 28px; padding-bottom: 28px;
+  }
+  .footer-links { flex-wrap: wrap; row-gap: 12px; column-gap: 20px; }
 }
