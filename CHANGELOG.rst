@@ -41,6 +41,8 @@ Documentation
 * :doc:`guide/builder/quantifiers` places possessive alongside greedy and lazy, so the page answers which of the three you want in a sentence each.
 * :doc:`guide/practice/unicode` teaches ``unicode_letter`` where it previously taught a workaround, and its strategy table carries the engine dimension the choice now depends on.
 * :doc:`guide/beyond/from-regex` lists the classes and back-references it understands, and states that the emitted text is normalised rather than copied.
+* The version switcher is part of the site rather than injected chrome: it sits in the navbar, is built from the same design tokens as the rest of the theme so it follows the light and dark themes, and its list scrolls within the screen it opens on (:pr:`324`).
+* The documentation is navigable on a phone. The section links collapse behind a menu button instead of disappearing, the sidebar becomes a control naming the page you are on and opens into a scrollable panel, the footer wraps inside the screen, and a wide table or a playground editor no longer widens the whole page (:pr:`324`).
 * A :doc:`1.0 → 1.1 upgrade guide <upgrading/1.0-to-1.1>`.
 
 Tooling and CI
