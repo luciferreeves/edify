@@ -16,7 +16,7 @@ stays lean:
 
 .. code-block:: bash
 
-   pip install edify[regex]      # the alternate regex engine backend
+   pip install edify[regex]      # alternate engine: Unicode classes, variable-width lookbehind, timeouts
    pip install edify[graphviz]   # vector (SVG/PNG) pattern diagrams
    pip install edify[pydantic]   # pydantic integration
    pip install edify[fastapi]    # FastAPI integration

@@ -24,6 +24,10 @@ from edify.elements.types.leaves import (
     NonWordElement,
     NullByteElement,
     TabElement,
+    UnicodeAlphanumericElement,
+    UnicodeLetterElement,
+    UnicodeLowercaseElement,
+    UnicodeUppercaseElement,
     UppercaseElement,
     WhitespaceCharElement,
     WordBoundaryElement,
@@ -102,6 +106,48 @@ class ClassesMixin(BuilderProtocol):
     def letter(self) -> Self:
         """Return a new builder with ``[a-zA-Z]`` (ASCII letter) appended."""
         new_state = self.state.with_element_added_to_top(LetterElement())
+        return self.with_state(new_state)
+
+    def unicode_letter(self) -> Self:
+        """Return a new builder with ``\\p{L}`` (any Unicode letter) appended.
+
+        Raises:
+            UnicodeClassNotSupportedError: At compile time, if the pattern is
+                compiled under ``engine='re'``.
+        """
+        new_state = self.state.with_element_added_to_top(UnicodeLetterElement())
+        return self.with_state(new_state)
+
+    def unicode_uppercase(self) -> Self:
+        """Return a new builder with ``\\p{Lu}`` (any Unicode uppercase letter) appended.
+
+        Raises:
+            UnicodeClassNotSupportedError: At compile time, if the pattern is
+                compiled under ``engine='re'``.
+        """
+        new_state = self.state.with_element_added_to_top(UnicodeUppercaseElement())
+        return self.with_state(new_state)
+
+    def unicode_lowercase(self) -> Self:
+        """Return a new builder with ``\\p{Ll}`` (any Unicode lowercase letter) appended.
+
+        Raises:
+            UnicodeClassNotSupportedError: At compile time, if the pattern is
+                compiled under ``engine='re'``.
+        """
+        new_state = self.state.with_element_added_to_top(UnicodeLowercaseElement())
+        return self.with_state(new_state)
+
+    def unicode_alphanumeric(self) -> Self:
+        """Return a new builder with ``[\\p{L}\\p{N}]`` (any Unicode letter or number) appended.
+
+        Unlike :meth:`word` this excludes the underscore.
+
+        Raises:
+            UnicodeClassNotSupportedError: At compile time, if the pattern is
+                compiled under ``engine='re'``.
+        """
+        new_state = self.state.with_element_added_to_top(UnicodeAlphanumericElement())
         return self.with_state(new_state)
 
     def uppercase(self) -> Self:

@@ -46,6 +46,10 @@ from edify.elements.types.leaves import (
     NullByteElement,
     StartOfInputElement,
     TabElement,
+    UnicodeAlphanumericElement,
+    UnicodeLetterElement,
+    UnicodeLowercaseElement,
+    UnicodeUppercaseElement,
     UppercaseElement,
     WhitespaceCharElement,
     WordBoundaryElement,
@@ -157,6 +161,14 @@ def _leaf_line(element: BaseElement) -> tuple[str, str] | None:
         return ("[a-z]", "any ASCII lowercase letter")
     if isinstance(element, AlphanumericElement):
         return ("[a-zA-Z0-9]", "any ASCII letter or digit")
+    if isinstance(element, UnicodeLetterElement):
+        return ("\\p{L}", "any letter, in any script")
+    if isinstance(element, UnicodeUppercaseElement):
+        return ("\\p{Lu}", "any uppercase letter, in any script")
+    if isinstance(element, UnicodeLowercaseElement):
+        return ("\\p{Ll}", "any lowercase letter, in any script")
+    if isinstance(element, UnicodeAlphanumericElement):
+        return ("[\\p{L}\\p{N}]", "any letter or number, in any script")
     if isinstance(element, NoopElement):
         return ("", "no-op")
     return None

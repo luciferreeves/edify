@@ -5,6 +5,10 @@ The named classes, each matching a single character, and their negated
 counterparts. ``word_boundary`` and ``non_word_boundary`` are zero-width like the
 :doc:`anchors`.
 
+The ``unicode_`` classes emit ``\p{...}`` property escapes and require
+``pip install edify[regex]``; the standard library has no property escapes, so
+compiling one under ``engine='re'`` raises.
+
 .. automethod:: edify.RegexBuilder.digit
 
 .. automethod:: edify.RegexBuilder.non_digit
@@ -16,6 +20,14 @@ counterparts. ``word_boundary`` and ``non_word_boundary`` are zero-width like th
 .. automethod:: edify.RegexBuilder.lowercase
 
 .. automethod:: edify.RegexBuilder.alphanumeric
+
+.. automethod:: edify.RegexBuilder.unicode_letter
+
+.. automethod:: edify.RegexBuilder.unicode_uppercase
+
+.. automethod:: edify.RegexBuilder.unicode_lowercase
+
+.. automethod:: edify.RegexBuilder.unicode_alphanumeric
 
 .. automethod:: edify.RegexBuilder.word
 

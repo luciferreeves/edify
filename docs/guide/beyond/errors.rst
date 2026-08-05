@@ -107,6 +107,8 @@ the call site, with a fix:
 - a character :meth:`~edify.RegexBuilder.range` whose bounds run backwards
 - a duplicate :meth:`~edify.RegexBuilder.named_capture` name
 - a lookbehind the chosen engine can't compile
+- a Unicode property class such as :meth:`~edify.RegexBuilder.unicode_letter`
+  compiled under the standard library, which has no property escapes
 - an assertion that fails — :meth:`~edify.RegexBuilder.assert_matches` names the
   inputs that were rejected (see :doc:`testing`)
 

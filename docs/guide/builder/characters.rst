@@ -177,11 +177,37 @@ character wide. A multi-character member raises rather than emitting something
 that does not mean what it reads like — to reject a whole sequence, use
 :meth:`~edify.RegexBuilder.anything_but_string` or a negative lookahead.
 
+ASCII or any script
+-------------------
+
+:meth:`~edify.RegexBuilder.letter` is ASCII: it emits ``[a-zA-Z]`` and stops
+there. :meth:`~edify.RegexBuilder.unicode_letter` emits ``\p{L}`` and matches a
+letter in any script:
+
+.. code-block:: python
+
+   from edify import RegexBuilder as R
+
+   R().letter().to_regex_string()           # '[a-zA-Z]'
+   R().unicode_letter().to_regex_string()   # '\\p{L}'
+
+The same pairing runs through the set —
+:meth:`~edify.RegexBuilder.unicode_uppercase` (``\p{Lu}``),
+:meth:`~edify.RegexBuilder.unicode_lowercase` (``\p{Ll}``), and
+:meth:`~edify.RegexBuilder.unicode_alphanumeric` (``[\p{L}\p{N}]``), which is
+:meth:`~edify.RegexBuilder.word` without the underscore.
+
+Property escapes are not part of the standard library's regex syntax, so the
+Unicode four require ``pip install edify[regex]`` and
+``.to_regex(engine="regex")``. Compiling one under the standard library raises a
+clear error rather than emitting something else. :doc:`../practice/unicode` covers
+which to reach for.
+
 Character constants
 -------------------
 
-Every built-in class is also an importable :class:`~edify.Pattern` constant.
-Each is callable as a one-character validator and composable with ``+``:
+Every built-in **ASCII** class is also an importable :class:`~edify.Pattern`
+constant. Each is callable as a one-character validator and composable with ``+``:
 
 .. code-block:: python
 
@@ -196,6 +222,10 @@ The full set mirrors the methods above: ``DIGIT``, ``NON_DIGIT``, ``WORD``,
 ``NON_WORD``, ``WHITESPACE``, ``NON_WHITESPACE``, ``LETTER``, ``LOWERCASE``,
 ``UPPERCASE``, ``ALPHANUMERIC``, ``ANY_CHAR``, ``TAB``, ``NEW_LINE``,
 ``CARRIAGE_RETURN``, and ``NULL_BYTE``. See :doc:`../beyond/composing` for combining them.
+
+The Unicode classes have no constant. A constant is callable on the spot, and
+calling one built on ``\p{...}`` would raise for anyone without the ``regex``
+extra installed — so they stay methods, where the engine choice is explicit.
 
 Quick reference
 ---------------

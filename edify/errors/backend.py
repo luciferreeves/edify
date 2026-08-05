@@ -61,3 +61,28 @@ class VariableWidthLookbehindNotSupportedError(EdifySyntaxError):
             ),
         )
         super().__init__(message)
+
+
+class UnicodeClassNotSupportedError(EdifySyntaxError):
+    """Raised when ``engine='re'`` compiles a pattern holding a Unicode property class."""
+
+    def __init__(self) -> None:
+        message = compose_annotated_message(
+            summary=(
+                "a Unicode character class such as unicode_letter() was compiled "
+                "under the stdlib 're' engine, which has no property escapes"
+            ),
+            trigger_hint=".to_regex(engine='re') called here",
+            note=(
+                "unicode_letter, unicode_uppercase, unicode_lowercase and "
+                "unicode_alphanumeric emit \\p{...} property escapes. stdlib re does "
+                "not implement them at all, so the pattern cannot compile there. "
+                "The emitted pattern is unchanged either way — only compilation differs."
+            ),
+            help_line=(
+                "help: install the third-party engine with pip install edify[regex] "
+                "and compile with .to_regex(engine='regex'), or use the ASCII letter() "
+                "or an explicit character class if ASCII is genuinely what you want."
+            ),
+        )
+        super().__init__(message)
