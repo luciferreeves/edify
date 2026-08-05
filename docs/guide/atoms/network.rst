@@ -62,16 +62,16 @@ twelve-hex-digit string does not match.
    v4("192.168.0.1")
    v4("999.1.1.1")                # the octet range is enforced
    block("10.0.0.0/8")
+   block("10.0.0.0/33")           # so is the prefix length
    hardware("00:1A:2B:3C:4D:5E")  # colons
    hardware("00-1A-2B-3C-4D-5E")  # or hyphens
    hardware("001A2B3C4D5E")       # but a separator is required
 
-Two limits are worth knowing before you reach for these. ``cidr`` checks the
-address with full octet rules but the prefix length only as ``\d{1,2}``, so
-``10.0.0.0/33`` matches the fragment even though it is not a valid block. And
-``ipv6`` covers three shapes — the full eight-group form, a trailing-``::`` form,
-and bare ``::`` — but not compression in the middle, so ``2001:db8::1`` does not
-match it:
+``cidr`` range-checks both halves: the address through ``octet``, and the prefix
+length to ``0``-``32``.
+
+``ipv6`` accepts the full eight-group form and every ``::``-compressed form,
+wherever the compressed run falls:
 
 .. edify-playground::
 
@@ -81,13 +81,17 @@ match it:
    v6 = Pattern().start_of_input().use(ipv6).end_of_input()
 
    v6("2001:db8:0:0:0:0:0:1")   # the full eight-group form
-   v6("2001:db8::")             # trailing compression
+   v6("2001:db8::1")            # compressed in the middle
+   v6("2001:db8::")             # compressed at the end
+   v6("::1")                    # compressed at the start
    v6("::")                     # the unspecified address
-   v6("2001:db8::1")            # interior compression needs the validator
+   v6("1::2::3")                # but only one run may be compressed
 
-For anything where those cases matter, use :doc:`../../library/address/cidr` and
-:doc:`../../library/address/ipv6` — the library validators implement the complete
-grammar. The atoms are fragments for embedding, not replacements for them.
+The library validators still go further. :doc:`../../library/address/ipv6` also
+accepts zone identifiers (``fe80::1%eth0``), the IPv4-mapped form
+(``::ffff:192.168.0.1``), and the hybrid IPv4-suffix form — reach for it when your
+input may carry any of those. The atoms are fragments for embedding, not
+replacements for the validators.
 
 Hosts and names
 ---------------
