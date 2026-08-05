@@ -34,7 +34,12 @@
 ] %}
 {% block content %}
 <div class="wrap api-layout">
-  <aside class="api-nav" aria-label="API navigation">
+  <aside class="api-nav sidenav" aria-label="API navigation">
+    <button class="sidenav-toggle" type="button" aria-expanded="false" aria-controls="sidenav-tree">
+      <span class="sidenav-toggle-label">API</span>
+      <span class="sidenav-caret" aria-hidden="true"></span>
+    </button>
+    <div class="sidenav-inner" id="sidenav-tree">
     {% for group_label, pages in api_groups %}
     <div class="api-nav-title{% if not loop.first %} api-nav-onpage{% endif %}">{{ group_label }}</div>
     <ul class="api-nav-list">
@@ -46,6 +51,7 @@
       {% endfor %}
     </ul>
     {% endfor %}
+    </div>
   </aside>
   <main id="main" class="content api-content" role="main">
     {{ body }}
