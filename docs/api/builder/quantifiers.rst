@@ -5,7 +5,9 @@ Quantifiers come **before** the token they repeat, so the chain reads the way yo
 say it out loud: ``.exactly(3).digit()`` is *exactly three digits*.
 
 The lazy variants stop at the first match that satisfies the pattern rather than
-consuming as much as possible.
+consuming as much as possible. The possessive variants consume as much as
+possible and then refuse to give any of it back, so the engine cannot backtrack
+into them.
 
 .. automethod:: edify.RegexBuilder.exactly
 
@@ -26,3 +28,15 @@ consuming as much as possible.
 .. automethod:: edify.RegexBuilder.one_or_more_lazy
 
 .. automethod:: edify.RegexBuilder.zero_or_more_lazy
+
+.. automethod:: edify.RegexBuilder.optional_possessive
+
+.. automethod:: edify.RegexBuilder.one_or_more_possessive
+
+.. automethod:: edify.RegexBuilder.zero_or_more_possessive
+
+.. automethod:: edify.RegexBuilder.at_least_possessive
+
+.. automethod:: edify.RegexBuilder.at_most_possessive
+
+.. automethod:: edify.RegexBuilder.between_possessive

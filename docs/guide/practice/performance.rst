@@ -91,10 +91,55 @@ noise you learn to ignore.
 
    RegexBuilder().one_or_more().group().one_or_more().letter().end()
 
+Taking away the choice
+----------------------
+
+The warning names two constructs, and both remove the problem at its root rather
+than working around it. A quantifier backtracks because it is willing to give
+back what it matched; take that willingness away and there is nothing to explore.
+
+:meth:`~edify.RegexBuilder.atomic` opens a group that matches as much as it can
+and then refuses to hand any of it back:
+
+.. code-block:: python
+
+   from edify import RegexBuilder
+
+   safe = RegexBuilder().atomic().one_or_more().letter().end()
+   safe.to_regex_string()   # '(?>[a-zA-Z]+)'
+
+The possessive quantifiers do the same for a single element, with no frame to
+close — :meth:`~edify.RegexBuilder.one_or_more_possessive` and its siblings:
+
+.. code-block:: python
+
+   from edify import RegexBuilder
+
+   RegexBuilder().one_or_more_possessive().letter().to_regex_string()   # '[a-zA-Z]++'
+
+Either one silences the warning, because the detector no longer sees a shape that
+*can* backtrack:
+
+.. edify-playground::
+   :tests: aaaa|aaaab|aa1a
+
+   from edify import RegexBuilder
+
+   RegexBuilder().start_of_input().one_or_more().atomic().one_or_more().letter().end().end_of_input()
+
+Both work on the default engine. Atomic grouping and possessive quantifiers
+reached the standard library in Python 3.11, which edify already requires, so
+neither needs an extra installed.
+
+Reach for them when the sub-pattern is genuinely all-or-nothing — a token, a
+quoted string, a run of digits. Where a later part of the pattern legitimately
+needs the earlier one to yield ground, possessive matching will change what the
+pattern accepts, so check it against the same inputs afterwards.
+
 Writing patterns that stay linear
 ---------------------------------
 
-Three habits avoid nearly all of it.
+Three habits avoid nearly all of the rest.
 
 **Anchor both ends.** An unanchored pattern is retried at every position in the
 subject, turning one failed match into *n* failed matches. If you mean "the whole

@@ -44,6 +44,43 @@ A non-capturing group is invisible to the match results. When you actually want
 to pull the text back out, reach for a *capturing* group instead — that's the
 subject of :doc:`captures`.
 
+Atomic groups
+-------------
+
+:meth:`~edify.RegexBuilder.atomic` opens a group that, once it has matched,
+refuses to give any of it back. The emitted difference is one character:
+
+.. code-block:: python
+
+   from edify import RegexBuilder as R
+
+   R().group().one_or_more().letter().end().to_regex_string()    # '(?:[a-zA-Z]+)'
+   R().atomic().one_or_more().letter().end().to_regex_string()   # '(?>[a-zA-Z]+)'
+
+The behavioural difference does not show up in that string at all — it shows up
+in what matches. An ordinary group will hand characters back when the rest of the
+pattern needs them; an atomic one will not, so a pattern that depended on that
+give-and-take stops matching:
+
+.. edify-playground::
+
+   from edify import Pattern
+
+   ordinary = Pattern().start_of_input().group().one_or_more().char("a").end().char("a").end_of_input()
+   atomic = Pattern().start_of_input().atomic().one_or_more().char("a").end().char("a").end_of_input()
+
+   ordinary("aa")   # the group gives one 'a' back so the final 'a' can match
+   atomic("aa")     # it keeps both, and there is nothing left to match
+
+That is the whole point. Backtracking is what makes a pattern expensive, and an
+atomic group is how you say "this part is all-or-nothing, stop reconsidering it".
+:doc:`../practice/performance` shows it turning a pattern that our ReDoS check
+warns about into one it does not.
+
+Atomic grouping works on the default engine — it reached the standard library in
+Python 3.11, which edify already requires. For the single-element form, with no
+frame to close, see the possessive quantifiers in :doc:`quantifiers`.
+
 Alternation
 -----------
 

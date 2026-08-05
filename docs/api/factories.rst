@@ -29,11 +29,18 @@ Quantifiers
 .. autofunction:: edify.zero_or_more_lazy
 .. autofunction:: edify.one_or_more
 .. autofunction:: edify.one_or_more_lazy
+.. autofunction:: edify.optional_possessive
+.. autofunction:: edify.one_or_more_possessive
+.. autofunction:: edify.zero_or_more_possessive
+.. autofunction:: edify.at_least_possessive
+.. autofunction:: edify.at_most_possessive
+.. autofunction:: edify.between_possessive
 
 Groups, captures, and alternation
 ---------------------------------
 
 .. autofunction:: edify.group
+.. autofunction:: edify.atomic
 .. autofunction:: edify.capture
 .. autofunction:: edify.named_capture
 .. autofunction:: edify.any_of

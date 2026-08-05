@@ -84,7 +84,48 @@ loses its ``?`` and ``<a><b>`` starts matching as a single span.
 
 Lazy is not a performance fix. Both variants explore the same set of positions;
 they differ only in which order they try them, so a lazy quantifier finds a
-*different* match, not a faster one. For the shapes that genuinely cost you, see
+*different* match, not a faster one.
+
+Possessive: no giving back
+--------------------------
+
+The one that *is* a performance fix is the third variant. A possessive quantifier
+matches as much as it can, like a greedy one, and then refuses to give any of it
+back — so there are no positions left to reconsider:
+
+.. code-block:: python
+
+   from edify import RegexBuilder as R
+
+   R().one_or_more_possessive().digit().to_regex_string()      # '\\d++'
+   R().zero_or_more_possessive().digit().to_regex_string()     # '\\d*+'
+   R().optional_possessive().digit().to_regex_string()         # '\\d?+'
+   R().at_least_possessive(2).digit().to_regex_string()        # '\\d{2,}+'
+   R().at_most_possessive(4).digit().to_regex_string()         # '\\d{0,4}+'
+   R().between_possessive(2, 5).digit().to_regex_string()      # '\\d{2,5}+'
+
+That refusal changes what matches, not just how fast. Greedy ``a+`` will hand a
+character back so a trailing ``a`` can match; possessive ``a++`` will not:
+
+.. edify-playground::
+
+   from edify import Pattern
+
+   greedy = Pattern().start_of_input().one_or_more().char("a").char("a").end_of_input()
+   possessive = Pattern().start_of_input().one_or_more_possessive().char("a").char("a").end_of_input()
+
+   greedy("aa")       # the quantifier gives one 'a' back
+   possessive("aa")   # it keeps both, so nothing is left for the final 'a'
+
+So the three are a spectrum: **greedy** takes everything and negotiates,
+**lazy** takes nothing and negotiates, **possessive** takes everything and does
+not negotiate. Reach for possessive when the sub-pattern is genuinely
+all-or-nothing — a token, a quoted string, a run of digits — and the rest of the
+pattern has no business borrowing from it.
+
+Both possessive quantifiers and :meth:`~edify.RegexBuilder.atomic` work on the
+default engine; they reached the standard library in Python 3.11, which edify
+already requires. For why this is the fix that matters, see
 :doc:`../practice/performance`.
 
 Bounded beats unbounded
