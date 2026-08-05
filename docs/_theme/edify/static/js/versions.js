@@ -38,6 +38,7 @@
       list.appendChild(itemFor(version, version.slug === currentSlug));
     });
     switcher.hidden = false;
+    document.documentElement.classList.add("has-version-switcher");
   }
 
   function itemFor(version, isCurrent) {

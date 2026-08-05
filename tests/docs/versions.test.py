@@ -42,13 +42,18 @@ def test_the_switcher_starts_hidden_so_a_local_build_shows_nothing():
     assert "hidden>Hosted by Read the Docs</a>" in _LAYOUT
 
 
-def test_the_default_read_the_docs_flyout_is_hidden():
-    assert "readthedocs-flyout { display: none; }" in _BASE_CSS
+def test_the_default_flyout_is_hidden_only_once_ours_has_rendered():
+    assert ".has-version-switcher readthedocs-flyout { display: none; }" in _BASE_CSS
+    assert 'classList.add("has-version-switcher")' in _VERSIONS_JS
 
 
 def test_the_script_reads_the_read_the_docs_addons_event():
     assert "readthedocs-addons-data-ready" in _VERSIONS_JS
     assert "event.detail.data()" in _VERSIONS_JS
+
+
+def test_the_page_opts_in_to_the_addons_event_api():
+    assert '<meta name="readthedocs-addons-api-version" content="1">' in _LAYOUT
 
 
 def test_the_script_links_each_version_to_its_documentation_url():
