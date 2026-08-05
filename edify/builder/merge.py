@@ -35,6 +35,7 @@ from edify.elements.types.groups import (
     AssertBehindElement,
     AssertNotAheadElement,
     AssertNotBehindElement,
+    AtomicElement,
     GroupElement,
     SubexpressionElement,
 )
@@ -109,6 +110,8 @@ def merge_element(element: BaseElement, context: MergeContext) -> MergeResult:
         return _merge_container(element, context, AnyOfElement)
     if isinstance(element, AnythingButAnyOfElement):
         return _merge_container(element, context, AnythingButAnyOfElement)
+    if isinstance(element, AtomicElement):
+        return _merge_container(element, context, AtomicElement)
     if isinstance(element, SubexpressionElement):
         return _merge_container(element, context, SubexpressionElement)
     if isinstance(element, AssertAheadElement):
@@ -193,6 +196,7 @@ _ContainerElement = (
     GroupElement
     | AnyOfElement
     | AnythingButAnyOfElement
+    | AtomicElement
     | SubexpressionElement
     | AssertAheadElement
     | AssertNotAheadElement

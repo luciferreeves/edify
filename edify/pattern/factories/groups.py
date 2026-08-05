@@ -10,6 +10,7 @@ single grouping element built from the supplied operand(s).
 * :func:`named_back_reference` — emit ``(?P=name)``.
 * :func:`any_of` — emit ``(?:a|b|c)`` alternation across the operands.
 * :func:`anything_but_any_of` — emit ``[^abc]`` rejecting the operands.
+* :func:`atomic` — wrap into an atomic ``(?>...)`` group.
 """
 
 from __future__ import annotations
@@ -22,7 +23,12 @@ from edify.elements.types.captures import (
     NamedBackReferenceElement,
     NamedCaptureElement,
 )
-from edify.elements.types.groups import AnyOfElement, AnythingButAnyOfElement, GroupElement
+from edify.elements.types.groups import (
+    AnyOfElement,
+    AnythingButAnyOfElement,
+    AtomicElement,
+    GroupElement,
+)
 from edify.errors.input import (
     MustBeAtLeastOneOperandError,
     MustBeAtLeastTwoOperandsError,
@@ -98,6 +104,15 @@ def any_of(*operands: BuilderProtocol) -> Pattern:
     child_elements = [target_element(operand) for operand in operands]
     children = tuple(child_elements)
     return pattern_containing(AnyOfElement(children=children))
+
+
+def atomic(operand: BuilderProtocol) -> Pattern:
+    """Return ``operand`` wrapped in an atomic group ``(?>...)``.
+
+    Args:
+        operand: The pattern to bundle into one non-backtracking unit.
+    """
+    return pattern_containing(AtomicElement(children=_operand_children(operand)))
 
 
 def anything_but_any_of(*operands: BuilderProtocol) -> Pattern:

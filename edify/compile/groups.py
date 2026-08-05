@@ -1,7 +1,8 @@
 """Render grouping elements to their regex string.
 
-Covers non-capturing groups, alternation (with char-class fusion),
-subexpressions, and the four lookaround assertions. Each renderer recurses
+Covers non-capturing groups, alternation (with char-class fusion), negated
+character classes, atomic groups, subexpressions, and the four lookaround
+assertions. Each renderer recurses
 into the element's children via the passed :data:`ElementRenderer` callable.
 """
 
@@ -17,6 +18,7 @@ from edify.elements.types.groups import (
     AssertBehindElement,
     AssertNotAheadElement,
     AssertNotBehindElement,
+    AtomicElement,
     GroupElement,
     SubexpressionElement,
 )
@@ -44,6 +46,9 @@ def render_grouping(element: GroupingElement, render_element: ElementRenderer) -
             return _render_alternation(child_elements, render_element)
         case AnythingButAnyOfElement(children=child_elements):
             return _render_negated_class(child_elements)
+        case AtomicElement(children=child_elements):
+            inner = _render_concatenation(child_elements, render_element)
+            return f"(?>{inner})"
         case AssertAheadElement(children=child_elements):
             inner = _render_concatenation(child_elements, render_element)
             return f"(?={inner})"

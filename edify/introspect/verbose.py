@@ -25,6 +25,7 @@ from edify.elements.types.groups import (
     AssertBehindElement,
     AssertNotAheadElement,
     AssertNotBehindElement,
+    AtomicElement,
     GroupElement,
     SubexpressionElement,
 )
@@ -52,15 +53,21 @@ from edify.elements.types.leaves import (
 )
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtLeastPossessiveElement,
     AtMostElement,
+    AtMostPossessiveElement,
     BetweenElement,
     BetweenLazyElement,
+    BetweenPossessiveElement,
     ExactlyElement,
     OneOrMoreElement,
     OneOrMoreLazyElement,
+    OneOrMorePossessiveElement,
     OptionalElement,
+    OptionalPossessiveElement,
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
+    ZeroOrMorePossessiveElement,
 )
 
 _INDENT_STEP = "  "
@@ -221,6 +228,41 @@ def _quantifier_lines(element: BaseElement, depth: int) -> list[str] | None:
             f"between {element.lower} and {element.upper} (lazy)",
             depth,
         )
+    return _possessive_quantifier_lines(element, prefix, depth)
+
+
+def _possessive_quantifier_lines(element: BaseElement, prefix: str, depth: int) -> list[str] | None:
+    """Return the ``re.VERBOSE`` lines for a possessive quantifier, or ``None``."""
+    if isinstance(element, OptionalPossessiveElement):
+        return _wrap_child(prefix, element.child, "?+", "optional (possessive)", depth)
+    if isinstance(element, ZeroOrMorePossessiveElement):
+        return _wrap_child(prefix, element.child, "*+", "zero or more (possessive)", depth)
+    if isinstance(element, OneOrMorePossessiveElement):
+        return _wrap_child(prefix, element.child, "++", "one or more (possessive)", depth)
+    if isinstance(element, AtLeastPossessiveElement):
+        return _wrap_child(
+            prefix,
+            element.child,
+            f"{{{element.times},}}+",
+            f"at least {element.times} (possessive)",
+            depth,
+        )
+    if isinstance(element, AtMostPossessiveElement):
+        return _wrap_child(
+            prefix,
+            element.child,
+            f"{{0,{element.times}}}+",
+            f"at most {element.times} (possessive)",
+            depth,
+        )
+    if isinstance(element, BetweenPossessiveElement):
+        return _wrap_child(
+            prefix,
+            element.child,
+            f"{{{element.lower},{element.upper}}}+",
+            f"between {element.lower} and {element.upper} (possessive)",
+            depth,
+        )
     return None
 
 
@@ -254,6 +296,12 @@ def _group_lines(element: BaseElement, depth: int) -> list[str] | None:
             _render_line(prefix, "(?:", "begin non-capturing group"),
             *_render_children(element.children, depth + 1),
             _render_line(prefix, ")", "end non-capturing group"),
+        ]
+    if isinstance(element, AtomicElement):
+        return [
+            _render_line(prefix, "(?>", "begin atomic group (never gives back)"),
+            *_render_children(element.children, depth + 1),
+            _render_line(prefix, ")", "end atomic group"),
         ]
     if isinstance(element, AnyOfElement):
         return _alternation_lines(prefix, element, depth)

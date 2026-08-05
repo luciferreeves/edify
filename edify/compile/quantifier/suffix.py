@@ -11,15 +11,21 @@ from __future__ import annotations
 
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtLeastPossessiveElement,
     AtMostElement,
+    AtMostPossessiveElement,
     BetweenElement,
     BetweenLazyElement,
+    BetweenPossessiveElement,
     ExactlyElement,
     OneOrMoreElement,
     OneOrMoreLazyElement,
+    OneOrMorePossessiveElement,
     OptionalElement,
+    OptionalPossessiveElement,
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
+    ZeroOrMorePossessiveElement,
 )
 from edify.elements.types.union import QuantifierElement
 
@@ -54,3 +60,15 @@ def quantifier_suffix(quantifier: QuantifierElement) -> str:
             return f"{{{lower_bound},{upper_bound}}}"
         case BetweenLazyElement(lower=lower_bound, upper=upper_bound):
             return f"{{{lower_bound},{upper_bound}}}?"
+        case OptionalPossessiveElement():
+            return "?+"
+        case ZeroOrMorePossessiveElement():
+            return "*+"
+        case OneOrMorePossessiveElement():
+            return "++"
+        case AtLeastPossessiveElement(times=minimum_count):
+            return f"{{{minimum_count},}}+"
+        case AtMostPossessiveElement(times=maximum_count):
+            return f"{{0,{maximum_count}}}+"
+        case BetweenPossessiveElement(lower=lower_bound, upper=upper_bound):
+            return f"{{{lower_bound},{upper_bound}}}+"

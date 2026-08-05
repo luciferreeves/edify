@@ -43,6 +43,17 @@ class AnyOfElement(BaseElement):
 
 
 @dataclass(frozen=True)
+class AtomicElement(BaseElement):
+    """An atomic group rendered as ``(?>...)``, which never backtracks into itself.
+
+    Attributes:
+        children: The elements rendered inside the group, in order.
+    """
+
+    children: tuple[BaseElement, ...] = field(default_factory=tuple)
+
+
+@dataclass(frozen=True)
 class AnythingButAnyOfElement(BaseElement):
     """A negated character class rendered as ``[^abc]``.
 

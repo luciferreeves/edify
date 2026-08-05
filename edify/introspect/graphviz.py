@@ -18,20 +18,27 @@ from edify.elements.types.groups import (
     AssertBehindElement,
     AssertNotAheadElement,
     AssertNotBehindElement,
+    AtomicElement,
     GroupElement,
     SubexpressionElement,
 )
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtLeastPossessiveElement,
     AtMostElement,
+    AtMostPossessiveElement,
     BetweenElement,
     BetweenLazyElement,
+    BetweenPossessiveElement,
     ExactlyElement,
     OneOrMoreElement,
     OneOrMoreLazyElement,
+    OneOrMorePossessiveElement,
     OptionalElement,
+    OptionalPossessiveElement,
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
+    ZeroOrMorePossessiveElement,
 )
 from edify.elements.types.union import QuantifierElement
 from edify.errors.introspect import MissingGraphvizDependencyError
@@ -108,6 +115,8 @@ def _emit_element(element: BaseElement, counter: _Counter) -> Emission:
         return _emit_subexpression(element.children, counter)
     if isinstance(element, GroupElement):
         return _emit_cluster(element.children, "grouped", counter)
+    if isinstance(element, AtomicElement):
+        return _emit_cluster(element.children, "atomic — never given back", counter)
     if isinstance(element, CaptureElement):
         return _emit_cluster(element.children, "captured", counter)
     if isinstance(element, NamedCaptureElement):
@@ -257,6 +266,23 @@ def _quantifier_phrase(element: BaseElement) -> str | None:
         return f"{element.lower} to {element.upper}"
     if isinstance(element, BetweenLazyElement):
         return f"{element.lower} to {element.upper} (lazy)"
+    return _possessive_quantifier_phrase(element)
+
+
+def _possessive_quantifier_phrase(element: BaseElement) -> str | None:
+    """Return the plain-English phrase for a possessive quantifier, or ``None``."""
+    if isinstance(element, OneOrMorePossessiveElement):
+        return "one or more (possessive)"
+    if isinstance(element, ZeroOrMorePossessiveElement):
+        return "zero or more (possessive)"
+    if isinstance(element, OptionalPossessiveElement):
+        return "optional (possessive)"
+    if isinstance(element, AtLeastPossessiveElement):
+        return f"at least {element.times} (possessive)"
+    if isinstance(element, AtMostPossessiveElement):
+        return f"at most {element.times} (possessive)"
+    if isinstance(element, BetweenPossessiveElement):
+        return f"{element.lower} to {element.upper} (possessive)"
     return None
 
 

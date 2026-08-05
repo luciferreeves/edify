@@ -14,15 +14,21 @@ from __future__ import annotations
 from edify.builder.types.protocol import BuilderProtocol
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtLeastPossessiveElement,
     AtMostElement,
+    AtMostPossessiveElement,
     BetweenElement,
     BetweenLazyElement,
+    BetweenPossessiveElement,
     ExactlyElement,
     OneOrMoreElement,
     OneOrMoreLazyElement,
+    OneOrMorePossessiveElement,
     OptionalElement,
+    OptionalPossessiveElement,
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
+    ZeroOrMorePossessiveElement,
 )
 from edify.errors.input import (
     MustBeIntegerGreaterThanZeroError,
@@ -181,3 +187,79 @@ def _ensure_strictly_ascending(lower_label: str, upper_label: str, lower: int, u
     if lower < upper:
         return
     raise MustBeLessThanError(lower_label, upper_label)
+
+
+def optional_possessive(operand: BuilderProtocol) -> Pattern:
+    """Return ``operand`` wrapped in a possessive ``?+`` quantifier.
+
+    Args:
+        operand: The pattern the quantifier repeats.
+    """
+    return pattern_containing(OptionalPossessiveElement(child=target_element(operand)))
+
+
+def zero_or_more_possessive(operand: BuilderProtocol) -> Pattern:
+    """Return ``operand`` wrapped in a possessive ``*+`` quantifier.
+
+    Args:
+        operand: The pattern the quantifier repeats.
+    """
+    return pattern_containing(ZeroOrMorePossessiveElement(child=target_element(operand)))
+
+
+def one_or_more_possessive(operand: BuilderProtocol) -> Pattern:
+    """Return ``operand`` wrapped in a possessive ``++`` quantifier.
+
+    Args:
+        operand: The pattern the quantifier repeats.
+    """
+    return pattern_containing(OneOrMorePossessiveElement(child=target_element(operand)))
+
+
+def at_least_possessive(count: int, operand: BuilderProtocol) -> Pattern:
+    """Return ``operand`` wrapped in a possessive ``{count,}+`` quantifier.
+
+    Args:
+        count: The minimum number of repetitions. Must be at least 1.
+        operand: The pattern the quantifier repeats.
+
+    Raises:
+        MustBePositiveIntegerError: If ``count`` is not an int of 1 or more.
+    """
+    _ensure_positive_integer("count", count)
+    return pattern_containing(AtLeastPossessiveElement(times=count, child=target_element(operand)))
+
+
+def at_most_possessive(count: int, operand: BuilderProtocol) -> Pattern:
+    """Return ``operand`` wrapped in a possessive ``{0,count}+`` quantifier.
+
+    Args:
+        count: The maximum number of repetitions. Must be at least 1.
+        operand: The pattern the quantifier repeats.
+
+    Raises:
+        MustBePositiveIntegerError: If ``count`` is not an int of 1 or more.
+    """
+    _ensure_positive_integer("count", count)
+    return pattern_containing(AtMostPossessiveElement(times=count, child=target_element(operand)))
+
+
+def between_possessive(lower: int, upper: int, operand: BuilderProtocol) -> Pattern:
+    """Return ``operand`` wrapped in a possessive ``{lower,upper}+`` quantifier.
+
+    Args:
+        lower: The minimum number of repetitions. Must be zero or more.
+        upper: The maximum number of repetitions. Must be greater than ``lower``.
+        operand: The pattern the quantifier repeats.
+
+    Raises:
+        MustBeIntegerGreaterThanZeroError: If ``lower`` is negative.
+        MustBePositiveIntegerError: If ``upper`` is not an int of 1 or more.
+        MustBeLessThanError: If ``lower`` is not strictly less than ``upper``.
+    """
+    _ensure_non_negative_integer("lower", lower)
+    _ensure_positive_integer("upper", upper)
+    _ensure_strictly_ascending("lower", "upper", lower, upper)
+    return pattern_containing(
+        BetweenPossessiveElement(lower=lower, upper=upper, child=target_element(operand))
+    )
