@@ -67,8 +67,7 @@ _BACK_REFERENCES = [
 def _agrees_on_every_probe(pattern_text: str) -> bool:
     translated = RegexBuilder.from_regex(pattern_text).to_regex_string()
     return all(
-        (re.search(pattern_text, probe) is not None)
-        == (re.search(translated, probe) is not None)
+        (re.search(pattern_text, probe) is not None) == (re.search(translated, probe) is not None)
         for probe in _PROBES
     )
 
