@@ -14,6 +14,10 @@ one that turns linear input into exponential match time and is almost
 never intentional. False positives on legitimate composite patterns
 (``[^()]*(?:\\([^()]*\\)[^()]*)*``) are avoided by requiring the
 group's children tuple to have length one.
+
+Possessive quantifiers and atomic groups cannot give back what they
+matched, so neither appears among the vulnerable shapes above and a
+pattern built from either is never reported.
 """
 
 from __future__ import annotations
@@ -57,9 +61,10 @@ def warn_on_redos_constructs(roots: Iterable[BaseElement]) -> None:
             f"nested unbounded quantifier detected: "
             f"{_display_name_for(element)} wraps a single-child group whose only "
             f"child is {_display_name_for(inner_quantifier)} — this shape is "
-            "vulnerable to catastrophic backtracking (ReDoS). Consider using a "
-            "possessive quantifier or an atomic group; under engine='regex' the "
-            "(?>...) atomic group is available."
+            "vulnerable to catastrophic backtracking (ReDoS). Wrap the inner "
+            "quantifier in .atomic(), or replace it with its possessive form "
+            "such as .one_or_more_possessive(), so it cannot give back what it "
+            "matched."
         )
         warnings.warn(message, ReDoSWarning, stacklevel=3)
 

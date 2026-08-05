@@ -38,7 +38,14 @@ def test_warning_message_names_both_quantifiers():
         _classic_redos_builder().to_regex()
     message_text = str(record[0].message)
     assert "one_or_more()" in message_text
-    assert "engine='regex'" in message_text
+    assert ".atomic()" in message_text
+    assert ".one_or_more_possessive()" in message_text
+
+
+def test_the_warning_does_not_claim_the_fix_needs_another_engine():
+    with pytest.warns(ReDoSWarning) as record:
+        _classic_redos_builder().to_regex()
+    assert "engine='regex'" not in str(record[0].message)
 
 
 def test_bounded_quantifier_does_not_trigger_the_warning(recwarn: pytest.WarningsRecorder):
