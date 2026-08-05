@@ -1,0 +1,1 @@
+hal :: pattern :: ^\s*\{.*"(?:_links|_embedded)"\s*:.*\}\s*$

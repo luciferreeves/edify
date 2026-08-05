@@ -1,0 +1,1 @@
+age :: pattern :: ^(?:AGE\-SECRET\-KEY\-1[0-9A-Z]{8,128}|age1(?:[0-9a-z]){8,128})$

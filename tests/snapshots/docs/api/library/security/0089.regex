@@ -1,0 +1,1 @@
+csr :: pattern :: ^\s*\-\-\-\-\-BEGIN (?:NEW )?CERTIFICATE REQUEST\-\-\-\-\-(?:[a-zA-Z0-9]|\s|[+/=])*\-\-\-\-\-END (?:NEW )?CERTIFICATE REQUEST\-\-\-\-\-\s*$

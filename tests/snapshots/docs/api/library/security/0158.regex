@@ -1,0 +1,1 @@
+keyring :: pattern :: ^\s*\-\-\-\-\-BEGIN PGP (?:PUBLIC|PRIVATE) KEY BLOCK\-\-\-\-\-(?:[a-zA-Z0-9]|\s|[+/=:])*\-\-\-\-\-END PGP (?:PUBLIC|PRIVATE) KEY BLOCK\-\-\-\-\-\s*$

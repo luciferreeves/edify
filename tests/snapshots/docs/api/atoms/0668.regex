@@ -1,0 +1,1 @@
+scientific :: pattern :: [+-]?\d+(?:\.\d+)?[eE][+-]?\d+

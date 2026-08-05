@@ -1,0 +1,1 @@
+ordinal :: pattern :: ^\d+(?:(?:st|nd|rd|th))$

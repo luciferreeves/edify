@@ -1,0 +1,1 @@
+soap :: pattern :: ^\s*(?:<\?xml.*)?<(?:(?:[a-zA-Z0-9]|[-_])+:)?Envelope.*http://schemas\.xmlsoap\.org/soap/envelope/.*$

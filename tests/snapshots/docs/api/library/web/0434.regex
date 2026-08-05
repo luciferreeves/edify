@@ -1,0 +1,1 @@
+robots :: pattern :: ^\s*(?:\#|(?:user\-agent|disallow|allow|sitemap|crawl\-delay|host)\s*:).*$

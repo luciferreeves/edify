@@ -1,0 +1,1 @@
+dosage :: pattern :: ^\d+(?:\.\d+)?\s?(?:mg|kg|ml|mcg|iu|[gl])(?:/(?:kg|day|dose))?$

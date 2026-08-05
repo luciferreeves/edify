@@ -1,0 +1,1 @@
+openapi :: pattern :: ^\s*(?:\{.*"openapi"\s*:\s*"3\.\d+(?:\d|[\.])*|openapi\s*:\s*["']?3\.\d+(?:\d|[\.])*).*$

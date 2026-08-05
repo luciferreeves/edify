@@ -1,0 +1,1 @@
+icao :: pattern :: ^[A-Z]{3,4}$

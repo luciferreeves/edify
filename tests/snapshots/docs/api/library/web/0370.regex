@@ -1,0 +1,1 @@
+nginx :: pattern :: ^\s*(?:\#|(?:http|server|events|location|upstream|stream|map).*\{|(?:worker_processes|worker_connections|include|user|pid|error_log|access_log)\s+).*$

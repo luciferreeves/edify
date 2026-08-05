@@ -1,0 +1,1 @@
+sitemap :: pattern :: ^\s*(?:<\?xml.*)?<(?:urlset|sitemapindex).*http://www\.sitemaps\.org/schemas/sitemap/.*$

@@ -1,0 +1,1 @@
+date :: regex :: (?P<year>\d{4})\-(?P<month>\d{2})

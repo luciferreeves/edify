@@ -1,0 +1,1 @@
+swagger :: pattern :: ^\s*(?:\{.*"swagger"\s*:\s*"2\.0|swagger\s*:\s*["']?2\.0).*$

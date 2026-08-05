@@ -749,7 +749,7 @@ Characters, classes, and simple word shapes. Covered with examples in
 
       ascii = Pattern().range("\x00", "\x7f")
 
-   **Emits** ``[ -]``
+   **Emits** ``[\x00-]``
 
 .. py:data:: edify.atoms.boolean
 
@@ -1562,7 +1562,7 @@ HTTP values, media types, file naming, and colours. Covered with examples in
 
       filename = Pattern().one_or_more().anything_but_chars('/\\<>:"|?*\x00')
 
-   **Emits** ``[^/\\<>:"|?* ]+``
+   **Emits** ``[^/\\<>:"|?*\x00]+``
 
 .. py:data:: edify.atoms.filepath
 
@@ -1598,7 +1598,7 @@ HTTP values, media types, file naming, and colours. Covered with examples in
 
       filepath = any_of(_posix, _windows)
 
-   **Emits** ``(?:/?(?:[^/ ]/?)+|[a-zA-Z]:(?:\\[^/\\<>:"|?* \n])+)``
+   **Emits** ``(?:/?(?:[^/\x00]/?)+|[a-zA-Z]:(?:\\[^/\\<>:"|?*\x00\n])+)``
 
 .. py:data:: edify.atoms.hexcolor
 

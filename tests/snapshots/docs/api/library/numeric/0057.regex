@@ -1,0 +1,1 @@
+hash :: pattern :: ^[a-fA-F0-9]{8,128}$

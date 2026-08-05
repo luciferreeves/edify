@@ -1,0 +1,1 @@
+openid :: pattern :: ^(?:https://(?:[a-zA-Z0-9]|[-.])+(?::\d{1,5})?)?(?:[a-zA-Z0-9]|[-._~/])*/\.well\-known/openid\-configuration/?$

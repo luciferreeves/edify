@@ -1,0 +1,1 @@
+imei :: pattern :: ^\d{15}$

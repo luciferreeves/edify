@@ -1,0 +1,1 @@
+oauth :: pattern :: ^(?:urn:ietf:params:oauth:grant\-type:(?:[a-zA-Z0-9]|[-_.])+|(?:authorization_code|client_credentials|refresh_token|password|implicit|device_code))$
