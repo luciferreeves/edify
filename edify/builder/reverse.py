@@ -232,9 +232,32 @@ def _translate_repeat(
     lazy: bool,
 ) -> builder_module.RegexBuilder:
     min_count, max_count, body = argument
-    quantified = _apply_quantifier(builder, min_count, max_count, lazy)
     body_nodes = list(body)
-    return _translate_sequence(quantified, body_nodes, names)
+    quantified = _apply_quantifier(builder, min_count, max_count, lazy)
+    if _emitted_element_count(body_nodes) == 1:
+        return _translate_sequence(quantified, body_nodes, names)
+    grouped = _translate_sequence(quantified.group(), body_nodes, names)
+    return grouped.end()
+
+
+def _emitted_element_count(nodes: SrePattern) -> int:
+    """Return how many elements ``_translate_sequence`` appends for ``nodes``.
+
+    A quantifier binds to the single element that follows it, so a body emitting
+    more than one element has to be grouped before the quantifier is applied.
+    Consecutive literals collapse into one element.
+    """
+    count = 0
+    in_literal_run = False
+    for opcode, _argument in nodes:
+        if opcode == sre.LITERAL:
+            if not in_literal_run:
+                count += 1
+            in_literal_run = True
+            continue
+        in_literal_run = False
+        count += 1
+    return count
 
 
 def _apply_quantifier(

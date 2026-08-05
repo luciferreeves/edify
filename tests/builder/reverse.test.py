@@ -68,7 +68,7 @@ def test_round_trip_compiled_regex_matches_the_same_inputs(source: str):
 
 def test_from_regex_raises_for_unsupported_construct():
     with pytest.raises(UnsupportedReverseParseError):
-        RegexBuilder.from_regex(r"(a)\1")
+        RegexBuilder.from_regex(r"(?P<n>a)(?(n)x)")
 
 
 def test_from_regex_raises_for_alternation_with_non_literal_branch():
@@ -78,7 +78,7 @@ def test_from_regex_raises_for_alternation_with_non_literal_branch():
 
 def test_from_regex_raises_for_unsupported_class_member_shape():
     with pytest.raises(UnsupportedReverseParseError):
-        RegexBuilder.from_regex(r"[\da-z_]")
+        RegexBuilder.from_regex(r"[^\da-z]")
 
 
 def test_from_regex_lazy_quantifier_translates_via_lazy_variants():
@@ -104,7 +104,7 @@ def test_from_regex_named_group_reproduces_the_name():
 
 def test_unsupported_error_message_names_the_offending_construct():
     with pytest.raises(UnsupportedReverseParseError) as excinfo:
-        RegexBuilder.from_regex(r"(a)\1")
+        RegexBuilder.from_regex(r"(?P<n>a)(?(n)x)")
     assert "hand-write" in str(excinfo.value)
 
 

@@ -104,18 +104,42 @@ What it understands
 
 - literal text (escaped for you) and the shorthand classes ``\d``, ``\w``, ``\s``
   and their negations, plus ``.``
-- a simple character class — a single range like ``[a-z]`` or a set of literals
-  like ``[abc]``
+- character classes — a single range like ``[a-z]``, a set of literals like
+  ``[abc]``, several members at once like ``[a-z0-9]`` or ``[a-z_]``, and every
+  one of those negated: ``[^abc]``, ``[^a-z]``, ``[^a-z0-9]``
+- backreferences, numbered (``\1``) and named (``(?P=name)``)
 - every quantifier — ``?``, ``*``, ``+``, ``{m}``, ``{m,n}``, and their lazy forms
 - groups ``(?:…)``, captures ``(…)``, and named captures ``(?P<name>…)``
 - alternation ``a|b``, anchors ``^`` and ``$``, and word boundaries ``\b``
 - lookahead and lookbehind, positive and negative
 - inline flags, as above
 
-A few constructs aren't translated yet — a multi-range or negated custom class
-(``[a-z0-9]``, ``[^abc]``) and backreferences (``\1``). When ``from_regex`` meets
-one, it raises a clear :class:`~edify.EdifyError` naming the exact construct
-rather than guessing — so you know precisely what to hand-write instead:
+The emitted text is normalised rather than copied, so a translation that changes
+the spelling still matches the same strings. ``[\da-z]`` comes back as
+``(?:\d|[a-z])`` — different characters, identical behaviour.
+
+.. edify-playground::
+
+   from edify import RegexBuilder
+
+   # A slug rule inherited as a raw regex — multi-member classes throughout.
+   slug = RegexBuilder.from_regex(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+
+   slug.test("hello-world")
+   slug.test("post-42")
+   slug.test("Hello-World")   # uppercase is outside [a-z0-9]
+   slug.test("a--b")          # a doubled separator breaks the shape
+
+   # And a backreference: the same word twice, separated by a space.
+   doubled = RegexBuilder.from_regex(r"^(?P<word>[a-z]+) (?P=word)$")
+
+   doubled.test("hello hello")
+   doubled.test("hello world")
+
+What is left are constructs the builder itself has no way to express — a
+conditional group ``(?(name)yes|no)``, say. When ``from_regex`` meets one it
+raises a clear :class:`~edify.EdifyError` naming the exact construct rather than
+guessing:
 
 .. code-block:: python
 
@@ -123,14 +147,14 @@ rather than guessing — so you know precisely what to hand-write instead:
    from edify.builder.reverse import UnsupportedReverseParseError
 
    try:
-       RegexBuilder.from_regex(r"(a)\1")
+       RegexBuilder.from_regex(r"(?P<n>a)(?(n)x)")
    except UnsupportedReverseParseError as problem:
        print(problem)
 
 .. code-block:: text
 
-   from_regex cannot translate the regex construct 'GROUPREF' yet; hand-write the
-   equivalent chain and file an issue with the source pattern.
+   from_regex cannot translate the regex construct 'GROUPREF_EXISTS' yet; hand-write
+   the equivalent chain and file an issue with the source pattern.
 
 Refusing is the right behavior here: a reverse parser that guessed would hand you
 a builder that quietly disagrees with the regex you started from. An error tells
