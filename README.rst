@@ -135,7 +135,9 @@ pattern back to you — in prose, as a diagram, or as an annotated verbose regex
     #     1234
 
 That same structure is what lets Edify warn you at build time about a pattern
-shaped for catastrophic backtracking, and round-trip a pattern through JSON.
+shaped for catastrophic backtracking — and the warning names the fix, because
+atomic groups and possessive quantifiers are chain methods like everything else.
+It is also what lets a pattern round-trip through JSON.
 
 Install
 =======
@@ -162,6 +164,8 @@ Also in the box
   snapshot what it emits.
 - **Reverse parsing** — turn an existing regex string back into a chain and read
   what it does.
+- **Unicode-aware classes** — say "any letter" and mean it, in any script, rather
+  than settling for ``[a-zA-Z]`` or a ``\w`` that also admits digits.
 
 Documentation
 =============

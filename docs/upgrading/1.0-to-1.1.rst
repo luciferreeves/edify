@@ -1,0 +1,52 @@
+.. _upgrading-1-0-to-1-1:
+
+1.0 → 1.1
+=========
+
+Edify 1.1 is additive almost everywhere: atomic groups, possessive quantifiers,
+Unicode-aware character classes, a negated multi-member character class, and a
+``from_regex`` that translates the constructs it used to refuse. Existing chains
+keep emitting exactly what they emitted before.
+
+One correction changes what matches, and it is the only thing on this page.
+
+.. _cidr-prefix-range:
+
+atoms.cidr range-checks the prefix length
+-----------------------------------------
+
+The prefix length is validated against the range 0-32 instead of being matched as
+one or two digits, so /33 through /99 no longer match. The address half is
+unchanged, and edify.library.cidr already behaved this way. If you relied on the
+looser shape, match the prefix yourself with an explicit quantifier after the
+address.
+
+.. code-block:: text
+
+    atoms.cidr  ->  "10.0.0.0/33" matches
+    atoms.cidr  ->  "10.0.0.0/33" does not match
+
+The two things named ``cidr`` now agree. Before this, ``atoms.cidr`` accepted a
+prefix that ``edify.library.cidr`` rejected, so which one you reached for changed
+the answer:
+
+.. code-block:: python
+
+   from edify import Pattern, library
+   from edify.atoms import cidr
+
+   block = Pattern().start_of_input().use(cidr).end_of_input()
+
+   block("10.0.0.0/24")    # True
+   block("10.0.0.0/33")    # False — was True in 1.0
+   library.cidr("10.0.0.0/33")   # False, in both versions
+
+If you deliberately want the looser shape — matching a prefix-like run of digits
+without checking its value — build it explicitly:
+
+.. code-block:: python
+
+   from edify import Pattern
+   from edify.atoms import ipv4
+
+   loose = Pattern().use(ipv4).char("/").between(1, 2).digit()

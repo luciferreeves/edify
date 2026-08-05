@@ -1,6 +1,55 @@
 
 Changelog
 =========
+1.1.0 (2026-08-05)
+------------------
+
+Edify 1.1 closes the gaps 1.0 admitted. The ReDoS check recommended two
+constructs the builder could not write, so both now exist and work on the
+standard library. ``from_regex`` refused character classes the forward builder
+writes every day, so it translates them. The Unicode guide named the most common
+Unicode bug in a validator and had no API to point at, so there is one. Existing
+chains emit exactly what they emitted before; the single behaviour change is in
+the :doc:`1.0 → 1.1 guide <upgrading/1.0-to-1.1>`.
+
+Added
+~~~~~
+
+* Atomic groups — :meth:`~edify.RegexBuilder.atomic` opens a group that matches as much as it can and then refuses to give any of it back, so the engine cannot backtrack into it (:pr:`318`).
+* Possessive quantifiers — ``optional_possessive``, ``zero_or_more_possessive``, ``one_or_more_possessive``, ``at_least_possessive``, ``at_most_possessive``, and ``between_possessive``, each with a factory (:pr:`318`).
+* Unicode-aware character classes — ``unicode_letter`` (``\p{L}``), ``unicode_uppercase`` (``\p{Lu}``), ``unicode_lowercase`` (``\p{Ll}``), and ``unicode_alphanumeric`` (``[\p{L}\p{N}]``), which is ``word`` without the underscore. These emit property escapes and compile under ``engine="regex"`` (:pr:`319`).
+* A negated multi-member character class — :meth:`~edify.RegexBuilder.anything_but_any_of` opens the negated counterpart of the ``any_of`` frame, so ``[^a-z0-9]`` finally has a chain that builds it. Anything you can build positively, you can now negate (:pr:`315`).
+* :meth:`~edify.RegexBuilder.from_regex` translates character classes of any number of members and their negated forms — ``[a-z0-9]``, ``[a-z_]``, ``[^abc]``, ``[^a-z]``, ``[^a-z0-9]`` — plus numbered and named back-references (:pr:`317`).
+
+Fixed
+~~~~~
+
+* ``from_regex`` returned a chain that quietly disagreed with its input when a quantified group held more than one element: ``^[a-z]+(?:-[a-z]+)*$`` came back as ``^[a-z]+\-*[a-z]+$``, which matches ``a--b`` and rejects ``x``. The repeat body is now grouped before the quantifier is applied (:pr:`317`).
+* ``atoms.ipv6`` rejected compression in the middle of an address — the most common way an IPv6 address is written. It now accepts every ``::``-compressed form, wherever the compressed run falls (:pr:`314`).
+* The ``ReDoSWarning`` recommended a possessive quantifier or an atomic group, neither of which the builder could express, and claimed the atomic group needed ``engine='regex'``. It now names :meth:`~edify.RegexBuilder.atomic` and :meth:`~edify.RegexBuilder.one_or_more_possessive`, and no longer fires on a shape built from either — those cannot backtrack (:pr:`318`).
+* Every entry in the atoms API reference is now checked against the regex its atom actually emits, so a documented construction cannot drift from the fragment it claims to build (:pr:`320`).
+
+Breaking
+~~~~~~~~
+
+* ``atoms.cidr`` range-checks the prefix length, so ``10.0.0.0/33`` no longer matches. The address half is unchanged, and ``edify.library.cidr`` already behaved this way (:pr:`314`). See :ref:`cidr-prefix-range`.
+
+Documentation
+~~~~~~~~~~~~~
+
+* :doc:`guide/practice/performance` shows the direct fix for a catastrophic-backtracking shape — the warning, the atomic rewrite, then the warning gone — rather than only advising a bounded quantifier.
+* :doc:`guide/builder/quantifiers` places possessive alongside greedy and lazy, so the page answers which of the three you want in a sentence each.
+* :doc:`guide/practice/unicode` teaches ``unicode_letter`` where it previously taught a workaround, and its strategy table carries the engine dimension the choice now depends on.
+* :doc:`guide/beyond/from-regex` lists the classes and back-references it understands, and states that the emitted text is normalised rather than copied.
+* The version switcher is part of the site rather than injected chrome: it sits in the navbar, is built from the same design tokens as the rest of the theme so it follows the light and dark themes, and its list scrolls within the screen it opens on (:pr:`324`).
+* The documentation is navigable on a phone. The section links collapse behind a menu button instead of disappearing, the sidebar becomes a control naming the page you are on and opens into a scrollable panel, the footer wraps inside the screen, and a wide table or a playground editor no longer widens the whole page (:pr:`324`).
+* A :doc:`1.0 → 1.1 upgrade guide <upgrading/1.0-to-1.1>`.
+
+Tooling and CI
+~~~~~~~~~~~~~~
+
+* The install-matrix jobs probe the Unicode classes in both directions: the bare install must raise and name the extra, and the ``edify[regex]`` install must compile and match non-ASCII (:pr:`319`).
+
 1.0.0 (2026-08-04)
 ------------------
 
