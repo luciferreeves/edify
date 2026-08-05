@@ -135,7 +135,20 @@ def _translate_node(
         return _translate_lookaround(
             builder, cast("tuple[int, SrePattern]", argument), names, negative=True
         )
+    if opcode == sre.NOT_LITERAL:
+        return builder.anything_but_chars(chr(cast(int, argument)))
+    if opcode == sre.GROUPREF:
+        return _translate_back_reference(builder, cast(int, argument), names)
     raise UnsupportedReverseParseError(str(opcode))
+
+
+def _translate_back_reference(
+    builder: builder_module.RegexBuilder, index: int, names: dict[int, str]
+) -> builder_module.RegexBuilder:
+    name = names.get(index)
+    if name is None:
+        return builder.back_reference(index)
+    return builder.named_back_reference(name)
 
 
 def _translate_anchor(
@@ -149,17 +162,55 @@ def _translate_anchor(
 def _translate_character_class(
     builder: builder_module.RegexBuilder, members: SrePattern
 ) -> builder_module.RegexBuilder:
-    if len(members) == 1:
-        return _translate_single_class_member(builder, members[0])
+    negated = bool(members) and members[0][0] == sre.NEGATE
+    body = members[1:] if negated else members
+    if negated:
+        return _translate_negated_class(builder, body)
+    if len(body) == 1:
+        return _translate_single_class_member(builder, body[0])
+    literal_chars = _all_literal_characters(body)
+    if literal_chars is not None:
+        return builder.any_of_chars(literal_chars)
+    return _translate_class_frame(builder.any_of(), body)
+
+
+def _translate_negated_class(
+    builder: builder_module.RegexBuilder, body: SrePattern
+) -> builder_module.RegexBuilder:
+    literal_chars = _all_literal_characters(body)
+    if literal_chars is not None:
+        return builder.anything_but_chars(literal_chars)
+    if len(body) == 1 and body[0][0] == sre.RANGE:
+        start_codepoint, end_codepoint = cast("tuple[int, int]", body[0][1])
+        return builder.anything_but_range(chr(start_codepoint), chr(end_codepoint))
+    for member in body:
+        if member[0] not in (sre.LITERAL, sre.RANGE):
+            raise UnsupportedReverseParseError(f"negated character-class member {member!r}")
+    return _translate_class_frame(builder.anything_but_any_of(), body)
+
+
+def _all_literal_characters(body: SrePattern) -> str | None:
+    """Return the joined characters when every member is a literal, else ``None``."""
     literal_chars: list[str] = []
-    for member in members:
+    for opcode, argument in body:
+        if opcode != sre.LITERAL:
+            return None
+        literal_chars.append(chr(cast(int, argument)))
+    return "".join(literal_chars)
+
+
+def _translate_class_frame(
+    builder: builder_module.RegexBuilder, body: SrePattern
+) -> builder_module.RegexBuilder:
+    """Add every member to an already-opened class frame and close it."""
+    current = builder
+    for member in body:
         opcode, argument = member
         if opcode == sre.LITERAL:
-            literal_chars.append(chr(cast(int, argument)))
+            current = current.char(chr(cast(int, argument)))
             continue
-        raise UnsupportedReverseParseError(f"character-class member {member!r}")
-    joined_chars = "".join(literal_chars)
-    return builder.any_of_chars(joined_chars)
+        current = _translate_single_class_member(current, member)
+    return current.end()
 
 
 def _translate_single_class_member(
@@ -181,9 +232,32 @@ def _translate_repeat(
     lazy: bool,
 ) -> builder_module.RegexBuilder:
     min_count, max_count, body = argument
-    quantified = _apply_quantifier(builder, min_count, max_count, lazy)
     body_nodes = list(body)
-    return _translate_sequence(quantified, body_nodes, names)
+    quantified = _apply_quantifier(builder, min_count, max_count, lazy)
+    if _emitted_element_count(body_nodes) == 1:
+        return _translate_sequence(quantified, body_nodes, names)
+    grouped = _translate_sequence(quantified.group(), body_nodes, names)
+    return grouped.end()
+
+
+def _emitted_element_count(nodes: SrePattern) -> int:
+    """Return how many elements ``_translate_sequence`` appends for ``nodes``.
+
+    A quantifier binds to the single element that follows it, so a body emitting
+    more than one element has to be grouped before the quantifier is applied.
+    Consecutive literals collapse into one element.
+    """
+    count = 0
+    in_literal_run = False
+    for opcode, _argument in nodes:
+        if opcode == sre.LITERAL:
+            if not in_literal_run:
+                count += 1
+            in_literal_run = True
+            continue
+        in_literal_run = False
+        count += 1
+    return count
 
 
 def _apply_quantifier(

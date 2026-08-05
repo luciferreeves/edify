@@ -51,6 +51,14 @@ class RegexBuilder(
     def from_regex(cls, pattern_text: str) -> RegexBuilder:
         """Return a builder chain whose emitted pattern is equivalent to ``pattern_text``.
 
+        Translates literals and the shorthand classes, character classes of any
+        number of members and their negated forms, numbered and named
+        back-references, every quantifier, groups and captures, alternation,
+        anchors, lookaround, and inline flags.
+
+        The emitted text is normalised rather than copied, so a translation may
+        spell the pattern differently while matching the same strings.
+
         Args:
             pattern_text: Raw regex source, exactly what would be handed to :func:`re.compile`.
 
