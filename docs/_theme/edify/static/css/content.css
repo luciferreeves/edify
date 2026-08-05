@@ -36,6 +36,11 @@
 }
 .api-pill:hover { background: var(--accent); color: var(--accent-fg); text-decoration: none; }
 
+/* the pill cannot shrink, so on a narrow screen it drops below the heading */
+@media (max-width: 860px) {
+  .content .title-row { flex-wrap: wrap; gap: 10px; }
+}
+
 .content a.reference.external::after {
   content: "\2197";
   display: inline-block;
