@@ -38,9 +38,9 @@ The chain methods are documented by topic:
        ``uppercase`` ``lowercase`` ``any_char`` and their negations
    * - :doc:`quantifiers`
      - ``exactly`` ``between`` ``at_least`` ``at_most`` ``optional``
-       ``one_or_more`` ``zero_or_more`` and the lazy variants
+       ``one_or_more`` ``zero_or_more`` and the lazy and possessive variants
    * - :doc:`groups`
-     - ``group`` ``any_of`` ``one_of`` ``end``
+     - ``group`` ``atomic`` ``any_of`` ``one_of`` ``end``
    * - :doc:`captures`
      - ``capture`` ``named_capture`` ``back_reference`` ``named_back_reference``
    * - :doc:`assertions`

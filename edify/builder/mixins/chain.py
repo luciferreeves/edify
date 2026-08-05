@@ -20,6 +20,7 @@ from edify.elements.types.groups import (
     AssertBehindElement,
     AssertNotAheadElement,
     AssertNotBehindElement,
+    AtomicElement,
     GroupElement,
 )
 from edify.errors.structure import CannotEndWhileBuildingRootExpressionError
@@ -58,6 +59,8 @@ def _close_frame(frame: StackFrame) -> BaseElement:
         return AnyOfElement(children=children)
     if isinstance(type_node, AnythingButAnyOfElement):
         return AnythingButAnyOfElement(children=children)
+    if isinstance(type_node, AtomicElement):
+        return AtomicElement(children=children)
     if isinstance(type_node, AssertAheadElement):
         return AssertAheadElement(children=children)
     if isinstance(type_node, AssertNotAheadElement):

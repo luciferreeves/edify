@@ -27,6 +27,7 @@ from edify.elements.types.groups import (
     AssertBehindElement,
     AssertNotAheadElement,
     AssertNotBehindElement,
+    AtomicElement,
     GroupElement,
     SubexpressionElement,
 )
@@ -54,15 +55,21 @@ from edify.elements.types.leaves import (
 )
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtLeastPossessiveElement,
     AtMostElement,
+    AtMostPossessiveElement,
     BetweenElement,
     BetweenLazyElement,
+    BetweenPossessiveElement,
     ExactlyElement,
     OneOrMoreElement,
     OneOrMoreLazyElement,
+    OneOrMorePossessiveElement,
     OptionalElement,
+    OptionalPossessiveElement,
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
+    ZeroOrMorePossessiveElement,
 )
 from edify.introspect.types import Diagram
 
@@ -104,6 +111,8 @@ def _element_diagram(element: BaseElement) -> Diagram:
         return _sequence_diagram(element.children)
     if isinstance(element, GroupElement):
         return _annotated_sequence(element.children, "grouped")
+    if isinstance(element, AtomicElement):
+        return _annotated_sequence(element.children, "atomic — never given back")
     if isinstance(element, CaptureElement):
         return _annotated_sequence(element.children, "captured")
     if isinstance(element, NamedCaptureElement):
@@ -245,6 +254,23 @@ def _quantifier_label(element: BaseElement) -> str | None:
         return f"{element.lower} to {element.upper} {_child_plural(element.child)}"
     if isinstance(element, BetweenLazyElement):
         return f"{element.lower} to {element.upper} {_child_plural(element.child)} (lazy)"
+    return _possessive_quantifier_label(element)
+
+
+def _possessive_quantifier_label(element: BaseElement) -> str | None:
+    """Return a single-line label for a possessive quantifier, or ``None``."""
+    if isinstance(element, OneOrMorePossessiveElement):
+        return f"one or more {_child_plural(element.child)} (possessive)"
+    if isinstance(element, ZeroOrMorePossessiveElement):
+        return f"zero or more {_child_plural(element.child)} (possessive)"
+    if isinstance(element, OptionalPossessiveElement):
+        return f"optional {_child_singular(element.child)} (possessive)"
+    if isinstance(element, AtLeastPossessiveElement):
+        return f"at least {element.times} {_child_plural(element.child)} (possessive)"
+    if isinstance(element, AtMostPossessiveElement):
+        return f"at most {element.times} {_child_plural(element.child)} (possessive)"
+    if isinstance(element, BetweenPossessiveElement):
+        return f"{element.lower} to {element.upper} {_child_plural(element.child)} (possessive)"
     return None
 
 

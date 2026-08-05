@@ -10,6 +10,8 @@
   frame; every member added inside it is rejected rather than accepted.
 * :meth:`GroupsMixin.group` — opens a non-capturing-group frame that
   :meth:`.end` closes later.
+* :meth:`GroupsMixin.atomic` — opens an atomic-group frame, which never gives
+  back what it matched.
 """
 
 from __future__ import annotations
@@ -21,7 +23,12 @@ from edify.builder.types.protocol import BuilderProtocol
 from edify.compile.escape import escape_special
 from edify.elements.types.base import BaseElement
 from edify.elements.types.chars import CharElement, StringElement
-from edify.elements.types.groups import AnyOfElement, AnythingButAnyOfElement, GroupElement
+from edify.elements.types.groups import (
+    AnyOfElement,
+    AnythingButAnyOfElement,
+    AtomicElement,
+    GroupElement,
+)
 from edify.errors.input import (
     MustBeAtLeastOneLiteralError,
     MustBeOneCharacterError,
@@ -83,6 +90,14 @@ class GroupsMixin(BuilderProtocol):
     def group(self) -> Self:
         """Return a new builder with a non-capturing-group frame opened."""
         return _open_frame(self, GroupElement())
+
+    def atomic(self) -> Self:
+        """Return a new builder with an atomic-group frame opened.
+
+        An atomic group matches as much as it can and then refuses to give any
+        of it back, so the engine cannot backtrack into it once it has moved on.
+        """
+        return _open_frame(self, AtomicElement())
 
 
 def _open_frame(builder: _TBuilder, type_node: BaseElement) -> _TBuilder:

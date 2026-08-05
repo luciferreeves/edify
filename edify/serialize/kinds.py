@@ -30,6 +30,7 @@ from edify.elements.types.groups import (
     AssertBehindElement,
     AssertNotAheadElement,
     AssertNotBehindElement,
+    AtomicElement,
     GroupElement,
     SubexpressionElement,
 )
@@ -57,15 +58,21 @@ from edify.elements.types.leaves import (
 )
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtLeastPossessiveElement,
     AtMostElement,
+    AtMostPossessiveElement,
     BetweenElement,
     BetweenLazyElement,
+    BetweenPossessiveElement,
     ExactlyElement,
     OneOrMoreElement,
     OneOrMoreLazyElement,
+    OneOrMorePossessiveElement,
     OptionalElement,
+    OptionalPossessiveElement,
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
+    ZeroOrMorePossessiveElement,
 )
 from edify.elements.types.root import RootElement
 
@@ -105,6 +112,7 @@ _CLASS_BY_KIND: dict[str, type[BaseElement]] = {
     "group": GroupElement,
     "any-of": AnyOfElement,
     "non-any-of": AnythingButAnyOfElement,
+    "atomic": AtomicElement,
     "subexpression": SubexpressionElement,
     "assert-ahead": AssertAheadElement,
     "assert-not-ahead": AssertNotAheadElement,
@@ -120,6 +128,12 @@ _CLASS_BY_KIND: dict[str, type[BaseElement]] = {
     "at-most": AtMostElement,
     "between": BetweenElement,
     "between-lazy": BetweenLazyElement,
+    "optional-possessive": OptionalPossessiveElement,
+    "zero-or-more-possessive": ZeroOrMorePossessiveElement,
+    "one-or-more-possessive": OneOrMorePossessiveElement,
+    "at-least-possessive": AtLeastPossessiveElement,
+    "at-most-possessive": AtMostPossessiveElement,
+    "between-possessive": BetweenPossessiveElement,
 }
 
 _KIND_BY_CLASS = {cls: kind for kind, cls in _CLASS_BY_KIND.items()}

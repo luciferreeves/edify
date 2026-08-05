@@ -19,6 +19,15 @@ Lazy variants:
 * :class:`ZeroOrMoreLazyElement` — ``*?``.
 * :class:`OneOrMoreLazyElement` — ``+?``.
 * :class:`BetweenLazyElement` — ``{lower,upper}?``.
+
+Possessive variants, which never give back what they matched:
+
+* :class:`OptionalPossessiveElement` — ``?+``.
+* :class:`ZeroOrMorePossessiveElement` — ``*+``.
+* :class:`OneOrMorePossessiveElement` — ``++``.
+* :class:`AtLeastPossessiveElement` — ``{times,}+``.
+* :class:`AtMostPossessiveElement` — ``{0,times}+``.
+* :class:`BetweenPossessiveElement` — ``{lower,upper}+``.
 """
 
 from __future__ import annotations
@@ -140,6 +149,80 @@ class BetweenElement(BaseElement):
 @dataclass(frozen=True)
 class BetweenLazyElement(BaseElement):
     """``{lower,upper}?`` lazy quantifier — between ``lower`` and ``upper`` matches, prefer fewer.
+
+    Attributes:
+        lower: The minimum number of repetitions required.
+        upper: The maximum number of repetitions allowed.
+        child: The element this quantifier applies to.
+    """
+
+    lower: int
+    upper: int
+    child: BaseElement
+
+
+@dataclass(frozen=True)
+class OptionalPossessiveElement(BaseElement):
+    """Possessive ``?+`` quantifier — zero or one match, never given back.
+
+    Attributes:
+        child: The element this quantifier applies to.
+    """
+
+    child: BaseElement
+
+
+@dataclass(frozen=True)
+class ZeroOrMorePossessiveElement(BaseElement):
+    """Possessive ``*+`` quantifier — zero or more matches, never given back.
+
+    Attributes:
+        child: The element this quantifier applies to.
+    """
+
+    child: BaseElement
+
+
+@dataclass(frozen=True)
+class OneOrMorePossessiveElement(BaseElement):
+    """Possessive ``++`` quantifier — one or more matches, never given back.
+
+    Attributes:
+        child: The element this quantifier applies to.
+    """
+
+    child: BaseElement
+
+
+@dataclass(frozen=True)
+class AtLeastPossessiveElement(BaseElement):
+    """``{times,}+`` possessive quantifier — at least ``times`` matches, never given back.
+
+    Attributes:
+        times: The minimum number of repetitions required.
+        child: The element this quantifier applies to.
+    """
+
+    times: int
+    child: BaseElement
+
+
+@dataclass(frozen=True)
+class AtMostPossessiveElement(BaseElement):
+    """``{0,times}+`` possessive quantifier — at most ``times`` matches, never given back.
+
+    Attributes:
+        times: The maximum number of repetitions allowed.
+        child: The element this quantifier applies to.
+    """
+
+    times: int
+    child: BaseElement
+
+
+@dataclass(frozen=True)
+class BetweenPossessiveElement(BaseElement):
+    """``{lower,upper}+`` possessive quantifier — never given back.
 
     Attributes:
         lower: The minimum number of repetitions required.

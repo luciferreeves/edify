@@ -24,6 +24,7 @@ from edify.elements.types.groups import (
     AssertBehindElement,
     AssertNotAheadElement,
     AssertNotBehindElement,
+    AtomicElement,
     GroupElement,
     SubexpressionElement,
 )
@@ -51,15 +52,21 @@ from edify.elements.types.leaves import (
 )
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtLeastPossessiveElement,
     AtMostElement,
+    AtMostPossessiveElement,
     BetweenElement,
     BetweenLazyElement,
+    BetweenPossessiveElement,
     ExactlyElement,
     OneOrMoreElement,
     OneOrMoreLazyElement,
+    OneOrMorePossessiveElement,
     OptionalElement,
+    OptionalPossessiveElement,
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
+    ZeroOrMorePossessiveElement,
 )
 from edify.elements.types.root import RootElement
 
@@ -104,6 +111,7 @@ GroupingElement = (
     GroupElement
     | AnyOfElement
     | AnythingButAnyOfElement
+    | AtomicElement
     | SubexpressionElement
     | AssertAheadElement
     | AssertNotAheadElement
@@ -122,6 +130,12 @@ QuantifierElement = (
     | AtMostElement
     | BetweenElement
     | BetweenLazyElement
+    | OptionalPossessiveElement
+    | ZeroOrMorePossessiveElement
+    | OneOrMorePossessiveElement
+    | AtLeastPossessiveElement
+    | AtMostPossessiveElement
+    | BetweenPossessiveElement
 )
 
 Element = (
@@ -159,6 +173,7 @@ Element = (
     | GroupElement
     | AnyOfElement
     | AnythingButAnyOfElement
+    | AtomicElement
     | SubexpressionElement
     | AssertAheadElement
     | AssertNotAheadElement

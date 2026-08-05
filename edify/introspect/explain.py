@@ -28,6 +28,7 @@ from edify.elements.types.groups import (
     AssertBehindElement,
     AssertNotAheadElement,
     AssertNotBehindElement,
+    AtomicElement,
     GroupElement,
     SubexpressionElement,
 )
@@ -55,15 +56,21 @@ from edify.elements.types.leaves import (
 )
 from edify.elements.types.quantifiers import (
     AtLeastElement,
+    AtLeastPossessiveElement,
     AtMostElement,
+    AtMostPossessiveElement,
     BetweenElement,
     BetweenLazyElement,
+    BetweenPossessiveElement,
     ExactlyElement,
     OneOrMoreElement,
     OneOrMoreLazyElement,
+    OneOrMorePossessiveElement,
     OptionalElement,
+    OptionalPossessiveElement,
     ZeroOrMoreElement,
     ZeroOrMoreLazyElement,
+    ZeroOrMorePossessiveElement,
 )
 
 
@@ -168,6 +175,32 @@ def _describe_step(
         return f"{connector} one or more {_describe_plural(element.child)}."
     if isinstance(element, OneOrMoreLazyElement):
         return f"{connector} one or more {_describe_plural(element.child)} (as few as possible)."
+    if isinstance(element, OptionalPossessiveElement):
+        return f"Optional: {_describe_optional_inner(element.child)} (never given back)."
+    if isinstance(element, ZeroOrMorePossessiveElement):
+        return f"{connector} zero or more {_describe_plural(element.child)} (never given back)."
+    if isinstance(element, OneOrMorePossessiveElement):
+        return f"{connector} one or more {_describe_plural(element.child)} (never given back)."
+    if isinstance(element, AtLeastPossessiveElement):
+        return (
+            f"{connector} at least {element.times} "
+            f"{_describe_plural(element.child)} (never given back)."
+        )
+    if isinstance(element, AtMostPossessiveElement):
+        return (
+            f"{connector} at most {element.times} "
+            f"{_describe_plural(element.child)} (never given back)."
+        )
+    if isinstance(element, BetweenPossessiveElement):
+        return (
+            f"{connector} between {element.lower} and {element.upper} "
+            f"{_describe_plural(element.child)} (never given back)."
+        )
+    if isinstance(element, AtomicElement):
+        return (
+            f"{connector} {_describe_inline_children(element.children)} "
+            "— matched all at once, never given back."
+        )
     if isinstance(element, ExactlyElement):
         return f"{connector} exactly {element.times} {_describe_plural(element.child)}."
     if isinstance(element, AtLeastElement):
@@ -374,6 +407,20 @@ def _describe_inline(element: BaseElement) -> str:
         return _describe_inline_children(element.children)
     if isinstance(element, AnyOfElement):
         return _describe_alternatives(element.children)
+    if isinstance(element, AtomicElement):
+        return _describe_inline_children(element.children)
+    if isinstance(element, OptionalPossessiveElement):
+        return f"an optional {_describe_optional_inner(element.child)}"
+    if isinstance(element, ZeroOrMorePossessiveElement):
+        return f"zero or more {_describe_plural(element.child)}"
+    if isinstance(element, OneOrMorePossessiveElement):
+        return f"one or more {_describe_plural(element.child)}"
+    if isinstance(element, AtLeastPossessiveElement):
+        return f"at least {element.times} {_describe_plural(element.child)}"
+    if isinstance(element, AtMostPossessiveElement):
+        return f"at most {element.times} {_describe_plural(element.child)}"
+    if isinstance(element, BetweenPossessiveElement):
+        return f"between {element.lower} and {element.upper} {_describe_plural(element.child)}"
     if isinstance(element, SubexpressionElement):
         return _describe_inline_children(element.children)
     if isinstance(element, BackReferenceElement):
@@ -492,10 +539,23 @@ def _example_for(element: BaseElement, alternative_index: int) -> str:
         if alternative_index % 2 == 0:
             return _example_for(element.child, alternative_index)
         return ""
-    if isinstance(element, ZeroOrMoreElement | ZeroOrMoreLazyElement):
+    if isinstance(element, ZeroOrMoreElement | ZeroOrMoreLazyElement | ZeroOrMorePossessiveElement):
         return _expand_variable(element.child, alternative_index, minimum=1)
-    if isinstance(element, OneOrMoreElement | OneOrMoreLazyElement):
+    if isinstance(element, OneOrMoreElement | OneOrMoreLazyElement | OneOrMorePossessiveElement):
         return _expand_variable(element.child, alternative_index, minimum=1)
+    if isinstance(element, OptionalPossessiveElement):
+        if alternative_index % 2 == 0:
+            return _example_for(element.child, alternative_index)
+        return ""
+    if isinstance(element, AtLeastPossessiveElement):
+        return _expand_child_n_times(element.child, alternative_index, element.times + 1)
+    if isinstance(element, AtMostPossessiveElement):
+        take = max(1, min(element.times, 2 + alternative_index % max(1, element.times)))
+        return _expand_child_n_times(element.child, alternative_index, take)
+    if isinstance(element, BetweenPossessiveElement):
+        take = element.lower + alternative_index % max(1, element.upper - element.lower + 1)
+        take = max(element.lower, min(element.upper, take))
+        return _expand_child_n_times(element.child, alternative_index, take)
     if isinstance(element, ExactlyElement):
         return _expand_child_n_times(element.child, alternative_index, element.times)
     if isinstance(element, AtLeastElement):
@@ -508,7 +568,8 @@ def _example_for(element: BaseElement, alternative_index: int) -> str:
         take = max(element.lower, min(element.upper, take))
         return _expand_child_n_times(element.child, alternative_index, take)
     if isinstance(
-        element, CaptureElement | NamedCaptureElement | GroupElement | SubexpressionElement
+        element,
+        CaptureElement | NamedCaptureElement | GroupElement | SubexpressionElement | AtomicElement,
     ):
         rendered_children = [_example_for(child, alternative_index) for child in element.children]
         return "".join(rendered_children)
