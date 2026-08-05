@@ -1,0 +1,1 @@
+ssh :: pattern :: ^(?:\-\-\-\-\-BEGIN OPENSSH PRIVATE KEY\-\-\-\-\-(?:[a-zA-Z0-9]|\s|[+/=])*\-\-\-\-\-END OPENSSH PRIVATE KEY\-\-\-\-\-\s*|(?:ssh\-rsa|ssh\-dss|ssh\-ed25519|sk\-ssh\-ed25519@openssh\.com|ecdsa\-sha2\-nistp\d{3})\s+(?:[a-zA-Z0-9]|[+/=])+.*)$

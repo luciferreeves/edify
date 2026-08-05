@@ -75,10 +75,19 @@ def _discover_blocks() -> Iterator[tuple[Path, int, str, Path]]:
             yield rst_path, block_start, block_source, relative_stem
 
 
-def _snapshot_bodies_for_block(namespace: dict[str, object], pre_exec_names: frozenset[str]) -> str:
+def _snapshot_bodies_for_block(
+    namespace: dict[str, object], pre_exec_values: dict[str, object]
+) -> str:
+    """Render the patterns a block defined, skipping names it left untouched.
+
+    A doc block may legitimately rebind a name the namespace already carries —
+    ``docs/api/atoms.rst`` builds ``cidr`` and ``ipv6``, which are also library
+    validators. Comparing by identity keeps the imported originals out while
+    recording whatever the block actually built.
+    """
     interesting_pairs: list[tuple[str, str, str]] = []
     for identifier, value in namespace.items():
-        if identifier in pre_exec_names:
+        if pre_exec_values.get(identifier, _ABSENT) is value:
             continue
         if identifier.startswith("_") or identifier in {"edify", "Pattern", "Regex"}:
             continue
@@ -90,6 +99,8 @@ def _snapshot_bodies_for_block(namespace: dict[str, object], pre_exec_names: fro
     rendered_lines = [f"{name} :: {kind} :: {body}" for name, kind, body in interesting_pairs]
     return "\n".join(rendered_lines) + ("\n" if rendered_lines else "")
 
+
+_ABSENT = object()
 
 DISCOVERED_BLOCKS: list[tuple[Path, int, str, Path]] = list(_discover_blocks())
 
@@ -118,9 +129,9 @@ def test_doc_code_block_produces_the_snapshotted_regex(
     if _ON_PYPY and (stem_string, block_start) in _BLOCKS_SKIPPED_ON_PYPY:
         pytest.skip("doc block hits PyPy's re.DEBUG upstream disassembler bug")
     namespace = _prepared_exec_namespace()
-    pre_exec_names = frozenset(namespace)
+    pre_exec_values = dict(namespace)
     exec(compile(block_source, str(rst_path), "exec"), namespace)
-    rendered = _snapshot_bodies_for_block(namespace, pre_exec_names)
+    rendered = _snapshot_bodies_for_block(namespace, pre_exec_values)
     snapshot_path = _SNAPSHOT_ROOT / stem_string / f"{block_start:04d}.regex"
     assert_snapshot(rendered, snapshot_path)
 

@@ -1,0 +1,1 @@
+protobuf :: pattern :: ^\s*(?:syntax\s*=\s*["']proto\d|//|(?:package|import|message|service|enum)\s+).*$

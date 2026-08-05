@@ -1,0 +1,1 @@
+epub :: pattern :: ^PK.*application/epub\+zip.*$

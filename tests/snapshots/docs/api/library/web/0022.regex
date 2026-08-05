@@ -1,0 +1,1 @@
+apache :: pattern :: ^\s*(?:\#|<(?:VirtualHost|Directory|Location|Files|IfModule|Limit|Proxy)|(?:ServerName|ServerRoot|ServerAdmin|DocumentRoot|Listen|LoadModule|ErrorLog|CustomLog|Include)\s+).*$

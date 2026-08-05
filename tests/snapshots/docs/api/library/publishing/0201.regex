@@ -1,0 +1,1 @@
+pmid :: pattern :: ^\d{1,8}$

@@ -1,0 +1,1 @@
+graphql :: pattern :: ^\s*(?:(?:query|mutation|subscription|fragment|schema|type|input|interface|union|enum|scalar|directive|extend)(?:\s|[{(@])|\#|\{\s*(?:[a-zA-Z]|[_.]).*\}).*$

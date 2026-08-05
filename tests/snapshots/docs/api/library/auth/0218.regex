@@ -1,0 +1,1 @@
+mnemonic :: pattern :: ^(?:[a-z]+ ){11,23}[a-z]+$

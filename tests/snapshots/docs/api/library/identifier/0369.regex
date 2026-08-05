@@ -1,0 +1,1 @@
+imo :: pattern :: ^IMO\d{7}$

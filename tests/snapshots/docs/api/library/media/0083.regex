@@ -1,0 +1,1 @@
+encoding :: pattern :: ^(?:gzip|compress|deflate|br|zstd|identity|x\-gzip|x\-compress|[\*])(?:\s*;q=\d(?:\.\d{1,3})?)?$

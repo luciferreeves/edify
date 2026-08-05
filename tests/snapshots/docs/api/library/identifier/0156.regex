@@ -1,0 +1,1 @@
+did :: pattern :: ^did:[a-z0-9]+:.+$

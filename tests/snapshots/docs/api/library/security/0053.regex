@@ -1,0 +1,1 @@
+certificate :: pattern :: ^\s*\-\-\-\-\-BEGIN (?:TRUSTED )?CERTIFICATE\-\-\-\-\-(?:[a-zA-Z0-9]|\s|[+/=])*\-\-\-\-\-END (?:TRUSTED )?CERTIFICATE\-\-\-\-\-\s*$

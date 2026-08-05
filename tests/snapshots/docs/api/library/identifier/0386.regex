@@ -1,0 +1,1 @@
+isin :: pattern :: ^[A-Z]{2}[A-Z0-9]{9}\d$

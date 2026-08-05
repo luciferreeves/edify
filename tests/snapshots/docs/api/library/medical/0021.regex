@@ -1,0 +1,1 @@
+blood :: pattern :: ^(?:(?:AB|[ABO]))[+-]$

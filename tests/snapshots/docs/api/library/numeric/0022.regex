@@ -1,0 +1,1 @@
+fraction :: pattern :: ^\-?(?:\d+\s+)?\d+/\d+$

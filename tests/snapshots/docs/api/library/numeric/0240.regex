@@ -1,0 +1,1 @@
+percentage :: pattern :: ^\-?\d+(?:\.\d+)?\s?%$

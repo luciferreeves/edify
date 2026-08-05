@@ -1,0 +1,1 @@
+altitude :: pattern :: ^\-?\d+(?:\.\d+)?\s?(?:ft|km|mi|[m])?$

@@ -1,0 +1,1 @@
+manifest :: pattern :: ^\s*\{.*"(?:start_url|display|icons|short_name|theme_color)"\s*:.*\}\s*$

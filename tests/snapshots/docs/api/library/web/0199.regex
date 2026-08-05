@@ -1,0 +1,1 @@
+htaccess :: pattern :: ^\s*(?:\#|<(?:IfModule|Files|FilesMatch|Limit|RequireAll)|(?:RewriteEngine|RewriteRule|RewriteCond|RewriteBase|Redirect|RedirectMatch|Options|AddType|AddHandler|ErrorDocument|Header|Require|Order|Deny|Allow|AuthType|DirectoryIndex)\s+).*$

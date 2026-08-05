@@ -1,0 +1,1 @@
+digest :: pattern :: ^(?:(?:sha256|sha512|sha1|md5|blake2[bs]?))[:-][a-fA-F0-9]{32,128}$

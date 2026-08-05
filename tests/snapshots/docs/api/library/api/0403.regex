@@ -1,0 +1,1 @@
+saml :: pattern :: ^\s*(?:<\?xml.*)?<(?:(?:[a-zA-Z0-9]|[-_])+:)?(?:Response|AuthnRequest|LogoutRequest|LogoutResponse|Assertion|EntityDescriptor).*urn:oasis:names:tc:SAML:2\.0:.*$
