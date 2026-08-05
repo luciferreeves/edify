@@ -84,6 +84,12 @@
   border-collapse: collapse; width: 100%; margin: 0 0 1.3rem; font-size: 0.92rem;
   border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
 }
+/* a wide reference table scrolls inside its own box rather than widening the page */
+@media (max-width: 860px) {
+  .content table.docutils {
+    display: block; width: max-content; max-width: 100%; overflow-x: auto;
+  }
+}
 .content table.docutils th, .content table.docutils td {
   border-bottom: 1px solid var(--border); padding: 8px 12px; text-align: left;
 }

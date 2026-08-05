@@ -96,7 +96,7 @@ img { max-width: 100%; }
   background: var(--nav-bg); backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--border);
 }
-.topnav-inner { display: flex; align-items: center; gap: 22px; height: 58px; }
+.topnav-inner { display: flex; align-items: center; gap: 22px; height: 58px; position: relative; }
 .brand {
   font-weight: 800; letter-spacing: 2.5px; font-size: 15px; color: var(--fg);
   display: inline-flex; align-items: center; gap: 8px;
@@ -130,6 +130,62 @@ img { max-width: 100%; }
 .ghlink { color: var(--muted); font-size: 14px; font-weight: 500;
   border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px; }
 .ghlink:hover { color: var(--fg); border-color: var(--border-strong); text-decoration: none; }
+
+/* ---- mobile navigation ----
+   The nav links and the sidebar tree both collapse behind a control below the
+   layout breakpoint, where there is no room to show either in full. */
+.nav-toggle { display: none; }
+.nav-toggle-bars, .nav-toggle-bars::before, .nav-toggle-bars::after {
+  display: block; width: 16px; height: 1.5px; border-radius: 1px;
+  background: currentColor; content: "";
+}
+.nav-toggle-bars { position: relative; }
+.nav-toggle-bars::before { position: absolute; top: -5px; }
+.nav-toggle-bars::after { position: absolute; top: 5px; }
+.sidenav-toggle { display: none; }
+
+/* ---- version switcher ----
+   Read the Docs injects its own flyout; this replaces it with a control built
+   from the same tokens as the rest of the nav, so it follows the active theme.
+   Both stay hidden until the addons event confirms a published build. */
+readthedocs-flyout { display: none; }
+
+.version-switcher { position: relative; display: inline-flex; }
+.version-switcher[hidden] { display: none; }
+.version-button {
+  display: inline-flex; align-items: center; gap: 7px;
+  font: inherit; font-size: 14px; font-weight: 500;
+  color: var(--muted); background: transparent;
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 10px; cursor: pointer;
+}
+.version-button:hover { color: var(--fg); border-color: var(--border-strong); }
+.version-button[aria-expanded="true"] { color: var(--fg); border-color: var(--border-strong); }
+.version-name { font-variant-numeric: tabular-nums; }
+.version-caret {
+  width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 5px solid currentColor; opacity: 0.7;
+}
+.version-menu {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 200;
+  min-width: 168px; padding: 8px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+[data-theme="dark"] .version-menu { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5); }
+.version-menu[hidden] { display: none; }
+.version-menu-heading {
+  margin: 2px 8px 8px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.6px; text-transform: uppercase; color: var(--faint);
+}
+.version-list { list-style: none; margin: 0; padding: 0; max-height: min(320px, 55vh); overflow-y: auto; }
+.version-list a {
+  display: block; padding: 6px 8px; border-radius: 6px;
+  font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.version-list a:hover { background: var(--surface); color: var(--fg); text-decoration: none; }
+.version-list a.current { color: var(--accent); font-weight: 600; background: var(--accent-weak); }
+.footer-rtd[hidden] { display: none; }
 
 /* ---- docs two-column layout ---- */
 .docs-layout {
@@ -187,6 +243,47 @@ img { max-width: 100%; }
 /* ---- responsive ---- */
 @media (max-width: 860px) {
   .docs-layout { grid-template-columns: 1fr; gap: 20px; }
-  .sidenav { position: static; max-height: none; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
-  .navlinks { display: none; }
+
+  .nav-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border);
+    background: transparent; color: var(--muted); cursor: pointer; padding: 0;
+  }
+  .nav-toggle:hover, .nav-toggle[aria-expanded="true"] {
+    color: var(--fg); border-color: var(--border-strong);
+  }
+  .navlinks {
+    display: none; position: absolute; top: calc(100% + 1px); left: 0; right: 0;
+    flex-direction: column; gap: 0; padding: 8px;
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.10);
+  }
+  .navlinks.navlinks-open { display: flex; }
+  .navlinks a { padding: 10px 10px; border-radius: 6px; font-size: 15px; }
+  .navlinks a:hover { background: var(--surface); }
+  .navlinks a.current { background: var(--accent-weak); }
+  .navlinks a.current::after { display: none; }
+
+  .sidenav {
+    position: static; max-height: none; border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+  }
+  .sidenav-toggle {
+    display: flex; align-items: center; justify-content: space-between; width: 100%;
+    font: inherit; font-size: 14px; font-weight: 600; color: var(--fg);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 14px; cursor: pointer;
+  }
+  .sidenav-toggle:hover { border-color: var(--border-strong); }
+  .sidenav-caret {
+    width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent;
+    border-top: 5px solid currentColor; opacity: 0.7;
+  }
+  .sidenav-toggle[aria-expanded="true"] .sidenav-caret { transform: rotate(180deg); }
+  .sidenav-inner { display: none; max-height: 60vh; overflow-y: auto; padding-top: 12px; }
+  .sidenav-open .sidenav-inner { display: block; }
+
+  /* the base rule wraps; a column that also wraps spills into a second column */
+  .footer-inner { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; gap: 14px; }
+  .footer-links { flex-wrap: wrap; row-gap: 10px; column-gap: 18px; }
 }

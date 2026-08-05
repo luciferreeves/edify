@@ -35,13 +35,26 @@
         <img class="brand-logo brand-logo-dark" src="{{ pathto('_static/img/logo-light-on-dark.png', 1) }}" alt="" width="22" height="22">
         EDIFY
       </a>
-      <nav class="navlinks">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navlinks" aria-label="Open navigation">
+        <span class="nav-toggle-bars" aria-hidden="true"></span>
+      </button>
+      <nav class="navlinks" id="navlinks">
         <a class="{{ 'current' if pagename.startswith('guide/') }}" href="{{ pathto('guide/index') }}">Guide</a>
         <a class="{{ 'current' if pagename.startswith('library/') }}" href="{{ pathto('library/index') }}">Library</a>
         <a class="{{ 'current' if pagename == 'playground' }}" href="{{ pathto('playground') }}">Playground</a>
         <a class="{{ 'current' if pagename.startswith('api/') }}" href="{{ pathto('api/index') }}">API</a>
       </nav>
       <span class="grow"></span>
+      <div class="version-switcher" hidden>
+        <button class="version-button" type="button" aria-expanded="false" aria-haspopup="true" title="Switch documentation version">
+          <span class="version-name"></span>
+          <span class="version-caret" aria-hidden="true"></span>
+        </button>
+        <div class="version-menu" hidden>
+          <p class="version-menu-heading">Version</p>
+          <ul class="version-list"></ul>
+        </div>
+      </div>
       <button class="icon-btn theme-toggle" type="button" aria-label="Toggle color theme" title="Toggle light / dark">
         <span class="theme-glyph"></span>
       </button>
@@ -63,6 +76,7 @@
         <a href="{{ pathto('deprecation-policy') }}">Deprecation policy</a>
         <a href="{{ pathto('changelog') }}">Changelog</a>
         <a href="{{ pathto('contributing') }}">Contributing</a>
+        <a class="footer-rtd" href="https://about.readthedocs.com/" rel="noopener" hidden>Hosted by Read the Docs</a>
       </nav>
     </div>
   </footer>
@@ -72,6 +86,8 @@
   <script src="{{ pathto('_static/js/links.js', 1) }}"></script>
   <script src="{{ pathto('_static/js/apipill.js', 1) }}"></script>
   <script src="{{ pathto('_static/js/navscroll.js', 1) }}"></script>
+  <script src="{{ pathto('_static/js/versions.js', 1) }}"></script>
+  <script src="{{ pathto('_static/js/mobilenav.js', 1) }}"></script>
   <script src="{{ pathto('_static/js/edify-api.js', 1) }}"></script>
   <script type="module" src="{{ pathto('_static/js/playground.js', 1) }}"></script>
 </body>
