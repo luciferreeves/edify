@@ -35,7 +35,8 @@ The chain methods are documented by topic:
        ``anything_but_range`` ``anything_but_string`` ``anything_but_any_of``
    * - :doc:`classes`
      - ``digit`` ``letter`` ``word`` ``whitespace_char`` ``alphanumeric``
-       ``uppercase`` ``lowercase`` ``any_char`` and their negations
+       ``uppercase`` ``lowercase`` ``any_char``, the ``unicode_`` classes,
+       and their negations
    * - :doc:`quantifiers`
      - ``exactly`` ``between`` ``at_least`` ``at_most`` ``optional``
        ``one_or_more`` ``zero_or_more`` and the lazy and possessive variants
