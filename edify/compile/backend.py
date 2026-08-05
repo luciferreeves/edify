@@ -16,7 +16,11 @@ from typing import cast
 from edify.builder.types.engine import Engine
 from edify.builder.types.flags import Flags
 from edify.compile.types import RegexModule
-from edify.errors.backend import MissingRegexBackendError, VariableWidthLookbehindNotSupportedError
+from edify.errors.backend import (
+    MissingRegexBackendError,
+    UnicodeClassNotSupportedError,
+    VariableWidthLookbehindNotSupportedError,
+)
 
 
 def load_regex_module() -> RegexModule:
@@ -41,6 +45,8 @@ def compile_pattern(pattern: str, engine: Engine, flags: Flags) -> re.Pattern[st
     Raises:
         VariableWidthLookbehindNotSupportedError: when ``engine='re'`` and the
             pattern uses a variable-width lookbehind body that stdlib re rejects.
+        UnicodeClassNotSupportedError: when ``engine='re'`` and the pattern uses a
+            Unicode property class, which stdlib re does not implement.
         MissingRegexBackendError: when ``engine='regex'`` and the ``regex`` module
             is not installed.
     """
@@ -52,6 +58,8 @@ def compile_pattern(pattern: str, engine: Engine, flags: Flags) -> re.Pattern[st
     except re.error as reason:
         if "look-behind" in str(reason):
             raise VariableWidthLookbehindNotSupportedError() from reason
+        if "bad escape \\p" in str(reason):
+            raise UnicodeClassNotSupportedError() from reason
         raise
 
 

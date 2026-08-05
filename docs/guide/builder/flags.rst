@@ -104,7 +104,10 @@ in one call rather than rewriting each token:
    letters.ascii_only().to_regex().match("café")  # None
 
 Whether that is the behavior you want depends entirely on the field.
-:doc:`../practice/unicode` walks through choosing.
+:doc:`../practice/unicode` walks through choosing. ``ascii_only`` is the mirror
+image of the Unicode property classes: this flag narrows a Unicode-aware token to
+ASCII, while :meth:`~edify.RegexBuilder.unicode_letter` and its siblings widen an
+ASCII-only one to every script.
 
 .. edify-playground::
    :tests: hello|user_1|café|日本語
@@ -187,8 +190,9 @@ Choosing the engine
 
 By default edify compiles with the standard library's ``re``. Pass
 ``engine="regex"`` to compile with the third-party engine instead (install it
-with ``pip install edify[regex]``), which supports features ``re`` doesn't — such
-as variable-width lookbehind:
+with ``pip install edify[regex]``), which supports features ``re`` doesn't —
+Unicode property classes such as :meth:`~edify.RegexBuilder.unicode_letter`,
+match timeouts, and variable-width lookbehind:
 
 .. code-block:: python
 

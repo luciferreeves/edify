@@ -80,7 +80,7 @@ jobs:
         run: |
           uv venv .venv-bare
           uv pip install --python .venv-bare/bin/python .
-      - name: import succeeds and re engine works; regex engine raises the friendly error
+      - name: import succeeds, re engine works, and both regex-only features raise clearly
         run: |
           .venv-bare/bin/python <<'PYCHECK'
           import edify
@@ -97,6 +97,18 @@ jobs:
               assert "pip install edify[regex]" in text, text
           else:
               raise SystemExit("expected MissingRegexBackendError under bare install")
+
+          from edify.errors.backend import UnicodeClassNotSupportedError
+
+          unicode_builder = edify.RegexBuilder().unicode_letter()
+          assert unicode_builder.to_regex_string() == "\\p{L}", unicode_builder.to_regex_string()
+          try:
+              unicode_builder.to_regex(engine="re")
+          except UnicodeClassNotSupportedError as reason:
+              text = str(reason)
+              assert "pip install edify[regex]" in text, text
+          else:
+              raise SystemExit("expected UnicodeClassNotSupportedError under engine='re'")
           PYCHECK
 
   install-with-regex-extra:
@@ -112,7 +124,7 @@ jobs:
         run: |
           uv venv .venv-extra
           uv pip install --python .venv-extra/bin/python '.[regex]'
-      - name: both engines compile; variable-width lookbehind works only under regex
+      - name: both engines compile; lookbehind and Unicode classes work under regex
         run: |
           .venv-extra/bin/python <<'PYCHECK'
           import edify
@@ -137,6 +149,14 @@ jobs:
 
           via_regex = variable_lookbehind_builder.to_regex(engine="regex")
           assert via_regex.search("foofoobar") is not None
+
+          unicode_builder = (
+              edify.Pattern().start_of_input().one_or_more().unicode_letter().end_of_input()
+          )
+          unicode_compiled = unicode_builder.to_regex(engine="regex")
+          assert unicode_compiled.match("caf\u00e9") is not None
+          assert unicode_compiled.match("\u65e5\u672c\u8a9e") is not None
+          assert unicode_compiled.match("abc123") is None
           PYCHECK
 
   install-with-integration-extra:

@@ -94,6 +94,26 @@ class LetterElement(BaseElement):
 
 
 @dataclass(frozen=True)
+class UnicodeLetterElement(BaseElement):
+    """The ``\\p{L}`` Unicode letter character class."""
+
+
+@dataclass(frozen=True)
+class UnicodeUppercaseElement(BaseElement):
+    """The ``\\p{Lu}`` Unicode uppercase-letter character class."""
+
+
+@dataclass(frozen=True)
+class UnicodeLowercaseElement(BaseElement):
+    """The ``\\p{Ll}`` Unicode lowercase-letter character class."""
+
+
+@dataclass(frozen=True)
+class UnicodeAlphanumericElement(BaseElement):
+    """The ``[\\p{L}\\p{N}]`` Unicode letter-or-number character class."""
+
+
+@dataclass(frozen=True)
 class UppercaseElement(BaseElement):
     """The ``[A-Z]`` ASCII uppercase-letter character class."""
 

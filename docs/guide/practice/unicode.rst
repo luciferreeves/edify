@@ -39,8 +39,7 @@ character range, so it stops at ASCII no matter what the input contains:
    letter.match("日本語")    # no match
 
 That difference is the single most common Unicode bug in a validator: a name field
-built on ``letter`` quietly rejects a large fraction of the world's names. Reach for
-``word`` — or an explicit character class — when the field holds a human name.
+built on ``letter`` quietly rejects a large fraction of the world's names.
 
 .. edify-playground::
    :tests: hello|café|日本語|Ünal|_x9
@@ -52,6 +51,73 @@ built on ``letter`` quietly rejects a large fraction of the world's names. Reach
        .end_of_input()
 
 Swap ``word()`` for ``letter()`` and watch everything but ``hello`` drop out.
+
+Saying "any letter" and meaning it
+----------------------------------
+
+``word`` matches non-ASCII, but it also admits digits and the underscore — note
+``_x9`` passing in the playground above. For a name field that is the wrong
+answer twice over.
+
+:meth:`~edify.RegexBuilder.unicode_letter` is the one that says what you mean.
+It emits the ``\p{L}`` property escape, which matches a letter in any script and
+nothing else:
+
+.. code-block:: python
+
+   from edify import RegexBuilder
+
+   name = (
+       RegexBuilder()
+       .start_of_input()
+       .one_or_more()
+       .unicode_letter()
+       .end_of_input()
+       .to_regex(engine="regex")
+   )
+
+   name.match("café")     # matches
+   name.match("日本語")     # matches
+   name.match("abc123")   # no match — digits are not letters
+   name.match("a_b")      # no match — nor is the underscore
+
+Three siblings narrow it further:
+:meth:`~edify.RegexBuilder.unicode_uppercase` (``\p{Lu}``),
+:meth:`~edify.RegexBuilder.unicode_lowercase` (``\p{Ll}``), and
+:meth:`~edify.RegexBuilder.unicode_alphanumeric` (``[\p{L}\p{N}]``) — which is
+``word`` without the underscore.
+
+These require the engine
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Property escapes are not part of the standard library's regex syntax at all, so
+these four classes need the third-party engine:
+
+.. code-block:: bash
+
+   pip install edify[regex]
+
+Compiling one under the standard library raises rather than silently emitting
+something else:
+
+.. code-block:: text
+
+   error: a Unicode character class such as unicode_letter() was compiled under the
+   stdlib 're' engine, which has no property escapes
+
+The emitted pattern is the same either way — ``to_regex_string()`` returns
+``\p{L}`` regardless of which engine you later compile with. That is deliberate:
+a chain's emitted regex is a pure function of the chain, so two identical chains
+stay equal no matter where they are compiled. Emitting a different string per
+engine would have bought default-install support at the cost of that guarantee.
+
+If the extra is not an option, the explicit character class is still the
+stdlib-engine answer — spell out the ranges your input actually needs, and accept
+that "every script" is not one of them.
+
+The playground on this page runs with the extra available, so a
+``unicode_letter`` example executes here even though it would raise on a bare
+install.
 
 Digits are not only 0-9
 -----------------------
@@ -213,7 +279,9 @@ Choosing a strategy
    * - The field holds
      - Use
    * - A human name, city, or free text
-     - ``word`` — Unicode-aware, normalize to NFC first
+     - ``unicode_letter`` — letters in any script and nothing else; needs
+       ``edify[regex]``. On the standard library, ``word`` is the closest fit,
+       but it also admits digits and ``_``. Normalize to NFC either way.
    * - An identifier, slug, or code
      - ``range("a", "z")`` or ``ascii_only`` — narrow on purpose
    * - A number you will parse

@@ -45,6 +45,10 @@ from edify.elements.types.leaves import (
     NullByteElement,
     StartOfInputElement,
     TabElement,
+    UnicodeAlphanumericElement,
+    UnicodeLetterElement,
+    UnicodeLowercaseElement,
+    UnicodeUppercaseElement,
     UppercaseElement,
     WhitespaceCharElement,
     WordBoundaryElement,
@@ -90,6 +94,10 @@ LeafElement = (
     | UppercaseElement
     | LowercaseElement
     | AlphanumericElement
+    | UnicodeLetterElement
+    | UnicodeUppercaseElement
+    | UnicodeLowercaseElement
+    | UnicodeAlphanumericElement
     | NoopElement
 )
 
@@ -158,6 +166,10 @@ Element = (
     | UppercaseElement
     | LowercaseElement
     | AlphanumericElement
+    | UnicodeLetterElement
+    | UnicodeUppercaseElement
+    | UnicodeLowercaseElement
+    | UnicodeAlphanumericElement
     | NoopElement
     | CharElement
     | StringElement

@@ -48,6 +48,10 @@ from edify.elements.types.leaves import (
     NullByteElement,
     StartOfInputElement,
     TabElement,
+    UnicodeAlphanumericElement,
+    UnicodeLetterElement,
+    UnicodeLowercaseElement,
+    UnicodeUppercaseElement,
     UppercaseElement,
     WhitespaceCharElement,
     WordBoundaryElement,
@@ -180,6 +184,14 @@ def leaf_label(element: BaseElement) -> str | None:
         return "lowercase letter"
     if isinstance(element, AlphanumericElement):
         return "letter or digit"
+    if isinstance(element, UnicodeLetterElement):
+        return "Unicode letter"
+    if isinstance(element, UnicodeUppercaseElement):
+        return "Unicode uppercase letter"
+    if isinstance(element, UnicodeLowercaseElement):
+        return "Unicode lowercase letter"
+    if isinstance(element, UnicodeAlphanumericElement):
+        return "Unicode letter or number"
     if isinstance(element, NoopElement):
         return "no-op"
     return None
