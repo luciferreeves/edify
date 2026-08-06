@@ -1,6 +1,19 @@
 
 Changelog
 =========
+1.1.1 (2026-08-06)
+------------------
+
+A documentation release. The package itself is unchanged — every file under
+``edify/`` is byte-identical to 1.1.0 — so there is nothing to do on upgrade
+unless you read the docs in a browser.
+
+Fixed
+~~~~~
+
+* The version switcher now appears on the published documentation. Read the Docs gates its addons event API behind an opt-in ``<meta name="readthedocs-addons-api-version" content="1">`` tag; without it, subscribing to the event throws and the switcher never received the version list (:pr:`326`).
+* When the version list cannot be reached, Read the Docs' own flyout stays visible as a fallback. It is now hidden only once our switcher has actually rendered, rather than unconditionally (:pr:`326`).
+
 1.1.0 (2026-08-05)
 ------------------
 
