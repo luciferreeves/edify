@@ -108,6 +108,7 @@ _ILLUSTRATIVE_NON_EXECUTABLE_BLOCKS: frozenset[tuple[str, int]] = frozenset()
 
 _BLOCKS_SKIPPED_ON_PYPY = frozenset(
     {
+        ("guide/builder/flags", 139),
         ("regex-builder/flags/index", 38),
     }
 )
