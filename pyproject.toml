@@ -58,7 +58,7 @@ dev = [
     "fastapi>=0.100",
     "graphviz>=0.20",
     "hypothesis>=6.100",
-    "mypy==2.4.0",
+    "mypy==2.4.1",
     "pydantic>=2.0",
     "pyright==1.1.414",
     "pytest>=8.0,<9.2",
